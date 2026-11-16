@@ -1,0 +1,60 @@
+{
+  "MWIR": {
+    "H2O": {
+      "ref": 0.8653908405763802,
+      "multiP": 0.8473985774194652,
+      "P1atm": 0.8404361141839882,
+      "reldiff_multiP_vs_ref_pct": -2.079091008743683,
+      "reldiff_P1atm_vs_ref_pct": -2.8836365284119703,
+      "reldiff_P1atm_vs_multiP_pct": -0.8216279117058911
+    },
+    "CO2": {
+      "ref": 0.7220467872872123,
+      "multiP": 0.6493925777821659,
+      "P1atm": 0.6455370042227065,
+      "reldiff_multiP_vs_ref_pct": -10.06225784592355,
+      "reldiff_P1atm_vs_ref_pct": -10.596236201252152,
+      "reldiff_P1atm_vs_multiP_pct": -0.5937199917847913
+    },
+    "CH4": {
+      "ref": 0.9970307936054291,
+      "multiP": 0.9968313611869323,
+      "P1atm": 0.9968123985818722,
+      "reldiff_multiP_vs_ref_pct": -0.020002633797866487,
+      "reldiff_P1atm_vs_ref_pct": -0.02190454146026033,
+      "reldiff_P1atm_vs_multiP_pct": -0.0019022881701413752
+    },
+    "total": {
+      "multiP": 0.5236040266186377
+    }
+  },
+  "LWIR": {
+    "H2O": {
+      "ref": 0.8638475599894029,
+      "multiP": 0.8475779537361557,
+      "P1atm": 0.8394369845034515,
+      "reldiff_multiP_vs_ref_pct": -1.8833885753461788,
+      "reldiff_P1atm_vs_ref_pct": -2.825796658643198,
+      "reldiff_P1atm_vs_multiP_pct": -0.9604979927590795
+    },
+    "CO2": {
+      "ref": 0.9745317656393555,
+      "multiP": 0.9722308338563077,
+      "P1atm": 0.9711376723800605,
+      "reldiff_multiP_vs_ref_pct": -0.23610639121016685,
+      "reldiff_P1atm_vs_ref_pct": -0.3482793869800882,
+      "reldiff_P1atm_vs_multiP_pct": -0.11243847018420627
+    },
+    "CH4": {
+      "ref": 0.9824920132166559,
+      "multiP": 0.9816682465181313,
+      "P1atm": 0.9797644775768697,
+      "reldiff_multiP_vs_ref_pct": -0.0838446203575316,
+      "reldiff_P1atm_vs_ref_pct": -0.277614026688755,
+      "reldiff_P1atm_vs_multiP_pct": -0.19393200788699883
+    },
+    "total": {
+      "multiP": 0.8122777846983842
+    }
+  }
+}

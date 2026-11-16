@@ -1,0 +1,16 @@
+x0 = [ 1.87194159e+06  4.54093396e+06  5.07516994e+06 -6.10449724e+02
+ -5.48763821e+03  5.19874628e+03]
+after 5 steps of 10s: [ 1.83879335e+06  4.26027670e+06  5.32780797e+06 -7.15143638e+02
+ -5.73595509e+03  4.90446195e+03]
+  step    0  r=  7063.155 km  |v|=7.5832 km/s
+  step  120  r=  7205.527 km  |v|=7.4328 km/s
+  step  240  r=  7347.635 km  |v|=7.2942 km/s
+  step  360  r=  7299.045 km  |v|=7.3352 km/s
+  step  480  r=  7127.973 km  |v|=7.5177 km/s
+  step  600  r=  7059.734 km  |v|=7.5877 km/s
+diverged at step None
+analytic end r = 7186.547 km
+propagate end r = 7190.672 km  finite=True
+propagate max|r| = 7355.480 km  min=7056.203 km
+sc_traj_batch 1 cand: 214.08 ms
+sc_traj_batch 200 cand: 296.00 ms -> 1480 us/cand

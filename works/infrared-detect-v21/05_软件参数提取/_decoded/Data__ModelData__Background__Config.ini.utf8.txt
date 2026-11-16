@@ -1,0 +1,9 @@
+[Correct]
+CrgbSprBright=1
+CrgbSprContrast=1
+KrgbSprBright=1
+KrgbSprContrast=1
+MrgbSprBright=1
+MrgbSprContrast=1
+LrgbSprBright=1
+LrgbSprContrast=1

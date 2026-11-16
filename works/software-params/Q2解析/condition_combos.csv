@@ -1,0 +1,3 @@
+﻿band,location,region_type,atm_no,time,wl_min_um,wl_max_um,temperature_C,humidity_pct,visibility_m,pressure_hpa,aerosol_model,atmosphere_model,weather,pitch_step_deg,rt_file,n_blocks,n_rows
+中波红外,洛阳,城市,01,2026-04-01 10:00,3.7,4.8,10.0,50.0,25.0,1013.25,沙漠型,美国标准大气,无云雨,1.0,RT_01_202510260638.txt,1,22005
+长波红外,洛阳,城市,01,2026-04-01 10:00,7.7,10.3,10.0,50.0,25.0,1013.25,沙漠型,美国标准大气,无云雨,1.0,RT_01_202510260637.txt,1,22005

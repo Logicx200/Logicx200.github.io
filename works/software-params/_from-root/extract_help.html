@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Help | BBBike extracts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Help for the BBBike extract service: extract OpenStreetMap data for any area in Garmin, OsmAnd, Mapsforge, PBF, Shapefile, GeoPackage, MBTiles, SVG and many other formats.">
+  <link rel="icon" href="/images/srtbike1.ico">
+  <link rel="describedby" type="text/plain" title="LLM summary" href="/llms.txt">
+
+  <!-- legacy, should be extract.css -->
+  <link rel="stylesheet" href="/html/extract-static.css">
+  <style>
+    a.x-large {
+        font-size: x-large;
+    }
+
+    p.center {
+        text-align: center;
+    }
+
+    /* long URLs as link text must not widen the page on phones */
+    div#main a {
+        overflow-wrap: anywhere;
+    }
+
+    img.example {
+        max-width: 100%;
+        height: auto;
+    }
+
+    ul.facts {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    ul.facts li {
+        margin: 0.2em 0;
+    }
+
+    nav.toc {
+        border: 1px solid #ccc;
+        padding: 0.3em 1em;
+        margin: 1em 0;
+    }
+
+    nav.toc ol {
+        margin: 0.3em 0;
+        padding-left: 1.5em;
+    }
+
+    div.scroll {
+        overflow-x: auto;
+    }
+
+    table.formats,
+    table.factors {
+        border-collapse: collapse;
+    }
+
+    table.formats th,
+    table.formats td,
+    table.factors th,
+    table.factors td {
+        border: 1px solid #999;
+        padding: 0.3em 0.5em;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    table.formats th.group {
+        background: #eee;
+    }
+
+    table.formats td.links {
+        font-size: smaller;
+    }
+
+    dl.faq dt {
+        font-weight: bold;
+        margin-top: 0.8em;
+    }
+
+    dl.faq dd {
+        margin-left: 1em;
+    }
+
+    div.video {
+        max-width: 560px;
+        aspect-ratio: 16 / 9;
+        background: #222;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1em;
+    }
+
+    div.video button {
+        font-size: large;
+        padding: 0.5em 1em;
+        cursor: pointer;
+    }
+
+    div.video iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="all">
+    <div id="border">
+      <div id="main">
+        <h1><a href="/">Help for BBBike extracts</a></h1>
+
+        <!-- keep in sync with ./web/extract-dialog/en/format.html and web/extract-dialog/en/about.html -->
+        <p>
+        The <a href="/">BBBike extract service</a> lets you download free
+        <a href="https://wiki.openstreetmap.org/wiki/Planet.osm">OpenStreetMap</a> data for any area of the world:
+        for Garmin GPS devices, smartphone apps, GIS software, web maps and your own projects.
+        </p>
+
+        <h2 id="quickstart">Quick start</h2>
+
+        <ol>
+          <li><b>Choose your area.</b>
+              Move the map to your desired area and click <b>create</b>.
+              Adjust the bounding box or add points to define the area you want.</li>
+          <li><b>Set up your extract.</b>
+              Select a <b>Format</b>, then enter the <b>Name of area to extract</b> and <b>Your email address</b>.</li>
+          <li><b>Download your map.</b>
+              Click <b>extract</b> to start processing.
+              You'll receive an email with the download link when your extract is ready.</li>
+        </ol>
+
+        <ul class="facts">
+          <li>&#9201; An extract usually takes 2&ndash;7 minutes.</li>
+          <li>&#9993; We'll send the download link by email.</li>
+          <li>&#9634; Up to 24 million km² per extract. File size limits vary by format (128 MB to 1,500 MB).</li>
+          <li>&#8635; The OpenStreetMap data is updated every day.</li>
+        </ul>
+
+        <p class="center"><a href="/" class="x-large">start the extract service</a></p>
+
+        <nav class="toc" aria-label="Contents">
+          <ol>
+            <li><a href="#select-area">Select an area</a></li>
+            <li><a href="#features">Which format should I choose?</a></li>
+            <li><a href="#after">After you click extract</a></li>
+            <li><a href="#faq">Frequently asked questions</a></li>
+            <li><a href="#youtube">Video tutorials</a></li>
+            <li><a href="#filesize">File size</a></li>
+            <li><a href="#other_extract_services">Other extract services</a></li>
+            <li><a href="#browsers">Supported browsers</a></li>
+            <li><a href="#tos">Terms of service</a></li>
+          </ol>
+        </nav>
+
+        <!-- ========================================================== -->
+        <h2 id="select-area">Select an area</h2>
+
+        <p>
+        Move the map to the area you want, or use <b>or search</b> next to the name field to find a place.
+        Then click the <b>create</b> button to create a bounding box on the map.
+        To move or resize it, choose <b>resize or drag polygon</b> and click on the box.
+        Drag the box to move it, or drag its corners to resize it.
+        </p>
+
+        <p>
+          <a href="/images/sicilia-rectangle.png"><img class="example" src="/images/sicilia-rectangle.png" width="600"
+             alt="Example: a rectangular bounding box around Sicily"></a>
+        </p>
+
+        <h3 id="polygon">Want a polygon instead of a box?</h3>
+        <p>
+        First create a bounding box as described above. Then choose <b>add points to polygon</b>
+        and click on the box. Drag the small handles in the middle of each edge to add new points.
+        You can add as many points as you want:
+        </p>
+
+        <p>
+          <a href="/images/sicilia-polygon.png"><img class="example" loading="lazy" src="/images/sicilia-polygon.png" width="600"
+             alt="Example: a polygon with many points around Sicily"></a>
+        </p>
+
+        <p>
+        A polygon usually produces only a half to a third of the data of a rectangle covering the same area.
+        Here is an example for a trip along the East Coast from New York City to Boston:
+        </p>
+        <p>
+          <a href="/images/boston-polygon.png"><img class="example" loading="lazy" src="/images/boston-polygon.png" width="600"
+             alt="Example: a narrow polygon from New York City to Boston"></a>
+        </p>
+
+        <p>
+        Need exact coordinates? Check <b>show lng/lat</b> and enter them directly.
+        Valid values for longitude are -180 to 180, and for latitude -90 to 90.
+        </p>
+
+        <!-- ========================================================== -->
+        <h2 id="features">Which format should I choose?</h2>
+
+        <p>
+        Choose the format by what you want to do with the data.
+        The size column shows the approximate file size relative to the
+        <a href="https://wiki.openstreetmap.org/wiki/PBF_Format">PBF</a> extract of the same area (PBF = 1):
+        if your area is 100 MB as PBF, it is about 43 MB as Garmin OSM and about 150 MB as Shapefile.
+        Actual sizes vary by region and data content.
+        The extract page shows the estimated size of your area for the selected format.
+        </p>
+
+        <div class="scroll">
+        <table class="formats">
+          <thead>
+            <tr><th>Format</th><th>Use it for</th><th>Open it with</th><th>Relative file size (PBF = 1)</th><th>More</th></tr>
+          </thead>
+          <tbody>
+            <tr><th class="group" colspan="5">GPS devices and smartphone apps</th></tr>
+            <tr id="garmin">
+              <td>Garmin</td>
+              <td>Garmin GPS devices, with routing. Map styles:
+                <a href="https://www.openstreetmap.org/">OSM</a>,
+                <a href="https://www.opencyclemap.org/">Cycle</a>,
+                Leisure (<a href="https://freizeitkarte-osm.de/">Freizeitkarte</a>),
+                Onroad, Ontrail,
+                <a href="http://bbbike.de/">BBBike</a>,
+                <a href="https://www.openfietsmap.nl/">Openfietsmap</a> Lite and Full,
+                <a href="https://openseamap.org/">OpenSeaMap</a> and
+                <a href="https://opentopomap.org/">OpenTopoMap</a>.</td>
+              <td>Your Garmin device. On the computer:
+                <a href="https://wiki.openstreetmap.org/wiki/QMapShack">QMapShack</a> (FreeBSD, Linux, macOS, Windows),
+                <a href="https://wiki.openstreetmap.org/wiki/BaseCamp">Garmin BaseCamp</a> (macOS, Windows)</td>
+              <td>0.04 to 0.61</td>
+              <td class="links">
+                <a href="/garmin.html">Garmin help page</a> (installation, map styles, UTF-8 and latin1)<br>
+                <a href="https://wiki.openstreetmap.org/wiki/OSM_Map_On_Garmin">OSM Map On Garmin</a>,
+                <a href="https://wiki.openstreetmap.org/wiki/OSM_Map_On_Garmin/Download">Download</a><br>
+                <a href="/extract-screenshots.html#garmin-osm">screenshots</a>
+              </td>
+            </tr>
+            <tr id="osmand">
+              <td>OsmAnd (OBF)</td>
+              <td>Offline maps on Android and iOS</td>
+              <td>OsmAnd (Android, iOS, Java desktop)</td>
+              <td>1.40</td>
+              <td class="links">
+                <a href="https://osmand.net/">osmand.net</a>,
+                <a href="https://github.com/osmandapp/OsmAnd">GitHub</a><br>
+                <a href="/extract-screenshots.html#osmand">screenshots</a>
+              </td>
+            </tr>
+            <tr id="mapsforge">
+              <td>Mapsforge</td>
+              <td>Offline maps on Android</td>
+              <td>Apps with Mapsforge support (Android, Java desktop)</td>
+              <td>0.80</td>
+              <td class="links">
+                <a href="https://wiki.openstreetmap.org/wiki/Mapsforge">OSM wiki</a>,
+                <a href="https://github.com/mapsforge/mapsforge/">GitHub</a><br>
+                <a href="/extract-screenshots.html#mapsforge">screenshots</a>
+              </td>
+            </tr>
+
+            <tr><th class="group" colspan="5">GIS software</th></tr>
+            <tr id="shapefile">
+              <td>Esri Shapefile,<br>GeoPackage,<br>GeoParquet</td>
+              <td>Maps and analysis in GIS software</td>
+              <td>QGIS (FreeBSD, Linux, macOS, Windows), QField (Android, iOS)</td>
+              <td>1.50<br>2.00<br>0.50</td>
+              <td class="links">
+                <a href="https://wiki.openstreetmap.org/wiki/Shapefiles">Shapefiles</a>,
+                <a href="https://wiki.openstreetmap.org/wiki/GeoPackage">GeoPackage</a>,
+                <a href="https://wiki.openstreetmap.org/wiki/GeoParquet">GeoParquet</a><br>
+                <a href="/extract-screenshots.html#shp">screenshots</a>
+              </td>
+            </tr>
+
+            <tr><th class="group" colspan="5">Web maps and tile servers</th></tr>
+            <tr id="mbtiles">
+              <td>MBTiles</td>
+              <td>Vector tiles for apps and tile servers</td>
+              <td><a href="https://github.com/Akylas/mbview-rs">MBTiles viewer</a>,
+                  QGIS (MapTiler plugin), GDAL (FreeBSD, Linux, macOS, Windows)</td>
+              <td>0.20 to 0.60</td>
+              <td class="links">
+                <a href="https://wiki.openstreetmap.org/wiki/MBTiles">OSM wiki</a>,
+                <a href="https://github.com/mapbox/mbtiles-spec/wiki/Implementations">implementations</a>,
+                <a href="https://github.com/shortbread-tiles/shortbread-tilemaker">Shortbread</a><br>
+                <a href="/extract-screenshots.html#mbtiles">screenshots</a>
+              </td>
+            </tr>
+            <tr id="pmtiles">
+              <td>PMTiles</td>
+              <td>Vector tiles for web maps without a tile server</td>
+              <td><a href="https://pmtiles.io/">pmtiles.io</a> viewer</td>
+              <td>0.20 to 0.60</td>
+              <td class="links">
+                <a href="https://wiki.openstreetmap.org/wiki/PMTiles">OSM wiki</a>,
+                <a href="https://github.com/protomaps/PMTiles">GitHub</a>,
+                <a href="https://github.com/shortbread-tiles/shortbread-tilemaker">Shortbread</a><br>
+                <a href="/extract-screenshots.html#pmtiles">screenshots</a>
+              </td>
+            </tr>
+
+            <tr><th class="group" colspan="5">Print and graphic design</th></tr>
+            <tr id="svg">
+              <td>SVG</td>
+              <td>Posters, print and graphic design. Map styles: Google, Hiking, Mapnik, Night, Wireframe and Cadastre.
+                  Note: large SVG files (over 10 MB) may slow down or crash your browser or SVG viewer.</td>
+              <td>Inkscape (FreeBSD, Linux, macOS, Windows), Firefox, Safari, Google Chrome, Adobe Illustrator (macOS, Windows)</td>
+              <td>1.14 to 3.82</td>
+              <td class="links">
+                <a href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">Wikipedia</a>,
+                <a href="https://wiki.openstreetmap.org/wiki/SVG">OSM wiki</a><br>
+                <a href="/extract-screenshots.html#svg">screenshots</a>
+              </td>
+            </tr>
+
+            <tr><th class="group" colspan="5">Raw OpenStreetMap data</th></tr>
+            <tr id="pbf">
+              <td>PBF</td>
+              <td>The standard format for OpenStreetMap software</td>
+              <td><a href="https://osmcode.org/osmium-tool/">Osmium</a> and other OSM tools</td>
+              <td>1.00</td>
+              <td class="links">
+                <a href="https://wiki.openstreetmap.org/wiki/PBF_Format">OSM wiki</a><br>
+                <a href="/extract-screenshots.html#pbf">screenshots</a>
+              </td>
+            </tr>
+            <tr id="osm">
+              <td>OSM XML (gzip, xz),<br>o5m (xz),<br>CSV (xz)</td>
+              <td>OSM tools and your own scripts</td>
+              <td>Osmium and other OSM tools, any text editor</td>
+              <td>1.60 to 2.00<br>0.80<br>&nbsp;</td>
+              <td class="links">
+                <a href="https://wiki.openstreetmap.org/wiki/OSM_XML">OSM XML</a>,
+                <a href="https://wiki.openstreetmap.org/wiki/O5m">o5m</a><br>
+                <a href="/extract-screenshots.html#osm">screenshots</a>
+              </td>
+            </tr>
+            <tr id="osmium">
+              <td>Osmium OPL, GeoJSON, GeoJSONSeq, SQLite, text (xz)</td>
+              <td>Data analysis and your own scripts</td>
+              <td><a href="https://osmcode.org/osmium-tool/">Osmium</a>, SQLite, any text editor</td>
+              <td>1.50 to 2.00</td>
+              <td class="links">
+                <a href="https://osmcode.org/osmium-tool/">osmcode.org</a><br>
+                <a href="/extract-screenshots.html#opl">screenshots</a>
+              </td>
+            </tr>
+
+            <tr><th class="group" colspan="5">Other</th></tr>
+            <tr id="srtm">
+              <td>SRTM contour lines</td>
+              <td>Contour lines for Garmin, OsmAnd, PBF and OSM XML</td>
+              <td>see the format</td>
+              <td>&nbsp;</td>
+              <td class="links">
+                <a href="https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission">Wikipedia</a><br>
+                <a href="/extract-screenshots.html#garmin-contours">screenshots</a>
+              </td>
+            </tr>
+            <tr id="bbbike-perltk">
+              <td>BBBike (bbd)</td>
+              <td>The BBBike Perl/Tk route planner</td>
+              <td>BBBike</td>
+              <td>2.20</td>
+              <td class="links"><a href="http://bbbike.de/">bbbike.de</a></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+
+        <p>See the <a href="/extract-screenshots.html">screenshots</a> of all formats and map styles.</p>
+
+        <!-- ========================================================== -->
+        <h2 id="after">After you click extract</h2>
+
+        <ul>
+          <li>You will get an email with the download link when your extract is ready, usually within 2&ndash;7 minutes.
+              The extract system runs in a shared batch mode. If there are too many requests,
+              it may take longer to process yours. Please be patient!</li>
+          <li>You can see the status of your extract requests on the
+              <a href="https://download.bbbike.org/osm/extract/">status page</a>.</li>
+          <li>Please use a meaningful name for the extract, so you can find it later in your inbox or on your computer.</li>
+          <li>Older extracts expire and are deleted from the server after some time.
+              If a download link no longer works, just request the extract again.</li>
+        </ul>
+
+        <h3 id="checksum">Check your download</h3>
+        <p>
+        You can verify a download with its <a href="https://en.wikipedia.org/wiki/MD5">MD5</a> checksum.
+        Run one of these commands and compare the result with the checksum on the download page:
+        </p>
+        <p>
+        <code>$ md5sum file.osm.pbf</code> (Linux)<br>
+        <code>$ md5 file.osm.pbf</code> (FreeBSD, macOS)<br>
+        <code>&gt; certutil -hashfile file.osm.pbf MD5</code> (Windows)
+        </p>
+
+        <!-- ========================================================== -->
+        <h2 id="faq">Frequently asked questions</h2>
+
+        <dl class="faq">
+          <dt>I didn't get an email.</dt>
+          <dd>Please check your spam folder first.
+              You can also find your extract on the <a href="https://download.bbbike.org/osm/extract/">status page</a>.</dd>
+
+          <dt>I don't have a working email address, or can't access my email right now.</dt>
+          <dd>Enter <b>nobody</b> as your email address,
+              and find your extract on the <a href="https://download.bbbike.org/osm/extract/">status page</a>.</dd>
+
+          <dt>My area is too big.</dt>
+          <dd>An extract can cover up to 24 million km². The maximum file size depends on the format (128 MB to 1,500 MB).
+              Try a <a href="#polygon">polygon</a> instead of a rectangle, or a format with a smaller
+              <a href="#filesize">file size</a>.
+              Need even larger areas? See the <a href="#extract-pro">extract pro service</a>.</dd>
+
+          <dt>My Garmin says "cannot unlock map".</dt>
+          <dd>Some Garmin devices or firmware versions can't read maps with the Unicode (UTF-8) character set.
+              The known workaround: choose the same Garmin format with "latin1" in its name.
+              See the <a href="/garmin.html#faq">Garmin help page</a> for details.</dd>
+
+          <dt>How up to date is the data?</dt>
+          <dd>The planet.osm database is updated every day, for all users.
+              For details, see the BBBike <a href="https://download.bbbike.org/osm/planet/">planet.osm</a> mirror.</dd>
+
+          <dt>Do the extracts contain metadata?</dt>
+          <dd>No, the extracts don't contain metadata such as version numbers, authors or timestamps.
+              If you need to edit OSM data, please go to the <a href="https://www.openstreetmap.org/">OpenStreetMap</a> website.
+              Extracts with full metadata are available with the <a href="#extract-pro">extract pro service</a>.</dd>
+
+          <dt>Are there ready-made extracts for countries or cities?</dt>
+          <dd>Yes, see <a href="#other_extract_services">other extract services</a> below.</dd>
+        </dl>
+
+        <!-- ========================================================== -->
+        <h2 id="youtube">Video tutorials</h2>
+        <p>
+        There are several YouTube tutorials on how to use the BBBike extract service for Shapefiles,
+        <a href="/garmin.html#youtube">Garmin</a>, OSM and SVG,
+        in English, French, Spanish, Russian, Portuguese, Thai and other languages.
+        The videos are loaded from YouTube only when you click on them.
+        </p>
+
+        <h3><a href="https://www.youtube.com/watch?v=_HMkuttRuhQ">How to Download Free Trail Maps on Garmin GPS</a> (English)</h3>
+        <div class="video" data-id="_HMkuttRuhQ" data-title="How to Download Free Trail Maps on Garmin GPS"><button type="button">&#9654; Play video</button></div>
+
+        <h3><a href="https://www.youtube.com/watch?v=A82Ap_Wp-vs">FREE World-Wide Garmin EDGE Maps // BBBike Updated Info!</a> (English)</h3>
+        <div class="video" data-id="A82Ap_Wp-vs" data-title="FREE World-Wide Garmin EDGE Maps // BBBike Updated Info!"><button type="button">&#9654; Play video</button></div>
+
+        <h3><a href="https://www.youtube.com/watch?v=HqDSgdSd-do">Download Shapefiles of Vector Data from OpenStreetMap</a>, 1 min (English)</h3>
+        <div class="video" data-id="HqDSgdSd-do" data-title="Download Shapefiles of Vector Data from OpenStreetMap"><button type="button">&#9654; Play video</button></div>
+
+        <h3><a href="https://www.youtube.com/watch?v=t_pOKoC7J8E">Create Custom City Maps in Canva (For Free)</a>, 10 min (English)</h3>
+        <div class="video" data-id="t_pOKoC7J8E" data-title="Create Custom City Maps in Canva (For Free)"><button type="button">&#9654; Play video</button></div>
+
+        <h3>More videos</h3>
+        <ul>
+          <li><a href="https://www.youtube.com/watch?v=uOK9uBmWrSI">Download Shapefiles from which area of the world / ArcGIS tutorial</a>, 1 min (English/French)</li>
+          <li><a href="https://www.youtube.com/watch?v=zYEp_bngfsI">How to Download Shapefile from OpenStreetMap</a>, 2 min (English)</li>
+          <li><a href="https://www.youtube.com/watch?v=Dk7jS5ETjPw&amp;t=1260s">Adobe Illustrator tutorial | Road infographic template design</a>, SVG, 3 min (English)</li>
+          <li><a href="https://www.youtube.com/watch?v=UkEkxL1Zp9s&amp;t=57s">World2Xplane Tutorial - How to build amazing overlays for X-Plane</a>, 8 min (English)</li>
+          <li><a href="https://www.youtube.com/watch?v=VWvZFfee_d8&amp;t=161s">Tutoriel Impuls'Map Utiliser des données OpenStreetMap OSM dans QGIS</a>, 6 min (French)</li>
+          <li><a href="https://www.youtube.com/watch?v=Uo0D7sbghCE">Extraire les données Shapefile de n'importe quelle région en ligne</a> (French)</li>
+          <li><a href="https://www.youtube.com/watch?v=VfyRa77iXcY">Shapefile mapas cartográficos</a> (Spanish)</li>
+          <li><a href="https://www.youtube.com/watch?v=Oz62UxCEwec">Import Streets from OpenStreetMaps</a>, 12 min (Russian)</li>
+          <li><a href="https://www.youtube.com/watch?v=20VmxB503UM&amp;t=387s">X-plane/World2Xplane OpenStreetMap</a>, 6 min (Russian)</li>
+          <li><a href="https://www.youtube.com/watch?v=dkZsw0AMrLw&amp;t=401s">Ortho4xp o melhor Tutorial+ World2xp e HD mesh V3</a>, 5 min (Portuguese)</li>
+          <li><a href="https://www.youtube.com/watch?v=WfUB5WMDyJ4">Como baixar dados do openstreetmaps em varios formatos e usá-los no QGIS</a>, 115 min (Portuguese)</li>
+          <li><a href="https://www.youtube.com/watch?v=CVEp_Ka0v0o">Steps to extract vector data from Web Map Service: bbbike, Shapefiles</a> (Thai)</li>
+        </ul>
+        <p>More <a href="/garmin.html#youtube">Garmin YouTube videos</a> are on the Garmin help page.</p>
+
+        <!-- ========================================================== -->
+        <h2 id="filesize">File size</h2>
+
+        <p>
+        The file size depends on the format. The table shows the approximate file size relative to
+        the PBF extract of the same area (PBF = 1). Actual sizes vary by region and data content.
+        </p>
+
+        <details>
+          <summary>Show all size factors</summary>
+          <table class="factors">
+            <thead>
+              <tr><th>Format</th><th>Relative file size (PBF = 1)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>PBF</td><td>1.00</td></tr>
+              <tr><td>OSM XML gzip</td><td>2.00</td></tr>
+              <tr><td>OSM XML xz</td><td>1.60</td></tr>
+              <tr><td>o5m xz</td><td>0.80</td></tr>
+
+              <tr><td>Osmium OPL xz</td><td>1.70</td></tr>
+              <tr><td>Osmium GeoJSON xz</td><td>2.00</td></tr>
+              <tr><td>Osmium SQLite xz</td><td>1.50</td></tr>
+              <tr><td>Osmium text xz</td><td>1.80</td></tr>
+
+              <tr><td>Mapsforge</td><td>0.80</td></tr>
+              <tr><td>Shapefile (Esri)</td><td>1.50</td></tr>
+              <tr><td>GeoParquet</td><td>0.50</td></tr>
+              <tr><td>GeoPackage</td><td>2.00</td></tr>
+              <tr><td>OsmAnd (OBF)</td><td>1.40</td></tr>
+
+              <tr><td>Garmin Cycle</td><td>0.27</td></tr>
+              <tr><td>Garmin Leisure</td><td>0.55</td></tr>
+              <tr><td>Garmin OSM</td><td>0.43</td></tr>
+              <tr><td>Garmin BBBike</td><td>0.40</td></tr>
+              <tr><td>Garmin Onroad</td><td>0.04</td></tr>
+              <tr><td>Garmin Ontrail</td><td>0.13</td></tr>
+              <tr><td>Garmin Openfietsmap Lite</td><td>0.40</td></tr>
+              <tr><td>Garmin Openfietsmap Full</td><td>0.61</td></tr>
+              <tr><td>Garmin OpenSeaMap</td><td>0.40</td></tr>
+              <tr><td>Garmin OpenTopoMap</td><td>0.44</td></tr>
+
+              <tr><td>SVG Google</td><td>1.68</td></tr>
+              <tr><td>SVG Hiking</td><td>3.82</td></tr>
+              <tr><td>SVG Mapnik</td><td>3.34</td></tr>
+              <tr><td>SVG Night</td><td>1.14</td></tr>
+              <tr><td>SVG Wireframe</td><td>3.28</td></tr>
+
+              <tr><td>MBTiles</td><td>0.20 to 0.60</td></tr>
+              <tr><td>PMTiles</td><td>0.20 to 0.60</td></tr>
+
+              <tr><td>BBBike Perl/Tk</td><td>2.20</td></tr>
+            </tbody>
+          </table>
+        </details>
+
+        <!-- ========================================================== -->
+        <h2 id="other_extract_services">Other extract services</h2>
+
+        <h3>BBBike extracts by region</h3>
+        <ul>
+          <li><a href="https://data.bbbike.org/osm/region/">Garmin and Mapsforge regions/countries</a>, updated weekly</li>
+          <li><a href="https://download.bbbike.org/osm/bbbike/">More than 200 cities worldwide</a>, ready to download</li>
+        </ul>
+
+        <h3>Other providers</h3>
+        <ul>
+          <li><a href="https://freizeitkarte-osm.de/">freizeitkarte-osm.de</a> for Garmin and Android</li>
+          <li><a href="https://wiki.openstreetmap.org/wiki/User:Computerteddy">wiki.openstreetmap.org/wiki/User:Computerteddy</a> for free Garmin maps, Europe and world</li>
+          <li><a href="https://wiki.openstreetmap.org/wiki/Planet.osm#Downloading">wiki.openstreetmap.org/wiki/Planet.osm#Downloading</a> for all formats</li>
+          <li><a href="https://download.geofabrik.de/openstreetmap/">download.geofabrik.de/openstreetmap</a> for OSM, PBF and Shapefile, daily updates</li>
+          <li><a href="https://download.osmand.net/list.php">download.osmand.net/list.php</a> for OsmAnd</li>
+        </ul>
+
+        <!-- ========================================================== -->
+        <h2 id="browsers">Supported browsers</h2>
+        <p>Any modern browser that follows the W3C standards:</p>
+        <ul>
+          <li>Firefox</li>
+          <li>Safari, including mobile Safari (iOS)</li>
+          <li>Google Chrome, Microsoft Edge, Opera and other Chromium-based browsers</li>
+        </ul>
+
+        <p>
+        JavaScript is required for the map and the place search.
+        Cookies are optional and only used to save your preferences.
+        </p>
+
+        <!-- ========================================================== -->
+        <h2 id="tos">Terms of service</h2>
+        <p>Map data &copy; <a href="https://www.openstreetmap.org/copyright" title="OpenStreetMap License">OpenStreetMap</a> contributors, ODbL 1.0 .</p>
+
+        <p>Shuttle Radar Topography Mission (<a href="https://wiki.openstreetmap.org/wiki/SRTM">SRTM</a>), by NASA, public domain.</p>
+
+        <p>
+        The BBBike extract service is free of charge for general use by end users. There are no warranties; use it at your own risk.
+        A fair usage policy applies.
+        </p>
+
+        <h2 id="extract-pro">BBBike professional plans</h2>
+        <p>
+        Want to use the service commercially, or need larger areas or extracts with full metadata?
+        The BBBike extract pro service offers all of this, along with commercial support.
+        See the BBBike <a href="/support.html">extract pro</a> service page for details and pricing.
+        </p>
+
+
+        <h2 id="donate">Support the BBBike extract service</h2>
+
+        <p class="donate_request">
+        <strong>Help keep BBBike free!</strong>
+        BBBike provides free OpenStreetMap extracts and custom downloads.
+        Running the servers and processing these extracts costs about
+        <strong>&euro;600 per month</strong>.
+        If BBBike is useful to you, please consider a small donation:
+        <strong>&euro;10, &euro;20, &euro;50 or whatever you think it's worth</strong>.
+        Every <a title="Donate to BBBike via PayPal or bank transfer" href="/community.html">contribution</a> helps keep the service running.
+        </p>
+
+        <p class="center">
+          <a class="donate_button" href="/community.html" title="Donate via PayPal or bank transfer">Donate</a>
+        </p>
+
+        <div id="footer">
+          <div id="footer_top">
+            <a href="/">Home</a> |
+            <a href="/garmin.html">Garmin</a> |
+            <a href="https://download.bbbike.org/">Download</a> |
+            <a href="https://download.bbbike.org/osm/extract/">Status</a> |
+            <a href="/community.html">Donate</a> |
+            <a href="/support.html" title="commercial support">Pro service</a>
+          </div>
+
+          <hr>
+          <div id="copyright">
+          &copy; 2011-2026 <a href="https://bbbike.org">BBBike.org</a>
+          by <a href="https://wolfram.schneider.org">Wolfram Schneider</a> -
+          Map data &copy; <a href="https://www.openstreetmap.org/copyright" title="OpenStreetMap License">OpenStreetMap</a> contributors
+          <br>
+          <a href="https://www.bbbike.org/">Cycle Route Planner</a> -
+          <a href="https://extract.bbbike.org/">Extract Service</a> -
+          <a href="https://search.bbbike.org/">Tagname Search</a> -
+          <a href="https://mc.bbbike.org/mc/">Map Compare</a> -
+          <a href="/llms.txt">AI / LLM information</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // load a YouTube video only when the user clicks on it
+  (function () {
+    var videos = document.querySelectorAll("div.video");
+    for (var i = 0; i < videos.length; i++) {
+      videos[i].querySelector("button").onclick = function () {
+        var div = this.parentNode;
+        var iframe = document.createElement("iframe");
+        iframe.src = "https://www.youtube-nocookie.com/embed/" + div.getAttribute("data-id") + "?autoplay=1";
+        iframe.title = div.getAttribute("data-title");
+        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        iframe.allowFullscreen = true;
+        div.innerHTML = "";
+        div.appendChild(iframe);
+      };
+    }
+  })();
+  </script>
+</body>
+</html>

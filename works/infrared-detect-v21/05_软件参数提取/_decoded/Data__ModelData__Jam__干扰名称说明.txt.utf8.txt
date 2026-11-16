@@ -1,0 +1,17 @@
+sunLight 直射阳光
+baozha  爆炸强光
+fire 火焰
+qggrd 强光干扰弹
+yc 战场扬尘
+ymd 烟幕弹
+yun 独立云
+ywps 烟雾喷射
+shuimu 水幕
+dmjh  点面结合
+dyyrd 点源诱饵弹
+
+jgyz 激光压制
+myyrd 面源诱饵弹
+
+
+

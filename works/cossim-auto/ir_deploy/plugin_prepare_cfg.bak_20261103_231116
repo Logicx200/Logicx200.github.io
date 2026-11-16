@@ -1,0 +1,17 @@
+[Config]
+#生成参考图 true:显示，false:隐藏
+ReferenceImage=0
+#可见光转换 true:显示，false:隐藏
+VisibleLightConversion=0
+#材质模型 true:显示，false:隐藏
+MaterialModel=0
+#轨迹编辑 true:显示，false:隐藏
+TrajectoryEdit=0
+#热特性模型 true:显示，false:隐藏
+ThermalPropertyModel=0
+#大气模型  0:隐藏 ; 1:Modtran 2:CART 
+AtmosphericModel=0
+#设备效应 true:显示，false:隐藏
+DeviceEffect=0
+#气动热效应 true:显示，false:隐藏
+AerothermalEffect=0

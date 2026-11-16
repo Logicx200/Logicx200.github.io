@@ -1,0 +1,25 @@
+{
+  "name": "dsh-usage-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Host-only DSH plugin: mirrors the background-job registry (ctx.jobs) into a small JSON file so a standalone desktop widget can display live progress. Declares no client half, so it cannot affect the interface.",
+  "type": "module",
+  "main": "src/plugin.mjs",
+  "exports": {
+    ".": "./src/plugin.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "cordis.patch.yml"
+  ],
+  "scripts": {
+    "check": "node test/bridge-check.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "license": "MIT"
+}

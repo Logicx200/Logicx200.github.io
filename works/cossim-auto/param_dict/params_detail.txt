@@ -1,0 +1,424 @@
+[BAND-MWIR] 中波红外波段 | Δλ_MWIR = 3.7–4.8 μm | 软件实测/高
+  依据: 软件默认传感器 SensorClass=1（中波红外）的 SensorEffect BandMin/BandMax=3.7/4.8；Q2_M 查找表为同口径；注意默认想定 ImagBand1Class=1（可见光成像）但配中波红外传感器，属软件默认数据不一致，本模型以传感器字段为准。
+  来源: 软件 DefaultPlanFile.xml SensorParam/SensorEffect；前作 sensor_notes.md §2；软件 Q2_M/Q2_L 查找表解析（前作 Q2解析/scenario_summary.md）
+  影响: 决定 MWIR 全部辐射量与大气路径；波段边界 ±0.1 μm 对信号影响 <1%
+[BAND-LWIR] 长波红外波段 | Δλ_LWIR = 8.0–12.0 μm | 软件实测/高
+  依据: 6 个目标模型 Config.ini 的 [Parameter] Lrgb 波长范围 8.000–12.000 μm；界于 ITU-R P.1817-1 所列远红外窗 8–14 μm 之内；与 Q2_L 的 7.7–10.3 μm 冲突（见 BAND-LWIR-Q2），本模型采用 Config.ini 口径。
+  来源: 软件 Data/ModelData/Target/*/Config.ini；前作 模型与想定参数.md §4.1；标准 ITU-R P.1817-1 (02/2012) Propagation data required for the design of terrestrial free-space optical links（https://www.itu.int/rec/R-REC-P.1817/en）；标准 ISO 20473:2007 Optics and photonics — Spectral bands（MWIR/LWIR 命名口径）
+  影响: LWIR 口径决定窗区吸收与背景辐射；与 7.7–10.3 互换会使 τ_band 偏差 10–30%
+[BAND-LWIR-Q2] Q2 长波查找表波段（口径冲突项，仅记录） | — = 7.7–10.3 μm | 软件实测/高
+  依据: 软件 Q2_L.csv 块头波长为 7.7–10.3 μm，模型 Config.ini 为 8–12 μm，二者不是同一套口径、不可互换；本项目不把 Q2 表作主输入，只作单点单条件交叉核对。
+  来源: 软件 Q2_M/Q2_L 查找表解析（前作 Q2解析/scenario_summary.md）
+  影响: 误用 Q2_L 代替 8–12 μm 积分会使 τ/L_path 失配，R50 偏差可达 10–20%
+[BAND-WEIGHT] 波段积分权重 | w(λ) = dB/dT(λ,T_ref=288 K) 归一化 无量纲 | 推导/中
+  依据: 黑体辐射出射度对温度导数 dB/dT 在波段内归一化作为权重，等价于「平坦显示波段 + Planck 微分加权」；软件只给 3.7–4.8 μm 平坦硬边界、无光谱响应曲线，按 dB/dT 加权是红外工程的标准做法；对 8–12 μm 窗区，dB/dT 在 10 μm 附近峰、短波端偏低。
+  来源: 本项目 00_构建脚本/接口约定.md（冻结版 v3.0）；文献[32] Ratches 1976, Opt.Eng. 15(6):525-530, DOI:10.1117/12.7972037；文献[33] Lloyd 1975, Thermal Imaging Systems, Plenum Press（经典教材，无DOI）
+  影响: 权重曲线改变 λ_eff 0.1–0.3 μm → τ_band 变化 1–5%；对结论影响小
+[BAND-REF-T] 波段加权参考温度 | T_ref = 288 K | 设定/中
+  依据: 以 288 K（≈15 ℃，与软件 AtmTemperature 一致）作为 dB/dT 权重的参考温度；权重对 T_ref 不敏感（250–300 K 范围内 λ_eff 漂移 <0.05 μm）。
+  来源: 本项目 00_构建脚本/接口约定.md（冻结版 v3.0）；推导
+  影响: T_ref ±10 K → λ_eff <0.05 μm → τ_band <1%
+[BAND-EFF-LAM] 有效波长 | λ_eff = MWIR≈4.2；LWIR≈10.0 μm | 推导/中
+  依据: 由 w(λ) 加权平均；MWIR 窗内 H2O 4.2–4.4 μm 线吸收使有效吸收波长偏长，LWIR 受 O3 9.6 μm 与 H2O 连续吸收影响。
+  来源: 文献[7] Gordon et al. 2022, JQSRT 277:107949, DOI:10.1016/j.jqsrt.2021.107949（HITRAN2020）；文献[8] Mlawer et al. 2012, Phil.Trans.R.Soc.A 370(1968):2520-2556, DOI:10.1098/rsta.2011.0295；推导
+  影响: λ_eff 偏 0.3 μm → 气溶胶/水汽 τ 变化 2–8%
+[RAD-PLANCK] 普朗克函数 | B(λ,T) = 按 Planck 定律逐波数计算 W/(m²·sr·μm) | 文献/高
+  依据: 辐射度量链的基础；300 K 时 MWIR 3.7–4.8 μm 黑体辐亮度约 5–13 W/(m²·sr·μm)、LWIR 8–12 μm 约 7–10.5 W/(m²·sr·μm)。常数采用 CODATA 值；实现见 radiometry.py。
+  来源: 文献[33] Lloyd 1975, Thermal Imaging Systems, Plenum Press（经典教材，无DOI）；文献[35] Driggers, Cox & Edwards 1999, Introduction to Infrared and EO Systems, Artech House
+  影响: 物理定义，无模型误差
+[RAD-DTAPP] 视在温差反演 | ΔT_app = 由波段辐亮度经 Planck LUT 反演 K | 推导/高
+  依据: ΔT_app = T_app(L_band) − T_bg；含大气透过率与路径辐射；是识别链的核心中间量（f_max 的 MRTD 判据直接比较 ΔT_app）。
+  来源: 本项目 00_构建脚本/接口约定.md（冻结版 v3.0）；文献[32] Ratches 1976, Opt.Eng. 15(6):525-530, DOI:10.1117/12.7972037
+  影响: LUT 插值误差 <0.5%；ΔT_app ±10% → R50 ±10–20%（MRTD 受限区）
+[SEN-CHANNEL] 传感器通道划分 | — = SEARCH（软件实测口径）/ RECOG（识别主通道） — | 设定/中
+  依据: 项目冻结两通道：SEARCH=软件默认中波传感器几何（FOV 3.75°×3°、1024×768、IFOV 63.9 μrad、D=0.1497 m），用于与软件工况对齐；RECOG=识别主通道（FOV 0.733°×0.550°、1024×768、像元 15 μm、f=1.20 m、D=0.30 m（F/4）、NETD 25 mK、抖动 0.3×IFOV），专为「识别极限」设计（f_nyq=40 cyc/mrad，分辨率不再是一阶限制）。注意：00_构建脚本/接口约定.md §3 目前只登记 SEARCH 口径（F#=3.0、pitch=28.7 μm、f=0.449 m），与冻结的 RECOG 口径不一致，需 Lead 同步更新冻结文档。
+  来源: Lead 冻结口径（2026-11-03 团队消息）；项目 00_构建脚本/接口约定.md §3（待更新）
+  影响: RECOG 与 SEARCH 的 f_nyq 相差 5.1 倍 → 几何受限区 R50 相差 5.1 倍；两通道分别回答「识别极限」与「软件工况对齐」
+[SEN-FOV-SEARCH] 搜索通道视场（软件实测） | FOV_H×FOV_V = 3.75×3.0 ° | 软件实测/高
+  依据: 软件 SensorEffect FovH/FovV=3.75/3.0，SceneGenEffect 相同；与 1024×768 组合后像元非方形（垂直 IFOV 大 6.7%），属软件视场口径，本模型保留。
+  来源: 软件 DefaultPlanFile.xml SensorParam/SensorEffect；前作 sensor_notes.md §2
+  影响: 与像元数共同决定 IFOV；FOV 本身不直接进入判据（判据用 IFOV 与 f_max）
+[SEN-FOV-RECOG] 识别通道视场（冻结设定） | FOV_H×FOV_V = 0.733×0.550 ° | 推导/高
+  依据: 由 RECOG 像元 15 μm、f=1.20 m、1024×768 自洽反推：FOV_H=1024×15e-6/1.20=0.0128 rad=0.733°，FOV_V=768×15e-6/1.20=0.0096 rad=0.550°；与 Lead 冻结值一致（差 <0.2%），说明该组参数内部自洽（方形像元）。
+  来源: 推导自 Lead 冻结口径；见 SEN-CHANNEL
+  影响: 决定 IFOV=12.5 μrad 与 f_nyq=40 cyc/mrad；FOV 本身不进入判据
+[SEN-NPX] 焦平面规模 | N_px = 1024×768 px | 软件实测/高
+  依据: 软件 DpiH/DpiV=1024/768；与 FOV 联合给出 IFOV。
+  来源: 软件 DefaultPlanFile.xml SensorParam/SensorEffect；前作 sensor_notes.md §2
+  影响: 像元数±20% → f_nyq ∓20% → R50 ∓20%（Nyquist 受限时）
+[SEN-FPS] 帧频 | f_s = 50 Hz | 软件实测/高
+  依据: 软件 FPS=50 Hz，帧周期 20 ms；静止平台/静止目标下只影响积分时间上限与运动模糊。
+  来源: 软件 DefaultPlanFile.xml SensorParam/SensorEffect；前作 sensor_notes.md §2
+  影响: 对静态单帧判据无直接通道；动目标跟踪时影响成像模糊
+[SEN-ALT] 传感器高度 | H_s = 8000 m | 软件实测/高
+  依据: 软件 SensorPosZ=8000 m（天向，即高度）；注意 Q2 查找表视点高度只到 5000 m，8000 m 需由本项目大气模型外推。
+  来源: 软件 DefaultPlanFile.xml（SensorParam/WeatherParam 字段；前作 模型与想定参数.md 与本项目 05_参数依据 同源解析）；软件 Q2_M/Q2_L 查找表解析（前作 Q2解析/scenario_summary.md）
+  影响: 高度决定斜距与大气路径；±20%（1.6 km）→ 斜程 τ ±5–10%，R50 ∓3–8%
+[SEN-PITCH-ATT] 传感器俯仰角 | θ_p = -90 ° | 软件实测/高
+  依据: 软件 SensorAttP=-90°（垂直下视）；目标位于地面附近（模型 Config.ini 高程 30 m），故近天底观测。
+  来源: 软件 DefaultPlanFile.xml（SensorParam/WeatherParam 字段；前作 模型与想定参数.md 与本项目 05_参数依据 同源解析）
+  影响: 偏离天底 ±10° 使斜程增加 1.5%；气溶胶/水汽路径加权轻微变化 <2%
+[SEN-IFOV] 搜索通道瞬时视场 | IFOV_H / IFOV_V = 63.92 / 68.18 μrad | 推导/高
+  依据: FOV/像素数：3.75°/1024=63.92 μrad；3.0°/768=68.18 μrad；两者差 6.7%（非方形像元或视场显示口径不一致）。
+  来源: 推导自 软件 DefaultPlanFile.xml SensorParam/SensorEffect；前作 sensor_notes.md §2；前作 sensor_notes.md §3
+  影响: f_nyq=0.5/IFOV=7.82（水平）或 7.33（垂直）cyc/mrad；IFOV ±20% → R50 ∓20%（Nyquist 受限段）
+[SEN-IFOV-RECOG] 识别通道瞬时视场 | IFOV_H / IFOV_V = 12.50 / 12.50 μrad | 推导/高
+  依据: FOV/像素数：0.733°/1024=12.49 μrad；0.550°/768=12.50 μrad（方形像元）；与 p/f=15e-6/1.20=12.5 μrad 三式一致。
+  来源: 推导；Lead 冻结口径
+  影响: f_nyq=0.5/IFOV=40.0 cyc/mrad（RECOG），比 SEARCH 的 7.82 高 5.1 倍；IFOV±20% → R50∓20%（Nyquist 受限段）
+[SEN-PITCH-PX] 搜索通道像元间距 | p = 28.7 μm | 设定/中
+  依据: 软件无像元尺寸字段；取 28.7 μm 使 f=p/IFOV=0.449 m 与 F#=3、口径 0.1497 m 的组合自洽。为何合理：属 1990s–2000s 制冷型 MWIR 典型 25–30 μm 档（现代 15 μm，SCD 2022 报告 InSb 由 1995 年 40 μm 演进到 15/10 μm）；影响：p 只经 f_nyq 通道影响 R50（±20% → ∓20%，若 Nyquist 受限），不进入辐射量链。
+  来源: 设定；外证 外证：SCD「HOT MWIR technology at SCD」SPIE DCS 2022（InSb 40→15→10 μm pitch 演进；15 μm pitch、120 K 时 NETD 23 mK；https://scdusa-ir.com/wp-content/uploads/2022/06/SPIE-DCS-2022-HFMW.pdf）；前作 V2.1 交付 README_交付说明.md（传感器补充参数：口径0.15m/焦距0.45m/像元28.7μm/NETD25mK/积分10ms）
+  影响: ±20% → R50 ∓20%（Nyquist 受限段）；可由探测器规格书替换
+[SEN-PITCH-RECOG] 识别通道像元间距 | p = 15 μm | 设定/中
+  依据: RECOG 像元 15 μm（冻结）；15 μm pitch 是当代制冷型 MWIR 主流（SCD 2022 报告 15 μm pitch InSb 在 120 K、50% 井容下 NETD=23 mK），支持「15 μm + 25 mK」组合合理。影响：与 IFOV 共同决定 f=1.20 m；p 只经 f_nyq 影响 R50。
+  来源: 设定；外证 外证：SCD「HOT MWIR technology at SCD」SPIE DCS 2022（InSb 40→15→10 μm pitch 演进；15 μm pitch、120 K 时 NETD 23 mK；https://scdusa-ir.com/wp-content/uploads/2022/06/SPIE-DCS-2022-HFMW.pdf）；Lead 冻结口径
+  影响: ±20% → R50 ∓20%（Nyquist 受限段）；可由探测器规格书替换
+[SEN-FNUM] 搜索通道 F 数 | F# = 3.0 — | 设定/中
+  依据: 软件无 F# 字段；取 3.0 为制冷型 MWIR 导引头典型（2–4），与口径/焦距自洽 D=f/F#=0.1497 m。为何合理：焦平面冷屏效率与紧凑光学使 MWIR 多用 F#2–3；影响：F# 影响衍射截止与入瞳辐照度（固定探测器时 NETD∝F#²），F#+20% → 入瞳能量 −31%、NETD 近似 +44%，MRTD 受限区 R50 −10–20%，Nyquist 受限区 <3%。
+  来源: 设定；外证 文献[35] Driggers, Cox & Edwards 1999, Introduction to Infrared and EO Systems, Artech House；前作 V2.1 交付 README_交付说明.md（传感器补充参数：口径0.15m/焦距0.45m/像元28.7μm/NETD25mK/积分10ms）
+  影响: MRTD 受限区 R50 −10–20%；可被光学设计参数替换
+[SEN-FNUM-RECOG] 识别通道 F 数 | F# = 4.0 — | 设定/中
+  依据: RECOG 取 F/4（冻结），与 f=1.20 m、D=0.30 m 自洽。为何合理：窄视场+长焦距下 F/4 是可制造的紧凑光学；F/4 使衍射截止 f_cut=D/λ=71.4 cyc/mrad（4.2 μm）> f_nyq=40，MWIR 仍非衍射受限；影响：F# 影响入瞳照度与 NETD（∝F#²），F/4→F/3 使能量 +78%。
+  来源: 设定；Lead 冻结口径；文献[35] Driggers, Cox & Edwards 1999, Introduction to Infrared and EO Systems, Artech House
+  影响: MRTD 受限区 R50 −10–20%；可被光学设计参数替换
+[SEN-FL] 搜索通道焦距 | f = 0.449 m | 推导/中
+  依据: f = p / IFOV = 28.7e-6 / 63.92e-6 = 0.449 m；由软件 IFOV 与设定像元间距联合推得。软件无焦距字段（导引头模板 FocalLength 默认 0）。
+  来源: 推导；前作 V2.1 交付 README_交付说明.md（传感器补充参数：口径0.15m/焦距0.45m/像元28.7μm/NETD25mK/积分10ms）；软件 DefaultPlanFile.xml（SensorParam/WeatherParam 字段；前作 模型与想定参数.md 与本项目 05_参数依据 同源解析）
+  影响: 与 F# 共同决定 D 与衍射极限；焦距 ±20% 若 F# 固定则改变入瞳与像面照度 → R50 10–20%
+[SEN-FL-RECOG] 识别通道焦距 | f = 1.20 m | 推导/高
+  依据: f = p / IFOV = 15e-6 / 12.5e-6 = 1.20 m；D=f/F#=1.20/4=0.30 m，与 Lead 冻结口径完全自洽。
+  来源: 推导；Lead 冻结口径
+  影响: 决定衍射截止与像面照度；见 SEN-APERTURE-RECOG
+[SEN-APERTURE] 搜索通道入瞳口径 | D = 0.1497 m | 推导/中
+  依据: D = f/F# = 0.449/3.0 = 0.1497 m；V2.1 报告补充口径 0.15 m。
+  来源: 推导；前作 V2.1 交付 README_交付说明.md（传感器补充参数：口径0.15m/焦距0.45m/像元28.7μm/NETD25mK/积分10ms）
+  影响: 衍射截止 f_cut≈D/λ=35.6 cyc/mrad（4.2 μm），远高于 f_nyq=7.8 → 非衍射受限；口径 −30% 才开始压 R50
+[SEN-APERTURE-RECOG] 识别通道入瞳口径 | D = 0.30 m | 推导/高
+  依据: D = f/F# = 1.20/4.0 = 0.30 m（冻结）。衍射截止 f_cut=D/λ：MWIR 4.2 μm 时 71.4 cyc/mrad（>f_nyq=40，非衍射受限）；LWIR 10 μm 时 30 cyc/mrad（<f_nyq=40，LWIR 为衍射受限）——这是 RECOG 通道 LWIR 的重要约束。
+  来源: 推导；Lead 冻结口径
+  影响: MWIR 非衍射受限；LWIR 衍射受限使 f_max≤30 cyc/mrad → LWIR R50 相对 MWIR 降至约 0.75 倍（几何受限段）
+[SEN-NETD] 噪声等效温差 | NETD = 25 mK | 设定/中
+  依据: 软件无噪声模型（IsNoise=0 且 NoiseFile 空），NETD 必须外部设定。取 25 mK 为制冷型 MWIR 典型（15–30 mK；SCD 2022 实测 15 μm pitch InSb 在 120 K、50% 井容下 NETD=23 mK，与本值同档）。为何合理：对 3.7–4.8 μm 制冷系统属中等偏优。影响：MRTD=k·NETD，NETD±20% → MRTD±20% → MRTD 受限区 R50 ∓10–20%，Nyquist 受限区 <5%。可被实测替换（NETD 实测/噪声模型）。
+  来源: 设定；外证 外证：SCD「HOT MWIR technology at SCD」SPIE DCS 2022（InSb 40→15→10 μm pitch 演进；15 μm pitch、120 K 时 NETD 23 mK；https://scdusa-ir.com/wp-content/uploads/2022/06/SPIE-DCS-2022-HFMW.pdf）；前作 V2.1 交付 README_交付说明.md（传感器补充参数：口径0.15m/焦距0.45m/像元28.7μm/NETD25mK/积分10ms）
+  影响: MRTD 受限区 R50 ∓10–20%；设定值，是重要不确定性来源
+[SEN-TINT] 积分时间 | t_int = 10 ms | 设定/中
+  依据: 软件无积分时间字段（模板默认 0）。取 10 ms = 帧周期 20 ms 的 50% 占空，兼顾 50 Hz 与灵敏度；非门控积分型 FPA 典型占空 30–80%。影响：仅通过 NETD（∝1/√t_int）间接影响，t±20% → NETD∓9.5% → R50 ±5–10%（MRTD 受限区）。
+  来源: 设定；外证 外证：SCD「HOT MWIR technology at SCD」SPIE DCS 2022（InSb 40→15→10 μm pitch 演进；15 μm pitch、120 K 时 NETD 23 mK；https://scdusa-ir.com/wp-content/uploads/2022/06/SPIE-DCS-2022-HFMW.pdf）；文献[35] Driggers, Cox & Edwards 1999, Introduction to Infrared and EO Systems, Artech House；前作 V2.1 交付 README_交付说明.md（传感器补充参数：口径0.15m/焦距0.45m/像元28.7μm/NETD25mK/积分10ms）
+  影响: ±20% → R50 ±5–10%（MRTD 受限区）；可由探测器时序替换
+[SEN-TAUOPT] 光学系统透过率 | τ_o = 0.80 — | 设定/低
+  依据: 软件无光学透过率字段。取 0.80 为 3–5 μm 多片锗/硅光学系统典型（0.70–0.85，含冷屏效率）；为何合理：F#3、MWIR 增透膜工艺成熟。影响：ΔT_app 近似 ∝ τ_o，τ_o±20% → ΔT_app±20% → MRTD 受限区 R50 ±10–20%。
+  来源: 设定；外证 文献[35] Driggers, Cox & Edwards 1999, Introduction to Infrared and EO Systems, Artech House；前作 V2.1 交付 README_交付说明.md（传感器补充参数：口径0.15m/焦距0.45m/像元28.7μm/NETD25mK/积分10ms）
+  影响: MRTD 受限区 R50 ±10–20%；设定值，可由光学效率实测替换
+[SEN-JITTER-SEARCH] 搜索通道视线抖动 | σ_jit = 20 μrad | 设定/低
+  依据: 软件无稳像/抖动字段（MovVibEffSimFlag 默认 0）。取 20 μrad≈0.3×IFOV（63.92 μrad）=19.2 μrad，与冻结的「抖动=0.3×IFOV」设计规则一致；为何合理：无稳像时平台振动 10–50 μrad。影响：抖动 MTF=exp(−2π²σ²f²)，f=7.8 cyc/mrad 处 MTF≈0.62；σ±20% → f_max 变化 5–15%（MRTD 受限区）。
+  来源: 设定；文献[35] Driggers, Cox & Edwards 1999, Introduction to Infrared and EO Systems, Artech House；文献[33] Lloyd 1975, Thermal Imaging Systems, Plenum Press（经典教材，无DOI）；前作 V2.1 交付 README_交付说明.md（传感器补充参数：口径0.15m/焦距0.45m/像元28.7μm/NETD25mK/积分10ms）
+  影响: f_max 5–15% → R50 5–15%（MRTD 受限区）；设定值
+[SEN-JITTER-RECOG] 识别通道视线抖动 | σ_jit = 3.75 μrad | 推导/中
+  依据: =0.3×IFOV=0.3×12.5=3.75 μrad（冻结设计规则）。抖动 MTF=exp(−2π²σ²f²)，f=40 cyc/mrad 处 MTF≈0.64，与 SEARCH 在各自 Nyquist 处相当（因同按 0.3 IFOV 设计）。
+  来源: 推导；Lead 冻结口径
+  影响: f_max 5–15% → R50 5–15%（MRTD 受限区）
+[SEN-MTF] 系统 MTF 链 | MTF_sys = 衍射×像元×抖动×湍流 连乘 — | 推导/中
+  依据: MTF 链：圆形孔径衍射 MTF → 像元积分 sinc(πfp)（p=28.7 μm、f≤7.8 cyc/mrad 时 >0.95）→ 抖动 MTF → 湍流 MTF（exp[−3.44(λf/r0)^(5/3)]）；用于 MRTD 与 f_max。
+  来源: 推导；文献[9] Fried 1966, JOSA 56(10):1372-1379, DOI:10.1364/JOSA.56.001372；文献[33] Lloyd 1975, Thermal Imaging Systems, Plenum Press（经典教材，无DOI）
+  影响: MTF 整体 −10% → f_max −5–15%（MRTD 受限区）
+[SEN-FMAX] 系统极限分辨率 | f_max = min(f_MRTD, f_nyq, f_diff) cyc/mrad | 推导/中
+  依据: 三重上限。SEARCH：f_nyq=7.82、f_diff=35.6（MWIR 4.2 μm）；RECOG：f_nyq=40.0、f_diff=71.4（MWIR）/30（LWIR，衍射受限）。半定量 MRTD 估计（k=2.5、NETD=25 mK、含湍流 r0≈0.30 m）：SEARCH 在 f_nyq 处 MTF_sys≈0.26 → MRTD≈0.24 K；RECOG 在 f_nyq 处 MTF_sys≈0.035 → MRTD≈1.8 K。故 RECOG 在中等距离即进入 MRTD/大气受限区，这正是「识别极限」问题的主战场；SEARCH 小目标在近—中距几何受限、大目标/远距才进入大气受限。
+  来源: 推导；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）；Lead 冻结口径；文献[9] Fried 1966, JOSA 56(10):1372-1379, DOI:10.1364/JOSA.56.001372
+  影响: f_max±20% → R50±20%（定义式）；两通道受限机制不同：SEARCH 近距几何受限、RECOG MRTD/大气受限
+[SEN-MRTD-K] MRTD 工程系数 | k = 2.5 — | 设定/低
+  依据: MRTD(0)=k·NETD 为工程近似（完整 MRTD 需观察者实验）。k=2.5 取 Lloyd/Ratches 教材中「低频 MRTD 约为 NETD 的 2–4 倍」的中值；采样成像系统 MRTD/NETD 比典型 2–3。为何合理：无观察者实验时的通行折中。影响：与 NETD 等价，k±20% → MRTD±20% → R50 ∓10–20%（MRTD 受限区）。无法直接实测替换，只能用观察者实验校核（见争议清单 U2）。
+  来源: 设定；外证 文献[33] Lloyd 1975, Thermal Imaging Systems, Plenum Press（经典教材，无DOI）；文献[32] Ratches 1976, Opt.Eng. 15(6):525-530, DOI:10.1117/12.7972037；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: k 2.0→2.5 使 R50 减 10–20%；本项目最大单参数不确定性之一
+[SEN-DET] 探测器类型/制冷 | — = InSb 或 T2SL 制冷（77–120 K） — | 设定/中
+  依据: 软件仅 SensorClass=1 隐含制冷型 MWIR，无材料/制冷温度字段。取 InSb/T2SL 为当前 MWIR 主流；为何合理：3.7–4.8 μm 高灵敏度必须制冷。影响：只通过 NETD/暗电流间接进入。
+  来源: 设定；外证 外证：SCD「HOT MWIR technology at SCD」SPIE DCS 2022（InSb 40→15→10 μm pitch 演进；15 μm pitch、120 K 时 NETD 23 mK；https://scdusa-ir.com/wp-content/uploads/2022/06/SPIE-DCS-2022-HFMW.pdf）
+  影响: 间接（经 NETD），无独立通道
+[SEN-BIT] 量化位宽 | N_bit = 8 bit | 软件实测/高
+  依据: 软件 BitWidth=1（8 位）；ResCoefficient=1746/ResBias=1733 为显示/注入链路线性映射，不是物理辐射响应率；本模型不用其做辐射标定，只用几何/波段/时序字段。
+  来源: 软件 DefaultPlanFile.xml SensorParam/SensorEffect；前作 sensor_notes.md §2
+  影响: 8 位量化对低对比度目标可增 0.5–1 DN 量化噪声；本模型以物理 NETD 替代，不建模量化
+[CRIT-N50-TTP-DET] TTP 判据—探测 | N50_det = 4.0 cycles | 文献/中
+  依据: 主口径（NVESD/TTP 度量）：探测 V50=4.0 cycles（N 为 TTP 度量下的周期数，P=0.5 点）。数值与项目冻结接口一致；TTP 报告原文（DTIC）在线访问受限，无 DOI 之外的二次核验，故置信度中。
+  来源: 文献[34] Vollmerhausen & Jacobs 2004, TTP Metric, DTIC ADA422493, DOI:10.21236/ADA422493；文献[11] Vollmerhausen, Jacobs & Driggers 2004, Opt.Eng. 43(11):2806-2818, DOI:10.1117/1.1799111；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: R50∝1/N50：TTP 4.0 vs Johnson 2.0 使探测距离差 2 倍
+[CRIT-N50-TTP-REC] TTP 判据—识别 | N50_rec = 16.5 cycles | 文献/中
+  依据: 主口径：识别 V50=16.5 cycles（目标特征尺寸在焦平面上的周期数）。
+  来源: 文献[34] Vollmerhausen & Jacobs 2004, TTP Metric, DTIC ADA422493, DOI:10.21236/ADA422493；文献[11] Vollmerhausen, Jacobs & Driggers 2004, Opt.Eng. 43(11):2806-2818, DOI:10.1117/1.1799111；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: R50 主结果直接反比于该值；与 Johnson 8.0 相差 2.06 倍
+[CRIT-N50-TTP-ID] TTP 判据—辨认 | N50_id = 26.6 cycles | 文献/中
+  依据: 主口径：辨认 V50=26.6 cycles。
+  来源: 文献[34] Vollmerhausen & Jacobs 2004, TTP Metric, DTIC ADA422493, DOI:10.21236/ADA422493；文献[11] Vollmerhausen, Jacobs & Driggers 2004, Opt.Eng. 43(11):2806-2818, DOI:10.1117/1.1799111；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: R50∝1/26.6；与 Johnson 16.0 相差 1.66 倍
+[CRIT-N50-J-DET] Johnson 判据—探测（备口径） | N50_J,det = 2.0 线对 lp | 文献/中
+  依据: 备口径：经典 Johnson 判据 2.0 线对。注意文献存在 2.0/8.0/12.5 与 1.5/6/12 两套数值，本项目选用 2.0/8.0/16.0 一套并绑定来源；报告必须声明所用版本。
+  来源: 文献[10] Johnson 1958, Proc. Image Intensifier Symp., Fort Belvoir, pp.249-273（无DOI，经典）；文献[33] Lloyd 1975, Thermal Imaging Systems, Plenum Press（经典教材，无DOI）；参考文献-大气环境参数量化-v1.0.md（50 条分级文献清单） §4-4
+  影响: 比 TTP 探测低一半 → Johnson 口径下探测距离翻倍
+[CRIT-N50-J-REC] Johnson 判据—识别（备口径） | N50_J,rec = 8.0 线对 lp | 文献/中
+  依据: 备口径：识别 8.0 线对（Johnson 1958 / Lloyd 1975 体系）。
+  来源: 文献[10] Johnson 1958, Proc. Image Intensifier Symp., Fort Belvoir, pp.249-273（无DOI，经典）；文献[33] Lloyd 1975, Thermal Imaging Systems, Plenum Press（经典教材，无DOI）
+  影响: 使识别距离约为 TTP 口径的 2.06 倍
+[CRIT-N50-J-ID] Johnson 判据—辨认（备口径） | N50_J,id = 16.0 线对 lp | 文献/中
+  依据: 备口径：辨认 16.0 线对（Johnson 1958 / Lloyd 1975 体系）。
+  来源: 文献[10] Johnson 1958, Proc. Image Intensifier Symp., Fort Belvoir, pp.249-273（无DOI，经典）；文献[33] Lloyd 1975, Thermal Imaging Systems, Plenum Press（经典教材，无DOI）
+  影响: 使辨认距离约为 TTP 口径的 1.66 倍
+[CRIT-TTPF-E] TTPF 概率曲线指数 | E = 2.0 — | 设定/低
+  依据: P(N)=N^E/(N50^E+N^E)；E=2.0 使 P(N50)=0.5、N=N50/2 时 P=0.2。NVESD 原始 TTPF 对不同任务用不同斜率（文献报告 E≈1.5–2.7），本项目统一取 2.0 作工程设定并做敏感性。影响：R50 与 E 无关；R90/R50=9^(1/E)（E=2→3.0，E=2.7→2.27），E±20% 使 R90 变化 ∓10–13%。
+  来源: 设定；外证 文献[34] Vollmerhausen & Jacobs 2004, TTP Metric, DTIC ADA422493, DOI:10.21236/ADA422493；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 仅改变概率曲线斜率与 R90/R50 比（±15%）；对 R50 无影响
+[CRIT-P-FORMULA] TTPF 概率公式 | P(N) = N^E/(N50^E+N^E) — | 推导/高
+  依据: 与 P=1/(1+(N50/N)^E) 等价；N50 定义为 P=0.5 处；实现见 probability.py。
+  来源: 推导；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）；文献[34] Vollmerhausen & Jacobs 2004, TTP Metric, DTIC ADA422493, DOI:10.21236/ADA422493
+  影响: 定义本身无误差；E/N50 取值见上
+[CRIT-P-THR] 判定概率阈值 | P_th = 0.5 — | 设定/高
+  依据: 临界距离 R50/R90 定义中的概率阈值；P_th=0.5 与 N50 定义自洽（R50 即 P=0.5）。
+  来源: 本项目 00_构建脚本/接口约定.md（冻结版 v3.0） §6
+  影响: P_th 0.5→0.9 使 R90/R50=3.0（E=2）；阈值提高 0.1 约使临界距离缩短 5–15%
+[CRIT-N-FORMULA] 分辨周期数定义 | N = N=f_max·D_eff/r_slant cyc | 推导/高
+  依据: 目标特征尺寸在像面上跨越的周期数；因 m/km≡mrad，N[cyc]=f_max[cyc/mrad]·D[m]/r[km]。
+  来源: 推导；本项目 00_构建脚本/接口约定.md（冻结版 v3.0） §5
+  影响: 定义无误差；对 D 口径与 r 几何敏感（见 TGT-DEFF / GEOM-SLANT）
+[CRIT-N50-CHOICE] N50 口径选择 | — = 主：TTP；备：Johnson — | 设定/中
+  依据: 主口径 TTP（cycle），Johnson（线对）作全量对照；冻结接口同时登记两套。参考文献清单明确警告「N50 两套数值必须绑定来源」，故报告必须逐图标注 n50_set 字段。
+  来源: 设定；参考文献-大气环境参数量化-v1.0.md（50 条分级文献清单） §4-4；本项目 00_构建脚本/接口约定.md（冻结版 v3.0） §5
+  影响: TTP vs Johnson 使识别距离相差 2.06 倍（本项目最大的判据口径不确定性）
+[TGT-BBOX-F16] F16 包围盒尺寸 | L×W×H = 9.66×14.85×4.57 m | 软件实测/高
+  依据: 解析 f16_vis.osg 全部顶点得轴对齐局部包围盒（无变换节点）；与实机尺寸（翼展 9.96 m、机长 15.06 m、高 4.88 m）吻合，验证 1 单位≈1 m。
+  来源: 软件 .osg 顶点解析；前作 正式仿真/target_bbox.json 与 模型与想定参数.md §5；前作 V2.1 交付 README_交付说明.md（传感器补充参数：口径0.15m/焦距0.45m/像元28.7μm/NETD25mK/积分10ms）
+  影响: D_eff=√(9.66×14.85)=11.98 m；尺寸±20% → R50±20%
+[TGT-BBOX-F22] F22 包围盒尺寸 | L×W×H = 13.50×18.60×4.00 m | 软件实测/高
+  依据: 解析 f22_vis.osg；与实机（翼展 13.56 m、机长 18.92 m）吻合。
+  来源: 软件 .osg 顶点解析；前作 正式仿真/target_bbox.json 与 模型与想定参数.md §5
+  影响: D_eff=√(13.50×18.60)=15.85 m
+[TGT-BBOX-NIMITZ] 尼米兹级航母包围盒尺寸 | L×W×H = 85.73×340.66×75.22 m | 软件实测/中
+  依据: 解析 nimitz_vis.osg；长 340.7 m 接近实船 332.8 m，宽 85.7 m、高 75.2 m 偏大（含舰岛/桅杆与吃水），高度异常不影响水平面 D_eff。
+  来源: 软件 .osg 顶点解析；前作 正式仿真/target_bbox.json 与 模型与想定参数.md §5
+  影响: D_eff=√(85.73×340.66)=170.9 m；宽度含外飘/舰载机，可能高估 10–20%
+[TGT-BBOX-ALBK] 阿利伯克级驱逐舰包围盒尺寸 | L×W×H = 20.27×151.32×47.74 m | 软件实测/高
+  依据: 解析 albk_vis.osg；长 151.3 m（实船 155 m）、宽 20.3 m 合理、高 47.7 m 含桅杆。
+  来源: 软件 .osg 顶点解析；前作 正式仿真/target_bbox.json 与 模型与想定参数.md §5
+  影响: D_eff=√(20.27×151.32)=55.39 m
+[TGT-BBOX-HM] 悍马车包围盒尺寸 | L×W×H = 2.81×5.09×3.20 m | 软件实测/中
+  依据: 解析 hm_vis.osg；车长 5.09 m 合理，高 3.20 m 偏大（可能含顶部武器站/天线）。
+  来源: 软件 .osg 顶点解析；前作 正式仿真/target_bbox.json 与 模型与想定参数.md §5
+  影响: D_eff=√(2.81×5.09)=3.79 m；高度不影响水平面口径
+[TGT-BBOX-AGZFSC] 爱国者导弹发射车包围盒尺寸 | L×W×H = 10.24×22.57×10.98 m | 软件实测/低
+  依据: 解析 agzfsc_vis.osg；长 22.6 m、高 11.0 m 明显大于单车（M901 发射车约 9.4×2.9×3.2 m），模型可能是发射车+雷达/拖车组合场景或比例未统一，须人工核定。
+  来源: 软件 .osg 顶点解析；前作 正式仿真/target_bbox.json 与 模型与想定参数.md §5
+  影响: D_eff=15.20 m 可能高估 3–5 倍 → R50 同比例偏大（争议清单 U3）
+[TGT-UNIT] 模型坐标单位 | — = 1 单位≈1 m — | 设定/中
+  依据: .osg 无变换节点、单位未标定；用公开尺寸交叉验证（F16/F22/albk 偏差 ≤3%、nimitz 长偏差 2.4%），故 1 单位=1 m 合理；但 agzfsc/nimitz 高宽异常说明并非全部模型比例统一。
+  来源: 设定；交叉验证 公开机型/舰船尺寸；软件 .osg 顶点解析；前作 正式仿真/target_bbox.json 与 模型与想定参数.md §5
+  影响: 单位假设 ±5% → R50 ±5%；agzfsc/nimitz 疑点可使 R50 ±20–100%
+[TGT-DEFF] 主尺寸口径（等效方目标） | D_eff = √(W_bbox×H_bbox) m | 推导/中
+  依据: 六模型：F16 11.98、F22 15.85、nimitz 170.89、albk 55.39、hm 3.79、agzfsc 15.20 m（用 bbox 水平面 x×y）；与 TTP/Johnson「目标特征尺寸」定义一致（取等效边长）。
+  来源: 推导；本项目 00_构建脚本/接口约定.md（冻结版 v3.0） §4；软件 .osg 顶点解析；前作 正式仿真/target_bbox.json 与 模型与想定参数.md §5
+  影响: D_eff±20% → R50±20%；是 R50 的最直接比例因子
+[TGT-DMAX] 备选尺寸口径（最大边） | D_max = max(W,L,H) m | 推导/中
+  依据: 六模型：F16 14.85、F22 18.60、nimitz 340.66、albk 151.32、hm 5.09、agzfsc 22.57 m；比 D_eff 大 1.17–2.73 倍（舰船类最敏感）。
+  来源: 推导；本项目 00_构建脚本/接口约定.md（冻结版 v3.0） §4 备选
+  影响: 口径切换使 R50 增 17–173%（舰船类最大）→ 见争议清单 U10
+[TGT-EMIS-T] 目标发射率 | ε_t = 0.90 — | 设定/中
+  依据: 软件无发射率字段（材质/纹理未配置）。取 0.90 为金属/涂装/车辆目标在 3–5 与 8–12 μm 的工程代表值（光谱库：涂漆金属 0.85–0.95，土壤/植被 0.90–0.98）；为何合理：军用目标多为涂装金属，ε 低于自然背景。影响：ΔL∝ε，ε±0.05（±5.6%）→ R50 ±5–8%。
+  来源: 设定；文献[12] Salisbury & D'Aria 1992, RSE 42(2):83-106, DOI:10.1016/0034-4257(92)90092-X；文献[28] Salisbury & D'Aria 1994, RSE 47(3):345-361, DOI:10.1016/0034-4257(94)90102-3；文献[29] Baldridge et al. 2009, RSE 113(4):711-715, DOI:10.1016/j.rse.2008.11.007（ASTER 光谱库 v2.0）
+  影响: ε±0.05 → R50 ±5–8%；可按材质光谱库替换
+[TGT-EMIS-BG] 背景发射率 | ε_bg = 0.95 — | 设定/中
+  依据: 软件无背景发射率字段。取 0.95 为地表（土壤/植被/混凝土）8–14 μm 典型 0.94–0.98；影响：与 ε_t 共同决定 ΔL，ε_bg−0.05 使信号约 +5%。
+  来源: 设定；文献[12] Salisbury & D'Aria 1992, RSE 42(2):83-106, DOI:10.1016/0034-4257(92)90092-X；文献[29] Baldridge et al. 2009, RSE 113(4):711-715, DOI:10.1016/j.rse.2008.11.007（ASTER 光谱库 v2.0）；文献[31] Kokaly et al. 2017, USGS Data Series 1035, DOI:10.3133/ds1035（USGS 光谱库 v7）
+  影响: ε_bg±0.05 → R50 ±3–5%；可按下垫面类型替换
+[TGT-TSTATE] 目标热状态 | T_t = 20 / 40 / 60 ℃ | 软件实测/中
+  依据: 软件目标 Config.ini 温度范围 0–60 ℃、环境温度 20 ℃；V2.1 采用 20/40/60 ℃ 三档热状态。60 ℃ 为软件上限，属高过热工况（整车均匀 60 ℃ 偏保守，实际多为局部热点）。
+  来源: 软件 Data/ModelData/Target/*/Config.ini；前作 模型与想定参数.md §4.1；前作 V2.1 交付 README_交付说明.md（传感器补充参数：口径0.15m/焦距0.45m/像元28.7μm/NETD25mK/积分10ms）
+  影响: 40/60 ℃ 对应 ΔT=20/40 K；ΔT±20% → R50 ±15–20%（MRTD 受限区）；20 ℃（ΔT=0）为不可探测边界
+[TGT-TBG] 背景温度 | T_bg = 20 ℃ | 软件实测/高
+  依据: 6 个目标与背景 Config.ini 的环境温度均为 20 ℃，且为均一常数（无地表温度场）；这是软件默认口径。
+  来源: 软件 Data/ModelData/Target/*/Config.ini；前作 模型与想定参数.md §4.1
+  影响: 背景 20 ℃ ±5 K → ΔT 变化 25%（20 K 工况）→ R50 ±20–30%（争议清单 U11）
+[TGT-DT] 目标-背景固有温差 | ΔT = 0 / 20 / 40 K | 推导/高
+  依据: ΔT=T_t−T_bg（忽略反射/环境辐射）；后续由 radiometry/atmosphere 模块转视在温差 ΔT_app。
+  来源: 推导；本项目 00_构建脚本/接口约定.md（冻结版 v3.0） §4
+  影响: ΔT±20% → R50 ±15–20%（MRTD 受限区）
+[TGT-EMIS-SPEC] 发射率光谱处理 | ε(λ) = 灰体常数（不随 λ 变） — | 设定/低
+  依据: 不建模光谱发射率与反射项，ε 取波段常数；真实 ε(λ) 在 3–5 μm 波动 0.05–0.15，MWIR 信号可偏差 5–15%。可被实测替换（ASTER/ECOSTRESS 光谱库 + 波段加权）。
+  来源: 设定；文献[29] Baldridge et al. 2009, RSE 113(4):711-715, DOI:10.1016/j.rse.2008.11.007（ASTER 光谱库 v2.0）；文献[30] Meerdink et al. 2019, RSE 230:111196, DOI:10.1016/j.rse.2019.05.015；文献[31] Kokaly et al. 2017, USGS Data Series 1035, DOI:10.3133/ds1035（USGS 光谱库 v7）
+  影响: 信号 5–15% 偏差 → R50 5–15%
+[TGT-POSE] 目标姿态/投影面积 | A_proj = bbox 水平面 (x×y) 代投影 — | 设定/低
+  依据: 用包围盒水平面作为投影面积，未随观测姿态/俯仰变化；真实斜视时舰船/飞机投影面积可变化 30–100%。
+  来源: 设定；争议清单 U10
+  影响: R50 ±15–50%（随目标类型与姿态）
+[TGT-THERMAL-RANGE] 软件温度映射范围 | T_range = 0–60 ℃ | 软件实测/高
+  依据: 软件 SensorEffect TextureLightMin/Max=0/60（温度系数，单位与 ℃ 一致，与模型 Config.ini 温度范围 0–60 ℃ 对应）；这是显示链路映射范围，不是目标物理温度上限。
+  来源: 软件 DefaultPlanFile.xml（SensorParam/WeatherParam 字段；前作 模型与想定参数.md 与本项目 05_参数依据 同源解析）；软件 Data/ModelData/Target/*/Config.ini；前作 模型与想定参数.md §4.1
+  影响: 无物理通道；仅佐证热状态取值合理性
+[ATM-VIS-SOFT] 软件默认能见度 | V_sw = 10000 m | 软件实测/高
+  依据: 软件 WeatherParam AtmVisibility=10000 m（晴天、干净大陆、美国标准大气、不考虑湍流）。这是基准情景的源头，AOD/PWV 均由它派生。
+  来源: 软件 DefaultPlanFile.xml（SensorParam/WeatherParam 字段；前作 模型与想定参数.md 与本项目 05_参数依据 同源解析）
+  影响: 决定基准 AOD 与 β550（见 ATM-AOD550 / ATM-BETA550）
+[ATM-AOD550] 550 nm 气溶胶光学厚度 | AOD550 = 0.587 — | 推导/中
+  依据: 由「软件默认能见度 10 km + 气溶胶标高 1.5 km」反推：β550=3.912/10=0.3912 km⁻¹，AOD=β550×H=0.3912×1.5=0.587；与软件默认 10000 m 能见度严格自洽（等效能见度 10.0 km）。真实气候对照：本项目 16 站 MERRA-2 十年中位 AOD 0.08–0.67（乡村/城市 0.33–0.53、近岸/城市 0.48–0.53、远洋 0.08–0.11），0.587 属城市/近岸污染量级，作为基准情景合理。
+  来源: 推导；软件 DefaultPlanFile.xml（SensorParam/WeatherParam 字段；前作 模型与想定参数.md 与本项目 05_参数依据 同源解析）；NASA POWER MERRA-2/CERES 逐日 AOD550/PWV（2015-2024，16 站×3653 天）；前作 _power_summary.csv / 工况统计_多站汇总.csv / 典型观测区_MERRA2气候值.csv；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 红外 4.2/10 μm 气溶胶 τ≈0.042/0.014，AOD±20% → τ±20% → ΔT_app∓3–5%
+[ATM-HAER] 陆地气溶胶标高 | H_aer = 1.5 km | 文献/中
+  依据: 取陆地边界层气溶胶指数标高 1.5 km（工程模型典型 1–2 km；LOWTRAN/6S 气溶胶廓线为分层指数型）。为何合理：东亚大陆边界层标高 1–2 km，1.5 km 为中值。影响：平面前行近似下柱含量守恒 → τ 对 H_aer 不敏感（<3%）；主要是路径辐射的加权温度（±2–5%）与 MOR↔AOD 换算口径（β550=AOD/H，MOR∓20%）。可被实测替换（激光雷达/探空气溶胶廓线）。
+  来源: 文献[6] Shettle & Fenn 1979, AFGL-TR-79-0214（LOWTRAN/MODTRAN 气溶胶模型源头）；文献[48] Kneizys et al. 1988, Users Guide to LOWTRAN 7, AFGL-TR-88-0177；外证：Schoemaker 2007, TNO「Satellite retrieved aerosol properties for battlespace characterization and sensor performance」（海洋边界层气溶胶指数标高 h=1000 m；https://publications.tno.nl/publication/102366/GBIVKG/schoemaker-2007-satellite.pdf）
+  影响: 天底 τ 影响 <3%；低仰角路径辐射/加权温度 2–5%；等效 MOR 口径 ∓20%
+[ATM-HAER-OCEAN] 海洋气溶胶标高 | H_aer,sea = 1.0 km | 文献/中
+  依据: 海洋边界层气溶胶指数廓线标高 1.0 km（TNO/ANAM 类模型常用；海上边界层更浅）。
+  来源: 外证：Schoemaker 2007, TNO「Satellite retrieved aerosol properties for battlespace characterization and sensor performance」（海洋边界层气溶胶指数标高 h=1000 m；https://publications.tno.nl/publication/102366/GBIVKG/schoemaker-2007-satellite.pdf）；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 海岛/海洋工况：8 km 高度下视时柱含量几乎不变；低仰角可差 5–10%
+[ATM-ALPHA] 默认 Ångström 指数 | α = 1.30 — | 文献/中
+  依据: 接口默认 1.30，对应中纬度混合/城市型气溶胶；前作大气工况热力图取 α=1.2。AERONET/Eck 1999 实测：城市/污染 1.1–1.6、生物质燃烧 1.7–2.2、沙尘 0.2–0.7、海洋 0.3–0.8；1.30 属城市/混合档中值偏上。
+  来源: 文献[4] Eck et al. 1999, JGR 104(D24):31333-31349, DOI:10.1029/1999JD900923
+  影响: MWIR 气溶胶消光弹性极大（dlnβ/dα=ln(0.55/λ)≈−2.03）：α+20% 使 4.2 μm 气溶胶 τ 降 41%；但绝对 τ 仅 0.04 → R50 变化 <3%；对等效 MOR 影响大
+[ATM-ALPHA-DESERT] Ångström 指数—沙漠沙尘 | α_dust = 0.4（0.2–0.7） — | 文献/中
+  依据: 沙尘以粗模态为主，α 低且可接近 0；AERONET 沙尘站点中位 0.3–0.5。
+  来源: 文献[4] Eck et al. 1999, JGR 104(D24):31333-31349, DOI:10.1029/1999JD900923；文献[17] Dubovik 2002 DOI:10.1175/1520-0469(2002)059<0590:VOAAOP>2.0.CO;2
+  影响: 沙尘工况 MWIR/LWIR 消光比城市型大 3–7 倍；AOD 0.3–0.5 的沙尘事件对 MWIR τ 可达 0.1–0.2 → R50 −5–15%
+[ATM-ALPHA-URBAN] Ångström 指数—城市/工业 | α_urban = 1.3（1.1–1.6） — | 文献/中
+  依据: 细模态主导，α 高；AERONET 城市/污染站中位 1.2–1.4。
+  来源: 文献[4] Eck et al. 1999, JGR 104(D24):31333-31349, DOI:10.1029/1999JD900923
+  影响: 同 ATM-ALPHA
+[ATM-ALPHA-RURAL] Ångström 指数—乡村 | α_rural = 1.2（1.0–1.5） — | 文献/中
+  依据: 乡村混合型（细+粗）α 中值约 1.2；本项目基准 1.30 与乡村/城市混合档相容。
+  来源: 文献[4] Eck et al. 1999, JGR 104(D24):31333-31349, DOI:10.1029/1999JD900923
+  影响: 同 ATM-ALPHA
+[ATM-ALPHA-OCEAN] Ångström 指数—海洋 | α_ocean = 0.5（0.3–0.8） — | 文献/中
+  依据: 海盐粗模态使 α 低（清洁海洋 0.3–0.8；受大陆输送时升高）。
+  来源: 文献[4] Eck et al. 1999, JGR 104(D24):31333-31349, DOI:10.1029/1999JD900923；外证：Schoemaker 2007, TNO「Satellite retrieved aerosol properties for battlespace characterization and sensor performance」（海洋边界层气溶胶指数标高 h=1000 m；https://publications.tno.nl/publication/102366/GBIVKG/schoemaker-2007-satellite.pdf）
+  影响: 海洋工况红外气溶胶消光偏大（相对城市型），但海洋 AOD 低（0.08–0.45），净影响小
+[ATM-ALPHA-BIOMASS] Ångström 指数—生物质燃烧 | α_biomass = 1.9（1.7–2.2） — | 文献/中
+  依据: 生物质燃烧气溶胶以亚微米细粒子为主，α 高；AERONET 燃烧站点中位 1.8–2.1。
+  来源: 文献[4] Eck et al. 1999, JGR 104(D24):31333-31349, DOI:10.1029/1999JD900923
+  影响: 该工况 MWIR/LWIR 消光最小（α 高使 4.2 μm 消光仅为 550 nm 的 ~0.4%），R50 影响 <2%
+[ATM-BETA550] 550 nm 地面消光系数 | β550 = 0.3913 km⁻¹ | 推导/高
+  依据: β550=AOD550/H_aer（指数廓线柱积分=AOD）；=0.587/1.5=0.3913 km⁻¹。
+  来源: 推导；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 决定气溶胶消光谱与等效 MOR；±20% → 红外 τ ∓20%
+[ATM-VIS-EQUIV] 等效能见度 | V_eq = 10.0 km | 推导/高
+  依据: V=3.912/β550=10.0 km，与软件默认能见度 10000 m 一致；用于与软件工况对照。
+  来源: 推导；文献[1] Koschmieder 1924（Beitr. Phys. Freien Atmos. 12:33-53/171-181，无DOI，经典）；标准 WMO-No.8 (2021) Vol.I Ch.9 Visibility（https://library.wmo.int/records/item/68695）
+  影响: 见 ATM-AOD550
+[ATM-MOR-FORMULA] 能见度—消光关系 | V=3.912/β = 常数 3.912（2% 对比度阈值） — | 文献/高
+  依据: Koschmieder 关系（2% 对比度阈值）；WMO-No.8 定义 MOR。注意另有 3.0（5% 阈值）一套常数，报告必须绑定所用常数。
+  来源: 文献[1] Koschmieder 1924（Beitr. Phys. Freien Atmos. 12:33-53/171-181，无DOI，经典）；标准 WMO-No.8 (2021) Vol.I Ch.9 Visibility（https://library.wmo.int/records/item/68695）
+  影响: 常数 3.912 vs 3.0 → 能见度差 30% → β 与 AOD 换算差 30%
+[ATM-MOL-SCAT] 分子（瑞利）散射 | β_mol(λ) = 0.008735·(0.55/λ)^4.08 km⁻¹ km⁻¹ | 文献/中
+  依据: 接口沿用 V2.1 口径 β_mol=0.008735·(0.55/λ)^4.08 km⁻¹。注意：6S 的标准形式是垂直瑞利光学厚度 τ_R(λ)=0.008735·λ^−4.08（λ 单位 μm），对应海平面 β0=τ_R/H_R≈0.0125 km⁻¹；接口式在 0.55 μm 处给 0.0087 km⁻¹（相当于 τ_R=0.07，偏小约 30%）。但本项目波段 4.2/10 μm 时 β_mol 分别仅 2.7×10⁻⁶ / 6.4×10⁻⁸ km⁻¹，两种口径差异 <10⁻⁵ km⁻¹，对结果完全可忽略；建议实现时按 6S 式归一以便与文献对照。
+  来源: 文献[49] Vermote et al. 1997, IEEE TGRS 35(3):675-686, DOI:10.1109/36.581987（6S）；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: MWIR/LWIR 分子散射 τ<10⁻⁴，对 R50 影响 <0.1%（数值口径问题不影响结论）
+[ATM-H2O-SCALE] 水汽标高 | H_H2O = 2.0 km | 文献/中
+  依据: 水汽指数标高 2 km（对流层水汽标高典型 1.5–3 km，全球平均约 2 km）；为何合理：15 ℃、50%RH 下由 PWV 归一后给出 1.28 cm 柱含量，与中纬度气候值（1–3 cm）一致。影响：柱含量已由 PWV 归一 → 天底路径 τ 对 H_H2O 不敏感（<3%），主要影响路径辐射的加权温度与低仰角斜程（3–8%）。
+  来源: 文献[48] Kneizys et al. 1988, Users Guide to LOWTRAN 7, AFGL-TR-88-0177；文献[36] Hersbach et al. 2020, QJRMS 146(730):1999-2049, DOI:10.1002/qj.3803；前作 大气工况分类图/make_dtapp_heatmap.py（ALPHA=1.2，H2O_SCALE_HT=2000 m，Angstrom 消光+指数水汽廓线）
+  影响: τ 影响 <3%；L_path 加权温度 2–5%
+[ATM-PWV] 可降水量 | PWV = 1.28 cm | 推导/中
+  依据: 由软件默认 15 ℃、50% RH 与 H_H2O=2 km 推得：e_s(15 ℃)=17.04 hPa，e=8.52 hPa，ρ_v≈6.4 g/m³，PWV=ρ_v·H=12.8 kg/m²=1.28 cm。与气候统计对照：16 站十年中位 PWV 0.47–4.89 cm，1.28 cm 属中纬度乡村/城市量级（北京 1.32、SACOL 1.12）；作为基准情景合理。
+  来源: 推导；软件 DefaultPlanFile.xml（SensorParam/WeatherParam 字段；前作 模型与想定参数.md 与本项目 05_参数依据 同源解析）；NASA POWER MERRA-2/CERES 逐日 AOD550/PWV（2015-2024，16 站×3653 天）；前作 _power_summary.csv / 工况统计_多站汇总.csv / 典型观测区_MERRA2气候值.csv；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: PWV±20% → MWIR 水汽 τ±20%（若波段平均 τ_H2O≈0.2–0.4，则 ΔT_app±4–8%）→ R50 ∓2–6%；LWIR 窗区更敏感
+[ATM-T0] 地面气温 | T0 = 15 ℃ | 软件实测/高
+  依据: 软件 WeatherParam AtmTemperature=15 ℃。
+  来源: 软件 DefaultPlanFile.xml（SensorParam/WeatherParam 字段；前作 模型与想定参数.md 与本项目 05_参数依据 同源解析）
+  影响: 气温影响 PWV 上限与路径辐射；±3 K → ΔT_app 与 L_path 2–5%
+[ATM-P0] 地面气压 | p0 = 1013 hPa | 软件实测/高
+  依据: 软件 AtmPressure=1013 hPa（标准大气 1013.25 hPa）。
+  来源: 软件 DefaultPlanFile.xml（SensorParam/WeatherParam 字段；前作 模型与想定参数.md 与本项目 05_参数依据 同源解析）；标准 ISO 2533:1975 Standard Atmosphere（1975-05 第1版，2024 确认现行；Add 1:1985 / Add 2:1997；https://www.iso.org/standard/7472.html）
+  影响: 气压影响谱线压力展宽：±5% → 线翼吸收 ±2–5%
+[ATM-RH] 地面相对湿度 | RH = 50 % | 软件实测/高
+  依据: 软件 WeatherParam AtmHumidity=50%；用于推导 PWV（经 H2O 标高归一），并使湿度增长效应隐含在 AOD/PWV 基准中（气溶胶吸湿增长未显式建模，见争议清单）。
+  来源: 软件 DefaultPlanFile.xml（SensorParam/WeatherParam 字段；前作 模型与想定参数.md 与本项目 05_参数依据 同源解析）；文献[6] Shettle & Fenn 1979, AFGL-TR-79-0214（LOWTRAN/MODTRAN 气溶胶模型源头）
+  影响: 经 PWV 间接影响；气溶胶吸湿未建模 → β550 可低估 10–20%
+[ATM-LAPSE] 温度直减率 | Γ = 6.5 K/km | 文献/高
+  依据: ISO 2533 标准大气 0–11 km 线性温度梯度 −6.5 K/km；接口约定同。
+  来源: 标准 ISO 2533:1975 Standard Atmosphere（1975-05 第1版，2024 确认现行；Add 1:1985 / Add 2:1997；https://www.iso.org/standard/7472.html）；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 温度廓线影响低层吸收与路径辐射：Γ±20% → τ_gas 2–5%
+[ATM-PSCALE] 气压标高 | H_p = 8.0 km | 推导/中
+  依据: 指数近似 ISO 2533：H_p≈RT/g≈8.4 km；取 8.0 km 使 0–8 km 气压最大偏差约 5%（8 km 处 372 hPa vs ISO 356 hPa）；接口约定采用 8.0 km。
+  来源: 推导；标准 ISO 2533:1975 Standard Atmosphere（1975-05 第1版，2024 确认现行；Add 1:1985 / Add 2:1997；https://www.iso.org/standard/7472.html）；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 气压廓线 ±10% → 吸收线展宽/τ_gas 2–4%
+[ATM-CO2] CO2 浓度 | x_CO2 = 420 ppm | 设定/中
+  依据: 接口设定 420 ppm（≈2022–2024 全球本底；NOAA GML Mauna Loa 2026-09 月均 426.07 ppm）。为何合理：CO2 对 LWIR 8–12 μm 窗影响弱、在 4.3 μm 有强带；±5% → 带边 τ 变化 <1%。
+  来源: 设定；外证 NOAA GML Mauna Loa CO2 月均（2026-09：426.07 ppm，https://gml.noaa.gov/ccgg/trends/）；文献[7] Gordon et al. 2022, JQSRT 277:107949, DOI:10.1016/j.jqsrt.2021.107949（HITRAN2020）
+  影响: <1%（4.3 μm 带边）
+[ATM-O3] 臭氧背景浓度 | x_O3 = 35 ppb | 设定/低
+  依据: 对流层背景 O3 约 20–50 ppb（污染区可达 80–120 ppb），取 35 ppb 为清洁—中等背景。为何合理：O3 9.6 μm 带位于 LWIR 窗区中心，1 atm 下对 8–12 μm 有 5–15% 吸收贡献，必须显式给值。影响：O3±20% → LWIR 窗 τ 变化 1–3%。可用探空/MLS O3 廓线替换。
+  来源: 设定；外证 WMO/GAW 臭氧评估 + 文献[7] Gordon et al. 2022, JQSRT 277:107949, DOI:10.1016/j.jqsrt.2021.107949（HITRAN2020）
+  影响: LWIR τ 1–3% → R50 1–3%
+[ATM-N2O] N2O 浓度 | x_N2O = 332 ppb | 设定/中
+  依据: 接口设定 332 ppb（≈2020 全球本底）；NOAA GML 2026-06 全球月均 339.86 ppb（+2.4%）。N2O 7.8/4.5 μm 带对 8–12 μm 窗影响小；+2.4% 可忽略。
+  来源: 设定；外证 NOAA GML 全球 N2O 月均（2026-06：339.86 ppb），DOI:10.15138/P8XG-AA10（https://gml.noaa.gov/ccgg/trends_n2o/）；文献[7] Gordon et al. 2022, JQSRT 277:107949, DOI:10.1016/j.jqsrt.2021.107949（HITRAN2020）
+  影响: <0.5%
+[ATM-CH4] CH4 浓度 | x_CH4 = 1930 ppb | 设定/中
+  依据: 接口设定 1930 ppb；NOAA GML 2026-06 全球月均 1934.57 ppb（+0.2%）。CH4 7.7 μm 带对 8–12 μm 影响小、3.3 μm 带在 MWIR 波段外；±0.2% 可忽略。
+  来源: 设定；外证 NOAA GML 全球 CH4 月均（2026-06：1934.57 ppb），DOI:10.15138/P8XG-AA10（https://gml.noaa.gov/ccgg/trends_ch4/）；文献[7] Gordon et al. 2022, JQSRT 277:107949, DOI:10.1016/j.jqsrt.2021.107949（HITRAN2020）
+  影响: <0.2%
+[ATM-CO] CO 浓度 | x_CO = 100 ppb | 设定/低
+  依据: 接口设定 100 ppb（全球对流层 CO 本底约 80–120 ppb，北半球略高）。为何合理：CO 4.6 μm 带落在 MWIR 波段内，须显式给值；±50% CO → 4.6 μm 边缘 τ 变化 <1%（位于波段边缘、权重低）。可用 NOAA GML/HATS CO 本底替换。
+  来源: 设定；外证 NOAA GML/HATS CO 本底量级 + 文献[7] Gordon et al. 2022, JQSRT 277:107949, DOI:10.1016/j.jqsrt.2021.107949（HITRAN2020）
+  影响: <1%
+[ATM-CONTINUUM] 水汽连续吸收（MT_CKD） | MT_CKD = 未显式建模（缺口登记） — | 设定/低
+  依据: 接口约定只做 HITRAN 逐线 Voigt 吸收，未含 MT_CKD 连续吸收。8–12 μm 窗区水汽连续吸收是窗区不透明度的主要来源之一；量级估算：PWV=1.28 cm 时 LWIR 8–12 μm 连续吸收光学厚度约 0.02–0.08（随 PWV 近线性），MWIR 4.2 μm 因远离线心、连续贡献相对更小（<0.02）。当前处理：不显式建模，作为系统偏差在不确定性清单声明（LWIR 透过率偏高 2–8%，R50 偏乐观 2–8%）。建议：接入 MT_CKD 3.2 系数或改用 LBLRTM/MODTRAN 对照。
+  来源: 设定/缺口；文献[8] Mlawer et al. 2012, Phil.Trans.R.Soc.A 370(1968):2520-2556, DOI:10.1098/rsta.2011.0295；文献[7] Gordon et al. 2022, JQSRT 277:107949, DOI:10.1016/j.jqsrt.2021.107949（HITRAN2020）；标准 ITU-R P.1817-1 (02/2012) Propagation data required for the design of terrestrial free-space optical links（https://www.itu.int/rec/R-REC-P.1817/en）（§2 亦指出分子连续吸收）
+  影响: LWIR τ 高估 2–8% → R50 乐观 2–8%；MWIR <2%
+[ATM-SPECIES] 吸收气体种类 | — = H2O / CO2 / O3 / N2O / CO / CH4 — | 文献/中
+  依据: HAPI 1.3 + HITRAN2020 逐线截面，6 种气体覆盖 MWIR/LWIR 主要吸收带；未含 O2（4.3 μm 与 1.27 μm 带，4.3 μm 与 CO2 重叠但对 4.5–4.8 窗区影响弱）。
+  来源: 文献[7] Gordon et al. 2022, JQSRT 277:107949, DOI:10.1016/j.jqsrt.2021.107949（HITRAN2020）；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: O2 缺失使 MWIR 4.2–4.4 μm 边缘 τ 偏低 <1%
+[ATM-XSECT] 截面温压网格 | σ(λ,T,p) = 250 / 280 / 300 K，1 atm — | 推导/中
+  依据: 07_光谱数据/xsect_mwir.npz 与 xsect_lwir.npz 三温度点截面，路径逐层按层温线性插值；气压只取 1 atm，而 8 km 内实际 356–1013 hPa，线翼误差 2–8%（对强吸收线）。当前处理：不做气压展宽校正，作为不确定性声明。
+  来源: 推导；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）；文献[7] Gordon et al. 2022, JQSRT 277:107949, DOI:10.1016/j.jqsrt.2021.107949（HITRAN2020）
+  影响: 气压展宽未校正 → 低层强线 τ 偏差 2–8% → ΔT_app 2–5%
+[ATM-LAYERING] 斜程分层积分 | dτ_layer = 逐层 dτ 积分（建议层厚 ≤0.5 km） — | 推导/高
+  依据: L_path=Σ B(T_layer)(1−exp(−dτ_layer))，逐层谱线计算后波段积分；接口约定 §1。层数建议：8 km 斜程约 16–32 层（层厚 ≤0.5 km）。
+  来源: 推导；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 层厚 0.5→1 km 使 τ_band 变化 <1%；层厚 >2 km 时 2–5%
+[ATM-AEROSOL-OPT] 气溶胶散射相函数/单次反照率 | g, ω = 未显式建模（缺口登记） — | 设定/低
+  依据: 接口未给气溶胶散射相函数与单次反照率，L_path 只按吸收/发射近似；对 MWIR/LWIR 白天背景辐亮度有 5–15% 影响（散射太阳光被忽略——夜间观测此项为 0）。建议：白天工况接入 OPAC 相函数或 MODTRAN 多次散射。
+  来源: 设定/缺口；文献[5] Hess et al. 1998, BAMS 79(5):831-844, DOI:10.1175/1520-0477(1998)079<0831:OPOAAC>2.0.CO;2；文献[17] Dubovik 2002
+  影响: 白天 L_path 低估 5–15%；夜间 0
+[ATM-AOD-DATA] AOD/PWV 气候统计来源 | — = MERRA-2/CERES via NASA POWER，2015–2024 逐日 — | 文献/高
+  依据: 16 站逐日 AOD550、PWV 来自 NASA POWER 的 MERRA-2/CERES 再分析；每站 3653 天；中位 AOD 0.08–0.67、PWV 0.47–4.89 cm；用于工况分类与参数范围标定（不直接作为模型输入，模型输入为标量 AOD/PWV）。
+  来源: NASA POWER MERRA-2/CERES 逐日 AOD550/PWV（2015-2024，16 站×3653 天）；前作 _power_summary.csv / 工况统计_多站汇总.csv / 典型观测区_MERRA2气候值.csv；文献[36] Hersbach et al. 2020, QJRMS 146(730):1999-2049, DOI:10.1002/qj.3803
+  影响: 用于情景选择；再分析代表性误差 AOD/PWV 10–20% → R50 3–8%
+[ATM-HITRAN-VER] HITRAN 版本与工具 | — = HITRAN2020 + HAPI 1.3.0 — | 文献/高
+  依据: 逐线 Voigt 截面，6 物种，3 温度点；HAPI 版本已冻结 1.3.0；HITRAN 谱线强度不确定度 5–10%（强线），τ 误差 2–5%。
+  来源: 文献[7] Gordon et al. 2022, JQSRT 277:107949, DOI:10.1016/j.jqsrt.2021.107949（HITRAN2020）；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 谱线数据误差 → τ 2–5% → R50 1–3%
+[DAT-Q2] Q2 大气查找表（仅交叉核对） | τ/L_path = 单点单条件（洛阳 10 ℃/50%/25 m/沙漠型） — | 软件实测/中
+  依据: Q2 表为单点单条件：洛阳、2026-04-01 10:00、10 ℃/50%/1013.25 hPa/能见度 25 m（物理异常）/沙漠型气溶胶；视点高度仅 5000 m，RT 卡片缺失无法复现。本项目不用其作主输入，只作单点交叉核对。
+  来源: 软件 Q2_M/Q2_L 查找表解析（前作 Q2解析/scenario_summary.md）
+  影响: 若误作主输入使 τ 偏差 10–50%；本项目不采用
+[TURB-CN2] 折射率结构常数（默认） | Cn² = 1e-15 m^(-2/3) | 设定/低
+  依据: 接口默认 1e-15（弱—中等湍流，夜间/近地面典型量级）；软件 AtmCn² 默认 0（不考虑湍流），本项目外部设定。为何合理：白天强湍流 1e-13–1e-12、夜间/弱 1e-17–1e-15，中纬度低空平均约 1e-15–1e-14。影响：r0∝(Cn²)^(−3/5)，Cn²±20% → r0∓11.7% → 湍流 MTF 变化 → MRTD 受限区 R50 ∓2–6%，强湍流时更大。可被实测替换（闪烁仪/温度脉动仪/探空）。
+  来源: 设定；文献[9] Fried 1966, JOSA 56(10):1372-1379, DOI:10.1364/JOSA.56.001372；文献[26] Andrews & Phillips 2005, Laser Beam Propagation Through Random Media, 2nd ed., SPIE Press；文献[25] Kopeika 1998, A System Engineering Approach to Imaging, SPIE Press（经典教材）；标准 ITU-R P.1817-1 (02/2012) Propagation data required for the design of terrestrial free-space optical links（https://www.itu.int/rec/R-REC-P.1817/en）
+  影响: Cn²±20% → R50 ∓2–6%（弱湍流）；强湍流时 ∓10–30%
+[TURB-CN2-CLASS] Cn² 分级 | Cn² = 1e-17 … 1e-12 m^(-2/3) | 文献/中
+  依据: 工程分级：极弱/夜间 1e-17–1e-16；弱 1e-16–1e-15；中等 1e-15–1e-14；强 1e-14–1e-13；极强/白天强对流 1e-13–1e-12。本项目默认 1e-15 属弱—中等。软件字段 AtmCn² 支持 1e-20–1e-8 全范围扫描（本项目 OFAT 用 1e-17…1e-12）。分级为文献/工程约定，ITU-R P.1817-1 只给湍流定性描述未给数值表。
+  来源: 文献/工程约定；文献[26] Andrews & Phillips 2005, Laser Beam Propagation Through Random Media, 2nd ed., SPIE Press；文献[25] Kopeika 1998, A System Engineering Approach to Imaging, SPIE Press（经典教材）；标准 ITU-R P.1817-1 (02/2012) Propagation data required for the design of terrestrial free-space optical links（https://www.itu.int/rec/R-REC-P.1817/en）；软件 AtmCn² 范围 1e-20~1e-8
+  影响: 全范围扫描（1e-17→1e-12）时 r0 变化约 30 倍 → R50 可变化 2–4 倍
+[TURB-R0] Fried 相干直径 | r0 = (0.423 k² Cn² L)^(−3/5) m | 文献/高
+  依据: Fried 1966 定义（长曝光、Kolmogorov 谱）。λ=4.2 μm、Cn²=1e-15、L=8 km 时 r0≈0.30 m（>口径 0.15 m → 湍流对分辨率影响中等）；LWIR λ=10 μm 时 r0≈0.84 m（r0∝λ^(6/5)）。
+  来源: 文献[9] Fried 1966, JOSA 56(10):1372-1379, DOI:10.1364/JOSA.56.001372；标准 ITU-R P.1817-1 (02/2012) Propagation data required for the design of terrestrial free-space optical links（https://www.itu.int/rec/R-REC-P.1817/en）；文献[26] Andrews & Phillips 2005, Laser Beam Propagation Through Random Media, 2nd ed., SPIE Press
+  影响: 公式本身无争议；r0 由 Cn²/λ/L 决定
+[TURB-MTF] 湍流 MTF | MTF_turb = exp[−3.44(λf/r0)^(5/3)] — | 文献/高
+  依据: 长曝光近场（Kolmogorov）湍流 MTF；f 用角频率（rad⁻¹）计算；本模型取长曝光（保守）。
+  来源: 文献[9] Fried 1966, JOSA 56(10):1372-1379, DOI:10.1364/JOSA.56.001372；标准 ITU-R P.1817-1 (02/2012) Propagation data required for the design of terrestrial free-space optical links（https://www.itu.int/rec/R-REC-P.1817/en）；文献[25] Kopeika 1998, A System Engineering Approach to Imaging, SPIE Press（经典教材）
+  影响: 长/短曝光 MTF 差 1.5–2 倍；取长曝光使 R50 偏保守 5–15%
+[TURB-L0] 湍流外尺度 | L0 = 未建模（Kolmogorov 无限外尺度） m | 设定/低
+  依据: 模型用 Kolmogorov 无限外尺度近似；实际 L0≈10–100 m，外尺度减小大尺度倾斜/低频 MTF 影响；当前处理：忽略并声明。
+  来源: 设定；文献[26] Andrews & Phillips 2005, Laser Beam Propagation Through Random Media, 2nd ed., SPIE Press
+  影响: 对 f>5 cyc/mrad 的 MTF 影响 <3%
+[GEOM-SLANT] 斜距几何 | r_slant = sqrt((r_ground·1000)²+(z_s−z_t)²) m | 推导/高
+  依据: 接口约定 §1；传感器 8000 m、目标地面附近（模型高程 30 m），斜距与地面水平距离差 <0.1%（近天底）。
+  来源: 本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 几何定义误差 <0.5%（地心曲率/折射忽略：8 km 高度、<50 km 地面距离时曲率修正 <2%）
+[GEOM-UNIT] 单位换算 | — = m/km ≡ mrad — | 推导/高
+  依据: N=f_max[cyc/mrad]·D[m]/r[km] 中 m/km 与 mrad 等价。
+  来源: 推导；本项目 00_构建脚本/接口约定.md（冻结版 v3.0） §5
+  影响: 无
+[GEOM-CURV] 地球曲率/折射 | — = 未建模 — | 设定/中
+  依据: 模型用平面平行大气，未建地心曲率与大气折射；8 km 高度下视至 50 km 地面距离时几何路径误差约 1–2%，天底附近 <0.2%。
+  来源: 设定；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 低仰角斜程 R50 偏差 <2%
+[PROB-THR] 临界状态定义 | R50/R90 = P_rec=P_th 的根 — | 推导/高
+  依据: 临界距离/温差/气溶胶/湍流按等性能（isoperformance）切片求解（文献[50] de Weck 2006 方法论）。
+  来源: 推导；文献[50] de Weck & Jones 2006, DOI:10.1002/sys.20043；本项目 00_构建脚本/接口约定.md（冻结版 v3.0）
+  影响: 定义无误差；结果取决于输入参数不确定性

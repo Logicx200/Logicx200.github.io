@@ -1,0 +1,30 @@
+{
+  "name": "dsh-live-console-ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Client half for dsh-live-console: a conversation-header button that opens the external console page through the authenticated host URL endpoint.",
+  "type": "module",
+  "main": "host.mjs",
+  "exports": {
+    ".": "./host.mjs",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "host.mjs",
+    "lib",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "license": "MIT"
+}

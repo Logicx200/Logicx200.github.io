@@ -1,0 +1,3 @@
+- insert:
+    - id: dsh-mood-usage
+      name: '@local/dsh-mood-usage'

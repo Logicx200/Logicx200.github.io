@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+    <SubSimMode remark="仿真模式" type="unsigned char" value="0">
+        <ModeID remark="模式ID" type="unsigned char" value="0" />
+        <Title remark="仿真模式标题" type="char[32]" value="单机推演仿真" />
+        <Sync remark="同步方式" type="unsigned char" value="1">
+            <tips>0：本机时钟 1：串口中断 2：反射中断 3：网口中断 4：通信中断</tips>
+        </Sync>
+        <Device remark="驱动方式" type="unsigned char" value="1">
+            <tips>1：本机驱动 2：反射驱动 3：网口驱动 4：串口驱动 5：序列图驱动</tips>
+        </Device>
+        <FrameAngle remark="框架角数据源" type="unsigned char" value="1">
+            <tips>1：不参与 2：人工输入 3：串口驱动</tips>
+        </FrameAngle>
+        <Method remark="仿真方式" type="unsigned char" value="3">
+            <tips>1：注入式 2：辐射式 3：单机推演</tips>
+        </Method>
+        <SendImg remark="发图方式" type="unsigned char" visible="0" value="1">
+            <tips>0：显卡输出 1：图像注入卡 2：DMD发送卡 3：电阻阵发送卡</tips>
+        </SendImg>
+    </SubSimMode>
+    <SubSimMode remark="仿真模式" type="unsigned char" value="1">
+        <ModeID remark="模式ID" type="unsigned char" value="1" />
+        <Title remark="仿真模式标题" type="char[32]" value="注入式仿真" />
+        <Sync remark="同步方式" type="unsigned char" value="1">
+            <tips>0：本机时钟 1：串口中断 2：反射中断 3：网口中断 4：通信中断</tips>
+        </Sync>
+        <Device remark="驱动方式" type="unsigned char" value="1">
+            <tips>1：本机驱动 2：反射驱动 3：网口驱动 4：串口驱动 5：序列图驱动</tips>
+        </Device>
+        <FrameAngle remark="框架角数据源" type="unsigned char" value="1">
+            <tips>1：不参与 2：人工输入 3：串口驱动</tips>
+        </FrameAngle>
+        <Method remark="仿真方式" type="unsigned char" value="1">
+            <tips>1：注入式 2：辐射式 3：单机推演</tips>
+        </Method>
+        <SendImg remark="发图方式" type="unsigned char" visible="0" value="0">
+            <tips>0：显卡输出 1：图像注入卡 2：DMD发送卡 3：电阻阵发送卡</tips>
+        </SendImg>
+    </SubSimMode>
+    <SubSimMode remark="仿真模式" type="unsigned char" value="2">
+        <ModeID remark="模式ID" type="unsigned char" value="2" />
+        <Title remark="仿真模式" type="char[32]" value="辐射式仿真" />
+        <Sync remark="同步方式" type="unsigned char" value="1">
+            <tips>0：本机时钟 1：串口中断 2：反射中断 3：网口中断 4：通信中断</tips>
+        </Sync>
+        <Device remark="驱动方式" type="unsigned char" value="1">
+            <tips>1：本机驱动 2：反射驱动 3：网口驱动 4：串口驱动 5：序列图驱动</tips>
+        </Device>
+        <FrameAngle remark="框架角数据源" type="unsigned char" value="1">
+            <tips>1：不参与 2：人工输入 3：串口驱动</tips>
+        </FrameAngle>
+        <Method remark="仿真方式" type="unsigned char" value="2">
+            <tips>1：注入式 2：辐射式 3：单机推演</tips>
+        </Method>
+        <SendImg remark="发图方式" type="unsigned char" visible="0" value="0">
+            <tips>0：显卡输出 1：图像注入卡 2：DMD发送卡 3：电阻阵发送卡</tips>
+        </SendImg>
+    </SubSimMode>
+    <SubSimMode remark="仿真模式" type="unsigned char" value="3">
+        <ModeID remark="模式ID" type="unsigned char" value="3" />
+        <Title remark="仿真模式" type="char[32]" value="序列图回放" />
+        <Sync remark="同步方式" type="unsigned char" value="1">
+            <tips>0：本机时钟 1：串口中断 2：反射中断 3：网口中断 4：通信中断</tips>
+        </Sync>
+        <Device remark="驱动方式" type="unsigned char" value="5">
+            <tips>1：本机驱动 2：反射驱动 3：网口驱动 4：串口驱动 5：序列图驱动</tips>
+        </Device>
+        <FrameAngle remark="框架角数据源" type="unsigned char" value="1">
+            <tips>1：不参与 2：人工输入 3：串口驱动</tips>
+        </FrameAngle>
+        <Method remark="仿真方式" type="unsigned char" value="1">
+            <tips>1：注入式 2：辐射式 3：单机推演</tips>
+        </Method>
+        <SendImg remark="发图方式" type="unsigned char" visible="0" value="0">
+            <tips>0：显卡输出 1：图像注入卡 2：DMD发送卡 3：电阻阵发送卡</tips>
+        </SendImg>
+    </SubSimMode>
+</root>

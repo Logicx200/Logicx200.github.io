@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 系统配置文件，需要拷贝到可执行程序同一目录下使用 -->
+<cossim_system>
+	<!-- 系统data文件夹路径，相对的路径是相对于当前运行程序路径 -->
+	<data_path>../Data</data_path>
+	<plugin>
+		<!-- 系统插件文件夹路径，相对的路径是相对于当前运行程序路径 -->
+		<path>./plugins</path>
+		<!-- 系统插件配置文件路径，相对的路径是相对于当前运行程序路径 -->
+		<config_path>../Data/config/pluginMgr/config.xml</config_path>
+	</plugin>
+	<!-- 系统assets文件夹路径，相对的路径是相对于当前运行程序路径 -->
+	<assets_path>../Data/Assets</assets_path>
+	<!-- Executable文件夹路径，相对的路径是相对于当前运行程序路径 -->
+	<executable_path>./Executable</executable_path>	
+	<!-- 模型材质的数据模式，false为两个温度(高度+低温)的纹理，true为一个温度映射可见光趋势的纹理 -->
+    	<texture_mode>true</texture_mode>
+</cossim_system>

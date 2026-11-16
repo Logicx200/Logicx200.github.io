@@ -1,0 +1,19 @@
+﻿[2026-09-29 23:19:01] shell-patch: begin  session=1  delay=0s
+[2026-09-29 23:19:01] restart: stopping 5 process(es)
+[2026-09-29 23:19:02] restart: starting D:\DeepSeek Harness\DeepSeek Harness.exe
+[2026-09-29 23:19:06] restart: GUI listening on 19387
+[2026-09-29 23:19:21] 
+[2026-09-29 23:19:21] --- before ---
+[2026-09-29 23:19:21] title  : 
+[2026-09-29 23:19:21] diagnostic armed: False
+[2026-09-29 23:19:21] main region distinct colours: 209
+[2026-09-29 23:19:21] 
+[2026-09-29 23:19:21] clicking the new-session button at (140,111)
+[2026-09-29 23:19:32] 
+[2026-09-29 23:19:32] --- after ---
+[2026-09-29 23:19:39] title  : DIAG console.error: slot entry crashed in 'rightbar': Error: cannot get property "off" without inject ¶ at dsh-app://app/plugins/??@deepseek-ai/dsh-exp
+[2026-09-29 23:19:39] main region distinct colours: 37
+[2026-09-29 23:19:39] 
+[2026-09-29 23:19:39] VERDICT: FIXED - creating a new session left the main region rendered.
+[2026-09-29 23:19:39] shell-patch: done
+[2026-09-29 23:19:40] removed the one-shot task DshShellPatchVerify

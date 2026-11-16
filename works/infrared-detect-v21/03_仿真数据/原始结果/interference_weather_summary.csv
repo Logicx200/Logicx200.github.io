@@ -1,0 +1,4 @@
+﻿天气,实际参数,筛选指数,10km识别概率均值
+雨,RainConcentration=10；RainHeight=1000 m；生成方式=0（无）,0.3,0.5901
+雪,SnowConcentration=0；生成方式=0（无）,0.0,0.7806
+雾,FogIntensity=0.5；FogDistance=5000 m；FogEndHeight=500 m,0.3,0.5901

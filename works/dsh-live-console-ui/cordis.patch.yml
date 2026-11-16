@@ -1,0 +1,6 @@
+# Client-half-only bundle: importing the package is what publishes its
+# `dsh.client` declaration to the client module table. The dummy host row keeps
+# the loader importing the package without adding any host behavior.
+- insert:
+    - id: live-console-ui
+      name: dsh-live-console-ui

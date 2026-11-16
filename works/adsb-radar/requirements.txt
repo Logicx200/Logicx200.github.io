@@ -1,0 +1,10 @@
+numpy>=1.24
+
+# 可选：直接用 pyrtlsdr 解调（--source rtlsdr）。
+# pyrtlsdrlib 提供 Windows/macOS 上编译好的 librtlsdr DLL。
+pyrtlsdr>=0.5.0
+pyrtlsdrlib>=0.0.6
+
+# 可选：凌日/月预测（太阳/月亮方位仰角）。
+# 未安装时雷达仍正常运行，只是没有凌日/月功能。
+astral>=3.2

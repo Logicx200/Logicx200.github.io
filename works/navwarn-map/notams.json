@@ -1,0 +1,239 @@
+{
+ "generated": "2026-11-12T13:24:45.019350+08:00",
+ "source": "CAAC AIS eAIP China · NOTAM Summary In Nov.2026（2026-11-02 00:06 UTC 快照）",
+ "source_url": "https://www.eaipchina.cn/",
+ "count": 8,
+ "notams": [
+  {
+   "id": "A 4484/26",
+   "fir": "ZBPE ZYSH ZSHA",
+   "kind": "禁飞区",
+   "status": "active",
+   "begin_utc": "2026-09-19T16:00:00+00:00",
+   "end_utc": "PERM",
+   "geom": {
+    "kind": "circle",
+    "center": [
+     39.902778,
+     116.383889
+    ],
+    "radius_m": 300000
+   },
+   "e": "SPECIAL RESTRICTED AREA ESTABLISHED, THE RELEVANT REQUIREMENTS AS FOLLOWS: 1. NAME AND IDENTIFICATION SPECIAL RESTRICTED AREA (ZB(SR)801) 2. LATERAL LIMITS: A CIRCLE WITH A RADIUS OF 300KM CENTERED AT N395410E1162327, BEIJING PROHIBITED AREA (ZB(P)801) NOT INCLUDED. VERTICAL LIMITS: SFC-UNL EFFECTIVE TIME: H24 3. SPECIAL RESTRICTIONS NO FLIGHT OPERATIONS SHALL BE PERMITTED EXCEPT COMMERCIAL FLIGHTS (NOTE 1), BUSINESS FLIGHTS (NOTE 2), AND FLIGHTS FOR MILITARY, CUSTOMS, POLICE SERVICES, AND FIRE-FIGHTING RESCUE PURPOSES. 4. OPERATIONAL REQUIREMENTS 4.1 MANNED AIRCRAFT SHALL BE EQUIPPED WITH A SECONDARY SURVEILLANCE RADAR (SSR) TRANSPONDER OR OTHER SURVEILLANCE EQUIPMENT OF EQUIVALENT PERFORMANCE, WHICH SHALL REMAIN ACTIVATED THROUGHOUT THE FLIGHT. UNMANNED AIRCRAFT SHALL HAVE RELIABLE SURVEILLANCE CAPABILITY, FITTED WITH AN AIRBORNE OPERATIONAL IDENTIFICATION TRANSMITTING MODULE, AN SSR T"
+  },
+  {
+   "id": "A 5897/26",
+   "fir": "ZLHW ZHWH",
+   "kind": "临时危险区",
+   "begin_utc": "2026-11-18T22:43:00+00:00",
+   "end_utc": "2026-11-18T23:05:00+00:00",
+   "geom": {
+    "kind": "polygon",
+    "coords": [
+     [
+      33.566667,
+      110.516667
+     ],
+     [
+      33.533333,
+      110.733333
+     ],
+     [
+      33.166667,
+      110.683333
+     ],
+     [
+      33.183333,
+      110.45
+     ]
+    ]
+   },
+   "qline": "ZXXX/QRDCA/IV/BO/W/000/999/3322N11036E013",
+   "e": "A TEMPORARY DANGER AREA ESTABLISHED BOUNDED BY: N333400E1103100-N333200E1104400-N331000E1104100-N331100E1102700, BACK TO START. VERTICAL LIMITS:SFC-UNL. AIRCRAFT ARE FORBIDDEN TO FLY INTO THE AREA.",
+   "source": "用户提供的原始 NOTAM 文本（CREATED: 11 NOV 2026 03:08 / SOURCE: ZBBBYNYX）",
+   "status": "upcoming"
+  },
+  {
+   "id": "A 5898/26",
+   "fir": "ZHWH",
+   "kind": "临时危险区",
+   "begin_utc": "2026-11-18T22:44:00+00:00",
+   "end_utc": "2026-11-18T23:10:00+00:00",
+   "geom": {
+    "kind": "polygon",
+    "coords": [
+     [
+      30.583333,
+      109.95
+     ],
+     [
+      30.55,
+      110.316667
+     ],
+     [
+      29.9,
+      110.216667
+     ],
+     [
+      29.95,
+      109.833333
+     ]
+    ]
+   },
+   "qline": "ZHWH/QRDCA/IV/BO/W/000/999/3015N11004E022",
+   "e": "A TEMPORARY DANGER AREA ESTABLISHED BOUNDED BY: N303500E1095700-N303300E1101900-N295400E1101300-N295700E1095000, BACK TO START. VERTICAL LIMITS:SFC-UNL. AIRCRAFT ARE FORBIDDEN TO FLY INTO THE AREA. F)SFC G)UNL",
+   "source": "用户提供的原始 NOTAM 文本（CREATED: 11 NOV 2026 03:08 / SOURCE: ZBBBYNYX）",
+   "status": "upcoming"
+  },
+  {
+   "id": "A 3167/26",
+   "fir": "ZLHW",
+   "kind": "临时危险区",
+   "status": "ended",
+   "begin_utc": "2026-11-03T00:05:00+00:00",
+   "end_utc": "2026-11-03T00:33:00+00:00",
+   "geom": {
+    "kind": "polygon",
+    "coords": [
+     [
+      33.066667,
+      98.816667
+     ],
+     [
+      33.016667,
+      99.366667
+     ],
+     [
+      32.183333,
+      99.266667
+     ],
+     [
+      32.233333,
+      98.716667
+     ]
+    ]
+   },
+   "e": "A TEMPORARY DANGER AREA ESTABLISHED BOUNDED BY: N330400E0984900-N330100E0992200-N321100E0991600-N321400E0984300 BACK TO START.VERTICAL LIMITS:SFC-UNL. AIRCRAFT ARE FORBIDDEN TO FLY INTO THE AREA."
+  },
+  {
+   "id": "A 5562/26",
+   "fir": "ZPKM",
+   "kind": "临时危险区",
+   "status": "ended",
+   "begin_utc": "2026-11-03T00:06:00+00:00",
+   "end_utc": "2026-11-03T00:46:00+00:00",
+   "geom": {
+    "kind": "polygon",
+    "coords": [
+     [
+      30.65,
+      98.633333
+     ],
+     [
+      30.6,
+      99.283333
+     ],
+     [
+      30.083333,
+      99.116667
+     ],
+     [
+      30.133333,
+      98.583333
+     ]
+    ]
+   },
+   "e": "A TEMPORARY DANGER AREA ESTABLISHED BOUNDED BY: N303900E0983800-N303600E0991700-N300500E0990700-N300800E0983500, BACK TO START.VERTICAL LIMITS:SFC-UNL. AIRCRAFT ARE FORBIDDEN TO FLY INTO THE AREA."
+  },
+  {
+   "id": "A 5624/26",
+   "fir": "ZJSA",
+   "kind": "临时危险区",
+   "status": "ended",
+   "begin_utc": "2026-11-05T15:52:00+00:00",
+   "end_utc": "2026-11-05T16:16:00+00:00",
+   "geom": {
+    "kind": "polygon",
+    "coords": [
+     [
+      18.45,
+      111.033333
+     ],
+     [
+      18.883333,
+      111.65
+     ],
+     [
+      18.316667,
+      112.133333
+     ],
+     [
+      17.866667,
+      111.483333
+     ]
+    ]
+   },
+   "e": "A TEMPORARY DANGER AREA ESTABLISHED BOUNDED BY:N182700E1110200-N185300E1113900-N181900E1120800-N175200E1112900, BACK TO START.VERTICAL LIMITS:SFC-UNL. AIRCRAFT ARE FORBIDDEN TO FLY INTO THE AREA."
+  },
+  {
+   "id": "A 5672/26",
+   "fir": "ZLHW",
+   "kind": "临时危险区",
+   "status": "ended",
+   "begin_utc": "2026-11-06T23:28:00+00:00",
+   "end_utc": "2026-11-06T23:50:00+00:00",
+   "geom": {
+    "kind": "polygon",
+    "coords": [
+     [
+      40.25,
+      100.0
+     ],
+     [
+      40.216667,
+      100.366667
+     ],
+     [
+      39.616667,
+      100.233333
+     ],
+     [
+      39.666667,
+      99.883333
+     ]
+    ]
+   },
+   "e": "A TEMPORARY DANGER AREA ESTABLISHED BOUNDED BY:N401500E1000000-N401300E1002200-N393700E1001400-N394000E0995300,VERTICAL LIMITS:SFC-UNL.CIVIL ACFT ARE FORBIDDEN TO FLY INTO THE AREA."
+  },
+  {
+   "id": "A 5673/26",
+   "fir": "ZLHW ZPKM",
+   "kind": "临时危险区",
+   "status": "ended",
+   "begin_utc": "2026-11-06T23:29:00+00:00",
+   "end_utc": "2026-11-06T23:57:00+00:00",
+   "geom": {
+    "kind": "polygon",
+    "coords": [
+     [
+      30.766667,
+      97.65
+     ],
+     [
+      30.833333,
+      97.3
+     ],
+     [
+      32.05,
+      97.6
+     ],
+     [
+      31.983333,
+      97.95
+     ]
+    ]
+   },
+   "e": "A TEMPORARY DANGER AREA ESTABLISHED BOUNDED BY:N304600E0973900-N305000E0971800-N320300E0973600-N315900E0975700,VERTICAL LIMITS:SFC-UNL.CIVIL ACFT ARE FORBIDDEN TO FLY INTO THE AREA."
+  }
+ ]
+}

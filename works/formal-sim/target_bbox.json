@@ -1,0 +1,122 @@
+{
+ "F16": {
+  "file": "D:\\XGGDCOSSim2\\Data\\ModelData\\Target\\F16\\F16_vis.osg",
+  "n_vertices": 3313,
+  "min": [
+   -4.83,
+   -10.517,
+   -1.151
+  ],
+  "max": [
+   4.83,
+   4.331,
+   3.423
+  ],
+  "dim_m": [
+   9.66,
+   14.848,
+   4.574
+  ],
+  "max_dim_m": 14.848
+ },
+ "f22": {
+  "file": "D:\\XGGDCOSSim2\\Data\\ModelData\\Target\\f22\\f22_vis.osg",
+  "n_vertices": 5389,
+  "min": [
+   -6.749,
+   -7.233,
+   -1.045
+  ],
+  "max": [
+   6.749,
+   11.368,
+   2.951
+  ],
+  "dim_m": [
+   13.498,
+   18.601,
+   3.996
+  ],
+  "max_dim_m": 18.601
+ },
+ "nimitz": {
+  "file": "D:\\XGGDCOSSim2\\Data\\ModelData\\Target\\nimitz\\nimitz_vis.osg",
+  "n_vertices": 6744,
+  "min": [
+   -42.865,
+   -170.328,
+   -9.481
+  ],
+  "max": [
+   42.865,
+   170.328,
+   65.743
+  ],
+  "dim_m": [
+   85.73,
+   340.656,
+   75.223
+  ],
+  "max_dim_m": 340.656
+ },
+ "hm": {
+  "file": "D:\\XGGDCOSSim2\\Data\\ModelData\\Target\\hm\\hm_vis.osg",
+  "n_vertices": 12889,
+  "min": [
+   -1.406,
+   -2.462,
+   -0.006
+  ],
+  "max": [
+   1.407,
+   2.629,
+   3.197
+  ],
+  "dim_m": [
+   2.814,
+   5.091,
+   3.203
+  ],
+  "max_dim_m": 5.091
+ },
+ "agzfsc": {
+  "file": "D:\\XGGDCOSSim2\\Data\\ModelData\\Target\\agzfsc\\agzfsc_vis.osg",
+  "n_vertices": 36339,
+  "min": [
+   -5.118,
+   -11.284,
+   -0.095
+  ],
+  "max": [
+   5.118,
+   11.284,
+   10.976
+  ],
+  "dim_m": [
+   10.237,
+   22.567,
+   11.072
+  ],
+  "max_dim_m": 22.567
+ },
+ "albk": {
+  "file": "D:\\XGGDCOSSim2\\Data\\ModelData\\Target\\albk\\albk_vis.osg",
+  "n_vertices": 6079,
+  "min": [
+   -10.136,
+   -76.754,
+   -6.61
+  ],
+  "max": [
+   10.136,
+   74.571,
+   41.133
+  ],
+  "dim_m": [
+   20.273,
+   151.324,
+   47.744
+  ],
+  "max_dim_m": 151.324
+ }
+}

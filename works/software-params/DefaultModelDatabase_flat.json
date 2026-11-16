@@ -1,0 +1,889 @@
+[
+ {
+  "path": "/root/BGModel",
+  "value": "",
+  "attrs": {
+   "remark": "背景信息"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo",
+  "value": "",
+  "attrs": {
+   "remark": "背景ID",
+   "Id": "0"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/Type",
+  "value": "",
+  "attrs": {
+   "remark": "背景类型",
+   "tips": "1:沙漠 2:戈壁 3:荒漠 4:城市 5:乡村 6:森林 7:丘陵 8:山区 9:海岛 10:海港",
+   "value": "9"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/Class",
+  "value": "",
+  "attrs": {
+   "remark": "背景类别",
+   "tips": "1:地面背景 2:海面背景 3:天空背景",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/BackgroundName",
+  "value": "",
+  "attrs": {
+   "remark": "背景名称",
+   "value": "台湾岛"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/KeyAreaLength",
+  "value": "",
+  "attrs": {
+   "remark": "重点区域尺寸长",
+   "type": "double",
+   "min": "0",
+   "max": "1000000",
+   "value": "20000"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/KeyAreaWidth",
+  "value": "",
+  "attrs": {
+   "remark": "重点区域尺寸宽",
+   "type": "double",
+   "min": "0",
+   "max": "1000000",
+   "value": "20000"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/KeyAreaResolution",
+  "value": "",
+  "attrs": {
+   "remark": "重点区域分辨率",
+   "type": "double",
+   "decimals": "1",
+   "min": "0",
+   "max": "1000000",
+   "value": "0.5"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/BgLength",
+  "value": "",
+  "attrs": {
+   "remark": "背景区域尺寸长",
+   "type": "double",
+   "min": "0",
+   "max": "1000000",
+   "value": "100000"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/BgWidth",
+  "value": "",
+  "attrs": {
+   "remark": "背景区域尺寸宽",
+   "type": "double",
+   "min": "0",
+   "max": "1000000",
+   "value": "100000"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/BgResolution",
+  "value": "",
+  "attrs": {
+   "remark": "背景区域分辨率",
+   "type": "double",
+   "min": "0",
+   "max": "1000000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/KeyAreaLon",
+  "value": "",
+  "attrs": {
+   "remark": "重点区域中心点经度",
+   "type": "double",
+   "decimals": "7",
+   "min": "0",
+   "max": "1000000",
+   "value": "126.697"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/KeyAreaLat",
+  "value": "",
+  "attrs": {
+   "remark": "重点区域中心纬度",
+   "type": "double",
+   "decimals": "7",
+   "min": "0",
+   "max": "1000000",
+   "value": "45.6644"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/KeyAreaHig",
+  "value": "",
+  "attrs": {
+   "remark": "重点区域中心高度",
+   "type": "double",
+   "decimals": "2",
+   "min": "0",
+   "max": "1000000",
+   "value": "181"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/SrtName",
+  "value": "",
+  "attrs": {
+   "remark": "显示名称",
+   "value": "台湾"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/BackgroundDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "背景描述信息",
+   "value": "台湾岛XXXXXX"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/ModelName",
+  "value": "",
+  "attrs": {
+   "remark": "模型名称",
+   "value": "基隆岛"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/ModelPath",
+  "value": "",
+  "attrs": {
+   "remark": "模型路径",
+   "value": "/background/city/FLT"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/BackgroundModelingPath",
+  "value": "",
+  "attrs": {
+   "remark": "地面背景建模结果文件路径",
+   "value": "/background/city/FLT"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/MaterialPath",
+  "value": "",
+  "attrs": {
+   "remark": "地面背景材质温度数据文件路径",
+   "value": "/background/city/FLT/texture"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/VersionInfo",
+  "value": "",
+  "attrs": {
+   "remark": "版本信息",
+   "value": "Version1.0"
+  }
+ },
+ {
+  "path": "/root/BGModel/SubBGInfo/ModelDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "模型描述信息",
+   "value": "基隆港XXXXXXX"
+  }
+ },
+ {
+  "path": "/root/TargetModel",
+  "value": "",
+  "attrs": {
+   "remark": "目标信息"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo",
+  "value": "",
+  "attrs": {
+   "remark": "目标ID",
+   "Id": "0"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/EntityClass",
+  "value": "",
+  "attrs": {
+   "remark": "实体类别",
+   "tips": "1:目标(含假目标) 2:干扰发射平台",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/TargetType",
+  "value": "",
+  "attrs": {
+   "remark": "类型",
+   "tips": "1:地面静止目标/平台 2:地面运动目标/平台 3:海上静止目标/平台 4:海上运动目标/平台 5:空中飞机目标/平台 7:海港停泊目标/平台",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/ProductName",
+  "value": "",
+  "attrs": {
+   "remark": "型号名称",
+   "value": "悍马车"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/DisplaytName",
+  "value": "",
+  "attrs": {
+   "remark": "显示名称",
+   "value": "加力状态悍马车"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/TargetDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "型号描述信息",
+   "value": "型号车XXX"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/DLLName",
+  "value": "",
+  "attrs": {
+   "remark": "动态链接库名称",
+   "value": "target.dll"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/SportDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "运动状态描述信息",
+   "value": "运动模型"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/TargetName",
+  "value": "",
+  "attrs": {
+   "remark": "模型名称",
+   "value": "hm"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/TargetPath",
+  "value": "",
+  "attrs": {
+   "remark": "模型路径",
+   "value": "/target/hm"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/TargetModelingPath",
+  "value": "",
+  "attrs": {
+   "remark": "实体建模结果文件路径",
+   "value": "/target/city/FLT"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/MaterialPath",
+  "value": "",
+  "attrs": {
+   "remark": "实体材质温度数据文件路径",
+   "value": "/target/city/FLT/texture"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/VersionInfo",
+  "value": "",
+  "attrs": {
+   "remark": "版本信息",
+   "value": "Version1.0"
+  }
+ },
+ {
+  "path": "/root/TargetModel/SubTargetInfo/ModelDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "模型描述信息",
+   "value": "模型尺寸xx"
+  }
+ },
+ {
+  "path": "/root/JamModel",
+  "value": "",
+  "attrs": {
+   "remark": "干扰信息"
+  }
+ },
+ {
+  "path": "/root/JamModel/SubJamInfo",
+  "value": "",
+  "attrs": {
+   "remark": "干扰ID",
+   "Id": "0"
+  }
+ },
+ {
+  "path": "/root/JamModel/SubJamInfo/JamType",
+  "value": "",
+  "attrs": {
+   "remark": "干扰类型",
+   "tips": "1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamModel/SubJamInfo/ProductName",
+  "value": "",
+  "attrs": {
+   "remark": "型号名称",
+   "value": "直射阳光"
+  }
+ },
+ {
+  "path": "/root/JamModel/SubJamInfo/DisplaytName",
+  "value": "",
+  "attrs": {
+   "remark": "显示名称",
+   "value": "直射阳光"
+  }
+ },
+ {
+  "path": "/root/JamModel/SubJamInfo/JamDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "干扰描述信息",
+   "value": "XXXX"
+  }
+ },
+ {
+  "path": "/root/JamModel/SubJamInfo/ImplType",
+  "value": "",
+  "attrs": {
+   "remark": "实现方式",
+   "tips": "1:贴图 2:粒子 3:UE模型 4:入瞳贴图",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamModel/SubJamInfo/JamTitle",
+  "value": "",
+  "attrs": {
+   "remark": "模型名称",
+   "value": "粒子阳光"
+  }
+ },
+ {
+  "path": "/root/JamModel/SubJamInfo/JamPath",
+  "value": "",
+  "attrs": {
+   "remark": "模型路径",
+   "value": "/jam/zhishe/"
+  }
+ },
+ {
+  "path": "/root/JamModel/SubJamInfo/VersionInfo",
+  "value": "",
+  "attrs": {
+   "remark": "版本信息",
+   "value": "Version1.0"
+  }
+ },
+ {
+  "path": "/root/JamModel/SubJamInfo/ModelDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "模型描述信息",
+   "value": "xx"
+  }
+ },
+ {
+  "path": "/root/SensorModel",
+  "value": "",
+  "attrs": {
+   "remark": "传感器信息"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo",
+  "value": "",
+  "attrs": {
+   "remark": "传感器ID",
+   "Id": "0"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/SensorType",
+  "value": "",
+  "attrs": {
+   "remark": "传感器类型",
+   "tips": "4:可见光",
+   "value": "4"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/ProductName",
+  "value": "",
+  "attrs": {
+   "remark": "型号名称",
+   "value": "可见光传感器"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/DisplaytName",
+  "value": "",
+  "attrs": {
+   "remark": "显示名称",
+   "value": "可见光传感器"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/SensorDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "传感器描述信息",
+   "value": "XXXX"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/BandMin",
+  "value": "",
+  "attrs": {
+   "remark": "波段上限",
+   "type": "double",
+   "decimals": "1",
+   "min": "0",
+   "max": "999",
+   "value": "0.4"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/BandMax",
+  "value": "",
+  "attrs": {
+   "remark": "波段下限",
+   "type": "double",
+   "decimals": "1",
+   "min": "0",
+   "max": "999",
+   "value": "0.8"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/FPS",
+  "value": "",
+  "attrs": {
+   "remark": "帧率",
+   "value": "50"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/Colourful",
+  "value": "",
+  "attrs": {
+   "remark": "是否彩色",
+   "tips": "1:彩色 2:灰度 3:全波段",
+   "value": "2"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/FovH",
+  "value": "",
+  "attrs": {
+   "remark": "水平视场角",
+   "type": "double",
+   "decimals": "2",
+   "min": "0",
+   "max": "180",
+   "value": "40"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/FovV",
+  "value": "",
+  "attrs": {
+   "remark": "垂直视场角",
+   "type": "double",
+   "decimals": "2",
+   "min": "0",
+   "max": "180",
+   "value": "30"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/DpiH",
+  "value": "",
+  "attrs": {
+   "remark": "水平分辨率",
+   "type": "int",
+   "min": "1",
+   "max": "9999",
+   "value": "1024"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/DpiV",
+  "value": "",
+  "attrs": {
+   "remark": "垂直分辨率",
+   "type": "int",
+   "min": "1",
+   "max": "9999",
+   "value": "768"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/ResCoefficient",
+  "value": "",
+  "attrs": {
+   "remark": "响应系数",
+   "type": "int",
+   "min": "0",
+   "max": "99999",
+   "value": "1746"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/ResBias",
+  "value": "",
+  "attrs": {
+   "remark": "响应偏置",
+   "type": "int",
+   "min": "-99999",
+   "max": "99999",
+   "value": "1733"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/BitWidth",
+  "value": "",
+  "attrs": {
+   "remark": "位宽模式",
+   "tips": "1:8位 2:16位 3:24位 4:10位 5:12位 6:14位",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/ImgOutModeInjection",
+  "value": "",
+  "attrs": {
+   "remark": "注入式图像输出方式",
+   "tips": "1:显卡 2:注入 3:模拟器 4:电阻阵",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/EffectFovH",
+  "value": "",
+  "attrs": {
+   "remark": "场景产生器水平视场角",
+   "type": "double",
+   "decimals": "2",
+   "min": "0",
+   "max": "180",
+   "value": "40"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/EffectFovV",
+  "value": "",
+  "attrs": {
+   "remark": "场景产生器垂直视场角",
+   "type": "double",
+   "decimals": "2",
+   "min": "0",
+   "max": "180",
+   "value": "30"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/EffectDpiH",
+  "value": "",
+  "attrs": {
+   "remark": "场景产生器水平分辨率",
+   "type": "int",
+   "min": "1",
+   "max": "9999",
+   "value": "1024"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/EffectDpiV",
+  "value": "",
+  "attrs": {
+   "remark": "场景产生器垂直分辨率",
+   "type": "int",
+   "min": "1",
+   "max": "9999",
+   "value": "768"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/EffectResCoefficient",
+  "value": "",
+  "attrs": {
+   "remark": "场景产生器响应系数",
+   "type": "int",
+   "min": "0",
+   "max": "99999",
+   "value": "1746"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/EffectResBias",
+  "value": "",
+  "attrs": {
+   "remark": "场景产生器响应偏置",
+   "type": "int",
+   "min": "-99999",
+   "max": "99999",
+   "value": "1733"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/EffectBitWidth",
+  "value": "",
+  "attrs": {
+   "remark": "场景产生器位宽模式",
+   "tips": "1:8位 2:16位 3:24位 4:10位 5:12位 6:14位",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/SensorModel/SubSensorInfo/ImgOutModeRadiant",
+  "value": "",
+  "attrs": {
+   "remark": "辐射式图像输出方式",
+   "tips": "1:显卡 2:注入 3:模拟器 4:电阻阵",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel",
+  "value": "",
+  "attrs": {
+   "remark": "导弹发射平台信息"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo",
+  "value": "",
+  "attrs": {
+   "remark": "导弹发射平台ID",
+   "Id": "0"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/Type",
+  "value": "",
+  "attrs": {
+   "remark": "类型",
+   "tips": "1:陆基 2:车载 3:舰载 4:机载 5:潜射",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/ProductName",
+  "value": "",
+  "attrs": {
+   "remark": "型号名称",
+   "value": "J20"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/DisplaytName",
+  "value": "",
+  "attrs": {
+   "remark": "显示名称",
+   "value": "歼20"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/ProductDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "型号描述信息",
+   "value": "喷xx"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/MovementModel",
+  "value": "",
+  "attrs": {
+   "remark": "运动模型动态链接库",
+   "value": "ball.dll"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/MovementDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "运动模型描述信息",
+   "value": "喷xx"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/MissileLaunchPlatformName",
+  "value": "",
+  "attrs": {
+   "remark": "模型名称",
+   "value": "hm"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/MissileLaunchPlatformPath",
+  "value": "",
+  "attrs": {
+   "remark": "模型路径",
+   "value": "/target/hm"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/MissileLaunchPlatformVersionInfo",
+  "value": "",
+  "attrs": {
+   "remark": "版本信息",
+   "value": "Version1.0"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/MissileLaunchPlatformDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "模型描述信息",
+   "value": "喷xx"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/MountingMissileName",
+  "value": "",
+  "attrs": {
+   "remark": "挂载导弹型号名称",
+   "value": "hm"
+  }
+ },
+ {
+  "path": "/root/MissileLaunchPlatformModel/SubMissileLaunchPlatInfo/MountingMissileNum",
+  "value": "",
+  "attrs": {
+   "remark": "挂载数量",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileModel",
+  "value": "",
+  "attrs": {
+   "remark": "导弹信息"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo",
+  "value": "",
+  "attrs": {
+   "remark": "导弹ID",
+   "Id": "0"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo/MissileType",
+  "value": "",
+  "attrs": {
+   "remark": "类型",
+   "tips": "1:弹道导弹 2:飞航导弹 3:制导火箭弹 4:制导炮弹 5:反坦克弹 6:巡飞弹",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo/ProductName",
+  "value": "",
+  "attrs": {
+   "remark": "型号名称",
+   "value": "AIM-120D"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo/DisplaytName",
+  "value": "",
+  "attrs": {
+   "remark": "显示名称",
+   "value": "120D"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo/TargetDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "型号描述信息",
+   "value": "XXX"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo/MovementModel",
+  "value": "",
+  "attrs": {
+   "remark": "运动模型动态链接库",
+   "value": "ball.dll"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo/MovementDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "运动模型描述信息",
+   "value": "XXXXX"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo/MissileName",
+  "value": "",
+  "attrs": {
+   "remark": "模型名称",
+   "value": "hm"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo/MissilePath",
+  "value": "",
+  "attrs": {
+   "remark": "模型路径",
+   "value": "/target/hm"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo/MissileVersionInfo",
+  "value": "",
+  "attrs": {
+   "remark": "版本信息",
+   "value": "Version1.0"
+  }
+ },
+ {
+  "path": "/root/MissileModel/SubMissileInfo/MissileDescribe",
+  "value": "",
+  "attrs": {
+   "remark": "模型描述信息",
+   "value": ""
+  }
+ }
+]

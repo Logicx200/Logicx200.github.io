@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cmd_plugin_list>  
+    <plugin author="" Version="v1.0.0" pluginName="libcossim_local_cmd_sched" bStartOnFirst="true" userAdminRight="false" name="单机模式" bLocal="1" description="">
+        <dependency/>
+        <condependency/>
+    </plugin>
+	<!--
+    <plugin author="" Version="v1.0.0" pluginName="libcossim_vmic_cmd_sched" bStartOnFirst="true" userAdminRight="false" name="反射联网" bLocal="0" description="">
+        <dependency/>
+        <condependency/>
+    </plugin>
+	<plugin author="" Version="v1.0.0" pluginName="libcossim_udp_cmd_sched" bStartOnFirst="true" userAdminRight="false" name="以太网控制" bLocal="0" description="">
+        <dependency/>
+        <condependency/>
+    </plugin>
+	<plugin author="" Version="v1.0.0" pluginName="libcossim_84local_cmd_sched" bStartOnFirst="true" userAdminRight="false" name="单机控制" bLocal="1" description="">
+        <dependency/>
+        <condependency/>
+    </plugin>
+	-->
+</cmd_plugin_list>

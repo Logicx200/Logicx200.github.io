@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>时空立方体 · 三维查看器</title>
+<!--__ASSEMBLE_STYLES__-->
+</head>
+<body>
+
+<canvas id="view"></canvas>
+
+<header id="bar">
+  <span class="brand">时空立方体</span>
+
+  <!--
+    「打开照片」刻意做成「透明 input 覆盖在按钮上」而不是「label + 隐藏 input」：
+    用户点到的就是 <input type="file"> 本身，浏览器原生打开文件对话框，
+    **完全不依赖 JavaScript**。这样即使脚本某处出错，选文件这条路依然是通的。
+  -->
+  <span id="openWrap" class="mini filewrap">
+    <span class="filelabel">打开照片/视频</span>
+    <input id="file" type="file" accept="image/*,video/*" multiple>
+  </span>
+
+  <select id="sort" class="mini" title="决定照片在时间轴上的先后">
+    <option value="exif">按拍摄时间（EXIF）</option>
+    <option value="name">按文件名</option>
+    <option value="mtime">按文件修改时间</option>
+  </select>
+
+  <select id="videoStep" class="mini" title="视频抽帧：默认每一帧都保留。要抽稀必须由你显式选择">
+    <option value="1">视频：每帧保留</option>
+    <option value="2">视频：每 2 帧取 1</option>
+    <option value="3">视频：每 3 帧取 1</option>
+    <option value="5">视频：每 5 帧取 1</option>
+  </select>
+
+  <select id="res" class="mini" title="每帧纹理的尺寸。帧数越多，能用的尺寸越小 —— 显存是硬约束">
+    <option value="auto">分辨率：自动适配</option>
+    <option value="orig">分辨率：原画质不缩放</option>
+    <option value="1920">分辨率：长边 1920</option>
+    <option value="1280">分辨率：长边 1280</option>
+    <option value="960">分辨率：长边 960</option>
+  </select>
+
+  <span id="status" class="status">拖入一批照片，或点「打开照片」</span>
+</header>
+
+<aside id="panel">
+  <div class="grp">
+    <div class="ttl">时间轴</div>
+    <label class="row">当前帧 <b id="lbFrame">—</b>
+      <input id="frame" type="range" min="0" max="0" step="1" value="0" disabled>
+    </label>
+    <label class="chk"><input id="allGhost" type="checkbox"> 全部半透明（不突出任何一帧）</label>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">不透明度</div>
+    <label class="row">当前帧 <b id="lbOpCur">1.00</b>
+      <input id="opCur" type="range" min="0" max="1" step="0.01" value="1">
+    </label>
+    <label class="row">其他帧 <b id="lbOpOther">0.12</b>
+      <input id="opOther" type="range" min="0" max="1" step="0.01" value="0.12">
+    </label>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">其他帧的显示方式</div>
+    <div class="seg" id="otherMode">
+      <button data-v="plane" class="on">半透明平面</button>
+      <button data-v="points">点云</button>
+    </div>
+    <label class="row">点大小 <b id="lbDot">5.0</b>
+      <input id="dot" type="range" min="1" max="16" step="0.5" value="5">
+    </label>
+    <div class="ttl sub">点云密度</div>
+    <div class="seg" id="lumDir">
+      <button data-v="bright" class="on">亮处更密</button>
+      <button data-v="dark">暗处更密</button>
+    </div>
+    <label class="row">密度幂次 <b id="lbLumW">0.85</b>
+      <input id="lumW" type="range" min="0.1" max="1" step="0.05" value="0.85">
+    </label>
+    <label class="row">门槛 <b id="lbLumT">0.02</b>
+      <input id="lumT" type="range" min="0" max="0.5" step="0.01" value="0.02">
+    </label>
+    <label class="chk"><input id="square" type="checkbox" checked> 方格点（保留原始像素形状，关闭则为圆点）</label>
+    <div class="note">点云密度按亮度加权：选「亮处更密」时画面越亮的地方点越密，
+      选「暗处更密」则反过来。幂次 1.0 = 密度严格正比于亮度；调小则小的一头也保留更多点。
+      参与密度的量低于「门槛」时一个点都不画。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">轮廓提取</div>
+    <label class="chk"><input id="outline" type="checkbox"> 只保留轮廓（颜色分界线）</label>
+    <label class="row">对比门槛 <b id="lbEdge">0.25</b>
+      <input id="edge" type="range" min="0.02" max="0.8" step="0.01" value="0.25">
+    </label>
+    <div class="note">勾上之后，每帧只画「与上下左右邻居颜色差得最多」的那些像素，
+      其余整片丢弃 —— 画面变成一张线稿。判据是**逐通道最大差**（不是亮度差），
+      所以红↔绿这种等亮度的强对比也能提出来。
+      线宽跟着屏幕走：照片缩小时线会变粗到看得见，放大时是 1 像素。
+      门槛调大 = 只留最强的那几条边。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">切割（只显示选区内的影像）</div>
+    <label class="chk"><input id="clip" type="checkbox"> 只显示选区（对所有帧生效）</label>
+    <div class="row2">
+      <button id="clipEdit" class="mini">框选区域…</button>
+      <button id="clipAll" class="mini">整个画面</button>
+    </div>
+    <div class="note" id="clipInfo">选区：整个画面（未切割）</div>
+    <div class="note">点「框选区域」会在**当前帧**的照片上打开一个框选面板：
+      拖出一个矩形、拖动它移动、拖四角/四边缩放。选区按**图像坐标**记录，
+      所以它是对**所有帧**生效的 —— 200 张照片会被切出同一块区域，
+      而不是只切当前那一张。切割在片元着色器里完成（选区外的像素直接丢弃），
+      照片本身没有被修改，关掉开关就恢复完整画面；
+      侧面的厚度条仍然是整张照片的边（它是薄片的外壳，不参与切割）。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">几何</div>
+    <label class="row">帧厚度 <b id="lbThick">0.020</b>
+      <input id="thick" type="range" min="0" max="0.12" step="0.002" value="0.02">
+    </label>
+    <label class="row">帧间距 <b id="lbSpacing">1.60</b>
+      <input id="spacing" type="range" min="0.2" max="6" step="0.05" value="1.6">
+    </label>
+    <div class="note">每张照片是一个有厚度的薄片，照片本身在薄片中间。
+      薄片的四个立面就是原图最外一列/一行的真实颜色，所以斜着看能看见每张照片的边。
+      厚度会自动夹到帧间距的 90%，永远不会互相穿模。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">厚度条（每张照片的侧立面）</div>
+    <label class="chk"><input id="showBands" type="checkbox" checked> 显示厚度条</label>
+    <label class="chk"><input id="bandDebug" type="checkbox"> 诊断：四色立面（左红/右绿/上蓝/下黄）</label>
+    <div class="seg" id="edgeMode">
+      <button data-v="edge" class="on">边界像素</button>
+      <button data-v="avg">整行/整列平均色</button>
+    </div>
+    <div class="note">每一帧薄片的四个立面，就是那一帧原图最外一列/一行，
+      颜色是那张照片的真实像素色。它的**不透明度跟着那一帧照片走** ——
+      把「其他帧」拉到 12%，它们的边也就跟着淡下去。
+      边缘很暗的照片（比如左右两边是黑的）在深色背景上会看不清，
+      这时可以把「帧厚度」调大一点，或者用 <code>?banddebug=1</code>
+      把四个立面涂成红/绿/蓝/黄来确认它们都画出来了。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">标记</div>
+    <label class="chk"><input id="showCube" type="checkbox" checked> 立方体线框（12 条棱）</label>
+    <label class="chk"><input id="showAxis" type="checkbox" checked> 时间轴</label>
+    <label class="chk"><input id="showOutline" type="checkbox"> 每张照片的显示区域描边</label>
+    <div class="note">标记永远画在最上层（不受遮挡）。「显示区域描边」默认**关闭**：
+      它是每帧一个真正的白色矩形线框，帧数一多（比如 200 张）叠起来会糊成一片白，
+      需要精确定位某一帧时再打开。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">视角</div>
+    <div class="seg" id="viewMode">
+      <button data-v="front">正视</button>
+      <button data-v="iso" class="on">等轴</button>
+      <button data-v="top">俯视</button>
+      <button id="reset" data-v="reset">复位</button>
+    </div>
+    <div class="note">拖动旋转 · 滚轮缩放 · 右键或双指拖动平移 · 双击复位</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">输出</div>
+    <button id="shot" class="mini wide">导出当前视图 PNG</button>
+  </div>
+</aside>
+
+<footer id="foot">
+  <span id="hud"></span>
+</footer>
+
+<div id="veil"><div class="box"><div id="veilText">准备中…</div><div class="bar"><i id="veilBar"></i></div><button id="veilCancel" class="mini" style="display:none">取消</button></div></div>
+
+<div id="crop" hidden>
+  <div class="cbox">
+    <div class="cttl">在当前帧上框选区域 <b id="cropInfo">整个画面</b></div>
+    <div id="cropWrap"><canvas id="cropCanvas"></canvas>
+      <div id="cropRect"><i data-h="nw"></i><i data-h="n"></i><i data-h="ne"></i><i data-h="e"></i><i data-h="se"></i><i data-h="s"></i><i data-h="sw"></i><i data-h="w"></i></div>
+    </div>
+    <div class="crow">
+      <button id="cropOk" class="mini wide">应用这个选区</button>
+      <button id="cropAll" class="mini">整个画面</button>
+      <button id="cropCancel" class="mini">取消</button>
+    </div>
+    <div class="note">在图上**按住拖动** = 画一个新矩形；拖矩形**内部** = 移动；
+      拖**四角/四边** = 缩放。灰色遮罩之外的部分就是会被丢掉的画面。
+      选区对所有帧生效（Esc 取消）。</div>
+  </div>
+</div>
+
+<div id="fatal"></div>
+
+<!--__ASSEMBLE_SCRIPTS__-->
+</body>
+</html>

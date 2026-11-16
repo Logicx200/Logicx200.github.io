@@ -1,0 +1,46 @@
+!计算区块数
+*nregions,1
+!分析类型,1：单层单相流
+*type,1
+!考虑侵蚀,0：不考虑,1：考虑
+*erosion,0
+!考虑密度演化,0：不考虑,1：考虑
+*density,0
+!考虑惯性力
+*grav_inertia,0
+!计算维度,2：二维(准三维)
+*ndim,2
+!边界虚拟节点
+*mbc,0
+!网格重划分
+*remesh,0
+!分布式并行
+*mpi,0
+!共享内存并行（OpenMP）线程数
+*omp,8
+!通量限制器,1：minmod
+*limiter,1
+!初始流体高度,1：实际高度
+*q1_flag,1
+!求解器,1：有限差分法
+*solver,1
+!创建,网格信息 nx ny xll yll dx dy
+*create,grid,input,1,770,1166,322900.000000,3126000.000000,30.0,30.0
+!创建,基底高程
+*create,topo,file,dem,1,z.txt
+!创建,流体
+*create,h,file,dem,1,h.txt
+!创建,边界
+*create,bound,custom,1
+!材料,编号,密度,密度值  (冰岩混合体 2000 kg/m3)
+*material,1,density,2000
+!材料,编号,摩擦模型,库伦模型,粘聚力,基底摩擦系数,孔隙水压力系数
+*material,1,friction,1,0,0.15,0
+!材料,编号,土压力系数,内摩擦角,基底摩擦角
+*material,1,earthpress,0.65,0.4228
+!材料分配
+*material_assign,1,0,1
+!时间步长: 变步长,总时间,初始步长,库郎数
+*time,1,400,0.01,0.25
+!输出: tecplot, 面形式, 区块1, 固定间隔, 每5秒
+*output,1,tecplot,1,1,1,30

@@ -1,0 +1,8 @@
+{
+  "step": 0.005,
+  "grid_min": 1250.0,
+  "grid_max": 2000.0,
+  "nlayers": 24,
+  "geometry": "platform 8 km, ground range 20 km, slant 21.541 km",
+  "atmosphere": "USSA76 T/p; H2O 7.5 g/m3 exp(-z/2km); CO2 415 ppm; CH4 1.9 ppm"
+}

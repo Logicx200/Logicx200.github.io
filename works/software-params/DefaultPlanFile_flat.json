@@ -1,0 +1,7565 @@
+[
+ {
+  "path": "/root/LinkFile",
+  "value": "",
+  "attrs": {
+   "remark": "关联需拷贝的文件名称"
+  }
+ },
+ {
+  "path": "/root/LinkFile/TargetTrackFile",
+  "value": "",
+  "attrs": {
+   "remark": "目标运动文件名称",
+   "type": "char[512]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/TargetTrackFile/Item",
+  "value": "导弹型号.csv",
+  "attrs": {
+   "TargetID": "301"
+  }
+ },
+ {
+  "path": "/root/LinkFile/JamPlatTrackFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰发射平台运动文件名称",
+   "type": "char[512]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/JamPlatTrackFile/Item",
+  "value": "导弹型号.csv",
+  "attrs": {
+   "JamPlatID": "401"
+  }
+ },
+ {
+  "path": "/root/LinkFile/JammerMotionFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰运动文件名称",
+   "type": "char[512]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/JammerMotionFile/Item",
+  "value": "导弹型号.csv",
+  "attrs": {
+   "JamID": "501"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlatMovFile",
+  "value": "",
+  "attrs": {
+   "remark": "导弹发射平台运动文件名称",
+   "type": "char[512]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlatMovFile/Item",
+  "value": "导弹型号.csv",
+  "attrs": {
+   "MissPlatID": "1"
+  }
+ },
+ {
+  "path": "/root/LinkFile/GrndWindFile",
+  "value": "导弹型号.xml",
+  "attrs": {
+   "remark": "地面风场文件名称",
+   "type": "char[256]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlanFile",
+  "value": "",
+  "attrs": {
+   "remark": "导弹类文件名称"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlanFile/Item",
+  "value": "",
+  "attrs": {
+   "MissID": "1"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlanFile/Item/MissEnvWindFile",
+  "value": "导弹型号.xml",
+  "attrs": {
+   "remark": "导弹风场文件名称",
+   "type": "char[256]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlanFile/Item/MissPlanFile",
+  "value": "导弹型号.xml",
+  "attrs": {
+   "remark": "导弹规划与制导设备仿真参数文件名称",
+   "type": "char[512]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlanFile/Item/OptImagGuidMod",
+  "value": "",
+  "attrs": {
+   "remark": "光学成像制导模块序号",
+   "GuidModNo": "1"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlanFile/Item/OptImagGuidMod/OptImagPSFFile",
+  "value": "导弹型号.dat",
+  "attrs": {
+   "remark": "导引头成像单元点扩散函数文件名称",
+   "type": "char[512]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlanFile/Item/OptImagGuidMod/OptImagHeterogFile",
+  "value": "导弹型号.dat",
+  "attrs": {
+   "remark": "导引头成像单元非均匀性特性数据文件名称",
+   "type": "char[512]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlanFile/Item/OptImagGuidMod/AerHeatEffFile",
+  "value": "导弹型号.dat",
+  "attrs": {
+   "remark": "导引头气动热效应文件名称",
+   "type": "char[512]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MissPlanFile/Item/OptImagGuidMod/MovVibEffFile",
+  "value": "导弹型号.dat",
+  "attrs": {
+   "remark": "运动抖动模糊效应点扩散函数文件名称",
+   "type": "char[512]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/TargetJamFile",
+  "value": "导弹型号.csv",
+  "attrs": {
+   "remark": "目标平台干扰类动态战情文件名称",
+   "type": "char[512]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/DeceptionLaserPulseTimingFile",
+  "value": "",
+  "attrs": {
+   "remark": "欺骗激光脉冲时序文件名称",
+   "type": "char[256]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/DeceptionLaserPulseTimingFile/Item",
+  "value": "导弹型号.dat",
+  "attrs": {
+   "JamID": "501"
+  }
+ },
+ {
+  "path": "/root/LinkFile/HighPlusSeqFile",
+  "value": "",
+  "attrs": {
+   "remark": "高重频序列脉冲字文件名称",
+   "type": "char[256]"
+  }
+ },
+ {
+  "path": "/root/LinkFile/HighPlusSeqFile/Item",
+  "value": "导弹型号.dat",
+  "attrs": {
+   "JamID": "501"
+  }
+ },
+ {
+  "path": "/root/LinkFile/MisDynSceFile",
+  "value": "导弹型号.csv",
+  "attrs": {
+   "remark": "导弹类动态战情文件名称",
+   "type": "char[512]",
+   "MissID": "1"
+  }
+ },
+ {
+  "path": "/root/MaterialParam",
+  "value": "",
+  "attrs": {
+   "remark": "材质特性参数"
+  }
+ },
+ {
+  "path": "/root/MaterialParam/OpticsMaterial",
+  "value": "",
+  "attrs": {
+   "remark": "光学特性材质"
+  }
+ },
+ {
+  "path": "/root/MaterialParam/OpticsMaterial/MaterialDataFile",
+  "value": "",
+  "attrs": {
+   "remark": "材质数据文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/SpaceParam",
+  "value": "",
+  "attrs": {
+   "remark": "时空参数"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ScenarioCode",
+  "value": "",
+  "attrs": {
+   "remark": "战情想定编号",
+   "type": "char[128]",
+   "value": "编号2"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroTime",
+  "value": "",
+  "attrs": {
+   "remark": "作战零点时间"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroTime/year",
+  "value": "",
+  "attrs": {
+   "remark": "年",
+   "type": "unsigned short",
+   "min": "1970",
+   "max": "2099",
+   "value": "2025"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroTime/month",
+  "value": "",
+  "attrs": {
+   "remark": "月",
+   "type": "unsigned char",
+   "min": "1",
+   "max": "12",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroTime/day",
+  "value": "",
+  "attrs": {
+   "remark": "日",
+   "type": "unsigned char",
+   "min": "1",
+   "max": "31",
+   "value": "20"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroTime/hour",
+  "value": "",
+  "attrs": {
+   "remark": "时",
+   "type": "unsigned char",
+   "min": "0",
+   "max": "23",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroTime/minute",
+  "value": "",
+  "attrs": {
+   "remark": "分",
+   "type": "unsigned char",
+   "min": "0",
+   "max": "59",
+   "value": "00"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroTime/second",
+  "value": "",
+  "attrs": {
+   "remark": "秒",
+   "type": "unsigned char",
+   "min": "0",
+   "max": "59",
+   "value": "00"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroPos",
+  "value": "",
+  "attrs": {
+   "remark": "地面坐标系原点位置"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroPos/ZeroPosLon",
+  "value": "",
+  "attrs": {
+   "remark": "经度",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "decimal": "7",
+   "value": "126.1234567"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroPos/ZeroPosLat",
+  "value": "",
+  "attrs": {
+   "remark": "纬度",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "decimal": "7",
+   "value": "45.1234567"
+  }
+ },
+ {
+  "path": "/root/SpaceParam/ZeroPos/ZeroPosAlt",
+  "value": "",
+  "attrs": {
+   "remark": "海拔高度",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000000",
+   "value": "123.45"
+  }
+ },
+ {
+  "path": "/root/WeatherParam",
+  "value": "",
+  "attrs": {
+   "remark": "气象环境参数"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherType",
+  "value": "",
+  "attrs": {
+   "remark": "天气类型",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherType/tips",
+  "value": "0：晴天 1：多云 2：阴天 3：小雨 4：中雨 5：大雨 6：雷雨 7：小雪 8：中雪 9：大雪 10：雾 11：霾",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/ImagBand",
+  "value": "",
+  "attrs": {
+   "remark": "波段定义"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/ImagBand/LaserBandClass",
+  "value": "",
+  "attrs": {
+   "remark": "激光波长类型",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/ImagBand/LaserBandClass/tips",
+  "value": "0：无 1：可见光波段激光 2：1.064微米激光 3：中波红外激光 4：长波红外激光",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/ImagBand/ImagBand1Class",
+  "value": "",
+  "attrs": {
+   "remark": "波段1类型",
+   "type": "unsigned char",
+   "value": "1",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/ImagBand/ImagBand1Class/tips",
+  "value": "0：无 1：可见光成像 2：近红外成像 3：短波红外成像 4：中波红外成像 5：长波红外成像 6：可见光成像(彩色)",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/ImagBand/ImagBand2Class",
+  "value": "",
+  "attrs": {
+   "remark": "波段2类型",
+   "type": "unsigned char",
+   "value": "0",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/ImagBand/ImagBand2Class/tips",
+  "value": "0：无 1：可见光成像 2：近红外成像 3：短波红外成像 4：中波红外成像 5：长波红外成像 6：可见光成像(彩色)",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase",
+  "value": "",
+  "attrs": {
+   "remark": "基本气象参数"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/AtmTemperature",
+  "value": "",
+  "attrs": {
+   "remark": "大气温度",
+   "type": "double",
+   "unit": "℃",
+   "min": "-100",
+   "max": "100",
+   "value": "15",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/AtmHumidity",
+  "value": "",
+  "attrs": {
+   "remark": "大气湿度",
+   "type": "double",
+   "unit": "%",
+   "min": "0",
+   "max": "100",
+   "value": "50",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/AtmPressure",
+  "value": "",
+  "attrs": {
+   "remark": "大气压强",
+   "type": "double",
+   "unit": "hPa",
+   "min": "300",
+   "max": "1100",
+   "value": "1013",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/AtmVisibility",
+  "value": "",
+  "attrs": {
+   "remark": "大气能见度",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "10000",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/AtmAerosol",
+  "value": "",
+  "attrs": {
+   "remark": "气溶胶模式（覆盖modtran5所有模式）",
+   "type": "unsigned char",
+   "value": "0",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/AtmAerosol/tips",
+  "value": "0：干净大陆 1：城市型(OPAC) 2：海洋型(OPAC) 3：沙漠型(OPAC) 4：乡村型 5：城市型 6：对流层模式 7：水平对流雾 8：发散型雾 9：无气溶胶",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/AtmMode",
+  "value": "",
+  "attrs": {
+   "remark": "大气模式",
+   "type": "unsigned char",
+   "value": "0",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/AtmMode/tips",
+  "value": "0：美国标准大气 1：AFGL热带 2：AFGL中纬度夏季 3：AFGL中纬度冬季 4：AFGL亚北极冬季 5：AFGL亚北极夏季 6：自定义大气数据",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/LauAtmTemperature",
+  "value": "",
+  "attrs": {
+   "remark": "导弹发射点大气温度",
+   "type": "double",
+   "unit": "℃",
+   "min": "-100",
+   "max": "100",
+   "value": "15",
+   "decimal": "3"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/TranRadAtmModelFile",
+  "value": "",
+  "attrs": {
+   "remark": "辐射传输计算大气卡片文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/LaserAtmModelFile",
+  "value": "",
+  "attrs": {
+   "remark": "激光透过率计算大气卡片文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/BandAtmTranRadFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段1大气辐射传输数据文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/Band2AtmTranRadFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段2大气辐射传输数据文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WeatherBase/LaserAtmTranFile",
+  "value": "",
+  "attrs": {
+   "remark": "激光大气透过率文件路径",
+   "type": "char[256]",
+   "value": "",
+   "read": "10"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/TurWeather",
+  "value": "",
+  "attrs": {
+   "remark": "湍流气象"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/TurWeather/TurModelFile",
+  "value": "",
+  "attrs": {
+   "remark": "湍流气象模型文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/WeatherParam/TurWeather/TurImagSimFlag",
+  "value": "",
+  "attrs": {
+   "remark": "成像大气湍流效应仿真",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/TurWeather/TurImagSimFlag/tips",
+  "value": "0：不考虑 1：考虑",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/TurWeather/AtmCn2",
+  "value": "",
+  "attrs": {
+   "remark": "地面大气折射率结构常数",
+   "type": "double",
+   "unit": "米的负3分之2幂",
+   "min": "1.0e-20",
+   "max": "1.0e-8",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/TurWeather/LaserTurDataFile",
+  "value": "",
+  "attrs": {
+   "remark": "激光大气湍流数据文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather",
+  "value": "",
+  "attrs": {
+   "remark": "风场气象"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/GrndWindType",
+  "value": "",
+  "attrs": {
+   "remark": "地面风类型",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/GrndWindType/tips",
+  "value": "0：固定风 1：随机风",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/MissEnvWindType",
+  "value": "",
+  "attrs": {
+   "remark": "导弹环境风类型",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/MissEnvWindType/tips",
+  "value": "0：固定风 1：随机风",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/GrndWindX",
+  "value": "",
+  "attrs": {
+   "remark": "地面风速X",
+   "type": "double",
+   "unit": "m/s",
+   "min": "-100",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/GrndWindY",
+  "value": "",
+  "attrs": {
+   "remark": "地面风速Y",
+   "type": "double",
+   "unit": "m/s",
+   "min": "-100",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/GrndWindZ",
+  "value": "",
+  "attrs": {
+   "remark": "地面风速Z",
+   "type": "double",
+   "unit": "m/s",
+   "min": "-100",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/MissEnvWindX",
+  "value": "",
+  "attrs": {
+   "remark": "导弹风速X",
+   "type": "double",
+   "unit": "m/s",
+   "min": "-100",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/MissEnvWindY",
+  "value": "",
+  "attrs": {
+   "remark": "导弹风速Y",
+   "type": "double",
+   "unit": "m/s",
+   "min": "-100",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/MissEnvWindZ",
+  "value": "",
+  "attrs": {
+   "remark": "导弹风速Z",
+   "type": "double",
+   "unit": "m/s",
+   "min": "-100",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/GrndWindFile",
+  "value": "",
+  "attrs": {
+   "remark": "地面风场文件名称",
+   "type": "char[256]",
+   "value": "",
+   "read": "10"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/WindWeather/MissEnvWindFile",
+  "value": "",
+  "attrs": {
+   "remark": "导弹风场文件名称",
+   "type": "char[256]",
+   "value": "",
+   "read": "10"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud",
+  "value": "",
+  "attrs": {
+   "remark": "环境云"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/CloudClass",
+  "value": "",
+  "attrs": {
+   "remark": "云类型",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/CloudClass/tips",
+  "value": "0：无云 1：卷云 2：积云 3：层云 4：卷积云 5：中度积云 6：高分辨率浓积云 7：积雨云 8：层积云 9：高耸积云",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/WeatherCloudHeight",
+  "value": "",
+  "attrs": {
+   "remark": "环境云高度",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "40000",
+   "value": "5000"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/WeatherCloudThickness",
+  "value": "",
+  "attrs": {
+   "remark": "环境云厚度",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "1000"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/WeatherCloudDensity",
+  "value": "",
+  "attrs": {
+   "remark": "环境云密度",
+   "type": "double",
+   "unit": "kg/m3",
+   "min": "0",
+   "max": "1000",
+   "value": "5"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/WeatherCloud1Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "环境云波段1透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/WeatherCloud1Light",
+  "value": "",
+  "attrs": {
+   "remark": "环境云波段1亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/WeatherCloud1LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "环境云波段1亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/WeatherCloud2Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "环境云波段2透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/WeatherCloud2Light",
+  "value": "",
+  "attrs": {
+   "remark": "环境云波段2亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/EnvCloud/WeatherCloud2LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "环境云波段2亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud",
+  "value": "",
+  "attrs": {
+   "remark": "独立云块"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo",
+  "value": "",
+  "attrs": {
+   "remark": "云块编号",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudMode",
+  "value": "",
+  "attrs": {
+   "remark": "云想定方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudMode/tips",
+  "value": "1：参数想定 2：贴图想定 3：模型想定",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudMassType",
+  "value": "",
+  "attrs": {
+   "remark": "云块类型",
+   "type": "unsigned char",
+   "value": "0",
+   "read": "2"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudMassType/tips",
+  "value": "0：无云 1：卷云 2：积云 3：层云 4：卷积云 5：中度积云 6：高分辨率浓积云 7：积雨云 8：层级云 9：高耸积云",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudPosX",
+  "value": "",
+  "attrs": {
+   "remark": "云层位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudPosY",
+  "value": "",
+  "attrs": {
+   "remark": "云层位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-100000",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudPosZ",
+  "value": "",
+  "attrs": {
+   "remark": "云层高度Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "1000"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudSpeedX",
+  "value": "",
+  "attrs": {
+   "remark": "云速度X",
+   "type": "double",
+   "unit": "m/s",
+   "min": "-100",
+   "max": "100",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudSpeedY",
+  "value": "",
+  "attrs": {
+   "remark": "云速度Y",
+   "type": "double",
+   "unit": "m/s",
+   "min": "-100",
+   "max": "100",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudLengthX",
+  "value": "",
+  "attrs": {
+   "remark": "云南北方向宽度",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "1000"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudLengthZ",
+  "value": "",
+  "attrs": {
+   "remark": "云东西方向宽度",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "1000"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudThickness",
+  "value": "",
+  "attrs": {
+   "remark": "云层厚度",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "300"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/ReferenceObserAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测方位角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0",
+   "read": "2"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/ReferenceObserPithAngle",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测俯仰角",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0",
+   "read": "2"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudRateRangeMin",
+  "value": "",
+  "attrs": {
+   "remark": "最小粒子数",
+   "type": "int",
+   "unit": "°",
+   "min": "0",
+   "max": "99999",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudRateRangeMax",
+  "value": "",
+  "attrs": {
+   "remark": "最大粒子数",
+   "type": "int",
+   "unit": "°",
+   "min": "0",
+   "max": "99999",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudSizeScaleFactor",
+  "value": "",
+  "attrs": {
+   "remark": "粒子尺寸缩放系数",
+   "type": "double",
+   "unit": "",
+   "min": "0.001",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/BandCloud1Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "云波段1透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/BandCloud1Light",
+  "value": "",
+  "attrs": {
+   "remark": "云波段1亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/BandCloud1LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "云波段1亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/BandCloud2Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "云波段2透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/BandCloud2Light",
+  "value": "",
+  "attrs": {
+   "remark": "云波段2亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/BandCloud2LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "云波段2亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/CloudChartletFile",
+  "value": "",
+  "attrs": {
+   "remark": "云层贴图文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/ParticModlelPsrsFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰粒子基础模型参数文件",
+   "type": "char[256]",
+   "value": "",
+   "read": "2"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/StandCloud/SubCloudNo/GrainLasExtCoefFile",
+  "value": "",
+  "attrs": {
+   "remark": "粒子特效激光消光系数文件",
+   "type": "char[256]",
+   "value": "",
+   "read": "2"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Rain",
+  "value": "",
+  "attrs": {
+   "remark": "雨"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Rain/RainHeight",
+  "value": "",
+  "attrs": {
+   "remark": "雨云高",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "1000"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Rain/RainConcentration",
+  "value": "",
+  "attrs": {
+   "remark": "雨量",
+   "type": "double",
+   "unit": "mm/h",
+   "min": "0",
+   "max": "1000",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Rain/RaindropEffectGeneration",
+  "value": "",
+  "attrs": {
+   "remark": "雨滴效果生成方式",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Rain/RaindropEffectGeneration/tips",
+  "value": "0：无 1：外部贴图 2：内部模型",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/Rain/RaindropChartletFile",
+  "value": "",
+  "attrs": {
+   "remark": "雨滴成像序列图文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Snow",
+  "value": "",
+  "attrs": {
+   "remark": "雪"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Snow/SnowHeight",
+  "value": "",
+  "attrs": {
+   "remark": "雪云高",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Snow/SnowConcentration",
+  "value": "",
+  "attrs": {
+   "remark": "雪量",
+   "type": "double",
+   "unit": "mm/h",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Snow/SnowGeneration",
+  "value": "",
+  "attrs": {
+   "remark": "雪效果生成方式",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Snow/SnowGeneration/tips",
+  "value": "0：无 1：外部贴图 2：内部模型",
+  "attrs": {}
+ },
+ {
+  "path": "/root/WeatherParam/Snow/SnowChartletFile",
+  "value": "",
+  "attrs": {
+   "remark": "雪成像序列图文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Fog",
+  "value": "",
+  "attrs": {
+   "remark": "雾"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Fog/FogIntensity",
+  "value": "",
+  "attrs": {
+   "remark": "雾效强度",
+   "type": "double",
+   "min": "0",
+   "max": "1",
+   "value": "0.5"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Fog/FogDistance",
+  "value": "",
+  "attrs": {
+   "remark": "雾的距离",
+   "type": "double",
+   "min": "0",
+   "max": "500000",
+   "value": "5000"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Fog/FogWarmColor",
+  "value": "",
+  "attrs": {
+   "remark": "雾效色调",
+   "type": "double",
+   "min": "0",
+   "max": "1",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Fog/FogGrayColor",
+  "value": "",
+  "attrs": {
+   "remark": "灰度强度",
+   "type": "double",
+   "min": "0",
+   "max": "1",
+   "value": "0.5"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Fog/FogEndHeight",
+  "value": "",
+  "attrs": {
+   "remark": "雾效高度",
+   "type": "double",
+   "min": "0",
+   "max": "500000",
+   "value": "500"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Fog/FogSkyboxVisible",
+  "value": "",
+  "attrs": {
+   "remark": "红外下天空盒渐变特效显隐",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/WeatherParam/Fog/FogSkyboxVisible/tips",
+  "value": "0：关闭 1：开启",
+  "attrs": {}
+ },
+ {
+  "path": "/root/SensorParam",
+  "value": "",
+  "attrs": {
+   "remark": "传感器信息"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID",
+  "value": "",
+  "attrs": {
+   "remark": "传感器ID",
+   "type": "unsigned short",
+   "value": "0",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor",
+  "value": "",
+  "attrs": {
+   "remark": "传感器参数"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/ModelID",
+  "value": "",
+  "attrs": {
+   "remark": "模型ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorClass",
+  "value": "",
+  "attrs": {
+   "remark": "传感器类型",
+   "type": "unsigned char",
+   "value": "1",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorClass/tips",
+  "value": "1：中波红外 2：长波红外-制冷 3：长波红外-非制冷 4：可见光 5：短波",
+  "attrs": {}
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorModelName",
+  "value": "",
+  "attrs": {
+   "remark": "传感器型号名称",
+   "type": "char[64]",
+   "value": "中波红外",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorDispName",
+  "value": "",
+  "attrs": {
+   "remark": "传感器显示名称",
+   "type": "char[128]",
+   "value": "中波红外",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/OpticAngle",
+  "value": "",
+  "attrs": {
+   "remark": "视角类型",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/OpticAngle/tips",
+  "value": "0：自由视角 1：第一视角 2：第三视角",
+  "attrs": {}
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorMotionFile",
+  "value": "",
+  "attrs": {
+   "remark": "传感器运动文件",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorPos",
+  "value": "",
+  "attrs": {
+   "remark": "传感器位置参数"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorPos/SensorPosX",
+  "value": "",
+  "attrs": {
+   "remark": "传感器东坐标",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorPos/SensorPosY",
+  "value": "",
+  "attrs": {
+   "remark": "传感器北坐标",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorPos/SensorPosZ",
+  "value": "",
+  "attrs": {
+   "remark": "传感器天坐标",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "8000"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorAtt",
+  "value": "",
+  "attrs": {
+   "remark": "传感器姿态参数"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorAtt/SensorAttH",
+  "value": "",
+  "attrs": {
+   "remark": "方位角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorAtt/SensorAttP",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰角",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "-90"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/Sensor/SensorAtt/SensorAttR",
+  "value": "",
+  "attrs": {
+   "remark": "横滚角",
+   "type": "double",
+   "unit": "°",
+   "min": "-360",
+   "max": "360",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect",
+  "value": "",
+  "attrs": {
+   "remark": "传感器效应参数"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/TextureLightMin",
+  "value": "",
+  "attrs": {
+   "remark": "最小温度系数",
+   "type": "double",
+   "min": "0.0000",
+   "max": "999.9999",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/TextureLightMax",
+  "value": "",
+  "attrs": {
+   "remark": "最大温度系数",
+   "type": "double",
+   "min": "0.0000",
+   "max": "999.9999",
+   "value": "60"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/BandMin",
+  "value": "",
+  "attrs": {
+   "remark": "工作波段最小值",
+   "type": "double",
+   "unit": "μm",
+   "min": "0.00",
+   "max": "999.00",
+   "value": "3.7",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/BandMax",
+  "value": "",
+  "attrs": {
+   "remark": "工作波段最大值",
+   "type": "double",
+   "unit": "μm",
+   "min": "0.00",
+   "max": "999.00",
+   "value": "4.8",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/FPS",
+  "value": "",
+  "attrs": {
+   "remark": "帧率",
+   "type": "int",
+   "min": "1",
+   "max": "200",
+   "value": "50"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/FovH",
+  "value": "",
+  "attrs": {
+   "remark": "水平视场角",
+   "type": "double",
+   "unit": "°",
+   "min": "0.00",
+   "max": "180.00",
+   "value": "3.75"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/FovV",
+  "value": "",
+  "attrs": {
+   "remark": "垂直视场角",
+   "type": "double",
+   "unit": "°",
+   "min": "0.00",
+   "max": "180.00",
+   "value": "3"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/DpiH",
+  "value": "",
+  "attrs": {
+   "remark": "水平分辨率",
+   "type": "int",
+   "min": "1",
+   "max": "9999",
+   "value": "1024"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/DpiV",
+  "value": "",
+  "attrs": {
+   "remark": "垂直分辨率",
+   "type": "int",
+   "min": "1",
+   "max": "9999",
+   "value": "768"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/BitWidth",
+  "value": "",
+  "attrs": {
+   "remark": "位宽模式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/BitWidth/tips",
+  "value": "1：8位 2：16位 3：24位 4：10位 5：12位 6：14位",
+  "attrs": {}
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/ResCoefficient",
+  "value": "",
+  "attrs": {
+   "remark": "响应系数",
+   "type": "double",
+   "min": "0",
+   "max": "99999",
+   "value": "1746",
+   "decimal": "4"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/ResBias",
+  "value": "",
+  "attrs": {
+   "remark": "响应偏置",
+   "type": "double",
+   "min": "-99999",
+   "max": "99999",
+   "value": "1733",
+   "decimal": "4"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/ImgOutModeInjection",
+  "value": "",
+  "attrs": {
+   "remark": "注入式图像输出方式",
+   "type": "unsigned char",
+   "value": "1",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/ImgOutModeInjection/tips",
+  "value": "1：显卡 2：注入 3：模拟器 4：电阻阵",
+  "attrs": {}
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/ImgScale",
+  "value": "",
+  "attrs": {
+   "remark": "截图制备倍率",
+   "type": "double",
+   "min": "0.1",
+   "max": "99.9",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/RecPath",
+  "value": "",
+  "attrs": {
+   "remark": "截图存储路径",
+   "type": "char[256]",
+   "read": "0",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/ReviseType",
+  "value": "",
+  "attrs": {
+   "remark": "校正类型",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/ReviseType/tips",
+  "value": "0：非均匀性校正 1：固定样式噪声",
+  "attrs": {}
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SensorEffect/NonUniform",
+  "value": "",
+  "attrs": {
+   "remark": "校正模型",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/DeviceEffect",
+  "value": "",
+  "attrs": {
+   "remark": "设备效应参数"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/DeviceEffect/IsDisperse",
+  "value": "",
+  "attrs": {
+   "remark": "弥散模型是否起效",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/DeviceEffect/IsDisperse/tips",
+  "value": "0：无效 1：起效",
+  "attrs": {}
+ },
+ {
+  "path": "/root/SensorParam/SensorID/DeviceEffect/DispersionFile",
+  "value": "",
+  "attrs": {
+   "remark": "弥散模型文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/DeviceEffect/IsNoise",
+  "value": "",
+  "attrs": {
+   "remark": "噪声模型是否起效",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/DeviceEffect/IsNoise/tips",
+  "value": "0：无效 1：起效",
+  "attrs": {}
+ },
+ {
+  "path": "/root/SensorParam/SensorID/DeviceEffect/NoiseFile",
+  "value": "",
+  "attrs": {
+   "remark": "噪声模型文件路径",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect",
+  "value": "",
+  "attrs": {
+   "remark": "场景产生器效应参数"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect/SceneGenFovH",
+  "value": "",
+  "attrs": {
+   "remark": "水平视场角",
+   "type": "double",
+   "unit": "°",
+   "min": "0.00",
+   "max": "180.00",
+   "value": "3.75"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect/SceneGenFovV",
+  "value": "",
+  "attrs": {
+   "remark": "垂直视场角",
+   "type": "double",
+   "unit": "°",
+   "min": "0.00",
+   "max": "180.00",
+   "value": "3"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect/SceneGenDpiH",
+  "value": "",
+  "attrs": {
+   "remark": "水平分辨率",
+   "type": "int",
+   "min": "1",
+   "max": "9999",
+   "value": "1024"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect/SceneGenDpiV",
+  "value": "",
+  "attrs": {
+   "remark": "垂直分辨率",
+   "type": "int",
+   "min": "1",
+   "max": "9999",
+   "value": "768"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect/SceneGenBitWidth",
+  "value": "",
+  "attrs": {
+   "remark": "位宽模式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect/SceneGenBitWidth/tips",
+  "value": "1：8位 2：16位 3：24位 4：10位 5：12位 6：14位",
+  "attrs": {}
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect/SceneGenResCoefficient",
+  "value": "",
+  "attrs": {
+   "remark": "响应系数",
+   "type": "double",
+   "min": "0",
+   "max": "99999",
+   "value": "1746",
+   "decimal": "4"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect/SceneGenResBias",
+  "value": "",
+  "attrs": {
+   "remark": "响应偏置",
+   "type": "double",
+   "min": "-99999",
+   "max": "99999",
+   "value": "1733",
+   "decimal": "4"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect/ImgOutModeRadiant",
+  "value": "",
+  "attrs": {
+   "remark": "辐射式图像输出方式",
+   "type": "unsigned char",
+   "value": "3",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/SensorParam/SensorID/SceneGenEffect/ImgOutModeRadiant/tips",
+  "value": "1：显卡 2：注入 3：模拟器 4：电阻阵",
+  "attrs": {}
+ },
+ {
+  "path": "/root/BGParam",
+  "value": "",
+  "attrs": {
+   "remark": "背景参数"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID",
+  "value": "",
+  "attrs": {
+   "remark": "背景ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/BGBase",
+  "value": "",
+  "attrs": {
+   "remark": "背景基础参数"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/BGBase/BgClass",
+  "value": "",
+  "attrs": {
+   "remark": "背景类别",
+   "type": "unsigned char",
+   "value": "1",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/BGBase/BgClass/tips",
+  "value": "1：地面背景 2：海面背景 3：天空背景 4：太空背景",
+  "attrs": {}
+ },
+ {
+  "path": "/root/BGParam/SubBGID/BGBase/BgType",
+  "value": "",
+  "attrs": {
+   "remark": "背景类型",
+   "type": "unsigned char",
+   "value": "1",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/BGBase/BgType/tips",
+  "value": "1：沙漠 2：戈壁 3：荒漠 4：城市 5：乡村 6：森林 7：丘陵 8：山区 9：海岛 10：海港 11：浅海 12：深海 13：天空 14：太空",
+  "attrs": {}
+ },
+ {
+  "path": "/root/BGParam/SubBGID/BGBase/BgName",
+  "value": "",
+  "attrs": {
+   "remark": "背景名称",
+   "type": "char[128]",
+   "value": "桃园机场",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/BGBase/GrdIsIncSea",
+  "value": "",
+  "attrs": {
+   "remark": "是否包括海洋",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/BGBase/GrdIsIncSea/tips",
+  "value": "0：不包括 1：包括",
+  "attrs": {}
+ },
+ {
+  "path": "/root/BGParam/SubBGID/GroundBG",
+  "value": "",
+  "attrs": {
+   "remark": "地面背景"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/GroundBG/BgScenario",
+  "value": "",
+  "attrs": {
+   "remark": "背景想定方式",
+   "type": "unsigned char",
+   "visible": "0",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/GroundBG/BgScenario/tips",
+  "value": "1：建模方式 2：外部导入",
+  "attrs": {}
+ },
+ {
+  "path": "/root/BGParam/SubBGID/GroundBG/BgSpaceLength",
+  "value": "",
+  "attrs": {
+   "remark": "背景范围-长",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "1000000",
+   "value": "300",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/GroundBG/BgSpaceWidth",
+  "value": "",
+  "attrs": {
+   "remark": "背景范围-宽",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "1000000",
+   "value": "300",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/GroundBG/BgFocusSpaceLength",
+  "value": "",
+  "attrs": {
+   "remark": "重点区域-长",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "1000000",
+   "value": "10",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/GroundBG/BgFocusSpaceWidth",
+  "value": "",
+  "attrs": {
+   "remark": "重点区域-宽",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "1000000",
+   "value": "10",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/GroundBG/BgModelResultFile",
+  "value": "",
+  "attrs": {
+   "remark": "地面背景建模结果文件路径",
+   "type": "char[256]",
+   "value": "",
+   "visible": "0",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/GroundBG/BgMaterialTemperatureDataFile",
+  "value": "",
+  "attrs": {
+   "remark": "地面背景材质温度数据文件路径",
+   "type": "char[256]",
+   "value": "",
+   "visible": "0",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/GroundBG/Bg1IntrinsicCharacterFile",
+  "value": "",
+  "attrs": {
+   "remark": "地面背景本征特性文件路径",
+   "type": "char[256]",
+   "visible": "0",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG",
+  "value": "",
+  "attrs": {
+   "remark": "海面背景"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaAltitudeLevel",
+  "value": "",
+  "attrs": {
+   "remark": "海平面高度",
+   "type": "double",
+   "unit": "m",
+   "min": "-99999",
+   "max": "99999",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaWaveLevel",
+  "value": "",
+  "attrs": {
+   "remark": "海况等级",
+   "type": "unsigned char",
+   "unit": "级",
+   "min": "0",
+   "max": "9",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaWindLevel",
+  "value": "",
+  "attrs": {
+   "remark": "蒲福风级",
+   "type": "unsigned char",
+   "unit": "级",
+   "min": "0",
+   "max": "12",
+   "value": "1",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaWindDirection",
+  "value": "",
+  "attrs": {
+   "remark": "海洋风向",
+   "type": "double",
+   "unit": "°",
+   "min": "0",
+   "max": "360",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaColorFactor",
+  "value": "",
+  "attrs": {
+   "remark": "海洋亮度系数",
+   "type": "double",
+   "min": "0",
+   "max": "65535",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaColorBias",
+  "value": "",
+  "attrs": {
+   "remark": "海洋亮度偏置",
+   "type": "double",
+   "min": "0",
+   "max": "65535",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaLight",
+  "value": "",
+  "attrs": {
+   "remark": "海洋定向光照",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaLight/tips",
+  "value": "0：否 1：是",
+  "attrs": {}
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaLightDir",
+  "value": "",
+  "attrs": {
+   "remark": "海洋定向光源方向"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaLightDir/SeaLightDirX",
+  "value": "",
+  "attrs": {
+   "remark": "定向光源-东",
+   "type": "double",
+   "min": "-1",
+   "max": "1",
+   "decimal": "3",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaLightDir/SeaLightDirY",
+  "value": "",
+  "attrs": {
+   "remark": "定向光源-北",
+   "type": "double",
+   "min": "-1",
+   "max": "1",
+   "decimal": "3",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/BGParam/SubBGID/SeaBG/SeaLightDir/SeaLightDirZ",
+  "value": "",
+  "attrs": {
+   "remark": "定向光源-天",
+   "type": "double",
+   "min": "-1",
+   "max": "1",
+   "decimal": "3",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam",
+  "value": "",
+  "attrs": {
+   "remark": "目标及干扰发射平台实体参数"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/TargetJamFile",
+  "value": "",
+  "attrs": {
+   "remark": "目标平台干扰类动态战情文件名称",
+   "type": "char[256]",
+   "visible": "0",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID",
+  "value": "",
+  "attrs": {
+   "remark": "实体ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo",
+  "value": "",
+  "attrs": {
+   "remark": "类型信息"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/EntityClass",
+  "value": "",
+  "attrs": {
+   "remark": "实体类别",
+   "type": "unsigned char",
+   "value": "1",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/EntityClass/tips",
+  "value": "1：目标(含假目标) 2：干扰发射平台",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/TargetType",
+  "value": "",
+  "attrs": {
+   "remark": "目标类型",
+   "type": "unsigned char",
+   "value": "2",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/TargetType/tips",
+  "value": "1：地面静止目标 2：地面运动目标 3：海上静止目标 4：海上运动目标 5：空中飞机目标 6：飞行导弹目标 7：海港停泊目标",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/JamPlatType",
+  "value": "",
+  "attrs": {
+   "remark": "干扰发射平台类型",
+   "type": "unsigned char",
+   "value": "2",
+   "visible": "0",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/JamPlatType/tips",
+  "value": "1：地面静止平台 2：地面运动平台 3：海上静止平台 4：海上运动平台 5：空中飞机平台 6：飞行导弹平台 7：海港停泊平台",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/EntityModelName",
+  "value": "",
+  "attrs": {
+   "remark": "实体型号名称",
+   "type": "char[64]",
+   "value": "ah64直升机",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/EntityDispName",
+  "value": "",
+  "attrs": {
+   "remark": "实体显示名称",
+   "type": "char[128]",
+   "value": "ah64直升机",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/MainTgtFlag",
+  "value": "",
+  "attrs": {
+   "remark": "是否主目标",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/MainTgtFlag/tips",
+  "value": "0：否 1：是",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/IsEnable",
+  "value": "",
+  "attrs": {
+   "remark": "是否起效",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/TypeInfo/IsEnable/tips",
+  "value": "0：无效 1：有效",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/StaticInfo",
+  "value": "",
+  "attrs": {
+   "remark": "静止实体专属信息"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/StaticInfo/EntityPosX",
+  "value": "",
+  "attrs": {
+   "remark": "实体坐标-东",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/StaticInfo/EntityPosY",
+  "value": "",
+  "attrs": {
+   "remark": "实体坐标-北",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/StaticInfo/EntityPosZ",
+  "value": "",
+  "attrs": {
+   "remark": "实体坐标-天",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/StaticInfo/EntityAttH",
+  "value": "",
+  "attrs": {
+   "remark": "姿态方位",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/StaticInfo/EntityAttP",
+  "value": "",
+  "attrs": {
+   "remark": "姿态俯仰",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/StaticInfo/EntityAttR",
+  "value": "",
+  "attrs": {
+   "remark": "姿态横滚",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/StaticInfo/EngineState",
+  "value": "",
+  "attrs": {
+   "remark": "发动机工作状态",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/StaticInfo/EngineState/tips",
+  "value": "0：停止 1：工作/巡航 2：加力",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo",
+  "value": "",
+  "attrs": {
+   "remark": "实体运动专属信息"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/MoveType",
+  "value": "",
+  "attrs": {
+   "remark": "运动想定方式",
+   "type": "unsigned char",
+   "visible": "0",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/MoveType/tips",
+  "value": "1：轨迹数据文件 2：导弹实时解算",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/EntityTrackFile",
+  "value": "",
+  "attrs": {
+   "remark": "实体运动文件名称",
+   "type": "char[256]",
+   "visible": "0",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/EntityPosX",
+  "value": "",
+  "attrs": {
+   "remark": "实体坐标-东",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/EntityPosY",
+  "value": "",
+  "attrs": {
+   "remark": "实体坐标-北",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/EntityPosZ",
+  "value": "",
+  "attrs": {
+   "remark": "实体坐标-天",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/EntityAttH",
+  "value": "",
+  "attrs": {
+   "remark": "姿态方位",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/EntityAttP",
+  "value": "",
+  "attrs": {
+   "remark": "姿态俯仰",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/EntityAttR",
+  "value": "",
+  "attrs": {
+   "remark": "姿态横滚",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/EngineState",
+  "value": "",
+  "attrs": {
+   "remark": "发动机工作状态",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/MoveInfo/EngineState/tips",
+  "value": "0：停止 1：工作/巡航 2：加力",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/OpticsQuality",
+  "value": "",
+  "attrs": {
+   "remark": "实体光学特性想定",
+   "visible": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/OpticsQuality/ScenMode",
+  "value": "",
+  "attrs": {
+   "remark": "实体特性想定方式",
+   "type": "unsigned char",
+   "value": "1",
+   "read": "2"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/OpticsQuality/ScenMode/tips",
+  "value": "1：建模方式 2：外部导入",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/OpticsQuality/ModelResultFile",
+  "value": "",
+  "attrs": {
+   "remark": "实体建模结果文件路径",
+   "type": "char[256]",
+   "value": "",
+   "read": "2"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/OpticsQuality/MaterialTemptureDataFile",
+  "value": "",
+  "attrs": {
+   "remark": "实体材质温度数据文件路径",
+   "type": "char[256]",
+   "value": "",
+   "read": "2"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/OpticsQuality/IntrinsicCharacterFile",
+  "value": "",
+  "attrs": {
+   "remark": "实体本征特性文件路径",
+   "type": "char[256]",
+   "value": "",
+   "read": "2"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/OpticsQuality/LaserScatScenMode",
+  "value": "",
+  "attrs": {
+   "remark": "激光反射特性想定方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/OpticsQuality/LaserScatScenMode/tips",
+  "value": "1：恒值 2：朗伯漫反射 3：BRDF",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/OpticsQuality/ReflectivityCoefficient",
+  "value": "",
+  "attrs": {
+   "remark": "漫反射系数",
+   "type": "double",
+   "min": "0",
+   "max": "1",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/OpticsQuality/BidirectionalReflectanceFile",
+  "value": "",
+  "attrs": {
+   "remark": "双向反射系数数据文件名称",
+   "type": "char[256]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist",
+  "value": "",
+  "attrs": {
+   "remark": "实体建模辅助参数",
+   "visible": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/IsEffective",
+  "value": "",
+  "attrs": {
+   "remark": "是否考虑毁伤效果仿真",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/IsEffective/tips",
+  "value": "0：不考虑 1：考虑",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/CrepDeg",
+  "value": "",
+  "attrs": {
+   "remark": "毁伤效果描述",
+   "type": "unsigned char",
+   "unit": "",
+   "min": "0",
+   "max": "20",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/AppearanceScenarioMode",
+  "value": "",
+  "attrs": {
+   "remark": "毁伤出现想定方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/AppearanceScenarioMode/tips",
+  "value": "1：基于时间 2：基于距离 3：基于爆炸动态战情",
+  "attrs": {}
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/StartTime",
+  "value": "",
+  "attrs": {
+   "remark": "开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-7200000",
+   "max": "7200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/MissTrgDistance",
+  "value": "",
+  "attrs": {
+   "remark": "弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/ModelBaryX",
+  "value": "",
+  "attrs": {
+   "remark": "模型中心偏移-东",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/ModelBaryY",
+  "value": "",
+  "attrs": {
+   "remark": "模型中心偏移-北",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/ModelBaryZ",
+  "value": "",
+  "attrs": {
+   "remark": "模型中心偏移-天",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/TargetJamPlatParam/EntityID/EntityAssist/ModelScale",
+  "value": "",
+  "attrs": {
+   "remark": "模型缩放比例",
+   "type": "double",
+   "min": "0",
+   "max": "999",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam",
+  "value": "",
+  "attrs": {
+   "remark": "干扰参数"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID",
+  "value": "",
+  "attrs": {
+   "remark": "干扰ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/CommonParam",
+  "value": "",
+  "attrs": {
+   "remark": "干扰想定共性参数"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/CommonParam/JamClass",
+  "value": "",
+  "attrs": {
+   "remark": "干扰类型",
+   "type": "unsigned char",
+   "value": "1",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/CommonParam/JamClass/tips",
+  "value": "1：阳光干扰-直射阳光 2：阳光干扰-镜面反射阳光 3：强光干扰-爆炸强光 4：强光干扰-燃烧火焰 5：强光干扰-强光干扰弹 6：战场扬尘干扰 7：烟幕弹干扰 8：烟幕喷射干扰 9：水幕干扰 10：点源诱饵弹干扰 11：面源诱饵弹干扰 12：点面结合诱饵弹干扰 13：激光压制干扰 14：激光角度欺骗干扰 15：激光高重频干扰 16：假目标干扰 17：伪装遮蔽干扰-目标本体伪装遮蔽 18：伪装遮蔽干扰-非目标本体伪装遮蔽",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/CommonParam/JamModelName",
+  "value": "",
+  "attrs": {
+   "remark": "干扰型号名称",
+   "type": "char[64]",
+   "value": "点源诱饵弹干扰",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/CommonParam/JamDispName",
+  "value": "",
+  "attrs": {
+   "remark": "干扰显示名称",
+   "type": "char[128]",
+   "value": "点源诱饵弹干扰",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/CommonParam/JamSimMode",
+  "value": "",
+  "attrs": {
+   "remark": "干扰效应仿真方式",
+   "type": "unsigned char",
+   "value": "1",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/CommonParam/JamSimMode/tips",
+  "value": "0：不考虑 1：场景贴图模拟 2：粒子系统模拟 3：模型模拟 4：入瞳贴图模拟 5：灰度贴图模拟 6：OpenGL粒子模拟 7：伪装模型",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/CommonParam/JamModelFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰贴图序列文件夹名称",
+   "type": "char[256]",
+   "value": "",
+   "read": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/CommonParam/Scale",
+  "value": "",
+  "attrs": {
+   "remark": "缩放比例",
+   "type": "double",
+   "min": "0",
+   "max": "999",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/CommonParam/GrainLasExtCoefFile",
+  "value": "",
+  "attrs": {
+   "remark": "粒子特效激光消光系数文件名称",
+   "type": "char[256]",
+   "read": "11",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight",
+  "value": "",
+  "attrs": {
+   "remark": "反射阳光干扰（干扰类型为1、2时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/IsTargetAssociated",
+  "value": "",
+  "attrs": {
+   "remark": "是否关联目标",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/IsTargetAssociated/tips",
+  "value": "0：不关联 1：关联",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/CorrTargetId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（目标）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/AppearanceScenarioMode",
+  "value": "",
+  "attrs": {
+   "remark": "出现想定方式",
+   "type": "unsigned char",
+   "value": "3"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/AppearanceScenarioMode/tips",
+  "value": "1：基于时间 2：基于距离 3：人工控制",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/StartTime",
+  "value": "",
+  "attrs": {
+   "remark": "开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-7200000",
+   "max": "7200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/MissTrgDistance",
+  "value": "",
+  "attrs": {
+   "remark": "弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/Durationtime",
+  "value": "",
+  "attrs": {
+   "remark": "持续时间",
+   "type": "unsigned int",
+   "unit": "ms",
+   "min": "0",
+   "max": "7200000",
+   "value": "10000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/JamMotionState",
+  "value": "",
+  "attrs": {
+   "remark": "干扰运动状态",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/JamMotionState/tips",
+  "value": "0：静止 1：运动",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/JamXPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/JamYPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/JamZPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/ReflectLight/JammerMotionFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰运动文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight",
+  "value": "",
+  "attrs": {
+   "remark": "强光干扰（干扰类型为3、4、5时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/AppearanceScenarioMode",
+  "value": "",
+  "attrs": {
+   "remark": "出现想定方式",
+   "type": "unsigned char",
+   "value": "4"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/AppearanceScenarioMode/tips",
+  "value": "1：基于时间 2：基于距离 3：基于动态战情 4：人工控制",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/StartTime",
+  "value": "",
+  "attrs": {
+   "remark": "开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-7200000",
+   "max": "7200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/MissTrgDistance",
+  "value": "",
+  "attrs": {
+   "remark": "弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/Durationtime",
+  "value": "",
+  "attrs": {
+   "remark": "持续时间",
+   "type": "unsigned int",
+   "unit": "ms",
+   "min": "0",
+   "max": "7200000",
+   "value": "10000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/JamMotionState",
+  "value": "",
+  "attrs": {
+   "remark": "干扰运动状态",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/JamMotionState/tips",
+  "value": "0：静止 1：运动",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/JamXPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/JamYPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/JamZPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-1000000",
+   "max": "1000000",
+   "value": "50"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/JammerMotionFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰运动文件名称",
+   "type": "char[256]",
+   "value": "",
+   "read": "10"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/JamLength",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-长",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/JamWidth",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-宽",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/JamThickness",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-厚",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/RefAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角方位",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/RefElevation",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角俯仰",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/SizeScaleFactor",
+  "value": "",
+  "attrs": {
+   "remark": "粒子尺寸缩放系数",
+   "type": "double",
+   "unit": "",
+   "min": "0.001",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/Band1Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段1透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/Band1Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/Band1LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/Band2Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段2透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/Band2Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/Band2LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/ParticModlelParaFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰粒子基础模型参数文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/Partic1CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段1粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/StrongLight/Partic2CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段2粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust",
+  "value": "",
+  "attrs": {
+   "remark": "战场扬尘干扰（干扰类型为6时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/CorrTargetId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（目标）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/AppearanceScenarioMode",
+  "value": "",
+  "attrs": {
+   "remark": "出现想定方式",
+   "type": "unsigned char",
+   "value": "3"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/AppearanceScenarioMode/tips",
+  "value": "1：基于时间 2：基于距离 3：人工控制",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/StartTime",
+  "value": "",
+  "attrs": {
+   "remark": "开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-7200000",
+   "max": "7200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/MissTrgDistance",
+  "value": "",
+  "attrs": {
+   "remark": "弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/Durationtime",
+  "value": "",
+  "attrs": {
+   "remark": "持续时间",
+   "type": "unsigned int",
+   "unit": "ms",
+   "min": "0",
+   "max": "7200000",
+   "value": "10000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/JamLength",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-长",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/JamWidth",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-宽",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/JamThickness",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-厚",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/RefAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角方位",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/RefElevation",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角俯仰",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/SizeScaleFactor",
+  "value": "",
+  "attrs": {
+   "remark": "粒子尺寸缩放系数",
+   "type": "double",
+   "unit": "",
+   "min": "0.001",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/Band1Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段1透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/Band1Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/Band1LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/Band2Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段2透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/Band2Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/Band2LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/ParticModlelParaFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰粒子基础模型参数文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/Partic1CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段1粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/BattleDust/Partic2CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段2粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade",
+  "value": "",
+  "attrs": {
+   "remark": "烟幕弹干扰（干扰类型为7时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/CorrJamPlatId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（干扰发射平台）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/AppearanceScenarioMode",
+  "value": "",
+  "attrs": {
+   "remark": "出现想定方式",
+   "type": "unsigned char",
+   "value": "4"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/AppearanceScenarioMode/tips",
+  "value": "1：基于时间 2：基于距离 3：自动规则 4：人工控制",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/StartTime",
+  "value": "",
+  "attrs": {
+   "remark": "开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-7200000",
+   "max": "7200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/MissTrgDistance",
+  "value": "",
+  "attrs": {
+   "remark": "弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/Durationtime",
+  "value": "",
+  "attrs": {
+   "remark": "持续时间",
+   "type": "unsigned int",
+   "unit": "ms",
+   "min": "0",
+   "max": "7200000",
+   "value": "20000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/SmokeGrenadeMode",
+  "value": "",
+  "attrs": {
+   "remark": "烟幕弹干扰方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/SmokeGrenadeMode/tips",
+  "value": "1：驻车干扰 2：行进间干扰",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/LaunchInitSpeed",
+  "value": "",
+  "attrs": {
+   "remark": "发射初始速度",
+   "type": "double",
+   "unit": "m/s",
+   "min": "0",
+   "max": "2000",
+   "value": "50"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/LaunchAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "发射方位角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/LaunchElevation",
+  "value": "",
+  "attrs": {
+   "remark": "发射俯仰角",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/GroupCount",
+  "value": "",
+  "attrs": {
+   "remark": "组数量",
+   "type": "unsigned char",
+   "min": "0",
+   "max": "100",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/SalvoCount",
+  "value": "",
+  "attrs": {
+   "remark": "齐射弹数量",
+   "type": "unsigned char",
+   "min": "0",
+   "max": "100",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/GroupInterval",
+  "value": "",
+  "attrs": {
+   "remark": "组间隔/发射时间间隔",
+   "type": "double",
+   "unit": "s",
+   "min": "0",
+   "max": "3600",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/IntraGroupInterval",
+  "value": "",
+  "attrs": {
+   "remark": "组内发射时间间隔",
+   "type": "double",
+   "unit": "s",
+   "min": "0",
+   "max": "3600",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/DetonationTime",
+  "value": "",
+  "attrs": {
+   "remark": "起爆时间",
+   "type": "unsigned char",
+   "unit": "s",
+   "min": "0",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/SmokeXPos",
+  "value": "",
+  "attrs": {
+   "remark": "烟幕位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/SmokeYPos",
+  "value": "",
+  "attrs": {
+   "remark": "烟幕位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/SmokeZPos",
+  "value": "",
+  "attrs": {
+   "remark": "烟幕位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "50"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/JamLength",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-长",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/JamWidth",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-宽",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/JamThickness",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-厚",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/RefAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角方位",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/RefElevation",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角俯仰",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "90"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/SizeScaleFactor",
+  "value": "",
+  "attrs": {
+   "remark": "粒子尺寸缩放系数",
+   "type": "double",
+   "unit": "",
+   "min": "0.001",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/Band1Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段1透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/Band1Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/Band1LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/Band2Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段2透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/Band2Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/Band2LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/ParticModlelParaFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰粒子基础模型参数文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/Partic1CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段1粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeGrenade/Partic2CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段2粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection",
+  "value": "",
+  "attrs": {
+   "remark": "烟幕喷射干扰（干扰类型为8时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/CorrJamPlatId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（干扰发射平台）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/AppearanceScenarioMode",
+  "value": "",
+  "attrs": {
+   "remark": "出现想定方式",
+   "type": "unsigned char",
+   "value": "4"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/AppearanceScenarioMode/tips",
+  "value": "1：基于时间 2：基于距离 3：自动规则 4：人工控制",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/StartTime",
+  "value": "",
+  "attrs": {
+   "remark": "开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-7200000",
+   "max": "7200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/MissTrgDistance",
+  "value": "",
+  "attrs": {
+   "remark": "弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/Durationtime",
+  "value": "",
+  "attrs": {
+   "remark": "持续时间",
+   "type": "unsigned int",
+   "unit": "ms",
+   "min": "0",
+   "max": "7200000",
+   "value": "10000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/SomkeEjectionJamMode",
+  "value": "",
+  "attrs": {
+   "remark": "烟幕喷射干扰方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/SomkeEjectionJamMode/tips",
+  "value": "1：驻车干扰 2：行进间干扰",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/JamLength",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-长",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/JamWidth",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-宽",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/JamThickness",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-厚",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/RefAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角方位",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/RefElevation",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角俯仰",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/SizeScaleFactor",
+  "value": "",
+  "attrs": {
+   "remark": "粒子尺寸缩放系数",
+   "type": "double",
+   "unit": "",
+   "min": "0.001",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/Band1Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段1透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/Band1Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/Band1LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/Band2Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段2透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/Band2Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/Band2LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/ParticModlelParaFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰粒子基础模型参数文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/Partic1CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段1粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/Partic2CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段2粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort/EjectionPortID",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort/EjectionPortID/LaunchInitSpeed",
+  "value": "",
+  "attrs": {
+   "remark": "喷射初始速度",
+   "type": "double",
+   "unit": "m/s",
+   "min": "0",
+   "max": "2000",
+   "value": "20"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort/EjectionPortID/LaunchAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "喷射方位角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "45"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort/EjectionPortID/LaunchElevation",
+  "value": "",
+  "attrs": {
+   "remark": "喷射俯仰角",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "45"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort/EjectionPortID/EjectionFlowRate",
+  "value": "",
+  "attrs": {
+   "remark": "喷射流量",
+   "type": "double",
+   "unit": "m3/s",
+   "min": "0",
+   "max": "65535",
+   "value": "90"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort/EjectionPortID/SingleTankSmokeTotal",
+  "value": "",
+  "attrs": {
+   "remark": "单罐烟幕总量",
+   "type": "double",
+   "unit": "m3",
+   "min": "0",
+   "max": "100000",
+   "value": "90"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort/EjectionPortID/EjectionPortPosX",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort/EjectionPortID/EjectionPortPosY",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort/EjectionPortID/EjectionPortPosZ",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/SmokeEjection/EjectionPort/EjectionPortID/EjectionPortSweepAngle",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口扇扫角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain",
+  "value": "",
+  "attrs": {
+   "remark": "水幕干扰（干扰类型为9时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/CorrJamPlatId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（干扰发射平台）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/AppearanceScenarioMode",
+  "value": "",
+  "attrs": {
+   "remark": "出现想定方式",
+   "type": "unsigned char",
+   "value": "4"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/AppearanceScenarioMode/tips",
+  "value": "1：基于时间 2：基于距离 3：自动规则 4：人工控制",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/StartTime",
+  "value": "",
+  "attrs": {
+   "remark": "开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-7200000",
+   "max": "7200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/MissTrgDistance",
+  "value": "",
+  "attrs": {
+   "remark": "弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/Durationtime",
+  "value": "",
+  "attrs": {
+   "remark": "持续时间",
+   "type": "unsigned int",
+   "unit": "ms",
+   "min": "0",
+   "max": "7200000",
+   "value": "20000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/WaterEjectionJamMode",
+  "value": "",
+  "attrs": {
+   "remark": "水幕喷射干扰方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/WaterEjectionJamMode/tips",
+  "value": "1：驻车干扰 2：行进间干扰",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/JamLength",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-长",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/JamWidth",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-宽",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/JamThickness",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-厚",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/RefAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角方位",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/RefElevation",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角俯仰",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/SizeScaleFactor",
+  "value": "",
+  "attrs": {
+   "remark": "粒子尺寸缩放系数",
+   "type": "double",
+   "unit": "",
+   "min": "0.001",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/Band1Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段1透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/Band1Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/Band1LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/Band2Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段2透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/Band2Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/Band2LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/ParticModlelParaFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰粒子基础模型参数文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/Partic1CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段1粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/Partic2CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段2粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/EjectionPort",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/EjectionPort/EjectionPortID",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/EjectionPort/EjectionPortID/LaunchInitSpeed",
+  "value": "",
+  "attrs": {
+   "remark": "喷射初始速度",
+   "type": "double",
+   "unit": "m/s",
+   "min": "0",
+   "max": "2000",
+   "value": "20"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/EjectionPort/EjectionPortID/LaunchAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "喷射方位角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/EjectionPort/EjectionPortID/LaunchElevation",
+  "value": "",
+  "attrs": {
+   "remark": "喷射俯仰角",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/EjectionPort/EjectionPortID/EjectionFlowRate",
+  "value": "",
+  "attrs": {
+   "remark": "喷射流量",
+   "type": "double",
+   "unit": "m3/s",
+   "min": "0",
+   "max": "65535",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/EjectionPort/EjectionPortID/EjectionPortPosX",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/EjectionPort/EjectionPortID/EjectionPortPosY",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/EjectionPort/EjectionPortID/EjectionPortPosZ",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/WaterCurtain/EjectionPort/EjectionPortID/EjectionPortSweepAngle",
+  "value": "",
+  "attrs": {
+   "remark": "喷射口扇扫角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb",
+  "value": "",
+  "attrs": {
+   "remark": "诱饵弹干扰（干扰类型为10、11、12时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/CorrEntityId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（目标或干扰发射平台）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/AppearanceScenarioMode",
+  "value": "",
+  "attrs": {
+   "remark": "出现想定方式",
+   "type": "unsigned char",
+   "value": "4"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/AppearanceScenarioMode/tips",
+  "value": "1：基于时间 2：基于距离 3：自动规则 4：人工控制",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/StartTime",
+  "value": "",
+  "attrs": {
+   "remark": "开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-7200000",
+   "max": "7200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/MissTrgDistance",
+  "value": "",
+  "attrs": {
+   "remark": "弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Durationtime",
+  "value": "",
+  "attrs": {
+   "remark": "持续时间",
+   "type": "unsigned int",
+   "unit": "ms",
+   "min": "0",
+   "max": "7200000",
+   "value": "10000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/DecoyInterferenceMethod",
+  "value": "",
+  "attrs": {
+   "remark": "诱饵弹干扰方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/DecoyInterferenceMethod/tips",
+  "value": "1：驻车干扰 2：行进间干扰",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/GroupCount",
+  "value": "",
+  "attrs": {
+   "remark": "组数量",
+   "type": "unsigned short",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/SalvoCount",
+  "value": "",
+  "attrs": {
+   "remark": "齐射弹数量",
+   "type": "unsigned char",
+   "min": "0",
+   "max": "100",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/GroupInterval",
+  "value": "",
+  "attrs": {
+   "remark": "组间隔/发射时间间隔",
+   "type": "double",
+   "unit": "s",
+   "min": "0",
+   "max": "3600",
+   "value": "0.8"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/IntraGroupInterval",
+  "value": "",
+  "attrs": {
+   "remark": "组内发射时间间隔",
+   "type": "double",
+   "unit": "s",
+   "min": "0",
+   "max": "3600",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/JamLength",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-长",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/JamWidth",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-宽",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/JamThickness",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-厚",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/RefAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角方位",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/RefElevation",
+  "value": "",
+  "attrs": {
+   "remark": "参考观测角俯仰",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/SizeScaleFactor",
+  "value": "",
+  "attrs": {
+   "remark": "粒子尺寸缩放系数",
+   "type": "double",
+   "unit": "",
+   "min": "0.001",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Band1Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段1透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Band1Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Band1LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段1亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Band2Transparency",
+  "value": "",
+  "attrs": {
+   "remark": "波段2透明度修正",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Band2Light",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正系数",
+   "type": "double",
+   "min": "0",
+   "max": "1000",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Band2LightBias",
+  "value": "",
+  "attrs": {
+   "remark": "波段2亮度修正偏置",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "-1000",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/ParticModlelParaFile",
+  "value": "",
+  "attrs": {
+   "remark": "干扰粒子基础模型参数文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Partic1CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段1粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Partic2CharaMapFile",
+  "value": "",
+  "attrs": {
+   "remark": "波段2粒子物理特性映射曲线文件名称",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Source",
+  "value": "",
+  "attrs": {
+   "remark": "发射源"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Source/SourceID",
+  "value": "",
+  "attrs": {
+   "remark": "发射源ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Source/SourceID/LaunchInitSpeed",
+  "value": "",
+  "attrs": {
+   "remark": "发射初始速度",
+   "type": "double",
+   "unit": "m/s",
+   "min": "0",
+   "max": "2000",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Source/SourceID/LaunchAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "发射方位角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "170"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Source/SourceID/LaunchElevation",
+  "value": "",
+  "attrs": {
+   "remark": "发射俯仰角",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Source/SourceID/SourcePosX",
+  "value": "",
+  "attrs": {
+   "remark": "发射源位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Source/SourceID/SourcePosY",
+  "value": "",
+  "attrs": {
+   "remark": "发射源位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/DecoyBomb/Source/SourceID/SourcePosZ",
+  "value": "",
+  "attrs": {
+   "remark": "发射源位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress",
+  "value": "",
+  "attrs": {
+   "remark": "激光压制干扰（干扰类型为13时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/CorrJamPlatId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（干扰发射平台）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/AppearanceScenarioMode",
+  "value": "",
+  "attrs": {
+   "remark": "出现想定方式",
+   "type": "unsigned char",
+   "value": "4"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/AppearanceScenarioMode/tips",
+  "value": "1：基于时间 2：基于距离 3：自动规则 4：人工控制",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/StartTime",
+  "value": "",
+  "attrs": {
+   "remark": "开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-7200000",
+   "max": "7200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/MissTrgDistance",
+  "value": "",
+  "attrs": {
+   "remark": "弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/Durationtime",
+  "value": "",
+  "attrs": {
+   "remark": "持续时间",
+   "type": "unsigned int",
+   "unit": "ms",
+   "min": "0",
+   "max": "7200000",
+   "value": "20000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LaserSuppressionMethod",
+  "value": "",
+  "attrs": {
+   "remark": "激光压制干扰方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LaserSuppressionMethod/tips",
+  "value": "1：驻车干扰 2：行进间干扰",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/JamXPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/JamYPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/JamZPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/TrackingChanelID",
+  "value": "",
+  "attrs": {
+   "remark": "跟瞄通道ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/TrackDist",
+  "value": "",
+  "attrs": {
+   "remark": "跟踪距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "2000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/TrackErrorYaw",
+  "value": "",
+  "attrs": {
+   "remark": "方位跟瞄精度",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "5000",
+   "decimal": "3",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/TrackErrorPitch",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰跟瞄精度",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "5000",
+   "decimal": "3",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/PitchMax",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰上限",
+   "type": "double",
+   "unit": "m",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/PitchMin",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰下限",
+   "type": "double",
+   "unit": "m",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/YawMaxTrackVelocity",
+  "value": "",
+  "attrs": {
+   "remark": "方位最大跟踪角速度",
+   "type": "double",
+   "unit": "°/s",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/YawMaxTrackAcceleration",
+  "value": "",
+  "attrs": {
+   "remark": "方位最大跟踪角加速度",
+   "type": "double",
+   "unit": "°/s2",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/PitchMaxTrackVelocity",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰最大跟踪角速度",
+   "type": "double",
+   "unit": "°/s",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/PitchMaxTrackAcceleration",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰最大跟踪角加速度",
+   "type": "double",
+   "unit": "°/s2",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LasWavebandType",
+  "value": "",
+  "attrs": {
+   "remark": "激光波段类型",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LasWavebandType/tips",
+  "value": "1：紫外 2：可见光 3：近红外 4：短波红外 5：中波红外 6：长波红外",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/StartLambda",
+  "value": "",
+  "attrs": {
+   "remark": "起始波长",
+   "type": "unsigned int",
+   "unit": "nm",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/EndLambda",
+  "value": "",
+  "attrs": {
+   "remark": "截止波长",
+   "type": "unsigned int",
+   "unit": "nm",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LaserLaunchPower",
+  "value": "",
+  "attrs": {
+   "remark": "发射功率",
+   "type": "double",
+   "unit": "W",
+   "min": "0",
+   "max": "1000000",
+   "decimal": "3",
+   "value": "30"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LaserType",
+  "value": "",
+  "attrs": {
+   "remark": "激光体制",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LaserType/tips",
+  "value": "1：脉冲激光 2：连续激光",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LasBeamControlType",
+  "value": "",
+  "attrs": {
+   "remark": "激光束控制方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LasBeamControlType/tips",
+  "value": "1：固定束散角 2：聚焦光束控制",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LaserRepeatFreq",
+  "value": "",
+  "attrs": {
+   "remark": "重复频率",
+   "type": "unsigned int",
+   "unit": "Hz",
+   "min": "0",
+   "max": "5000000",
+   "value": "1000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LasPulseWidth",
+  "value": "",
+  "attrs": {
+   "remark": "脉冲宽度",
+   "type": "double",
+   "unit": "nm",
+   "min": "0.000001",
+   "max": "1000000",
+   "decimal": "8",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LasDiameter",
+  "value": "",
+  "attrs": {
+   "remark": "出光口径",
+   "type": "double",
+   "unit": "mm",
+   "min": "1",
+   "max": "1000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LaserDivergAng",
+  "value": "",
+  "attrs": {
+   "remark": "束散角",
+   "type": "double",
+   "unit": "mrad",
+   "min": "0",
+   "max": "10000",
+   "decimal": "4",
+   "value": "0.5"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserSuppress/LasSpotSizeFile",
+  "value": "",
+  "attrs": {
+   "remark": "不同距离激光光斑尺寸数据文件",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept",
+  "value": "",
+  "attrs": {
+   "remark": "激光角度欺骗干扰（干扰类型为14时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/CorrJamPlatId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（干扰发射平台）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/LaserAngleDeceptionMethod",
+  "value": "",
+  "attrs": {
+   "remark": "激光角度欺骗干扰方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/LaserAngleDeceptionMethod/tips",
+  "value": "1：驻车干扰 2：行进间干扰",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/JamZBPosX",
+  "value": "",
+  "attrs": {
+   "remark": "干扰装备激光告警头位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/JamZBPosY",
+  "value": "",
+  "attrs": {
+   "remark": "干扰装备激光告警头位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/JamZBPosZ",
+  "value": "",
+  "attrs": {
+   "remark": "干扰装备激光告警头位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetPosX",
+  "value": "",
+  "attrs": {
+   "remark": "假目标位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetPosY",
+  "value": "",
+  "attrs": {
+   "remark": "假目标位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetPosZ",
+  "value": "",
+  "attrs": {
+   "remark": "假目标位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "假目标姿态方位角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetElevation",
+  "value": "",
+  "attrs": {
+   "remark": "假目标姿态俯仰角",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetRoll",
+  "value": "",
+  "attrs": {
+   "remark": "假目标姿态滚转角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetNormalAzimuth",
+  "value": "",
+  "attrs": {
+   "remark": "假目标法线方向方位",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetNormalElevation",
+  "value": "",
+  "attrs": {
+   "remark": "假目标法线方向俯仰",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetReflectivityScenario",
+  "value": "",
+  "attrs": {
+   "remark": "假目标反射特性想定方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetReflectivityScenario/tips",
+  "value": "1：恒值 2：朗伯漫反射 3：BRDF",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/ReflectivityCoefficient",
+  "value": "",
+  "attrs": {
+   "remark": "反射系数",
+   "type": "double",
+   "min": "0",
+   "max": "1",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FakeTargetBidirectionalReflectanceFile",
+  "value": "",
+  "attrs": {
+   "remark": "假目标双向反射系数数据文件路径",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/LaserWarnSensitivity",
+  "value": "",
+  "attrs": {
+   "remark": "激光告警灵敏度",
+   "type": "double",
+   "unit": "μW/cm2",
+   "min": "0",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/ScatteringInterceptRadius",
+  "value": "",
+  "attrs": {
+   "remark": "散射截获半径",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/JammingReactionTime",
+  "value": "",
+  "attrs": {
+   "remark": "干扰反应时间",
+   "type": "double",
+   "unit": "s",
+   "min": "0",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/JammingDuration",
+  "value": "",
+  "attrs": {
+   "remark": "干扰持续时间",
+   "type": "double",
+   "unit": "s",
+   "min": "0",
+   "max": "1000",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/LasPulseEnergy",
+  "value": "",
+  "attrs": {
+   "remark": "干扰激光脉冲能量",
+   "type": "double",
+   "unit": "mJ",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/LasPulseWidth",
+  "value": "",
+  "attrs": {
+   "remark": "干扰激光脉冲宽度",
+   "type": "double",
+   "unit": "nm",
+   "min": "0.000001",
+   "max": "1000000",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/JammingTimingStrategy",
+  "value": "",
+  "attrs": {
+   "remark": "干扰时序策略",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/JammingTimingStrategy/tips",
+  "value": "1：固定时序差 2：序列时序差",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/FixedTimingOffset",
+  "value": "",
+  "attrs": {
+   "remark": "固定时序差值",
+   "type": "double",
+   "unit": "μs",
+   "min": "-100",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserAngleDecept/DeceptionLaserPulseTimingFile",
+  "value": "",
+  "attrs": {
+   "remark": "欺骗激光脉冲时序文件",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate",
+  "value": "",
+  "attrs": {
+   "remark": "激光高重频干扰（干扰类型为15时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/CorrJamPlatId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（干扰发射平台）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/AppearanceScenarioMode",
+  "value": "",
+  "attrs": {
+   "remark": "出现想定方式",
+   "type": "unsigned char",
+   "value": "4"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/AppearanceScenarioMode/tips",
+  "value": "1：基于时间 2：基于距离 3：自动规则 4：人工控制",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/StartTime",
+  "value": "",
+  "attrs": {
+   "remark": "开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-7200000",
+   "max": "7200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/MissTrgDistance",
+  "value": "",
+  "attrs": {
+   "remark": "弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/Durationtime",
+  "value": "",
+  "attrs": {
+   "remark": "持续时间",
+   "type": "unsigned int",
+   "unit": "ms",
+   "min": "0",
+   "max": "7200000",
+   "value": "10000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/LaserHighRepetRateMethod",
+  "value": "",
+  "attrs": {
+   "remark": "激光高重频干扰方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/LaserHighRepetRateMethod/tips",
+  "value": "1：驻车干扰 2：行进间干扰",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/JamXPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/JamYPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/JamZPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/TrackingChanelID",
+  "value": "",
+  "attrs": {
+   "remark": "跟瞄通道ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/TrackDist",
+  "value": "",
+  "attrs": {
+   "remark": "跟踪距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "2000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/TrackErrorYaw",
+  "value": "",
+  "attrs": {
+   "remark": "方位跟瞄精度",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "5000",
+   "decimal": "3",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/TrackErrorPitch",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰跟瞄精度",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "5000",
+   "decimal": "3",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/PitchMax",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰上限",
+   "type": "double",
+   "unit": "m",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/PitchMin",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰下限",
+   "type": "double",
+   "unit": "m",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/YawMaxTrackVelocity",
+  "value": "",
+  "attrs": {
+   "remark": "方位最大跟踪角速度",
+   "type": "double",
+   "unit": "°/s",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/YawMaxTrackAcceleration",
+  "value": "",
+  "attrs": {
+   "remark": "方位最大跟踪角加速度",
+   "type": "double",
+   "unit": "°/s2",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/PitchMaxTrackVelocity",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰最大跟踪角速度",
+   "type": "double",
+   "unit": "°/s",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/PitchMaxTrackAcceleration",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰最大跟踪角加速度",
+   "type": "double",
+   "unit": "°/s2",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/LasWavebandType",
+  "value": "",
+  "attrs": {
+   "remark": "激光波段类型",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/LasWavebandType/tips",
+  "value": "1：紫外 2：可见光 3：近红外 4：短波红外 5：中波红外 6：长波红外",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/StartLambda",
+  "value": "",
+  "attrs": {
+   "remark": "起始波长",
+   "type": "unsigned int",
+   "unit": "nm",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/EndLambda",
+  "value": "",
+  "attrs": {
+   "remark": "截止波长",
+   "type": "unsigned int",
+   "unit": "nm",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/LaserLaunchPower",
+  "value": "",
+  "attrs": {
+   "remark": "发射功率",
+   "type": "double",
+   "unit": "W",
+   "min": "0",
+   "max": "1000000",
+   "decimal": "3",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/InterfType",
+  "value": "",
+  "attrs": {
+   "remark": "干扰样式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/InterfType/tips",
+  "value": "1：重频和脉冲能量不变 2：重频和脉冲能量变化",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/LaserRepeatFreq",
+  "value": "",
+  "attrs": {
+   "remark": "重复频率",
+   "type": "unsigned int",
+   "unit": "Hz",
+   "min": "0",
+   "max": "5000000",
+   "value": "1000"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/LasPulseWidth",
+  "value": "",
+  "attrs": {
+   "remark": "脉冲宽度",
+   "type": "double",
+   "unit": "nm",
+   "min": "0.000001",
+   "max": "1000000",
+   "decimal": "8",
+   "value": "10"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/LasDiameter",
+  "value": "",
+  "attrs": {
+   "remark": "出光口径",
+   "type": "double",
+   "unit": "mm",
+   "min": "1",
+   "max": "1000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/LaserDivergAng",
+  "value": "",
+  "attrs": {
+   "remark": "束散角",
+   "type": "double",
+   "unit": "mrad",
+   "min": "0",
+   "max": "10000",
+   "decimal": "4",
+   "value": "0.5"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/LaserHighRepetRate/HighPlusSeqFile",
+  "value": "",
+  "attrs": {
+   "remark": "高重频序列脉冲字文件文件",
+   "type": "char[256]",
+   "read": "10",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/FalseTarget",
+  "value": "",
+  "attrs": {
+   "remark": "假目标干扰（干扰类型为16时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/FalseTarget/CorrTargetId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（目标）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage",
+  "value": "",
+  "attrs": {
+   "remark": "伪装遮蔽干扰（干扰类型为17、18时想定）"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/CorrTargetId",
+  "value": "",
+  "attrs": {
+   "remark": "关联的实体（目标）ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/AutoFall",
+  "value": "",
+  "attrs": {
+   "remark": "自由落体伪装屏蔽",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/AutoFall/tips",
+  "value": "0：不启用 1：启用",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/JamType",
+  "value": "",
+  "attrs": {
+   "remark": "干扰贴合类型",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/JamType/tips",
+  "value": "0：外扩覆盖模式 1：紧密贴合模式",
+  "attrs": {}
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/JamXPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/JamYPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/JamZPos",
+  "value": "",
+  "attrs": {
+   "remark": "干扰位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/JamLength",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-长",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/JamWidth",
+  "value": "",
+  "attrs": {
+   "remark": "干扰空间尺寸范围-宽",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "10000",
+   "value": "100"
+  }
+ },
+ {
+  "path": "/root/JamParam/JamID/Camouflage/JamAngle",
+  "value": "",
+  "attrs": {
+   "remark": "角度",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon",
+  "value": "",
+  "attrs": {
+   "remark": "导弹武器系统"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID",
+  "value": "",
+  "attrs": {
+   "remark": "平台ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo",
+  "value": "",
+  "attrs": {
+   "remark": "导弹发射平台信息"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatClass",
+  "value": "",
+  "attrs": {
+   "remark": "平台类型",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatClass/tips",
+  "value": "1：陆基 2：车载 3：舰载 4：机载 5：潜射",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatTypName",
+  "value": "",
+  "attrs": {
+   "remark": "平台型号名称",
+   "type": "char[64]",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatDispName",
+  "value": "",
+  "attrs": {
+   "remark": "平台显示名称",
+   "type": "char[128]",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatMovSta",
+  "value": "",
+  "attrs": {
+   "remark": "平台运动状态",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatMovSta/tips",
+  "value": "1：静止 2：运动",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatLon",
+  "value": "",
+  "attrs": {
+   "remark": "平台位置经度",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "decimal": "7",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatLat",
+  "value": "",
+  "attrs": {
+   "remark": "平台位置纬度",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "decimal": "7",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatAlt",
+  "value": "",
+  "attrs": {
+   "remark": "平台位置高度",
+   "type": "double",
+   "unit": "m",
+   "min": "-100000",
+   "max": "10000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatPosX",
+  "value": "",
+  "attrs": {
+   "remark": "平台位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "20000000",
+   "max": "20000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatPosY",
+  "value": "",
+  "attrs": {
+   "remark": "平台位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "20000000",
+   "max": "20000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatPosZ",
+  "value": "",
+  "attrs": {
+   "remark": "平台位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "20000000",
+   "max": "20000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatGesYaw",
+  "value": "",
+  "attrs": {
+   "remark": "平台姿态偏航角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatGesPitch",
+  "value": "",
+  "attrs": {
+   "remark": "平台姿态俯仰角",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatGesRoll",
+  "value": "",
+  "attrs": {
+   "remark": "平台姿态滚转角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatEngSta",
+  "value": "",
+  "attrs": {
+   "remark": "发动机状态",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/MissPlatEngSta/tips",
+  "value": "0：未开机 1：巡航 2：加力",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/WaitLauMiss1ID",
+  "value": "",
+  "attrs": {
+   "remark": "待发射导弹1ID",
+   "type": "unsigned short",
+   "value": "201"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/ModelBaryX",
+  "value": "",
+  "attrs": {
+   "remark": "模型中心偏移X",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/ModelBaryY",
+  "value": "",
+  "attrs": {
+   "remark": "模型中心偏移Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/ModelBaryZ",
+  "value": "",
+  "attrs": {
+   "remark": "模型中心偏移Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-10000",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/MissilePlatformInfo/ModelScale",
+  "value": "",
+  "attrs": {
+   "remark": "模型缩放比例",
+   "type": "double",
+   "min": "0",
+   "max": "999",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles",
+  "value": "",
+  "attrs": {
+   "remark": "导弹信息"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID",
+  "value": "",
+  "attrs": {
+   "remark": "导弹ID",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/CorrMissPlatID",
+  "value": "",
+  "attrs": {
+   "remark": "关联发射平台ID",
+   "type": "unsigned short",
+   "value": "101"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissileClass",
+  "value": "",
+  "attrs": {
+   "remark": "导弹类型",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissileClass/tips",
+  "value": "1：弹道导弹 2：飞航导弹 3：制导火箭弹 4：制导炮弹 5：反坦克弹 6：巡飞弹",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissTypName",
+  "value": "",
+  "attrs": {
+   "remark": "导弹型号名称",
+   "type": "char[64]",
+   "value": "PL15"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissDispName",
+  "value": "",
+  "attrs": {
+   "remark": "导弹显示名称",
+   "type": "char[128]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MainMissFlag",
+  "value": "",
+  "attrs": {
+   "remark": "是否主导弹",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MainMissFlag/tips",
+  "value": "0：否 1：是",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissModVerNum",
+  "value": "",
+  "attrs": {
+   "remark": "模型版本",
+   "type": "char[32]",
+   "value": "V01"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissHangYaw",
+  "value": "",
+  "attrs": {
+   "remark": "导弹加挂姿态方位角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissHangPitch",
+  "value": "",
+  "attrs": {
+   "remark": "导弹加挂姿态俯仰角",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissHangRoll",
+  "value": "",
+  "attrs": {
+   "remark": "导弹加挂姿态滚转角",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissLauLow",
+  "value": "",
+  "attrs": {
+   "remark": "导弹发射规则",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissLauLow/tips",
+  "value": "1：时间规则 2：距离规则 3：本系统人工发射 4：被试品人工发射",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissLauTime",
+  "value": "",
+  "attrs": {
+   "remark": "发射时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-8000000",
+   "max": "8000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissLauRang",
+  "value": "",
+  "attrs": {
+   "remark": "发射距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "20000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/AttackTargID",
+  "value": "",
+  "attrs": {
+   "remark": "预攻击目标ID",
+   "type": "unsigned short",
+   "value": "301"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/MissLauInitVel",
+  "value": "",
+  "attrs": {
+   "remark": "导弹发射初速度",
+   "type": "double",
+   "unit": "m/s",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/DamEffSimFlag",
+  "value": "",
+  "attrs": {
+   "remark": "是否考虑毁伤效果仿真",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/DamEffSimFlag/tips",
+  "value": "0：不考虑 1：考虑",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/PrelauSeekWork",
+  "value": "",
+  "attrs": {
+   "remark": "导引头是否发射前工作",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/PrelauSeekWork/tips",
+  "value": "0：否吧 1：是",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/PrelauSeekWorkRang",
+  "value": "",
+  "attrs": {
+   "remark": "导引头发射前工作弹目距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/SatNavPertSimMode",
+  "value": "",
+  "attrs": {
+   "remark": "卫星导航受扰效果模拟方式",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/MissID/SatNavPertSimMode/tips",
+  "value": "0：不模拟 1：本系统数据文件方式 2：联合仿真他系统模拟方式",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam",
+  "value": "",
+  "attrs": {
+   "remark": "末制导导引头参数"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam",
+  "value": "",
+  "attrs": {
+   "remark": "导引头公共参数"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/SeekTypName",
+  "value": "",
+  "attrs": {
+   "remark": "导引头型号名称",
+   "type": "char[64]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/SeekDispName",
+  "value": "",
+  "attrs": {
+   "remark": "导引头显示名称",
+   "type": "char[128]",
+   "value": ""
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/CorrMissID",
+  "value": "",
+  "attrs": {
+   "remark": "关联导弹ID",
+   "type": "unsigned short",
+   "value": "201"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/SeekGuidModNum",
+  "value": "",
+  "attrs": {
+   "remark": "导引头制导模块数量",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/SeekPlatNum",
+  "value": "",
+  "attrs": {
+   "remark": "导引头平台数量",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/SeekInstYaw1",
+  "value": "",
+  "attrs": {
+   "remark": "导引头安装姿态方位角（平台1）",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/SeekInstPitch1",
+  "value": "",
+  "attrs": {
+   "remark": "导引头安装姿态俯仰角（平台1）",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/SeekInstRoll1",
+  "value": "",
+  "attrs": {
+   "remark": "导引头安装姿态滚转角（平台1）",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/SeekInstYaw2",
+  "value": "",
+  "attrs": {
+   "remark": "导引头安装姿态方位角（平台2）",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/SeekInstPitch2",
+  "value": "",
+  "attrs": {
+   "remark": "导引头安装姿态俯仰角（平台2）",
+   "type": "double",
+   "unit": "°",
+   "min": "-90",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/SeekInstRoll2",
+  "value": "",
+  "attrs": {
+   "remark": "导引头安装姿态滚转角（平台2）",
+   "type": "double",
+   "unit": "°",
+   "min": "-180",
+   "max": "180",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/ComGuidSratFlag",
+  "value": "",
+  "attrs": {
+   "remark": "复合制导策略",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/ComGuidSratFlag/tips",
+  "value": "1：主副模式 2：接力模式 3：融合模式",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/MainGuidModNo",
+  "value": "",
+  "attrs": {
+   "remark": "主制导模块序号",
+   "type": "unsigned char",
+   "min": "1",
+   "max": "3",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod1Class",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块1类型",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod1Class/tips",
+  "value": "0：无 1：激光 2：光学成像 3：主动雷达 4：被动雷达",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod1Band",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块1工作波段",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod1Band/tips",
+  "value": "1：可见光 2：近红外 3：短波红外 4：中波红外 5：长波红外",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod1PlatSerNum",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块1所属平台序号",
+   "type": "unsigned char",
+   "min": "1",
+   "max": "2",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod2Class",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块2类型",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod2Class/tips",
+  "value": "0：无 1：激光半主动 2：光学成像 3：主动雷达 4：被动雷达",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod2Band",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块2工作波段",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod2Band/tips",
+  "value": "1：可见光 2：近红外 3：短波红外 4：中波红外 5：长波红外",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod2PlatSerNum",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块2所属平台序号",
+   "type": "unsigned char",
+   "min": "1",
+   "max": "2",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod3Class",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块3类型",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod3Class/tips",
+  "value": "0：无 1：激光 2：光学成像 3：主动雷达 4：被动雷达",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod3Band",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块3工作波段",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod3Band/tips",
+  "value": "1：可见光 2：近红外 3：短波红外 4：中波红外 5：长波红外",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/GuidMod3PlatSerNum",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块3所属平台序号",
+   "type": "unsigned char",
+   "min": "1",
+   "max": "2",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/OptImagGuidModNum",
+  "value": "",
+  "attrs": {
+   "remark": "光学成像制导模块数量",
+   "type": "unsigned char",
+   "min": "0",
+   "max": "2",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/CommonParam/LaserGuidModNum",
+  "value": "",
+  "attrs": {
+   "remark": "激光制导模块数量",
+   "type": "unsigned char",
+   "min": "0",
+   "max": "1",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods",
+  "value": "",
+  "attrs": {
+   "remark": "光学成像制导模块"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块序号",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/StartWavelength",
+  "value": "",
+  "attrs": {
+   "remark": "起始波长",
+   "type": "double",
+   "unit": "μm",
+   "min": "0",
+   "max": "20",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/CutOffWavelength",
+  "value": "",
+  "attrs": {
+   "remark": "终止波长",
+   "type": "double",
+   "unit": "μm",
+   "min": "0",
+   "max": "20",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/FieldYaw",
+  "value": "",
+  "attrs": {
+   "remark": "方位视场",
+   "type": "double",
+   "unit": "°",
+   "min": "0",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/FieldPitch",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰视场",
+   "type": "double",
+   "unit": "°",
+   "min": "0",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/EntraPupDiam",
+  "value": "",
+  "attrs": {
+   "remark": "入瞳直径",
+   "type": "double",
+   "unit": "mm",
+   "min": "0",
+   "max": "300",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/FocalLength",
+  "value": "",
+  "attrs": {
+   "remark": "焦距",
+   "type": "double",
+   "unit": "mm",
+   "min": "0",
+   "max": "2000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/YawPixelNum",
+  "value": "",
+  "attrs": {
+   "remark": "方位像元数",
+   "type": "unsigned short",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/PitchPixelNum",
+  "value": "",
+  "attrs": {
+   "remark": "俯仰像元数",
+   "type": "unsigned short",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/IntegralTime",
+  "value": "",
+  "attrs": {
+   "remark": "积分时间",
+   "type": "unsigned int",
+   "unit": "μs",
+   "min": "0",
+   "max": "200000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/FrameFreq",
+  "value": "",
+  "attrs": {
+   "remark": "帧频",
+   "type": "double",
+   "unit": "Hz",
+   "min": "0",
+   "max": "500",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/GrayScale",
+  "value": "",
+  "attrs": {
+   "remark": "灰度等级",
+   "type": "unsigned char",
+   "unit": "位",
+   "min": "8",
+   "max": "16",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/RadBright1",
+  "value": "",
+  "attrs": {
+   "remark": "响应特性点1辐射亮度",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/Sect1RespRatio",
+  "value": "",
+  "attrs": {
+   "remark": "亮度区间1响应系数",
+   "type": "double",
+   "unit": "(sr.m2)/W",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/Sect1RespBias",
+  "value": "",
+  "attrs": {
+   "remark": "亮度区间1响应偏置",
+   "type": "unsigned int",
+   "unit": "灰度",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/RadBright2",
+  "value": "",
+  "attrs": {
+   "remark": "响应特性点2辐射亮度",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/Sect2RespRatio",
+  "value": "",
+  "attrs": {
+   "remark": "亮度区间2响应系数",
+   "type": "double",
+   "unit": "(sr.m2)/W",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/Sect2RespBias",
+  "value": "",
+  "attrs": {
+   "remark": "亮度区间2响应偏置",
+   "type": "unsigned int",
+   "unit": "灰度",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/RadBright3",
+  "value": "",
+  "attrs": {
+   "remark": "响应特性点3辐射亮度",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/Sect3RespRatio",
+  "value": "",
+  "attrs": {
+   "remark": "亮度区间3响应系数",
+   "type": "double",
+   "unit": "(sr.m2)/W",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/Sect3RespBias",
+  "value": "",
+  "attrs": {
+   "remark": "亮度区间3响应偏置",
+   "type": "unsigned int",
+   "unit": "灰度",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/RadBright4",
+  "value": "",
+  "attrs": {
+   "remark": "响应特性点4辐射亮度",
+   "type": "double",
+   "unit": "W/(sr.m2)",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/Sect4RespRatio",
+  "value": "",
+  "attrs": {
+   "remark": "亮度区间4响应系数",
+   "type": "double",
+   "unit": "(sr.m2)/W",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/Sect4RespBias",
+  "value": "",
+  "attrs": {
+   "remark": "亮度区间4响应偏置",
+   "type": "unsigned int",
+   "unit": "灰度",
+   "min": "0",
+   "max": "10000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/GrayVariance",
+  "value": "",
+  "attrs": {
+   "remark": "噪声灰度方差",
+   "type": "double",
+   "unit": "灰度",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/AerHeatRadSimFlag",
+  "value": "",
+  "attrs": {
+   "remark": "气动热辐射热辐射效应仿真标识",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/AerHeatRadSimFlag/tips",
+  "value": "0：不考虑 1：考虑",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/AerHeatPSFSimFlag",
+  "value": "",
+  "attrs": {
+   "remark": "气动热图像退化效应仿真标识",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/AerHeatPSFSimFlag/tips",
+  "value": "0：不考虑 1：考虑",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/MovVibEffSimFlag",
+  "value": "",
+  "attrs": {
+   "remark": "运动抖动模糊效应仿真标识",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/OptImagGuidMods/OptImagGuidMod/MovVibEffSimFlag/tips",
+  "value": "0：不考虑 1：考虑",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods",
+  "value": "",
+  "attrs": {
+   "remark": "激光制导模块"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod",
+  "value": "",
+  "attrs": {
+   "remark": "制导模块序号",
+   "type": "unsigned char",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/AllField",
+  "value": "",
+  "attrs": {
+   "remark": "全视场",
+   "type": "double",
+   "unit": "°",
+   "min": "0",
+   "max": "90",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/Wavelength",
+  "value": "",
+  "attrs": {
+   "remark": "工作波长",
+   "type": "double",
+   "unit": "μm",
+   "min": "0",
+   "max": "20",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/Sensitivity",
+  "value": "",
+  "attrs": {
+   "remark": "灵敏度",
+   "type": "double",
+   "unit": "fJ/cm2",
+   "min": "0",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/IndicatorPosX",
+  "value": "",
+  "attrs": {
+   "remark": "指示器位置X",
+   "type": "double",
+   "unit": "m",
+   "min": "-100000",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/IndicatorPosY",
+  "value": "",
+  "attrs": {
+   "remark": "指示器位置Y",
+   "type": "double",
+   "unit": "m",
+   "min": "-100000",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/IndicatorPosZ",
+  "value": "",
+  "attrs": {
+   "remark": "指示器位置Z",
+   "type": "double",
+   "unit": "m",
+   "min": "-100000",
+   "max": "100000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/LasShootScenFlag",
+  "value": "",
+  "attrs": {
+   "remark": "激光发射想定方式",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/LasShootScenFlag/tips",
+  "value": "1：基于时间 2：基于距离 3：基于事件",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/StartLasShootTime",
+  "value": "",
+  "attrs": {
+   "remark": "发射开始时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-8000000",
+   "max": "8000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/EndLasShootTime",
+  "value": "",
+  "attrs": {
+   "remark": "发射结束时间",
+   "type": "int",
+   "unit": "ms",
+   "min": "-8000000",
+   "max": "8000000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/StartLasShootRang",
+  "value": "",
+  "attrs": {
+   "remark": "发射开始距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "50000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/EndLasShootRang",
+  "value": "",
+  "attrs": {
+   "remark": "发射结束距离",
+   "type": "double",
+   "unit": "m",
+   "min": "0",
+   "max": "50000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/LasPulseEnergy",
+  "value": "",
+  "attrs": {
+   "remark": "指示器激光脉冲能量",
+   "type": "double",
+   "unit": "mJ",
+   "min": "0",
+   "max": "1000",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/LasDivAngle",
+  "value": "",
+  "attrs": {
+   "remark": "指示器激光束散角",
+   "type": "double",
+   "unit": "mrad",
+   "min": "0",
+   "max": "10",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/LasPulseWidth",
+  "value": "",
+  "attrs": {
+   "remark": "指示激光器脉冲宽度",
+   "type": "double",
+   "unit": "ns",
+   "min": "0",
+   "max": "10",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/LasRepFreq",
+  "value": "",
+  "attrs": {
+   "remark": "指示器激光重频",
+   "type": "double",
+   "unit": "Hz",
+   "min": "0",
+   "max": "100",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/LasCodeClass",
+  "value": "",
+  "attrs": {
+   "remark": "指示器激光编码类型",
+   "type": "unsigned char",
+   "value": "1"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/LasCodeClass/tips",
+  "value": "1：精确频率码 2：PCM码 3：变间隔码 4：伪随机码 5：水印码",
+  "attrs": {}
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/LasCodeNum",
+  "value": "",
+  "attrs": {
+   "remark": "指示器激光编码编号",
+   "type": "unsigned short",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/IndicAzimPrec",
+  "value": "",
+  "attrs": {
+   "remark": "指示器方位照射精度",
+   "type": "double",
+   "unit": "mrad",
+   "min": "0",
+   "max": "10",
+   "value": "0"
+  }
+ },
+ {
+  "path": "/root/MissileWeapon/MissPlatID/Missiles/DYTParam/LaserGuidMods/LaserGuidMod/IndicPitchPrec",
+  "value": "",
+  "attrs": {
+   "remark": "指示器俯仰照射精度",
+   "type": "double",
+   "unit": "mrad",
+   "min": "0",
+   "max": "10",
+   "value": "0"
+  }
+ }
+]

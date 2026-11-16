@@ -1,0 +1,59 @@
+{
+ "generatedAt": "2026-09-25T14:55:00.378Z",
+ "title": "我的摄影记录",
+ "subtitle": "",
+ "author": "",
+ "source": "网页导入",
+ "stats": {
+  "photos": 14,
+  "withGps": 0,
+  "withExifDate": 14,
+  "fromFolderName": 0,
+  "fromMtime": 0,
+  "withLocation": 0,
+  "lowConfidence": 14,
+  "firstDate": "2025-02-26",
+  "lastDate": "2025-02-26",
+  "bytes": 5043995
+ },
+ "years": {
+  "2025": 14
+ },
+ "months": [
+  {
+   "key": "2025-02",
+   "count": 14,
+   "cover": "media/thumbs/39b830f9f297d0cac4a4.webp"
+  }
+ ],
+ "locations": [
+  {
+   "name": "未识别地点",
+   "lat": null,
+   "lng": null,
+   "count": 14,
+   "first": "2025-02-26",
+   "last": "2025-02-26",
+   "cover": "media/thumbs/39b830f9f297d0cac4a4.webp"
+  }
+ ],
+ "cameras": [
+  {
+   "name": "NIKON CORPORATION NIKON D3100",
+   "count": 14
+  }
+ ],
+ "lenses": [
+  {
+   "name": "0.0 mm f/0.0",
+   "count": 14
+  }
+ ],
+ "editors": [
+  {
+   "name": "Lightroom",
+   "count": 14
+  }
+ ],
+ "tags": []
+}

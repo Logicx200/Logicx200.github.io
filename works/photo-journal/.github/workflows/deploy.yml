@@ -1,0 +1,59 @@
+name: 构建并发布相册站点
+
+# 说明：
+#   站点数据和缩略图都由本地的 `npm run import` 生成并提交到仓库，
+#   这里只负责把 public/ 组装成静态站点发布到 GitHub Pages。
+#   如果你希望在 CI 里导入照片，可以把照片放进仓库再取消下面的注释，
+#   但那会把仓库变得很大，一般不建议。
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 安装依赖
+        run: npm ci --omit=dev || npm install --omit=dev
+
+      # 如果照片和原始导出都在仓库里，可以解开下面这段让 CI 重新生成索引
+      # - name: 导入照片
+      #   run: node scripts/import.mjs --src ./photos --copy
+
+      - name: 构建静态站点
+        run: node scripts/build.mjs --out dist
+
+      - name: 配置 Pages
+        uses: actions/configure-pages@v5
+
+      - name: 上传站点产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

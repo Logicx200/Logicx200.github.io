@@ -1,0 +1,23 @@
+
+============ 冒烟测试 ============
+PASS  资源可取 /index.html（主页面）   [200 text/html; charset=utf-8 1801B]
+PASS  资源可取 /styles.css（样式）   [200 text/css; charset=utf-8 5870B]
+PASS  资源可取 /app.js（主程序）   [200 text/javascript; charset=utf-8 19143B]
+PASS  资源可取 /loader.js（数据管线）   [200 text/javascript; charset=utf-8 7452B]
+PASS  资源可取 /shader.js（着色器）   [200 text/javascript; charset=utf-8 4700B]
+PASS  资源可取 /test/index.html（无头测试页）   [200 text/html; charset=utf-8 2263B]
+PASS  资源可取 /sample/frame_000.png（样本图）   [200 image/png 683B]
+PASS  资源可取 /sample/frame_023.png（样本图（末帧））   [200 image/png 673B]
+PASS  index.html 包含 app.js 需要的全部元素 id   [11 个都在]
+PASS  index.html 用 importmap 固定了 three 版本   [three@0.169.0]
+PASS  app.js 从各个本地模块导入的符号都存在   [3 个模块 / 7 个符号：loadSequence, reapplyThreshold, fitFrustum, vertexShader, fragmentShader, MODE_SOLID, MODE_GHOST]
+PASS  CDN Three.js 导出了用到的每个符号   [WebGLRenderer,SRGBColorSpace,NoToneMapping,Scene,OrthographicCamera,Vector3,Vector2,Mesh,PlaneGeometry,ShaderMaterial,AdditiveBlending,NormalBlending,Data3DTexture,RGBAFormat,UnsignedByteType,LinearFilter,ClampToEdgeWrapping,NoColorSpace]
+PASS  shader.js 声明的 uniform 都在 app.js 的 uniforms 里提供了   [10 个都齐]
+PASS  shader.js 用到的每个 u* 标识符都有 uniform 声明   [10 个标识符全部已声明]
+PASS  app.js 没有提供着色器不认识的 uniform   [一致]
+PASS  app.js 里 el(...) 引用的 id 都存在于 index.html   [15 个 id]
+PASS  ui 表里的元素都能在 index.html 里找到   [14 个]
+PASS  没有引用 ui 表之外的成员（删元素后漏删引用会被抓出来）   [13 个引用全部有定义]
+PASS  app.js 用到的 renderer 成员在 three 里都存在   [capabilities,setClearColor,outputColorSpace,toneMapping,setPixelRatio,getContext,setRenderTarget,initTexture,info,render]
+
+19/19 通过

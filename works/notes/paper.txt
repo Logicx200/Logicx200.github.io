@@ -1,0 +1,567 @@
+第 48 卷 第 2 期                                           力 学 与 实 践                                             2026 年 4 月
+
+ 本科生研究
+编者按：《大学》有言：“大学之道，在明明德，在亲民，在止于至善。”学术之本在于育人，力学之要在于实践。《力学与实践》特
+设“本科生研究”专栏，愿以初心育新人，为青年学子求真问学、探索创新搭建学术平台，助力教育、科技、人才一体化战略落地。
+专栏立足工程实际，聚焦力学前沿，倡导在学术实践中锤炼本领、激发创见，鼓励本科生把论文写在祖国大地上，以严谨求实追求真
+知，以不懈探索臻于至善，为力学事业注入青春动能。 “苟日新，日日新，又日新。”守正方能致远，创新方有生机。愿广大青年力
+学笃行、守正创新，于求索中砥砺锋芒，于实践中增长才干，深耕力学领域，以青春之力推动科技进步和国家发展。
+
+
+
+
+               面向大规模空间碎片清除的轨道分段–
+                    拼接规划方法1)
+        唐子杰 *             于宇航 †           吴亦烜 †          黄哲铖 †      喻中扬 †         李润道 *,2)         张     楠 **,3)
+                                              *
+                                               (清华大学航天航空学院，北京 100084)
+                                                  †
+                                                   (清华大学行健书院，北京 100084)
+                                  **
+                                    (北京航空航天大学自动化科学与电气工程学院，北京 100191)
+
+        摘要      随着全球航天活动的激增，空间碎片问题日益严峻，在轨航天器面临严重威胁，主动碎片清除任
+    务迫在眉睫。面向大规模、多目标、多约束空间碎片清除任务规划问题，提出了一种轨道分段−拼接规划方
+    法。该方法将多个航天器长时程、多机动的复杂轨道规划问题分解为短时轨道基元数据库生成与可行轨道基
+    元拼接两个核心阶段。将 24 h 的任务总时长划分为 4 个存在重叠的时间窗口，通过对各窗口初始轨道根数大
+    规模网格搜索，筛选出能在时间窗口内清除多个碎片目标的轨道基元组成的数据库。设计组合优化算法与轨
+    道拼接方法，从数据库中为每个航天器选择 4 个轨道基元并通过两脉冲转移拼接，形成一条 6 次脉冲机动的
+    完整任务轨迹。本方法成功应用于第十五届全国大学生周培源力学竞赛“空间轨道设计”赛题，设计的 3 个航
+    天器任务方案共清除了 125 个空间碎片，取得了冠军成绩。结果表明，该方法为解决此类大规模空间碎片清
+    除任务规划问题提供了一种行之有效的技术思路。
+
+        关键词       空间碎片清除，多目标访问，轨道设计，组合优化，分段拼接
+
+        中图分类号: V412.4                  DOI: 10.6052/1000-0879-25-281
+
+        文献标识码: A            CSTR: 32047.14.1000-0879-25-281
+
+
+   ORBIT SEGMENTATION AND PATCHING PLANNING METHOD FOR
+                          LARGE-SCALE SPACE DEBRIS REMOVAL1)
+           TANG Zijie*       YU Yuhang†               WU Yixuan†   HUANG Zhecheng†        YU Zhongyang†
+                                              LI Rundao*,2)     ZHANG Nan**,3)
+                      *
+                       (School of Aerospace Engineering, Tsinghua University, Beijing 100084, China)
+                              †
+                               (Xingjian College, Tsinghua University, Beijing 100084, China)
+          **
+            (School of Automation Science and Electrical Engineering, Beihang University, Beijing 100191, China)
+
+2025—09—18 收到第 1 稿，2026—01—29 收到修改稿。
+1) 国家自然科学基金项目（12402052）和博士后创新人才支持计划项目（BX20240201）资助。
+2) 通讯作者：李润道，博士研究生，研究方向为深空探测轨道设计。E-mail：lrd22@mails.tsinghua.edu.cn；
+3) 通讯作者：张楠，副教授，主要研究方向为航天器轨道动力学。E-mail：nanzhang247@163.com
+唐子杰和于宇航为共同第一作者。
+引用格式: 唐子杰, 于宇航, 吴亦烜等. 面向大规模空间碎片清除的轨道分段–拼接规划方法. 力学与实践, 2026, 48(2): 265-271
+      Tang Zijie, Yu Yuhang, Wu Yixuan, et al. Orbit segmentation and patching planning method for large-scale space debris
+      removal. Mechanics in Engineering, 2026, 48(2): 265-271
+266                                             力    学   与   实   践                           2026 年 第 48 卷
+
+Abstract With the surge in global space activities, the problem of space debris has become increasingly
+severe, posing a serious threat to on-orbit spacecraft and making active debris removal (ADR) missions urgent.
+To address the large-scale, multi-target, multi-constraint ADR mission planning problem, this paper proposes
+an orbit segmentation-and-patching planning method. The method decomposes the complex long-duration,
+multi-maneuver, multi-spacecraft trajectory optimization problem into two main stages: generating databases
+of short-duration trajectory segments and patching feasible segments. First, the 24-hour mission duration is
+divided into four overlapping time windows. Within each window, a large-scale grid search of initial orbital
+elements is performed to create a database of short-duration trajectory segments that can efficiently remove
+multiple pieces of debris. Then, a combinatorial optimization algorithm is used to select four optimal segments
+from the databases for each spacecraft. These segments are then patched using two-impulse transfers to
+construct a complete six-impulse mission trajectory. This method was successfully applied to the “Space Orbit
+Design” problem in the 15th National Zhou Peiyuan Mechanics Competition, where the proposed solution for
+three spacecraft cleared 125 pieces of debris and won the championship. The results demonstrate that this
+method provides an effective technical approach for large-scale ADR mission planning by transforming a
+complex optimization problem into a constructive process of feasible steps.
+Keywords space debris removal, multi-target exploration, orbit design, combinatorial optimization,
+segmentation and patching
+
+
+      人类的航天活动正以前所未有的速度发展，                                    遗传算法，并构建了庞大的机动数据库以支撑其
+空间碎片也随之急剧增加，对在轨航天器构成了                                        混合搜索框架[13]。Barea 等 [14] 则提出一种基于分
+巨大的碰撞威胁。一次严重的撞击就可能产生数                                        支定界的两层算法，上层通过整数线性规划进行
+                 [1]
+以千计的新碎片 ，进而引发连锁碰撞，即所谓的                                       目标选择，下层则利用 Benders 分解处理轨道动
+                                      [2]
+“凯斯勒效应” (Kessler syndrome) ，最终可能                             力学与可行性。为进一步提升搜索效率，Zhang 等[15]
+导致特定轨道区域因碎片密度过高而永久性污染，                                       设计了一种确定性的分层时空树搜索方法，将序
+                 [3]
+无法再安全使用 。面对这一严峻挑战，发展并实                                       列与时间线在不同层级上独立剪枝，以维持解的
+施 主 动 碎 片 清 除 (active debris removal, ADR)                   多样性。与此不同，Zhu 等 [16] 提出了一个三阶段
+技术，已成为保障空间环境可持续利用、确保未                                        优化框架，首先使用改进的蚁群算法确定序列，
+来航天活动安全的必要且紧迫的战略任务[4-6]。                                     再依次对时间变量和转移轨道进行优化。通过发
+      设计多目标碎片清除任务的轨道，本质上是                                    展快速准确的转移代价评估方法，也能显著提升
+一个大规模目标访问的任务规划问题，通常被建                                        效率，例如 Huang 等 [17] 基于线性相对运动推导
+模为轨道旅行商问题（orbit TSP, OTSP） [7-8]，                            了转移 Δv 的解析近似及其梯度，为梯度优化算
+                                            [9-10]
+在数学上属于混合整数非线性规划范畴                                 。这类        法的应用奠定了基础。在算法融合方面，Li 等 [18]
+问题深度耦合了目标选择与序列规划（离散组合                                        将蚁群算法与遗传算法相结合，提出了进化精英
+优化）以及轨道机动策略（连续非线性优化），                                        算法，由一个不断演化的精英种群来指导蚁群算
+求解难度极大。为应对这一挑战，研究人员从问                                        法的全局搜索。Neto 等 [19] 则在遗传算法的基础
+题重构、搜索策略优化和算法融合等多个角度                                         上，引入插值树搜索来优化交会时刻，并利用滑
+发展了高效的求解方法。在问题重构方面，一                                         动窗口 2-opt 算法持续优化解，以应对解随时间
+种 有 效 思 路 是 通 过 引 入“ 中 间 轨 道 ” 概 念 ， 将                       推移而“变质”的问题。这些方法通过不同的策略
+原问题转化为关于交会时间的非线性规划问题，                                        解耦或简化了问题的复杂性，为大规模 OTSP 的
+从而改善问题的凸性，使得无需预定顺序即可                                         求解提供了多样化的解决路径。
+                       [11-12]
+快速评估序列成本                      。在搜索策略上，喷气推                        针对上述挑战，本文提出一种基于“分而治
+进 实 验 室 （ Jet Propulsion Laboratory， JPL）                    之”策略的轨道分段–拼接规划方法。该方法核心
+在第九届国际空间轨道设计大赛 (GTOC9) 竞赛                                    在于重构了优化问题的决策变量，将长时程、强
+中综合运用了分支定界、集束搜索、蚁群算法和                                        耦合的连续机动规划转化为对“轨道基元”（航天
+第 2 期                唐子杰等：面向大规模空间碎片清除的轨道分段–拼接规划方法                                267
+
+器初始 6 维轨道参数离散点以及其在窗口时段内                    道根数网格搜索，穷举生成一个轨道基元数据库。
+外推所飞越的目标序列）的离散组合问题。求解                            阶段二：轨道基元组合挑选与拼接（轨道拼
+过程分解为两个阶段：先通过大规模搜索构建包                      接）。利用组合优化方法，从 4 个时段的轨道基
+含丰富候选解的轨道基元数据库；再利用组合优                      元 数 据 库 中 各 选出 3 个 轨 道 基 元 ， 并 通 过 求 解
+化算法在库中进行高效筛选与脉冲拼接，生成满                      Lambert 弧段将所选 12 个轨道基元拼接形成 3 条
+足全局约束的最优轨迹。该方法显著降低了计算                      完整轨迹。
+复杂度，提升了求解效率。应用此方法，团队在
+                                           2.1   轨道基元数据库生成
+第十五届全国大学生周培源力学竞赛中成功规划
+                                                 本阶段旨在建立 4 个分属不同时间窗口的高
+出清除 125 个碎片的方案，夺得冠军。
+                                           质量轨道基元数据库。初步划分的 4 个时间窗口
+                                           为 8:00—16:00， 14:00—22:00， 20:00—4:00(+1)
+1 空间碎片清除轨道设计问题
+                                           和 0:00(+1)—8:00(+1)，相邻窗口间存在一定重叠
+              [20]
+   根据赛题要求 ，本任务的总体目标为：在                     时间。此外，对上述时间窗口做适当的增长或
+UTC 时 间 2030 年 11 月 14 日 8 时 至 15 日 8 时    平移，可以扩大数据库的规模，有利于最终生
+的 24 h 任务窗口内，规划并部署不超过 3 个航天                成指标更优的结果，但是数据库的生成时间也会
+器，每个航天器执行总计不超过 6 次速度增量没                    增加。
+有限制的脉冲机动，从给定的 345 个空间碎片中                         对于每个数据库对应的时间窗口，选定半长
+选择一部分碎片进行清除。航天器在轨道飞行过                      轴 a、偏心率 e、轨道倾角 i、升交点赤经 Ω、近
+程中，其运动受到地球中心引力和 J2 项摄动的影                   地点幅角 ω、真近点角 f 作为网格搜索参数进行
+响。碎片的运动仅考虑地球中心引力和非球形 J2                    轨道递推，记录各轨道基元清除的碎片编号并统
+项一阶长期摄动。航天器的轨道机动被简化为瞬                      计去重的清除数量，并将清除碎片数量超过 8 个
+时脉冲，脉冲作用前后，航天器的位置保持不变，                     的轨道基元存入数据库。 航天器轨道 6 根数的搜
+速度发生瞬时改变。本任务的最终优化目标是最                      索范围聚焦于碎片轨道 6 根数高度聚集的区域，
+大化总清除碎片数量 N。                               该区域依据碎片轨道 6 根数的初始分布（如图 2
+   整个任务规划过程需满足以下约束条件。                      所示）确定。
+(1) 任务时段约束：所有清除装置的投送必须在                          图 3 展示了在 8:00—16:00 时段数据库中，不
+指定的 24 h 窗口内完成。(2) 航天器与机动次数                同轨道参数范围内单段轨道可清理碎片的平均数
+约束：部署的航天器数量小于等于 3，每个航天                     量分布。该图由 3 个子图构成，分别呈现了轨道
+器的脉冲机动次数不超过 6。(3) 轨道高度约束：                  偏 心率 (e) 与 半 长 轴 (a) (图 3(a))、 升 交 点 赤 经
+在任务时段内，任一航天器的轨道高度必须始终                      (Ω) 与 轨 道 倾 角 (i) (图 3(b))、 以 及 近 心 点 幅 角
+高于 200 km。(4) 碎片清除条件：在清除时刻，                (ω) 与真近点角 (f) (图 3(c)) 不同筛选范围内数据
+航天器与目标碎片的相对位置小于 30 km，相对                   库中轨道基元的平均碎片清理数。图中颜色由蓝
+速度小于 150 m/s。(5) 碎片清除唯一性约束：每               至红的变化，直观地表示了在该参数组合下清理
+个碎片最多被清除一次。                                碎片的平均数量由少增多。对于图中的白色区域，
+                                           其含义需根据子图进行区分：在图 3(b) 和图 3(c)
+2 轨道分段–拼接规划方法                              中，白色区域代表对应参数组合下的轨道基元清
+   所提轨道分段–拼接规划方法采用“分而治之”                   理碎片平均数量低于数据库收录阈值（即小于
+策略，如图 1 所示，将原本的全局优化问题划分                    8 个），因此轨道基元数据库中相应筛选范围内
+                                    [21]
+为轨道分段和轨道拼接两个子问题分别求解 。                      无数据；而在图 3(a) 中，由于其数据由两次不同
+具体过程分为两个阶段。                                搜索范围的网格计算结果拼合而成，其左下角与
+   阶段一：轨道基元数据库生成（轨道分段）。                    右上角的大片白色区域表示该参数空间未被计算，
+将 24 h 的总任务窗口划分为 4 个分属不同（且存在               而非清理碎片平均数量小于 8。图 3 表明在特定
+重叠）的时间段，并在每个时间段内通过初始轨                      的轨道根数组合区域存在性能显著更优的高值区，
+268                                 力    学    与   实    践                             2026 年 第 48 卷
+
+
+
+
+             T1              T1+dt1 T3                T3+dt3                   时间轴
+                         T2             T2+dt2        T4           T4+dt4
+
+
+                  数据库1            数据库2              数据库3              数据库4
+
+
+
+
+                    轨道拼接—施加两个脉冲
+
+                                                  重复(舍去)
+
+                   时间干涉，舍去
+
+
+
+
+                               图1    轨道数据库生成与拼接方案
+                    Fig. 1   Orbital database generation and patching scheme
+
+
+即图中红色区域，轨道基元的碎片清理效率对轨                              上述局部优化与全局优化过程，直至收敛至最优
+道形状参数与相位参数的耦合具有高度敏感性。                              解，即无法获得更优的轨道基元组合为止。
+
+2.2 轨道基元组合挑选与拼接                                            在轨道基元拼接过程中，相邻轨道基元间通
+
+      在已有数据库的基础上，本阶段完成对 3 个                        过施加两次脉冲机动并采用 Lambert 弧段进行连
+
+航天器分别 4 个时间窗口合计 12 个轨道基元的挑                         接，恰好满足赛题规定的每个航天器最多施加 6
+选与拼接。                                              次脉冲的约束条件。由于轨道基元存在时间重叠，
+      在轨道基元挑选过程中，需从 4 个数据库中                        轨道基元拼接过程需要尽量避免损失可清除的碎
+各选取 3 个轨道基元。目标函数为 12 个轨道基元                         片，因而拼接过程存在时间限制。若直接求解
+可清除的碎片总数。计算可清除的碎片总数时，                              Lambert 弧段，则可能导致求解器不收敛或在有
+被重复清除的碎片仅计一次，为相邻时间段的轨                              限的时间内轨道过高或过低等不符合实际的异常
+道拼接预留的 45 min 转移时长内清除的碎片不                          情况，因而 Lambert 弧段采用两种求解方式：其
+计。轨道基元挑选采用组合优化方法，该方法包                              一，直接使用比赛官方提供的 ATK 软件求解；
+含局部优化和全局优化两个过程。局部优化过程                              其二，首先施加一个与速度矢量方向相反、大小
+针对当前选定的轨道基元组合，随机替换其中一                              为原速度两倍的脉冲使航天器进入逆行轨道，随
+个段，若新组合的目标函数值优于或等于原组合，                             后同样使用 ATK 软件求解 Lambert 问题，最终
+则接受该替换。全局优化过程则借鉴遗传算法的                              将初始的逆行脉冲与 ATK 解算得到的第一个脉
+交叉机制，对任意两个选定的轨道基元组合执行                              冲进行矢量合并。两种方式中任意一种获得可行
+单点交叉操作以生成两个新组合。算法交替执行                              解即可完成拼接。需特别指出，采用第二种方式
+第 2 期                             唐子杰等：面向大规模空间碎片清除的轨道分段–拼接规划方法                                                                         269
+
+        160
+                                     120                            从一个已经收获殆尽的区域，转移到一个全新的、
+        120                             90                          未清除碎片密集的区域，实现了对原本在单一轨
+   频数
+
+
+
+
+                                   频数
+                                        60
+          80                                                        道上无法到达的目标区域的覆盖，3 个航天器的
+          40                            30
+                                                                    拼接方案如图 4 所示。
+           0                             0
+               7500 9000 10 500              0   0.1 0.2 0.3
+                   a/km                              e              (a) 0.005 0
+                                     160                                  0.006 5                                               10.0
+        120
+                                     120                                  0.008 5
+        150
+                                                                          0.010 5
+   频数
+
+
+
+
+                                   频数
+
+
+
+        100                             80                                                                                      9.5
+                                                                          0.012 5
+          50                            40
+                                                                          0.014 5
+
+
+
+
+                                                                      e
+           0                            0                                                                                       9.0
+                                                                          0.016 5
+                98.4 99.0 99.6                   80 88     96
+                    i/(°)                         Ω/(°)                   0.018 5
+                                                                          0.021 5                                               8.5
+          80                            20
+                                                                          0.025 5
+          60                            15
+   频数
+
+
+
+
+                                   频数
+
+
+
+
+                                                                          0.029 5                                               8.0
+          40                            10
+
+
+
+
+                                                                                70 9.7
+                                                                                71 6.4
+                                                                                71 7.6
+                                                                                71 8.4
+                                                                                71 9.2
+                                                                                71 5.2
+                                                                                72 6.0
+                                                                                72 6.8
+                                                                                72 7.6
+                                                                                72 8.4
+                                                                                      .2
+          20                             5
+
+
+
+
+                                                                                   79
+                                                                                   3
+                                                                                   7
+                                                                                   0
+                                                                                   2
+                                                                                   4
+                                                                                   7
+                                                                                   9
+                                                                                   1
+                                                                                   3
+                                                                                   5
+                                                                                70
+          0                              0                                                                 a
+               0 100 200 300                 0 100 200 300
+                   ω/(°)                         f/(°)               (b) 75.40                                                  10.00
+                图2     碎片的轨道根数统计分布                                             75.45                                            9.75
+ Fig. 2    Statistical distribution of orbital elements of debris              75.50                                            9.50
+                                                                               75.54
+时，只要拼接过程预留的时间超过半个轨道周期，                                                                                                          9.25
+                                                                       Ω/(°)
+
+
+
+
+                                                                               75.59
+即可确保拼接成功。因此，在轨道基元挑选阶段                                                                                                           9.00
+                                                                               75.69
+预先考虑并预留 45 min 的转移时长专用于轨道                                                                                                       8.75
+                                                                               75.78
+拼接。一般情况下，若两个轨道基元相位差别过                                                                                                           8.50
+                                                                               75.99
+大，则需要采用第二种方法进行拼接。                                                                                                               8.25
+                                                                               76.18
+
+3 仿真算例
+                                                                                         0
+
+                                                                                                0
+
+                                                                                                       4
+
+                                                                                                              9
+
+                                                                                                                    20
+
+                                                                                                                           29
+                                                                                       .9
+
+                                                                                              .0
+
+                                                                                                     .0
+
+                                                                                                            .0
+
+                                                                                                                     .
+
+                                                                                                                            .
+                                                                                    97
+
+                                                                                             98
+
+                                                                                                    98
+
+                                                                                                           98
+
+                                                                                                                  98
+
+                                                                                                                         98
+
+
+
+
+                                                                                                         i/(°)
+    研究中的轨道生成和拼接算法基于 Python
+                                                                     (c) −60.1                                                  9.6
+语言实现，并在 192 核 AMD EPYC 9654 平台进
+                                                                         −50.4                                                  9.4
+行计算，用于生成最终结果的计算时间约 12 h。                                                 −40.8
+                                                                         −31.2                                                  9.2
+所有生成的方案最终通过比赛官方提供的 ATK                                                   −21.6
+                                                                                                                                9.0
+软件进行验证。通过实施轨道分段–拼接方法，                                                    −12.0
+                                                                       ω/(°)
+
+
+
+
+                                                                          −2.4                                                  8.8
+最终生成的任务方案共清除了 125 个空间碎片，                                                   9.6
+在竞赛中取得了冠军。3 个母航天器分别负责清                                                    19.2                                                  8.6
+                                                                          28.8
+除 42，41 和 42 个碎片。最终方案中 3 个航天器                                             38.4
+                                                                                                                                8.4
+
+的轨道基元设计如表 1 所示。                                                           48.0                                                  8.2
+                                                                          57.6
+    以清除碎片数量最多的 3 号航天器为例，该                                                                                                       8.0
+                                                                                     36 1
+                                                                                     65.4
+                                                                                     93.1
+                                                                                    12 .8
+                                                                                    152.6
+                                                                                    181.3
+                                                                                    200.0
+                                                                                    238.7
+                                                                                    267.4
+                                                                                    296.2
+                                                                                    324.9
+                                                                                    353.6
+                                                                                         3
+
+
+
+
+航天器在 24 h 内总计清除了 42 个碎片。其任务
+                                                                                      0.
+
+
+
+
+                                                                                      2.
+
+
+
+
+轨迹由 4 个精心挑选的轨道基元拼接而成，展现                                                                                  f/(°)
+
+了分段策略的灵活性和高效性。轨道拼接是本方                                               图3         8:00—16:00 时段数据库中不同轨道参数范围内清理
+法的核心环节，其效果直接决定了最终方案的优                                                                     碎片平均数量分布
+                                                                    Fig. 3      Average distribution of debris cleared within different
+劣。一次典型的拼接操作通过两次脉冲机动，显                                                     orbital parameter ranges in the database during the
+著改变了轨道的半长轴和相位，使得航天器能够                                                                  8:00—16:00 time period
+270                                                     力    学     与    实       践                                  2026 年 第 48 卷
+
+                             表1    最终结果中各航天器所选的轨道基元对应的时间窗口和初始轨道根数
+ Table 1          The final results show the time window and initial orbital elements corresponding to the selected orbital
+                                                    primitives for each spacecraft
+
+ 航天器               轨道基元              时间窗口                 a/km         e             i/(°)   Ω/(°)       ω/(°)   M/(°)   清除数量
+                         1          8:00—16:00            7144       0.009           98.10   75.80       40.0    63.7      10
+                         2         14:00—22:00            7178       0.021           98.05   75.69       40.0    42.9      10
+      1
+                         3        20:00—4:00(+1)          7136       0.016           98.05   76.03       20.0    34.1      14
+                         4      0:00(+1)—8:00(+1)         7242       0.022           98.05   76.19       40.0    281.4     10
+                         1          8:00—16:00            7258       0.030           98.05   75.45       50.0    136.1     9
+                         2         14:00—22:00            7260       0.028           98.05   75.79       40.0    314.3     10
+      2
+                         3        17:00—4:00(+1)          7226       0.026           98.05   75.91       40.0    52.1      12
+                         4      0:00(+1)—8:00(+1)         7266       0.030           98.05   76.19       60.0    185.0     10
+                         1          8:00—16:00            7144       0.015           98.20   75.80       20.0    285.8     9
+                         2         12:00—23:00            7214       0.024           98.05   75.71       40.0    358.0     14
+      3
+                         3        20:00—4:00(+1)          7226       0.022           98.05   76.03       60.0    330.7     13
+                         4      0:00(+1)—8:00(+1)         7232       0.020           98.05   76.19       60.0    128.1     9
+
+
+                                            筛选段                  拼接段             舍去段         飞越碎片
+                                   航天器1 高度变化                                                   航天器1 赤纬变化
+                  1500                                                         90
+                                                                               60
+                  1250
+                                                                               30
+          高度/km
+
+
+
+
+                                                                        赤纬/度
+
+
+
+
+                  1000                                                          0
+                                                                               −30
+                   750
+                                                                               −60
+                   500                                                         −90
+                                   航天器2 高度变化                                                   航天器2 赤纬变化
+                                                                                90
+
+                  1250                                                          60
+                                                                                30
+          高度/km
+
+
+
+
+                  1000
+                                                                        赤纬/度
+
+
+
+
+                                                                                 0
+                   750                                                         −30
+
+                   500                                                         −60
+                                                                               −90
+                                   航天器3 高度变化                                                   航天器3 赤纬变化
+                                                                                90
+
+                  1500                                                          60
+                                                                                30
+          高度/km
+
+
+
+
+                                                                        赤纬/度
+
+
+
+
+                  1000                                                           0
+                                                                               −30
+
+                   500                                                         −60
+                                                                               −90
+                     :00   :00   :00   :00   :00   :00  :00                      :00   :00   :00    :00   :00   :00  :00
+                 4 08 4 12 4 16 4 20 5 00 5 04 5 08                          4 08 4 12 4 16 4 20 5 00 5 04 5 08
+              −1       −1    −1    −1    −1    −1    −1                   −1       −1    −1    −1     −1    −1    −1
+           11       11    11    11    11    11    11                   11       11    11    11     11    11    11
+                                     时间/UTC                                                       时间/UTC
+
+                                               图4     最终结果中的航天器轨道拼接方案
+                                     Fig. 4   The spacecraft orbit patching scheme in the final result
+第 2 期                           唐子杰等：面向大规模空间碎片清除的轨道分段–拼接规划方法                                                                       271
+
+4 结论                                                                   tional University of Defense Technology, 2020 (in Chinese)
+                                                                    10 Huang AY, Li HN, Zhang JC, et al. Orbit traveling sales-
+    本文针对大规模空间碎片清除任务规划这一                                                man problems: new modeling formulation via convexifica-
+                                                                       tion approach. Journal of Guidance, Control, and Dynamics,
+复杂优化问题，提出了一种轨道分段–拼接方法。
+                                                                       2024, 47(9): 2008-2015
+该方法通过数据库生成和分段拼接两个阶段，将                                               11 周秀华, 于锡峥, 王荣兰等. 多碎片移除过程中的路径优化. 空
+一个难以直接求解的、解空间巨大的全局优化问                                                  间科学学报, 2018, 38(1): 79-87
+                                                                       Zhou Xiuhua, Yu Xizheng, Wang Ronglan, et al. Path op-
+题转化为一个可操作且每一步都满足任务约束条
+                                                                       timization in removal process of multi-debris. Chinese
+件的构造性问题。团队使用本方法在第十五届全                                                  Journal of Space Science, 2018, 38(1): 79-87 (in Chinese)
+国大学生周培源力学竞赛“空间轨道设计”赛题中                                              12 章仁为. 卫星轨道姿态动力学与控制. 北京: 北京航空航天大学
+                                                                       出版社, 1999
+取得了清除 125 个碎片的优异成绩，并最终获得
+                                                                    13 Anastassios P, Daniel G, Drew J, et al. GTOC9: results
+冠军。                                                                    from the Jet Propulsion Laboratory (team JPL). Acta Fu-
+                                                                       tura, 2018, 11: 25-35
+                                                                    14 Barea A, Urrutxua H, Cadarso L. Large-scale object selec-
+                     参     考     文     献                               tion and trajectory planning for multi-target space debris
+                                                                       removal missions. Acta Astronautica, 2020, 170: 289-301
+1 Kessler DJ, Cour-Palais BG. Collision frequency of artifi-        15 Zhang JC, Zhu YH, Luo YZ. Hierarchical spatiotemporal
+  cial satellites: the creation of a debris belt. Journal of Geo-      tree search method for planning multi-asteroid successive
+  physical Research, 1978, 83(6): 2637-2646                            rendezvous. Journal of Guidance, Control, and Dynamics,
+2 Kessler DJ, Johnson NL, Liou JC, et al. The Kessler syn-             2025, 48(5): 1138-1147
+  drome: implications to future space operations. The 33rd          16 Zhu YH, Zhang Y, Luo YZ, et al. Intelligence-based
+  Annual AAS Rocky Mountain Guidance and Control Con-                  multistage optimization framework for multiple debris re-
+  ference, Breckenridge, 2010                                          moval mission. Journal of Guidance, Control, and Dynamics,
+3 Johnson NL, Krisko PH, Liou JC, et al. NASA’s new break-             2024, 47(7): 1447-1456
+  up model of evolve 4.0. Advances in Space Research, 2001,         17 Huang AY, Li HN, Luo YZ. Rapid cost evaluation model
+  28(9): 1377-1384                                                     for order-undetermined multi-asteroid rendezvous mis-
+4 Liou JC, Johnson NL. Risks in space from orbiting debris.            sions. Journal of Guidance, Control, and Dynamics, 2025,
+  Science, 2006, 311(5759): 340-341                                    48(7): 1652-1661
+5 Bonnal C, Ruault JM, Desjean MC. Active debris removal:           18 Li H, Baoyin H. Optimization of multiple debris removal
+  recent progress and current trends. Acta Astronautica, 2013,         missions using an evolving elitist club algorithm. IEEE
+  85: 51-60                                                            Transactions on Aerospace and Electronic Systems, 2019,
+6 Dolado-Perez JC, Revelin B, Di-Costanzo R. Sensitivity               56(1): 773-784
+  analysis of the long-term evolution of the space debris pop-      19 Neto JBR, Ramos GDO. An interpolated approach for act-
+  ulation in LEO. Journal of Space Safety Engineering, 2015,           ive debris removal. 2022 IEEE Congress on Evolutionary
+  2(1): 12-22                                                          Computation (CEC), IEEE, 2022
+7 张进, 朱阅訸. 空间多目标交会轨道设计与优化方法. 北京: 化                                  20 朱阅訸, 杨震, 罗亚中. 面向卫星解体碎片清除任务的轨道设计
+  学工业出版社, 2024                                                         与机动规划. http://zpy.cstam.org.cn/download.aspx?Part-
+8 Cerf M. Multiple space debris collecting mission-debris se-          NodeId=43
+  lection and trajectory optimization. Journal of Optimiza-         21 Zhang N, Chen S, Zhang Z, et al. Two-stage dynamic-as-
+  tion Theory and Applications, 2013, 156(3): 761-796                  signment optimization method for multispacecraft debris
+9 朱阅訸. 面向大规模目标访问任务的飞行序列规划方法. [ 博士                                      removal. Journal of Guidance, Control, and Dynamics, 2022,
+  论文 ]. 长沙: 国防科技大学, 2020                                               45(9): 1750-1759
+  Zhu Yuehe. Flight sequence planning method for large-
+  scale-object visiting mission. [PhD Thesis]. Changsha: Na-                                                  (责任编辑: 胡        漫)
+

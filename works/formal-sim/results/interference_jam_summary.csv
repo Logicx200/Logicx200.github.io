@@ -1,0 +1,19 @@
+﻿ID,干扰类型,本地模型/来源,实际参数,筛选模型,筛选指数,10km识别概率均值,识别50%距离变化均值(km)
+1,直射阳光,sunLight,JamType=1；Laser_Power=10；Laser_Exposure=100；Duration=20 ms,light,0.9,0.2186,
+2,镜面反射,无独立模型文件（参数块）,仅参数块；无本地模型目录,light,0.4,0.5308,-1.362
+3,爆炸强光,baozha,JamType=3；Duration=10000 ms；粒子率 100,light,0.75,0.3122,
+4,火焰,fire,JamType=0（文件内）；Duration≈1e8；粒子率 5–50,light,0.65,0.3747,
+5,强光干扰弹,qggrd,JamType=5/10；粒子率 1–100；Duration=10000 ms,light,0.7,0.3434,
+6,战场扬尘,yc,JamType=6；粒子率 50–400；Fluid_Density=1.293；Duration=10000 ms,obscurant,0.45,0.444,-7.545
+7,烟幕弹,ymd,JamType=7；粒子率 30–100；Density=1.29；Duration=1000 ms,obscurant,0.65,0.3412,-12.583
+8,烟幕喷射,ywps,JamType=8；粒子率 200；Density=1.29；Duration=100–1000 ms,obscurant,0.6,0.3503,-11.133
+9,水幕,shuimu,JamType=9；粒子率 1000–5000；Density=1；Duration=10 ms,obscurant,0.55,0.3683,-9.93
+10,点源诱饵弹,dyyrd,JamType=10；粒子率 100；Density=1.29；Duration=10000 ms,decoy,0.45,0.4996,-1.673
+11,面源诱饵弹,myyrd,JamType=11；粒子率 300–500；Density=0.01；Duration=10 ms,decoy,0.5,0.4683,-2.076
+12,点面结合诱饵弹,dmjh,JamType=10（文件内）；粒子率 10000；Density=1.29,decoy,0.55,0.4371,-2.659
+13,激光压制,jgyz,JamType=13；Laser_Power=10；Exposure=100；Rate=1000；Duration=20 ms,laser,0.9,0.2186,
+14,激光角度欺骗,无独立模型文件（参数块）,参数块存在；无本地模型目录,laser,0.4,0.5308,-1.362
+15,激光高重频,无独立模型文件（参数块）,参数块存在；Laser_Power=10；Rate=1000,laser,0.85,0.2498,
+16,假目标,无独立模型文件（参数块）,参数块存在；无本地模型目录,decoy,0.5,0.4683,-2.076
+17,伪装遮蔽-本体,无独立模型文件（参数块）,参数块存在；无本地模型目录,obscurant,0.55,0.3683,-9.93
+18,伪装遮蔽-非本体,无独立模型文件（参数块）,参数块存在；无本地模型目录,obscurant,0.55,0.3683,-9.93

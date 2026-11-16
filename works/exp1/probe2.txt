@@ -1,0 +1,1 @@
+cand=10000 events=1559 elapsed=63.0s  per-event=6.3 ms

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>MassFlow 模拟进度 — 吉隆冰崩</title>
+<meta http-equiv="refresh" content="5">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: #0d1117; color: #e6edf3;
+    font: 15px/1.55 "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  .card {
+    width: min(700px, 92vw); padding: 32px 36px;
+    background: #161b22; border: 1px solid #30363d; border-radius: 14px;
+    box-shadow: 0 12px 44px rgba(0,0,0,.55);
+  }
+  h1 { margin: 0 0 4px; font-size: 20px; letter-spacing: .2px; }
+  .sub { color: #8b949e; font-size: 13px; margin-bottom: 12px; }
+  .cfg { color: #6e7681; font-size: 12px; margin-bottom: 22px; }
+  .row { display: flex; align-items: baseline; margin-bottom: 10px; }
+  .tag {
+    font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+    background: #1f6feb22; color: #58a6ff; border: 1px solid #1f6feb55;
+  }
+  .tag.done { background: #3fb95022; color: #3fb950; border-color: #3fb95055; }
+  .tag.stall { background: #d2992222; color: #d29922; border-color: #d2992255; }
+  .run { margin-left: auto; color: #8b949e; font-size: 13px; }
+  .bar { height: 18px; background: #21262d; border-radius: 9px; overflow: hidden; margin: 16px 0 10px; }
+  .fill { height: 100%; width: __PCT__%; background: linear-gradient(90deg,#1f6feb,#58a6ff); }
+  .fill.done { background: linear-gradient(90deg,#238636,#3fb950); }
+  .big { font-size: 40px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
+  .big small { font-size: 15px; color: #8b949e; font-weight: 400; margin-left: 8px; }
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+  .m { background: #0d1117; border: 1px solid #21262d; border-radius: 10px; padding: 13px 15px; }
+  .m .k { color: #8b949e; font-size: 12px; margin-bottom: 6px; }
+  .m .v { font-size: 21px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .m .v small { font-size: 12px; color: #8b949e; font-weight: 400; }
+  .foot { margin-top: 20px; color: #6e7681; font-size: 12px; border-top: 1px solid #21262d; padding-top: 12px; }
+  .warn { color: #d29922; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>吉隆冰崩数值模拟 — MassFlow</h1>
+  <div class="sub">2026-08-26 事件 · 前缘速度标定 · <b>高精度算例</b></div>
+  <div class="cfg">网格 900 × 96 = 86,400 格 · dx = 20 m（横向）· dy = 140 m（纵向）· μ = 0.005 · 总时长 1200 s</div>
+
+  <div class="row">
+    <span class="tag __TAGCLS__">__TAG__</span>
+    <span class="run">__RUN__</span>
+  </div>
+
+  <div class="bar"><div class="fill __FILLCLS__"></div></div>
+  <div class="big">__PCT__<small>%</small></div>
+
+  <div class="metrics">
+    <div class="m"><div class="k">模拟时间</div><div class="v">__SIM__ <small>/ 1200 s</small></div></div>
+    <div class="m"><div class="k">已写结果</div><div class="v">__FRAMES__ <small>帧 · __MB__ MB</small></div></div>
+    <div class="m"><div class="k">预计剩余</div><div class="v">__ETA__</div></div>
+  </div>
+
+  <div class="foot">
+    最后更新 __UPDATED__ · 页面每 5 秒自动重载<br>
+    数据由本文件内嵌（不使用 fetch，避免 file:// 的 CORS 限制）
+  </div>
+</div>
+</body>
+</html>

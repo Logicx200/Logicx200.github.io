@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "DSH Mood Usage",
+    "description": "Serves today's token spend to the DSH Mood Eyes widget by folding the local session logs."
+  }
+}

@@ -1,0 +1,5291 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>时空立方体 · 三维查看器</title>
+<style>
+:root{
+  --bg:#05070b;
+  --panel:rgba(14,18,26,.86);
+  --line:rgba(255,255,255,.12);
+  --line2:rgba(255,255,255,.22);
+  --fg:#e8edf5;
+  --dim:#8b97a8;
+  --accent:#5ab0ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);
+  font:13px/1.5 "Segoe UI","Microsoft YaHei",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased}
+#view{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#view.drag{cursor:grabbing}
+
+/* ------------------------------------------------------------------ 顶栏 */
+#bar{position:fixed;left:0;right:0;top:0;height:46px;display:flex;align-items:center;gap:10px;
+  padding:0 14px;background:linear-gradient(180deg,rgba(5,7,11,.92),rgba(5,7,11,.45) 70%,transparent);
+  backdrop-filter:blur(6px);z-index:5;pointer-events:none}
+#bar>*{pointer-events:auto}
+#bar .filewrap{pointer-events:auto}
+.brand{font-weight:600;letter-spacing:.06em;white-space:nowrap}
+.brand::before{content:"";display:inline-block;width:8px;height:8px;margin-right:8px;
+  background:var(--accent);border-radius:1px;vertical-align:1px}
+.status{color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+
+.mini{appearance:none;background:rgba(255,255,255,.07);color:var(--fg);border:1px solid var(--line);
+  border-radius:6px;padding:5px 11px;font:inherit;cursor:pointer;white-space:nowrap}
+.mini:hover{background:rgba(255,255,255,.13);border-color:var(--line2)}
+select.mini{padding:5px 6px}
+label.mini{display:inline-block}
+
+/* 「打开照片」：透明 input 铺满整个按钮，用户点到的是 input 本身，
+   所以浏览器原生打开文件对话框，不依赖任何 JS。 */
+.filewrap{position:relative;display:inline-block;overflow:hidden}
+.filewrap .filelabel{display:inline-block;pointer-events:none}
+.filewrap input[type=file]{position:absolute;inset:0;width:100%;height:100%;
+  opacity:0;cursor:pointer;font-size:100px;border:0;padding:0;margin:0}
+
+/* ------------------------------------------------------------------ 面板 */
+#panel{position:fixed;left:14px;top:60px;width:252px;max-height:calc(100% - 96px);overflow-y:auto;
+  padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  backdrop-filter:blur(10px);z-index:4}
+#panel::-webkit-scrollbar{width:8px}
+#panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:4px}
+.grp{padding:9px 0;border-top:1px solid var(--line)}
+.grp:first-child{border-top:0;padding-top:0}
+.ttl{color:var(--dim);font-size:11px;letter-spacing:.08em;margin-bottom:7px;text-transform:uppercase}
+
+.row{display:block;margin:8px 0;color:var(--dim);font-size:12px}
+.row b{color:var(--fg);font-weight:500;float:right;font-variant-numeric:tabular-nums}
+.row input[type=range]{width:100%;margin-top:4px;accent-color:var(--accent);height:16px}
+
+.chk{display:flex;align-items:flex-start;gap:7px;margin:7px 0;color:var(--dim);font-size:12px;cursor:pointer}
+.chk input{margin:2px 0 0;accent-color:var(--accent);flex:none}
+.chk:hover{color:var(--fg)}
+
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{flex:1 1 auto;appearance:none;background:rgba(255,255,255,.05);color:var(--dim);
+  border:1px solid var(--line);border-radius:6px;padding:5px 6px;font:inherit;font-size:12px;cursor:pointer}
+.seg button:hover{color:var(--fg)}
+.seg button.on{background:rgba(90,176,255,.18);border-color:rgba(90,176,255,.55);color:#dceaff}
+
+.note{color:#6f7b8c;font-size:11px;line-height:1.45;margin-top:6px}
+.wide{width:100%;margin-top:2px}
+.row2{display:flex;gap:6px;margin-top:6px}
+.row2 .mini{flex:1 1 auto}
+
+/* ------------------------------------------------------------------ 底栏 */
+#foot{position:fixed;left:0;right:0;bottom:0;padding:6px 14px;color:var(--dim);font-size:11px;
+  font-variant-numeric:tabular-nums;z-index:5;pointer-events:none;
+  background:linear-gradient(0deg,rgba(5,7,11,.85),transparent)}
+
+/* ------------------------------------------------------- 遮罩 / 致命错误 */
+#veil{position:fixed;inset:0;display:none;place-items:center;background:rgba(5,7,11,.72);z-index:20}
+#veil.on{display:grid}
+#veil .box{width:300px;text-align:center}
+#veilText{color:var(--fg);margin-bottom:10px;font-variant-numeric:tabular-nums}
+#veil .bar{height:3px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+#veil .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .12s}
+
+#fatal{position:fixed;inset:auto 14px 14px 14px;display:none;z-index:30;max-height:46%;overflow:auto;
+  padding:12px 14px;background:rgba(60,10,14,.94);border:1px solid rgba(255,120,120,.5);
+  border-radius:8px;color:#ffd9d9;font:12px/1.5 ui-monospace,Consolas,monospace;white-space:pre-wrap;
+  cursor:pointer;opacity:1;transition:opacity .9s ease}
+
+/* ------------------------------------------------------- 切割：框选面板 */
+#crop{position:fixed;inset:0;display:none;place-items:center;background:rgba(5,7,11,.78);z-index:25;
+  padding:18px}
+#crop[hidden]{display:none}
+#crop:not([hidden]){display:grid}
+#crop .cbox{max-width:min(92vw,880px);max-height:92vh;display:flex;flex-direction:column;gap:8px;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+#crop .cttl{color:var(--fg);font-size:12px}
+#crop .cttl b{color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums}
+/*
+ * 框选层必须**正好等于画布那块区域**。
+ * 它是 .cbox（flex 列）的子项，默认会被拉伸到整个容器的宽度，而画布受
+ * max-width/min(90vw,820px) 与 max-height:62vh 双重限制，常常窄得多 ——
+ * 一旦外框比画布宽，"按百分比定位的选区"与"鼠标坐标换算"就会用错分母：
+ * 选区框看起来还跟着鼠标走，但换算出来的 uv 整体偏小，
+ * 表现为**选出来的区域被挪到了画面左边**。所以这里让它收缩到画布大小。
+ */
+#cropWrap{position:relative;display:block;width:fit-content;height:fit-content;margin:0 auto;
+  line-height:0;cursor:crosshair;touch-action:none;user-select:none}
+#cropCanvas{max-width:min(90vw,820px);max-height:62vh;width:auto;height:auto;display:block;border-radius:4px}
+/* 选区外压暗：用 box-shadow 铺满整块画布，不需要额外的遮罩元素 */
+#cropRect{position:absolute;border:1px solid rgba(140,200,255,.95);
+  box-shadow:0 0 0 9999px rgba(5,7,11,.6);cursor:move}
+#cropRect i{position:absolute;width:11px;height:11px;margin:-6px 0 0 -6px;background:#8fc8ff;
+  border:1px solid rgba(5,7,11,.8);border-radius:2px}
+#cropRect i[data-h=nw]{left:0;top:0;cursor:nwse-resize}
+#cropRect i[data-h=n]{left:50%;top:0;cursor:ns-resize}
+#cropRect i[data-h=ne]{left:100%;top:0;cursor:nesw-resize}
+#cropRect i[data-h=e]{left:100%;top:50%;cursor:ew-resize}
+#cropRect i[data-h=se]{left:100%;top:100%;cursor:nwse-resize}
+#cropRect i[data-h=s]{left:50%;top:100%;cursor:ns-resize}
+#cropRect i[data-h=sw]{left:0;top:100%;cursor:nesw-resize}
+#cropRect i[data-h=w]{left:0;top:50%;cursor:ew-resize}
+#crop .crow{display:flex;gap:6px}
+#crop .crow .mini{flex:1 1 auto}
+#fatal.on{display:block}
+/* 3 秒后渐隐：提示是自己淡出的，不需要用户去关；点一下可以再看 3 秒 */
+#fatal.out{opacity:0;pointer-events:none}
+</style>
+</head>
+<body>
+
+<canvas id="view"></canvas>
+
+<header id="bar">
+  <span class="brand">时空立方体</span>
+
+  <!--
+    「打开照片」刻意做成「透明 input 覆盖在按钮上」而不是「label + 隐藏 input」：
+    用户点到的就是 <input type="file"> 本身，浏览器原生打开文件对话框，
+    **完全不依赖 JavaScript**。这样即使脚本某处出错，选文件这条路依然是通的。
+  -->
+  <span id="openWrap" class="mini filewrap">
+    <span class="filelabel">打开照片/视频</span>
+    <input id="file" type="file" accept="image/*,video/*" multiple>
+  </span>
+
+  <select id="sort" class="mini" title="决定照片在时间轴上的先后">
+    <option value="exif">按拍摄时间（EXIF）</option>
+    <option value="name">按文件名</option>
+    <option value="mtime">按文件修改时间</option>
+  </select>
+
+  <select id="videoStep" class="mini" title="视频抽帧：默认每一帧都保留。要抽稀必须由你显式选择">
+    <option value="1">视频：每帧保留</option>
+    <option value="2">视频：每 2 帧取 1</option>
+    <option value="3">视频：每 3 帧取 1</option>
+    <option value="5">视频：每 5 帧取 1</option>
+  </select>
+
+  <select id="res" class="mini" title="每帧纹理的尺寸。帧数越多，能用的尺寸越小 —— 显存是硬约束">
+    <option value="auto">分辨率：自动适配</option>
+    <option value="orig">分辨率：原画质不缩放</option>
+    <option value="1920">分辨率：长边 1920</option>
+    <option value="1280">分辨率：长边 1280</option>
+    <option value="960">分辨率：长边 960</option>
+  </select>
+
+  <span id="status" class="status">拖入一批照片，或点「打开照片」</span>
+</header>
+
+<aside id="panel">
+  <div class="grp">
+    <div class="ttl">时间轴</div>
+    <label class="row">当前帧 <b id="lbFrame">—</b>
+      <input id="frame" type="range" min="0" max="0" step="1" value="0" disabled>
+    </label>
+    <label class="chk"><input id="allGhost" type="checkbox"> 全部半透明（不突出任何一帧）</label>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">不透明度</div>
+    <label class="row">当前帧 <b id="lbOpCur">1.00</b>
+      <input id="opCur" type="range" min="0" max="1" step="0.01" value="1">
+    </label>
+    <label class="row">其他帧 <b id="lbOpOther">0.12</b>
+      <input id="opOther" type="range" min="0" max="1" step="0.01" value="0.12">
+    </label>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">其他帧的显示方式</div>
+    <div class="seg" id="otherMode">
+      <button data-v="plane" class="on">半透明平面</button>
+      <button data-v="points">点云</button>
+    </div>
+    <label class="row">点大小 <b id="lbDot">5.0</b>
+      <input id="dot" type="range" min="1" max="16" step="0.5" value="5">
+    </label>
+    <div class="ttl sub">点云密度</div>
+    <div class="seg" id="lumDir">
+      <button data-v="bright" class="on">亮处更密</button>
+      <button data-v="dark">暗处更密</button>
+    </div>
+    <label class="row">密度幂次 <b id="lbLumW">0.85</b>
+      <input id="lumW" type="range" min="0.1" max="1" step="0.05" value="0.85">
+    </label>
+    <label class="row">门槛 <b id="lbLumT">0.02</b>
+      <input id="lumT" type="range" min="0" max="0.5" step="0.01" value="0.02">
+    </label>
+    <label class="chk"><input id="square" type="checkbox" checked> 方格点（保留原始像素形状，关闭则为圆点）</label>
+    <div class="note">点云密度按亮度加权：选「亮处更密」时画面越亮的地方点越密，
+      选「暗处更密」则反过来。幂次 1.0 = 密度严格正比于亮度；调小则小的一头也保留更多点。
+      参与密度的量低于「门槛」时一个点都不画。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">轮廓提取</div>
+    <label class="chk"><input id="outline" type="checkbox"> 只保留轮廓（颜色分界线）</label>
+    <label class="row">对比门槛 <b id="lbEdge">0.25</b>
+      <input id="edge" type="range" min="0.02" max="0.8" step="0.01" value="0.25">
+    </label>
+    <div class="note">勾上之后，每帧只画「与上下左右邻居颜色差得最多」的那些像素，
+      其余整片丢弃 —— 画面变成一张线稿。判据是**逐通道最大差**（不是亮度差），
+      所以红↔绿这种等亮度的强对比也能提出来。
+      线宽跟着屏幕走：照片缩小时线会变粗到看得见，放大时是 1 像素。
+      门槛调大 = 只留最强的那几条边。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">切割（只显示选区内的影像）</div>
+    <label class="chk"><input id="clip" type="checkbox"> 只显示选区（对所有帧生效）</label>
+    <div class="row2">
+      <button id="clipEdit" class="mini">框选区域…</button>
+      <button id="clipAll" class="mini">整个画面</button>
+    </div>
+    <div class="note" id="clipInfo">选区：整个画面（未切割）</div>
+    <div class="note">点「框选区域」会在**当前帧**的照片上打开一个框选面板：
+      拖出一个矩形、拖动它移动、拖四角/四边缩放。选区按**图像坐标**记录，
+      所以它是对**所有帧**生效的 —— 200 张照片会被切出同一块区域，
+      而不是只切当前那一张。切割在片元着色器里完成（选区外的像素直接丢弃），
+      照片本身没有被修改，关掉开关就恢复完整画面；
+      侧面的厚度条仍然是整张照片的边（它是薄片的外壳，不参与切割）。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">几何</div>
+    <label class="row">帧厚度 <b id="lbThick">0.020</b>
+      <input id="thick" type="range" min="0" max="0.12" step="0.002" value="0.02">
+    </label>
+    <label class="row">帧间距 <b id="lbSpacing">1.60</b>
+      <input id="spacing" type="range" min="0.2" max="6" step="0.05" value="1.6">
+    </label>
+    <div class="note">每张照片是一个有厚度的薄片，照片本身在薄片中间。
+      薄片的四个立面就是原图最外一列/一行的真实颜色，所以斜着看能看见每张照片的边。
+      厚度会自动夹到帧间距的 90%，永远不会互相穿模。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">厚度条（每张照片的侧立面）</div>
+    <label class="chk"><input id="showBands" type="checkbox" checked> 显示厚度条</label>
+    <label class="chk"><input id="bandDebug" type="checkbox"> 诊断：四色立面（左红/右绿/上蓝/下黄）</label>
+    <div class="seg" id="edgeMode">
+      <button data-v="edge" class="on">边界像素</button>
+      <button data-v="avg">整行/整列平均色</button>
+    </div>
+    <div class="note">每一帧薄片的四个立面，就是那一帧原图最外一列/一行，
+      颜色是那张照片的真实像素色。它的**不透明度跟着那一帧照片走** ——
+      把「其他帧」拉到 12%，它们的边也就跟着淡下去。
+      边缘很暗的照片（比如左右两边是黑的）在深色背景上会看不清，
+      这时可以把「帧厚度」调大一点，或者用 <code>?banddebug=1</code>
+      把四个立面涂成红/绿/蓝/黄来确认它们都画出来了。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">标记</div>
+    <label class="chk"><input id="showCube" type="checkbox" checked> 立方体线框（12 条棱）</label>
+    <label class="chk"><input id="showAxis" type="checkbox" checked> 时间轴</label>
+    <label class="chk"><input id="showOutline" type="checkbox"> 每张照片的显示区域描边</label>
+    <div class="note">标记永远画在最上层（不受遮挡）。「显示区域描边」默认**关闭**：
+      它是每帧一个真正的白色矩形线框，帧数一多（比如 200 张）叠起来会糊成一片白，
+      需要精确定位某一帧时再打开。</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">视角</div>
+    <div class="seg" id="viewMode">
+      <button data-v="front">正视</button>
+      <button data-v="iso" class="on">等轴</button>
+      <button data-v="top">俯视</button>
+      <button id="reset" data-v="reset">复位</button>
+    </div>
+    <div class="note">拖动旋转 · 滚轮缩放 · 右键或双指拖动平移 · 双击复位</div>
+  </div>
+
+  <div class="grp">
+    <div class="ttl">输出</div>
+    <button id="shot" class="mini wide">导出当前视图 PNG</button>
+  </div>
+</aside>
+
+<footer id="foot">
+  <span id="hud"></span>
+</footer>
+
+<div id="veil"><div class="box"><div id="veilText">准备中…</div><div class="bar"><i id="veilBar"></i></div><button id="veilCancel" class="mini" style="display:none">取消</button></div></div>
+
+<div id="crop" hidden>
+  <div class="cbox">
+    <div class="cttl">在当前帧上框选区域 <b id="cropInfo">整个画面</b></div>
+    <div id="cropWrap"><canvas id="cropCanvas"></canvas>
+      <div id="cropRect"><i data-h="nw"></i><i data-h="n"></i><i data-h="ne"></i><i data-h="e"></i><i data-h="se"></i><i data-h="s"></i><i data-h="sw"></i><i data-h="w"></i></div>
+    </div>
+    <div class="crow">
+      <button id="cropOk" class="mini wide">应用这个选区</button>
+      <button id="cropAll" class="mini">整个画面</button>
+      <button id="cropCancel" class="mini">取消</button>
+    </div>
+    <div class="note">在图上**按住拖动** = 画一个新矩形；拖矩形**内部** = 移动；
+      拖**四角/四边** = 缩放。灰色遮罩之外的部分就是会被丢掉的画面。
+      选区对所有帧生效（Esc 取消）。</div>
+  </div>
+</div>
+
+<div id="fatal"></div>
+
+<script>
+(function () {
+'use strict';
+/* ===================================================== 10-math.js */
+/* 时空立方体 · 数学
+ *
+ * 约定（坐标系是右手系，单位与「照片宽度」无关，照片宽固定为 1）：
+ *
+ *      +X  画面向右
+ *      +Y  画面向上
+ *      +Z  从第一帧指向最后一帧 —— 也就是时间轴的正方向
+ *
+ * 于是：
+ *      正面（z = 0）        第一帧
+ *      背面（z = depth）    最后一帧
+ *      左右/上下四个侧面    每一行（列）像素沿 Z 拉成的颜色条
+ *
+ * 矩阵一律列主序（和 WebGL 一致），函数名里的 `m4` 前缀表示 4x4，
+ * `mul(a, b)` 的语义是「先施加 b，再施加 a」，即 a·b·v。
+ */
+(function (STC) {
+  'use strict';
+
+  var TAU = Math.PI * 2;
+
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function deg(d) { return d * Math.PI / 180; }
+  function rad(r) { return r * 180 / Math.PI; }
+
+  /* ------------------------------------------------------------ 4x4 矩阵 */
+
+  function m4() {
+    return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  }
+
+  /** out = a · b （两者都是列主序） */
+  function mul(a, b, out) {
+    out = out || m4();
+    var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3];
+    var a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
+    var a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
+    var a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
+    for (var i = 0; i < 4; i++) {
+      var b0 = b[i * 4], b1 = b[i * 4 + 1], b2 = b[i * 4 + 2], b3 = b[i * 4 + 3];
+      out[i * 4]     = a00 * b0 + a10 * b1 + a20 * b2 + a30 * b3;
+      out[i * 4 + 1] = a01 * b0 + a11 * b1 + a21 * b2 + a31 * b3;
+      out[i * 4 + 2] = a02 * b0 + a12 * b1 + a22 * b2 + a32 * b3;
+      out[i * 4 + 3] = a03 * b0 + a13 * b1 + a23 * b2 + a33 * b3;
+    }
+    return out;
+  }
+
+  /** 透视投影，输出 NDC z ∈ [-1, 1] */
+  function perspective(fovyRad, aspect, near, far, out) {
+    out = out || m4();
+    var f = 1 / Math.tan(fovyRad / 2);
+    var nf = 1 / (near - far);
+    out[0] = f / aspect; out[1] = 0; out[2] = 0;  out[3] = 0;
+    out[4] = 0; out[5] = f; out[6] = 0;           out[7] = 0;
+    out[8] = 0; out[9] = 0; out[10] = (far + near) * nf; out[11] = -1;
+    out[12] = 0; out[13] = 0; out[14] = 2 * far * near * nf; out[15] = 0;
+    return out;
+  }
+
+  /**
+   * 正交投影，输出 NDC z ∈ [-1, 1]。
+   *
+   * near/far 是**沿视线的有符号距离**（前方为负，和 lookAt 的相机空间一致）：
+   * 相机空间里点在视线前方时 z 为负，所以 near 通常取一个负数。
+   * 映射公式与透视一致：z_ndc = -2/(far-near) * z + (far+near)/(near-far) 取负号后
+   * 化简为上式的 (far+near)/(near-far) 与 2/(near-far)。
+   */
+  function ortho(left, right, bottom, top, near, far, out) {
+    out = out || m4();
+    var lr = 1 / (right - left);
+    var bt = 1 / (top - bottom);
+    var nf = 1 / (near - far);
+    out[0] = 2 * lr; out[1] = 0;      out[2] = 0;       out[3] = 0;
+    out[4] = 0;      out[5] = 2 * bt; out[6] = 0;       out[7] = 0;
+    out[8] = 0;      out[9] = 0;      out[10] = 2 * nf; out[11] = 0;
+    out[12] = -(right + left) * lr;
+    out[13] = -(top + bottom) * bt;
+    out[14] = (far + near) * nf;
+    out[15] = 1;
+    return out;
+  }
+
+  /** 视图矩阵：把世界坐标变换到相机坐标（相机看向 -Z） */
+  function lookAt(eye, center, up, out) {
+    out = out || m4();
+    var zx = eye[0] - center[0], zy = eye[1] - center[1], zz = eye[2] - center[2];
+    var zl = Math.hypot(zx, zy, zz) || 1;
+    zx /= zl; zy /= zl; zz /= zl;
+
+    var xx = up[1] * zz - up[2] * zy;
+    var xy = up[2] * zx - up[0] * zz;
+    var xz = up[0] * zy - up[1] * zx;
+    var xl = Math.hypot(xx, xy, xz);
+    if (xl < 1e-6) { xx = 1; xy = 0; xz = 0; }   // up 与视线共线时的退化处理
+    else { xx /= xl; xy /= xl; xz /= xl; }
+
+    var yx = zy * xz - zz * xy;
+    var yy = zz * xx - zx * xz;
+    var yz = zx * xy - zy * xx;
+
+    out[0] = xx; out[1] = yx; out[2] = zx; out[3] = 0;
+    out[4] = xy; out[5] = yy; out[6] = zy; out[7] = 0;
+    out[8] = xz; out[9] = yz; out[10] = zz; out[11] = 0;
+    out[12] = -(xx * eye[0] + xy * eye[1] + xz * eye[2]);
+    out[13] = -(yx * eye[0] + yy * eye[1] + yz * eye[2]);
+    out[14] = -(zx * eye[0] + zy * eye[1] + zz * eye[2]);
+    out[15] = 1;
+    return out;
+  }
+
+  /** 模型矩阵：先缩放，再平移到局部原点 loc。照片平面在 z = 0 上。 */
+  function modelMat(sx, sy, sz, loc, out) {
+    out = out || m4();
+    out[0] = sx; out[1] = 0; out[2] = 0; out[3] = 0;
+    out[4] = 0; out[5] = sy; out[6] = 0; out[7] = 0;
+    out[8] = 0; out[9] = 0; out[10] = sz; out[11] = 0;
+    out[12] = loc[0]; out[13] = loc[1]; out[14] = loc[2]; out[15] = 1;
+    return out;
+  }
+
+  function normalMat3(m, out) {
+    out = out || new Float32Array(9);
+    // 这里的模型矩阵只有缩放+平移，法线矩阵就是左上 3x3 的逆转置，
+    // 对轴对齐缩放来说等于按 1/s 缩放。直接取左上角再归一化即可
+    // —— 但我们只在世界空间做光照/描边，不依赖精确法线，故原样取出。
+    out[0] = m[0]; out[1] = m[1]; out[2] = m[2];
+    out[3] = m[4]; out[4] = m[5]; out[5] = m[6];
+    out[6] = m[8]; out[7] = m[9]; out[8] = m[10];
+    return out;
+  }
+
+  /**
+   * 世界坐标 → NDC。
+   * 注意这里**没有做透视除法**：我们用的是正交式的用法（相机在远处、
+   * 场景很扁），而且所有断言都基于同一套变换，所以保持"不除 w"的一致性更重要。
+   * 真正的透视除法由 GPU 在光栅化前完成。
+   */
+  function xformPoint(m, x, y, z, out) {
+    out = out || [0, 0, 0];
+    out[0] = m[0] * x + m[4] * y + m[8] * z + m[12];
+    out[1] = m[1] * x + m[5] * y + m[9] * z + m[13];
+    out[2] = m[2] * x + m[6] * y + m[10] * z + m[14];
+    out[3] = m[3] * x + m[7] * y + m[11] * z + m[15];
+    return out;
+  }
+
+  /* -------------------------------------------------------------- 轨道相机
+   *
+   * 球坐标：方位角 az 绕 +Y，仰角 el 抬离 XZ 平面。
+   *   az = 0, el = 0  →  相机在 +Z 轴上，正对第一帧（正视）
+   * 我们刻意让 az 的符号与直觉一致：向右拖动让物体向右转。
+   */
+  function orbitEye(target, dist, azDeg, elDeg, out) {
+    out = out || [0, 0, 0];
+    var az = deg(azDeg), el = deg(elDeg);
+    var c = Math.cos(el);
+    out[0] = target[0] + dist * c * Math.sin(az);
+    out[1] = target[1] + dist * Math.sin(el);
+    out[2] = target[2] + dist * c * Math.cos(az);
+    return out;
+  }
+
+  /** 包围球半径：把半尺寸 (hx, hy, hz) 的盒子装进以 target 为心的球 */
+  function boundRadius(hx, hy, hz) {
+    return Math.hypot(hx, hy, hz);
+  }
+
+  /** 让半径为 r 的球恰好进入竖直视场 fovy 所需的距离 */
+  function fitDistance(r, fovyRad) {
+    return r / Math.max(Math.sin(fovyRad / 2), 1e-4);
+  }
+
+  STC.math = {
+    TAU: TAU, clamp: clamp, lerp: lerp, deg: deg, rad: rad,
+    m4: m4, mul: mul, perspective: perspective, ortho: ortho, lookAt: lookAt,
+    modelMat: modelMat, normalMat3: normalMat3, xformPoint: xformPoint,
+    orbitEye: orbitEye, boundRadius: boundRadius, fitDistance: fitDistance
+  };
+})(window.STC = window.STC || {});
+
+/* ===================================================== 20-gl.js */
+/* 时空立方体 · WebGL2 基础设施
+ *
+ * 这里做四件事：
+ *   1. 创建 context 并如实上报它的能力上限（MAX_TEXTURE_SIZE 是「原画质」的硬边界）；
+ *   2. 编译着色器，把编译日志完整保留下来 —— 编译失败时画面会全空，
+ *      而 JS 那边一切正常，所以这类错误必须显式暴露，不能只丢给控制台；
+ *   3. 缓冲/纹理/VAO 的小工具；
+ *   4. 记录每一次 draw call 和估算的显存占用，供 HUD 显示。
+ */
+(function (STC) {
+  'use strict';
+
+  var MAX_REPORTED_ERRORS = 12;
+
+  function create(canvas) {
+    var gl = canvas.getContext('webgl2', {
+      alpha: false,
+      antialias: false,
+      depth: true,
+      stencil: false,
+      premultipliedAlpha: false,
+      preserveDrawingBuffer: true,
+      powerPreference: 'high-performance',
+      desynchronized: false
+    });
+    if (!gl) {
+      throw new Error('这个浏览器没能提供 WebGL2 上下文。\n' +
+        '请用较新的 Chrome / Edge / Firefox，并确认没有关闭硬件加速。');
+    }
+
+    var errors = [];
+    function report(kind, msg) {
+      if (errors.length < MAX_REPORTED_ERRORS) {
+        errors.push('[' + kind + '] ' + msg);
+      } else if (errors.length === MAX_REPORTED_ERRORS) {
+        errors.push('… 更多错误已省略');
+      }
+    }
+
+    var info = {
+      version: gl.getParameter(gl.VERSION),
+      vendor: gl.getParameter(gl.VENDOR),
+      renderer: gl.getParameter(gl.RENDERER),
+      maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
+      maxTexUnits: gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS),
+      maxRenderbuffer: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
+      maxViewport: gl.getParameter(gl.MAX_VIEWPORT_DIMS),
+      pointRange: gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE),
+      maxVertexAttribs: gl.getParameter(gl.MAX_VERTEX_ATTRIBS)
+    };
+
+    /* ------------------------------------------------------------ 着色器 */
+
+    function compile(type, src, label) {
+      var sh = gl.createShader(type);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        var log = gl.getShaderInfoLog(sh) || '(无日志)';
+        report('shader:' + label, log.trim() + '\n' + numberLines(src));
+        gl.deleteShader(sh);
+        return null;
+      }
+      return sh;
+    }
+
+    function program(vsSrc, fsSrc, label, attribs) {
+      label = label || 'program';
+      var vs = compile(gl.VERTEX_SHADER, vsSrc, label + '.vert');
+      var fs = compile(gl.FRAGMENT_SHADER, fsSrc, label + '.frag');
+      if (!vs || !fs) return null;
+      var p = gl.createProgram();
+      gl.attachShader(p, vs);
+      gl.attachShader(p, fs);
+      if (attribs) {
+        for (var i = 0; i < attribs.length; i++) {
+          gl.bindAttribLocation(p, i, attribs[i]);
+        }
+      }
+      gl.linkProgram(p);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+        report('link:' + label, (gl.getProgramInfoLog(p) || '(无日志)').trim());
+        gl.deleteProgram(p);
+        return null;
+      }
+      return wrapProgram(p, label);
+    }
+
+    /** 把 program 包装成「缓存 uniform 位置」的对象 */
+    function wrapProgram(p, label) {
+      var locs = Object.create(null);
+      return {
+        program: p,
+        label: label,
+        use: function () { gl.useProgram(p); return this; },
+        /** 取 uniform 位置（缓存；不存在时返回 null，调用方自己跳过） */
+        u: function (name) {
+          if (!(name in locs)) locs[name] = gl.getUniformLocation(p, name);
+          return locs[name];
+        },
+        /** 只在位置存在时设置，省掉一堆 if */
+        set: function (name, fn) {
+          var l = this.u(name);
+          if (l) fn(l);
+          return this;
+        },
+        attrib: function (name) { return gl.getAttribLocation(p, name); }
+      };
+    }
+
+    /* -------------------------------------------------------------- 缓冲 */
+
+    function buffer(data, target) {
+      var b = gl.createBuffer();
+      var t = target || gl.ARRAY_BUFFER;
+      gl.bindBuffer(t, b);
+      gl.bufferData(t, data, gl.STATIC_DRAW);
+      gl.bindBuffer(t, null);
+      return b;
+    }
+
+    /**
+     * 建一个 2D 纹理。关键点：
+     *   - 一律上传原始尺寸，绝不缩放（原画质的第一道保证）；
+     *   - internalFormat 与 format 都用 RGBA/UNSIGNED_BYTE，
+     *     不做任何色彩空间转换，像素值原样进显存；
+     *   - LINEAR 时也不生成 mipmap，避免引入非原始像素。
+     */
+    function texture2D(opts) {
+      var t = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      var filter = opts.filter || gl.LINEAR;
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+      if (opts.flipY) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, opts.source);
+      if (opts.flipY) gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      var err = gl.getError();
+      if (err !== gl.NO_ERROR) {
+        report('texture', '上传 ' + (opts.label || '') + ' 失败（GL 错误 0x' + err.toString(16) + '）' +
+          '，尺寸 ' + (opts.source.width || '?') + '×' + (opts.source.height || '?'));
+        gl.deleteTexture(t);
+        return null;
+      }
+      return t;
+    }
+
+    /**
+     * 用**显式尺寸 + 像素数据**建一张 2D 纹理（侧面颜色条用）。
+     *
+     * 这里有一道必须有的闸门：`data` 的字节数必须**正好**等于 width×height×4。
+     * texImage2D 的这个重载只认宽高，多出来的数据会被**静默丢弃** ——
+     * 早先侧面图集算出了 W×n 的像素却按 W×1 上传，n-1 帧的数据全被丢掉，
+     * 而且一个错误都不报。表现就是"侧面颜色每一帧都一样"。
+     * 现在长度不对就直接报错、返回 null，宁可没有侧面也不要错的侧面。
+     */
+    function edgeTexture(width, height, data, filter) {
+      var need = width * height * 4;
+      if (!data || data.byteLength !== need) {
+        report('texture', '侧面图集尺寸与数据不符：声明 ' + width + '×' + height +
+          '（需要 ' + need + ' 字节），实际 ' + (data ? data.byteLength : 'null') +
+          ' 字节。已放弃这张图集，而不是上传一张被截断的。');
+        return null;
+      }
+      var t = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      var f = filter || gl.NEAREST;
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, f);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, f);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+      // 行序由 CPU 侧决定（第 0 行就是第 0 帧），显式关掉翻转
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      var err = gl.getError();
+      if (err !== gl.NO_ERROR) {
+        report('texture', '上传侧面图集失败（GL 错误 0x' + err.toString(16) + '），尺寸 ' +
+          width + '×' + height);
+        gl.deleteTexture(t);
+        return null;
+      }
+      return t;
+    }
+
+    function vao(setup) {
+      var v = gl.createVertexArray();
+      gl.bindVertexArray(v);
+      setup();
+      gl.bindVertexArray(null);
+      return v;
+    }
+
+    /** 把某个 buffer 绑定到固定位置的 attrib 上 */
+    function attrib(index, buf, size, type, normalized, stride, offset, divisor) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.enableVertexAttribArray(index);
+      gl.vertexAttribPointer(index, size, type || gl.FLOAT, !!normalized, stride || 0, offset || 0);
+      if (divisor) gl.vertexAttribDivisor(index, divisor);
+    }
+
+    function textureBytes(w, h, layers) {
+      return w * h * 4 * (layers || 1);
+    }
+
+    return {
+      gl: gl,
+      info: info,
+      errors: errors,
+      report: report,
+      program: program,
+      buffer: buffer,
+      texture2D: texture2D,
+      edgeTexture: edgeTexture,
+      vao: vao,
+      attrib: attrib,
+      textureBytes: textureBytes,
+      getError: function () { return gl.getError(); }
+    };
+  }
+
+  function numberLines(src) {
+    return src.split('\n').map(function (l, i) {
+      return String(i + 1).padStart(4, ' ') + ' | ' + l;
+    }).join('\n');
+  }
+
+  STC.gl = { create: create };
+})(window.STC = window.STC || {});
+
+/* ===================================================== 30-exif.js */
+/* 时空立方体 · EXIF 最小读取
+ *
+ * 只做一件事：从 JPEG 里读出「拍摄时间」和「方向」，用来决定照片在时间轴上的先后。
+ *
+ * 为什么必须读 EXIF 而不是用文件修改时间：
+ *   拷来拷去、批量导出、网盘同步都会改掉 mtime，但 EXIF 里的 DateTimeOriginal
+ *   是相机按下快门那一刻写下的，那才是真正的拍摄时刻。
+ *
+ * 只读头部若干字节（APP1 一定在最前面几段里），不解码整张图。
+ */
+(function (STC) {
+  'use strict';
+
+  var HEAD_BYTES = 256 * 1024;
+
+  /** 解析 JPEG 的 EXIF；返回 {date:Date|null, orientation:int, hasExif:bool} */
+  function parseJpeg(view, bytes) {
+    var out = { date: null, orientation: 1, hasExif: false };
+    if (bytes < 4 || view.getUint8(0) !== 0xFF || view.getUint8(1) !== 0xD8) return out;
+
+    var off = 2;
+    while (off + 4 <= bytes) {
+      if (view.getUint8(off) !== 0xFF) break;
+      var marker = view.getUint8(off + 1);
+      off += 2;
+      if (marker === 0xD8 || marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)) continue;
+      if (marker === 0xDA) break;                       // 进入压缩数据，后面不再有元数据
+      if (off + 2 > bytes) break;
+      var size = view.getUint16(off, false);
+      if (size < 2) break;
+      var segStart = off + 2;
+      var segEnd = off + size;
+      if (segEnd > bytes) segEnd = bytes;
+
+      if (marker === 0xE1 && segStart + 6 <= segEnd &&
+          view.getUint32(segStart, false) === 0x45786966 &&   // "Exif"
+          view.getUint16(segStart + 4, false) === 0x0000) {
+        out.hasExif = true;
+        readTiff(view, segStart + 6, segEnd, out);
+        return out;
+      }
+      off = segEnd;
+    }
+    return out;
+  }
+
+  function readTiff(view, tiff, end, out) {
+    if (tiff + 8 > end) return;
+    var order = view.getUint16(tiff, false);
+    var le;
+    if (order === 0x4949) le = true;        // "II"
+    else if (order === 0x4D4D) le = false;  // "MM"
+    else return;
+    if (view.getUint16(tiff + 2, le) !== 0x002A) return;
+
+    var ifd0 = view.getUint32(tiff + 4, le);
+    var exifIfd = 0;
+
+    // ---- IFD0：拿 Orientation，同时找 Exif 子目录的指针 ----
+    var n = readIfd(view, tiff, tiff + ifd0, end, le, function (tag, type, count, valOff) {
+      if (tag === 0x0112) out.orientation = readShort(view, type, count, valOff, le) || 1;
+      else if (tag === 0x8769) exifIfd = readLong(view, type, count, valOff, le);
+    });
+
+    // ---- Exif 子目录：拿 DateTimeOriginal(0x9003)，退而求其次 DateTimeDigitized(0x9004) ----
+    var best = null, digitized = null;
+    if (exifIfd && n >= 0) {
+      readIfd(view, tiff, tiff + exifIfd, end, le, function (tag, type, count, valOff) {
+        if (tag === 0x9003) best = readAscii(view, count, valOff, end);
+        else if (tag === 0x9004) digitized = readAscii(view, count, valOff, end);
+      });
+    }
+    if (!best) best = digitized;
+    if (best) out.date = parseStamp(best);
+  }
+
+  /** 遍历一个 IFD，对每个条目调用 cb(tag, type, count, valueOffsetOrInline) */
+  function readIfd(view, tiff, ifd, end, le, cb) {
+    if (ifd + 2 > end) return -1;
+    var count = view.getUint16(ifd, le);
+    if (count > 512) return -1;                 // 明显不合理，防止越界乱跑
+    for (var i = 0; i < count; i++) {
+      var e = ifd + 2 + i * 12;
+      if (e + 12 > end) break;
+      var tag = view.getUint16(e, le);
+      var type = view.getUint16(e + 2, le);
+      var num = view.getUint32(e + 4, le);
+      var size = typeSize(type) * num;
+      // 值 ≤ 4 字节时直接内联在条目里，否则是个偏移
+      var valOff = size <= 4 ? e + 8 : tiff + view.getUint32(e + 8, le);
+      cb(tag, type, num, valOff);
+    }
+    return count;
+  }
+
+  function typeSize(t) {
+    switch (t) {
+      case 1: case 2: case 6: case 7: return 1;
+      case 3: case 8: return 2;
+      case 4: case 9: case 11: return 4;
+      case 5: case 10: case 12: return 8;
+      default: return 1;
+    }
+  }
+
+  function readShort(view, type, count, off, le) {
+    if (type !== 3 || count < 1) return 0;
+    return view.getUint16(off, le);
+  }
+
+  function readLong(view, type, count, off, le) {
+    if (type !== 4 || count < 1) return 0;
+    return view.getUint32(off, le);
+  }
+
+  function readAscii(view, count, off, end) {
+    var s = '';
+    for (var i = 0; i < count && off + i < end; i++) {
+      var c = view.getUint8(off + i);
+      if (c === 0) break;
+      s += String.fromCharCode(c);
+    }
+    return s.trim();
+  }
+
+  /** EXIF 格式是 "YYYY:MM:DD HH:MM:SS"，注意是冒号分隔日期 */
+  function parseStamp(s) {
+    var m = /^(\d{4}):(\d{2}):(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/.exec(s);
+    if (!m) return null;
+    var y = +m[1], mo = +m[2], d = +m[3], h = +m[4], mi = +m[5], se = +m[6];
+    if (y < 1900 || mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+    // 相机时间没有时区信息，按本地时间解释 —— 单调排序不受影响
+    var t = new Date(y, mo - 1, d, h, mi, se);
+    return isNaN(t.getTime()) ? null : t;
+  }
+
+  /** 读一个 File 的拍摄信息；任何失败都安静地退回默认值 */
+  async function read(file) {
+    var out = { date: null, orientation: 1, hasExif: false, error: null };
+    try {
+      if (!/jpe?g$/i.test(file.name) && file.type !== 'image/jpeg') return out;
+      var buf = await file.slice(0, Math.min(HEAD_BYTES, file.size)).arrayBuffer();
+      return parseJpeg(new DataView(buf), buf.byteLength);
+    } catch (e) {
+      out.error = String(e && e.message || e);
+      return out;
+    }
+  }
+
+  STC.exif = { read: read, parseJpeg: parseJpeg };
+})(window.STC = window.STC || {});
+
+/* ===================================================== 40-seq.js */
+/* 时空立方体 · 序列加载
+ *
+ * 三件必须做对的事：
+ *
+ * 1. 原画质。解码只走 createImageBitmap，且**不传任何 resize 参数**；
+ *    不进 canvas、不做 drawImage 缩放、不做任何有损编码。
+ *    唯一的硬边界是 GPU 的 MAX_TEXTURE_SIZE —— 超了要明确报错，绝不偷偷缩图。
+ *
+ * 2. 排序要可靠。优先 EXIF 拍摄时间，其次文件名自然序，最后文件修改时间；
+ *    前一个键相等时才用后一个键。
+ *
+ * 3. 显存要有账。每帧纹理是 w×h×4 字节，自己算清楚，超预算就明说超了多少，
+ *    而不是让浏览器把显存吃爆、页面直接白掉。
+ */
+(function (STC) {
+  'use strict';
+
+  /*
+   * 纹理预算是这个程序最硬的物理约束，必须算清楚：
+   *   每帧纹理字节 = 宽 × 高 × 4
+   *   12MP 照片（4000×3000）= 33 MB/帧
+   *   于是 200 帧原画质 = 6.6 GB —— **没有任何 GPU 装得下**。
+   *
+   * 所以"200 帧 + 原画质 + 全部同时驻留"三者不可能同时成立，
+   * 只能让用户明确选一个。默认预算给 2 GB（独显常见值，集显可能仍然吃紧），
+   * 并按 deviceMemory 向上放宽。
+   */
+  var RAM_BUDGET = 2 * 1024 * 1024 * 1024;
+  var MAX_FRAMES = 600;
+  /* 视频是连续画面，"每帧都保留"是硬要求，所以给视频序列单独放宽帧数上限。
+     真正卡住的是显存预算（见下），这个上限只是防止 UI/滑块彻底失控。 */
+  var VIDEO_MAX_FRAMES = 2000;
+  var POINT_BUDGET = 4.0e6;              // 点云总点数上限（所有帧加起来）
+  var MAX_LONG_EDGE = 8192;              // 单帧长边硬上限（与 GPU 上限共同约束）
+  var MIN_EDGE = 24;                     // 再小就没有可读性了
+
+  /** 探测一个更贴近本机的默认预算 */
+  function defaultBudget() {
+    var dm = (typeof navigator !== 'undefined' && navigator.deviceMemory) || 0;
+    if (dm >= 16) return 4 * 1024 * 1024 * 1024;
+    if (dm >= 8) return 3 * 1024 * 1024 * 1024;
+    return RAM_BUDGET;
+  }
+
+  /**
+   * 在「帧数」与「单帧分辨率」之间解一个可行的长边。
+   *
+   * 约束：n × W × H × 4 ≤ budget，且 W/H 保持给定宽高比、长边不超过上限。
+   * 解出长边 L 满足 n × L²/aspect' × 4 ≤ budget（aspect' = 长边/短边）。
+   * 返回 0 表示"没有任何正解"（理论上不会，因为 L 可以很小）。
+   */
+  function fitLongEdge(n, aspect, budget) {
+    if (n <= 0 || budget <= 0) return 0;
+    var longRatio = Math.max(aspect, 1 / aspect);        // 长边 / 短边
+    // n * L * (L/longRatio) * 4 <= budget   →   L <= sqrt(budget * longRatio / (4n))
+    var L = Math.sqrt(budget * longRatio / (4 * n));
+    return Math.max(MIN_EDGE, Math.min(MAX_LONG_EDGE, Math.floor(L)));
+  }
+
+  var IMAGE_RE = /\.(jpe?g|png|webp|bmp|gif|avif|jfif)$/i;
+
+  function isImage(file) {
+    return /^image\//.test(file.type || '') || IMAGE_RE.test(file.name || '');
+  }
+
+  function naturalCompare(a, b) {
+    return String(a).localeCompare(String(b), 'zh-Hans-CN', { numeric: true, sensitivity: 'base' });
+  }
+
+  /**
+   * 排序键的**唯一实现**：图片、视频块都走这一个比较器，
+   * 避免"图片一套规则、视频又一套规则"这种早晚会对不上的写法。
+   * a/b = {name, lastModified, date}
+   */
+  function compareEntries(a, b, mode) {
+    if (mode === 'exif') {
+      var da = a.date, db = b.date;
+      if (da && db && da.getTime() !== db.getTime()) return da.getTime() - db.getTime();
+      if (da && !db) return -1;              // 有拍摄时间的排前面
+      if (!da && db) return 1;
+      return naturalCompare(a.name, b.name);
+    }
+    if (mode === 'mtime') {
+      return (a.lastModified - b.lastModified) || naturalCompare(a.name, b.name);
+    }
+    return naturalCompare(a.name, b.name) || (a.lastModified - b.lastModified);
+  }
+
+  /**
+   * 决定顺序。返回 {list, keys} —— keys 里记下每张用的排序键，便于 UI 展示。
+   * mode: 'exif' | 'name' | 'mtime'
+   */
+  async function order(files, mode, onProgress) {
+    var list = Array.from(files).filter(isImage);
+    if (!list.length) {
+      throw new Error('没有找到可用的图片（支持 JPG / PNG / WebP / BMP / GIF / AVIF）');
+    }
+
+    var meta = new Array(list.length);
+    if (mode === 'exif') {
+      for (var i = 0; i < list.length; i++) {
+        meta[i] = await STC.exif.read(list[i]);
+        if (onProgress && (i % 16 === 15 || i === list.length - 1)) {
+          onProgress({ phase: 'exif', done: i + 1, total: list.length });
+        }
+      }
+    } else {
+      for (var j = 0; j < list.length; j++) meta[j] = { date: null, orientation: 1 };
+    }
+
+    var idx = list.map(function (_, k) { return k; });
+    idx.sort(function (a, b) {
+      var A = list[a], B = list[b];
+      return compareEntries(
+        { name: A.name, lastModified: A.lastModified, date: meta[a].date },
+        { name: B.name, lastModified: B.lastModified, date: meta[b].date },
+        mode);
+    });
+
+    var sorted = idx.map(function (k) { return list[k]; });
+    var sortedMeta = idx.map(function (k) { return meta[k]; });
+    var noExif = 0;
+    if (mode === 'exif') {
+      for (var m = 0; m < sortedMeta.length; m++) if (!sortedMeta[m].date) noExif++;
+    }
+    return { files: sorted, meta: sortedMeta, noExif: noExif };
+  }
+
+  /** 解码一帧，保持原始像素尺寸 */
+  async function decode(file) {
+    return decodeAt(file, 0);
+  }
+
+  /** 所有帧统一的目标平面尺寸（世界单位，宽固定为 1，保持原始长宽比，不拉伸） */
+  function layout(planeW, planeH, n, depthRatio) {
+    var depth = (depthRatio === undefined ? 1.6 : depthRatio) * Math.max(planeW, planeH);
+    return {
+      planeW: planeW,
+      planeH: planeH,
+      depth: depth,
+      step: n > 1 ? depth / (n - 1) : 0,
+      zOf: function (i) { return n > 1 ? i * (depth / (n - 1)) : depth * 0.5; }
+    };
+  }
+
+  /** 解码一帧；给了 longEdge 就按长边缩放（这是唯一的"降分辨率"入口，且由用户显式选择） */
+  async function decodeAt(file, longEdge) {
+    if (typeof createImageBitmap === 'function') {
+      var bit = await createImageBitmap(file, {
+        premultiplyAlpha: 'none',
+        colorSpaceConversion: 'none'
+      });
+      if (!longEdge || Math.max(bit.width, bit.height) <= longEdge) return bit;
+      // 只有确实需要缩小才走这一步；resizeQuality: 'high' 用较好的重采样
+      var s = longEdge / Math.max(bit.width, bit.height);
+      var tw = Math.max(1, Math.round(bit.width * s));
+      var th = Math.max(1, Math.round(bit.height * s));
+      try {
+        var small = await createImageBitmap(file, {
+          resizeWidth: tw, resizeHeight: th, resizeQuality: 'high',
+          premultiplyAlpha: 'none', colorSpaceConversion: 'none'
+        });
+        if (bit.close) bit.close();
+        return small;
+      } catch (e) {
+        return bit;                       // 缩放失败就退回原尺寸，绝不静默丢帧
+      }
+    }
+    return decodeAtViaImg(file, longEdge);
+  }
+
+  function decodeAtViaImg(file, longEdge) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        if (!longEdge || Math.max(img.width, img.height) <= longEdge) return resolve(img);
+        var s = longEdge / Math.max(img.width, img.height);
+        var c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.width * s));
+        c.height = Math.max(1, Math.round(img.height * s));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        resolve(c);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('解码失败')); };
+      img.src = url;
+    });
+  }
+
+  /**
+   * 加载整个序列。返回 frames[]，每帧带自己的 ImageBitmap。
+   *
+   * **关于分辨率**：默认（autoLongEdge 为假、longEdge 为 0）完全保持原始尺寸。
+   * 帧数一多，原尺寸不可能同时驻留显存 —— 200 帧 12MP 需要 6.6 GB。
+   * 所以提供了两条明确的出路，都由用户选择：
+   *   - longEdge: N        → 统一缩到长边 N（用户指定）
+   *   - autoLongEdge: true → 按预算与帧数自动解一个长边（并报告用了多少）
+   * 两者都不给时，超预算就按原有逻辑"载入到装不下为止"并如实报告。
+   *
+   * **视频**：视频文件先被抽成一串帧（`STC.video`），再与照片一起堆叠。
+   * 抽帧默认**每一帧都保留**；`opts.videoStep = N` 表示每 N 个呈现帧保留 1 个
+   * （用户显式选择才会抽稀）。抽帧是实时的，进度里会报"已抓 N 帧 / 媒体时间"。
+   */
+  async function load(files, opts) {
+    opts = opts || {};
+    var maxTex = opts.maxTextureSize || 8192;
+    var budget = opts.budget || defaultBudget();
+    var onProgress = opts.onProgress || function () {};
+    var signal = opts.signal || { cancelled: false };
+    var wantLongEdge = opts.longEdge || 0;
+    var autoLongEdge = !!opts.autoLongEdge;
+    var sortMode = opts.sort || 'exif';
+    var videoStep = Math.max(1, Math.round(opts.videoStep || 1));
+
+    var all = Array.from(files);
+    var imageFiles = all.filter(isImage);
+    var videoFiles = all.filter(function (f) { return !isImage(f) && STC.video.isVideo(f); });
+    if (!imageFiles.length && !videoFiles.length) {
+      throw new Error('没有找到可用的图片或视频\n' +
+        '图片：JPG / PNG / WebP / BMP / GIF / AVIF；视频：浏览器能解的 MP4 / WebM / MOV…');
+    }
+
+    /* ---- 1. 图片排序（EXIF 拍摄时间 → 文件名 → 修改时间）---- */
+    var ordered = imageFiles.length
+      ? await order(imageFiles, sortMode, onProgress)
+      : { files: [], meta: [], noExif: 0 };
+
+    var trimmed = 0;
+    if (!videoFiles.length && ordered.files.length > MAX_FRAMES) {
+      // 只有图片时才沿用"等间隔抽稀"的老行为（保住整段时间跨度）。
+      // 有视频时绝不抽稀：那等于把"每一帧都保留"这条承诺偷偷改掉。
+      var keep = [];
+      var stepF = ordered.files.length / MAX_FRAMES;
+      for (var k = 0; k < MAX_FRAMES; k++) keep.push(Math.floor(k * stepF));
+      trimmed = ordered.files.length - keep.length;
+      ordered.files = keep.map(function (i) { return ordered.files[i]; });
+    }
+
+    /* ---- 2. 视频元信息，然后与图片一起排序 ---- */
+    var videos = [];
+    for (var vi = 0; vi < videoFiles.length; vi++) {
+      if (signal.cancelled) throw new Error('已取消');
+      onProgress({ phase: 'video-meta', done: vi, total: videoFiles.length });
+      videos.push({ file: videoFiles[vi], meta: await STC.video.meta(videoFiles[vi]) });
+      await tick();
+    }
+
+    var entries = [];
+    ordered.files.forEach(function (f, i) {
+      entries.push({ kind: 'image', file: f, date: ordered.meta[i].date });
+    });
+    videos.forEach(function (v) {
+      entries.push({ kind: 'video', file: v.file, meta: v.meta, date: null, probe: null });
+    });
+    entries.sort(function (a, b) {
+      return compareEntries(
+        { name: a.file.name, lastModified: a.file.lastModified, date: a.date },
+        { name: b.file.name, lastModified: b.file.lastModified, date: b.date },
+        sortMode);
+    });
+
+    /* ---- 3. 先量第一块的原始尺寸，据此定下目标长边 ---- */
+    var firstEntry = entries[0];
+    var firstBmp = null;
+    var origW, origH;
+    if (firstEntry.kind === 'image') {
+      onProgress({ phase: 'measure', done: 0, total: entries.length });
+      try { firstBmp = await decodeAt(firstEntry.file, 0); } catch (e) { firstBmp = null; }
+      origW = firstBmp ? firstBmp.width : 0;
+      origH = firstBmp ? firstBmp.height : 0;
+    } else {
+      origW = firstEntry.meta.width;
+      origH = firstEntry.meta.height;
+    }
+    if (!origW || !origH) throw new Error('第一帧解码失败，无法确定序列尺寸');
+    var origLong = Math.max(origW, origH);
+    var origShort = Math.min(origW, origH);
+    var aspect = origW / origH;
+
+    /* ---- 4. "大概多少帧"：图片数已知，视频靠短探测反推帧率 ---- */
+    var frameCap = videos.length ? VIDEO_MAX_FRAMES : MAX_FRAMES;
+    var estFrames = entries.length;
+    for (var pi = 0; pi < videos.length; pi++) {
+      var pv = videos[pi];
+      if (autoLongEdge) {
+        onProgress({ phase: 'video-probe', done: pi, total: videos.length, name: pv.file.name });
+        pv.probe = await STC.video.probe(pv.file, { signal: signal });
+        pv.estFrames = STC.video.estimateFrames(pv.meta.duration, pv.probe.fps, videoStep);
+      } else {
+        pv.estFrames = 0;
+      }
+      if (pv.estFrames) estFrames += pv.estFrames - 1;   // 它自己已经算作 1 个 entry
+    }
+    var estCapped = Math.min(estFrames, frameCap);
+
+    var longEdge = wantLongEdge;
+    var autoChosen = 0;
+    if (!longEdge && autoLongEdge) {
+      autoChosen = fitLongEdge(estCapped, aspect, budget);
+      longEdge = autoChosen;
+    }
+    if (longEdge) {
+      longEdge = Math.max(MIN_EDGE, Math.min(longEdge, origLong, MAX_LONG_EDGE, maxTex));
+    }
+    var scaled = !!(longEdge && longEdge < origLong);
+    var scale = scaled ? longEdge / origLong : 1;
+    var targetW = Math.max(1, Math.round(origW * scale));
+    var targetH = Math.max(1, Math.round(origH * scale));
+
+    /* ---- 5. 逐块产出帧 ---- */
+    var frames = [];
+    var failed = [];
+    var notes = [];
+    var bytes = 0;
+    var budgetHit = null;
+    var videoInfo = [];
+    var pendingFirst = firstBmp;
+
+    function pushFrame(o) {
+      bytes += o.bytes;
+      frames.push({
+        index: frames.length,
+        name: o.name,
+        lastModified: o.lastModified,
+        width: o.width, height: o.height,
+        bytes: o.bytes,
+        bitmap: o.bitmap,
+        texture: null,
+        aspect: o.width / o.height,
+        video: o.video || null,
+        videoTime: o.videoTime,
+        videoFrame: o.videoFrame
+      });
+    }
+
+    for (var ei = 0; ei < entries.length; ei++) {
+      if (signal.cancelled) throw new Error('已取消');
+      var en = entries[ei];
+
+      if (en.kind === 'image') {
+        var bmp = null;
+        try {
+          if (pendingFirst && !scaled) {
+            bmp = pendingFirst;                    // 尺寸就是原尺寸，直接复用
+            pendingFirst = null;
+          } else {
+            bmp = await decodeAt(en.file, scaled ? longEdge : 0);
+          }
+        } catch (e) {
+          failed.push(en.file.name + '：' + (e && e.message || e));
+          continue;
+        }
+        if (bmp.width > maxTex || bmp.height > maxTex) {
+          if (bmp.close) bmp.close();
+          failed.push(en.file.name + '：' + bmp.width + '×' + bmp.height +
+            ' 超过本机 GPU 单张纹理上限 ' + maxTex + '×' + maxTex + '，已跳过（不会替你做压缩）');
+          continue;
+        }
+        var ifb = bmp.width * bmp.height * 4;
+        if (bytes + ifb > budget) {
+          if (bmp.close) bmp.close();
+          budgetHit = {
+            at: frames.length, total: estCapped, kind: 'image', name: en.file.name,
+            usedMB: Math.round(bytes / 1048576),
+            needMB: Math.round(ifb / 1048576),
+            budgetMB: Math.round(budget / 1048576)
+          };
+          break;
+        }
+        pushFrame({
+          name: en.file.name, lastModified: en.file.lastModified,
+          width: bmp.width, height: bmp.height, bytes: ifb, bitmap: bmp
+        });
+        onProgress({ phase: 'decode', done: ei + 1, total: entries.length });
+        if (ei % 2 === 1) await tick();
+        continue;
+      }
+
+      /* ---- 视频块：抽帧 ---- */
+      var vw = Math.max(1, Math.round(en.meta.width * scale));
+      var vh = Math.max(1, Math.round(en.meta.height * scale));
+      if (vw > maxTex || vh > maxTex) {
+        failed.push(en.file.name + '：视频尺寸 ' + en.meta.width + '×' + en.meta.height +
+          ' 超过本机 GPU 单张纹理上限 ' + maxTex + '×' + maxTex + '，已跳过');
+        continue;
+      }
+      var vfb = vw * vh * 4;
+      var roomByBudget = Math.floor((budget - bytes) / vfb);
+      var roomByCap = frameCap - frames.length;
+      var room = Math.min(roomByBudget, roomByCap);
+      if (room < 1) {
+        budgetHit = {
+          at: frames.length, total: estCapped, kind: 'video', name: en.file.name,
+          usedMB: Math.round(bytes / 1048576),
+          needMB: Math.round(vfb / 1048576),
+          budgetMB: Math.round(budget / 1048576)
+        };
+        break;
+      }
+
+      var ex = await STC.video.extract(en.file, {
+        longEdge: longEdge || 0,
+        keepEvery: videoStep,
+        limit: room,
+        signal: signal,
+        onProgress: function (vn, p) {
+          onProgress({
+            phase: 'video', name: vn, done: ei, total: entries.length,
+            frames: p.frames, seen: p.seen, time: p.time, duration: p.duration
+          });
+        }.bind(null, en.file.name)
+      });
+
+      var est = en.estFrames || STC.video.estimateFrames(en.meta.duration,
+        STC.video.FALLBACK_FPS, videoStep);
+      var info = {
+        name: en.file.name,
+        duration: ex.duration,
+        method: ex.method,
+        keepEvery: ex.keepEvery,
+        seen: ex.seen,
+        kept: ex.frames.length,
+        dropped: ex.dropped,
+        decoded: ex.decoded,
+        estimated: est,
+        truncated: ex.frames.length >= room && est > ex.frames.length,
+        frameW: ex.frameW, frameH: ex.frameH,
+        maxInflight: ex.maxInflight, throttles: ex.throttles, pauses: ex.pauses,
+        direct: ex.direct, failedBitmaps: ex.failedBitmaps
+      };
+      videoInfo.push(info);
+
+      if (!ex.frames.length) {
+        failed.push(en.file.name + '：一帧都没抽到（解码失败或格式不支持）');
+        continue;
+      }
+
+      for (var fi = 0; fi < ex.frames.length; fi++) {
+        var vf = ex.frames[fi];
+        pushFrame({
+          name: en.file.name + ' #' + pad4(fi + 1),
+          lastModified: en.file.lastModified,
+          width: vf.width, height: vf.height,
+          bytes: vf.width * vf.height * 4,
+          bitmap: vf.bitmap,
+          video: en.file.name,
+          videoTime: vf.time,
+          videoFrame: fi
+        });
+      }
+
+      if (info.truncated) {
+        var roomKind = (room === roomByCap) ? ('帧数上限 ' + frameCap + ' 帧') : '显存预算';
+        if (!budgetHit) {
+          budgetHit = {
+            at: frames.length, total: est, kind: 'video', name: en.file.name,
+            usedMB: Math.round(bytes / 1048576),
+            needMB: Math.round(vfb / 1048576),
+            budgetMB: Math.round(budget / 1048576),
+            kept: ex.frames.length, estimate: est
+          };
+        }
+        var needStep = Math.ceil(est / Math.max(1, ex.frames.length));
+        notes.push(en.file.name + '：估计共 ' + est + ' 帧，本次只保留前 ' + ex.frames.length +
+          ' 帧（' + roomKind + '）。' +
+          (needStep <= 10
+            ? '想留住整段的话，把「视频抽帧」改成每 ' + needStep + ' 帧取 1。'
+            : '想留住整段的话，请把顶栏「分辨率」改成更小的值 —— ' +
+              '当前分辨率下这个视频装不进显存预算。'));
+      }
+      /*
+       * 丢帧与抽帧质量的报告。
+       *
+       * 现实一点说：在抢占式系统里**丢帧无法完全避免**（其它进程占着 CPU/GPU 时
+       * 解码器就是来不及呈现），所以这里的语气是"报告"而不是"报错"：
+       *   - 少量丢帧（< 5%）：一句话说清楚，不劝用户改配置；
+       *   - 明显丢帧：给出具体比例和建议（调低分辨率），并明确"抽稀解决不了这个"。
+       */
+      if (ex.dropped > 0) {
+        var denom = Math.max(1, ex.dropped + ex.seen);
+        var lostPct = Math.round(ex.dropped / denom * 100);
+        var how = ex.throttles
+          ? '（已自动降速 ' + ex.throttles + ' 次' + (ex.pauses ? '、暂停 ' + ex.pauses + ' 次' : '') + '）'
+          : '';
+        notes.push(en.file.name + '：解码器报了 ' + ex.dropped + ' 个丢帧' + how +
+          '，呈现 ' + ex.seen + ' 帧、保留 ' + ex.frames.length + ' 帧（丢帧率约 ' + lostPct + '%）。' +
+          (lostPct <= 5
+            ? '这个量级属于正常抖动（别的东西占着 CPU/GPU 时就会这样），可以忽略。'
+            : '丢得有点多。请把顶栏「分辨率」调低（例如 1280 或 960）再抽一次 —— ' +
+              '**不要**用「每 N 帧取 1」，那只是少抽样，丢掉的帧并不会回来。'));
+      }
+      if (ex.failedBitmaps) {
+        notes.push(en.file.name + '：有 ' + ex.failedBitmaps + ' 帧拷贝失败，已从序列里剔除（不会拿假帧充数）。');
+      }
+      if (ex.throttles && !ex.dropped) {
+        // 慢但没丢：这是预期行为，也告诉用户为什么花了比视频更长的时间
+        notes.push(en.file.name + '：拷贝速度低于播放速度，已自动降速 ' + ex.throttles +
+          ' 次' + (ex.pauses ? '、暂停 ' + ex.pauses + ' 次' : '') +
+          '以保证一帧不丢（代价是耗时比视频本身长）。');
+      }
+      if (ex.method !== 'rvfc') {
+        notes.push(en.file.name + '：这个浏览器没有 requestVideoFrameCallback，' +
+          '已退化为 rAF 采样，帧数可能与真实帧数有出入。');
+      }
+      await tick();
+    }
+
+    if (frames.length < 2) {
+      closeAll(frames);
+      throw new Error('可用的照片/视频帧不足 2 张' +
+        (failed.length ? '：\n' + failed.slice(0, 5).join('\n') : '') +
+        (budgetHit ? '\n显存预算不足：已用 ' + budgetHit.usedMB + 'MB，本帧需要 ' +
+          budgetHit.needMB + 'MB，上限 ' + budgetHit.budgetMB + 'MB' : ''));
+    }
+
+    var planeH = targetH / targetW;
+    var geo = layout(1, planeH, frames.length, opts.depthRatio);
+
+    return {
+      frames: frames,
+      geo: geo,
+      bytes: bytes,
+      failed: failed,
+      notes: notes,
+      trimmed: trimmed,
+      budgetHit: budgetHit,
+      noExif: ordered.noExif,
+      video: videoInfo,
+      videoStep: videoStep,
+      estFrames: estFrames,
+      // 实际用于渲染的尺寸（可能已被用户选择的分辨率策略缩小）
+      baseW: targetW, baseH: targetH,
+      // 原图尺寸与是否发生缩放 —— 界面要如实报告，不能偷偷降质
+      origW: origW, origH: origH, origLong: origLong, origShort: origShort,
+      scaled: scaled, longEdge: scaled ? longEdge : origLong, autoChosen: autoChosen,
+      budget: budget, requested: all.length,
+      sort: sortMode
+    };
+  }
+
+  function pad4(n) {
+    var s = String(n);
+    while (s.length < 4) s = '0' + s;
+    return s;
+  }
+
+  /** 点云密度：用总点数预算反推出采样步长（1 像素 1 个点时的步长是 1） */
+  function pointStride(frames, budget) {
+    var total = 0;
+    for (var i = 0; i < frames.length; i++) {
+      total += frames[i].width * frames[i].height;
+    }
+    return STC.view.pointStride(total, budget || POINT_BUDGET, frames.length);
+  }
+
+  function closeAll(frames) {
+    for (var i = 0; i < frames.length; i++) {
+      if (frames[i].bitmap && frames[i].bitmap.close) frames[i].bitmap.close();
+    }
+  }
+
+  function release(seq) {
+    if (!seq) return;
+    closeAll(seq.frames);
+    seq.frames.length = 0;
+  }
+
+  function tick() {
+    return new Promise(function (r) { setTimeout(r, 0); });
+  }
+
+  STC.seq = {
+    load: load,
+    order: order,
+    compareEntries: compareEntries,
+    layout: layout,
+    pointStride: pointStride,
+    release: release,
+    isImage: isImage,
+    naturalCompare: naturalCompare,
+    defaultBudget: defaultBudget,
+    fitLongEdge: fitLongEdge,
+    RAM_BUDGET: RAM_BUDGET,
+    MAX_FRAMES: MAX_FRAMES,
+    VIDEO_MAX_FRAMES: VIDEO_MAX_FRAMES,
+    MAX_LONG_EDGE: MAX_LONG_EDGE,
+    POINT_BUDGET: POINT_BUDGET
+  };
+})(window.STC = window.STC || {});
+
+/* ===================================================== 45-video.js */
+/* 时空立方体 · 视频抽帧
+ *
+ * 目标：**把一个视频变成一串帧**，交给下游的堆叠流程 —— 与照片完全同等对待。
+ * 硬要求是「每一帧都要保留」，所以这里的默认行为是：
+ *
+ *   逐帧播放，每呈现一帧就抓一帧；抓不过来就主动降速/暂停，绝不丢帧。
+ *
+ * 为什么不用"按固定时间间隔 seek 抽帧"？因为 seek 只能落到关键帧附近再解码，
+ * 抽出来的时间点既不均匀也不等于真实帧时刻，而且更慢。真正"每一帧"的定义只有一个：
+ * **浏览器解码器实际呈现过的那些帧**，而那正好是 requestVideoFrameCallback 的回调。
+ *
+ * ⚠️ 这里有一个**必须**讲清楚的坑，也是第一版踩过的：
+ * 把视频帧搬进内存要一次拷贝（createImageBitmap），4K 一帧就是 30 MB 量级。
+ * 第一版在回调里 `await` 拷贝完才登记下一帧的回调 —— 那等于每帧都把整条回调链
+ * 卡住几十毫秒，浏览器于是把"来不及呈现"的帧通通丢掉。用户实测：300 多帧的视频
+ * 丢掉 233 帧，只剩 92 帧。
+ *
+ * 所以现在的做法是两条：
+ *   1. **回调链永不被我们的处理阻塞**：进回调就先登记下一帧的回调，
+ *      拷贝异步排队（多画布轮转，保证快照不会互相覆盖）；
+ *   2. **背压**：积压到一定程度就降低播放速度（必要时暂停），
+ *      解码器于是不再丢帧 —— 代价是总耗时可能超过视频时长，但一帧不少。
+ */
+(function (STC) {
+  'use strict';
+
+  var VIDEO_RE = /\.(mp4|m4v|mov|webm|ogv|ogg|mkv|avi|3gp|m2ts|mts)$/i;
+
+  function isVideo(file) {
+    return /^video\//.test(file.type || '') || VIDEO_RE.test(file.name || '');
+  }
+
+  var PROBE_SECONDS = 2.0;      // 探测：看够 2 秒媒体时间就足够反推帧率
+  var PROBE_MAX_FRAMES = 150;   // 探测的帧数上限（高帧率视频也不会探太久）
+  var FALLBACK_FPS = 30;        // 探测不出帧率时的保守估计
+
+  function videoEl() {
+    var v = document.createElement('video');
+    v.muted = true;
+    v.defaultMuted = true;
+    v.playsInline = true;
+    v.preload = 'auto';
+    if (v.setAttribute) {
+      v.setAttribute('muted', '');
+      v.setAttribute('playsinline', '');
+    }
+    return v;
+  }
+
+  function once(el, name) {
+    return new Promise(function (resolve, reject) {
+      function ok() { off(); resolve(); }
+      function bad() {
+        off();
+        var e = el.error;
+        reject(new Error('视频加载失败' +
+          (e && (e.message || e.code) ? '：' + (e.message || ('code ' + e.code)) : '（这个格式浏览器解不了？）')));
+      }
+      function off() {
+        el.removeEventListener(name, ok);
+        el.removeEventListener('error', bad);
+      }
+      el.addEventListener(name, ok);
+      el.addEventListener('error', bad);
+    });
+  }
+
+  /** 读元信息：尺寸与时长（不解码画面，很快） */
+  async function meta(file) {
+    var url = URL.createObjectURL(file);
+    var v = videoEl();
+    try {
+      v.src = url;
+      try {
+        await once(v, 'loadedmetadata');
+      } catch (e) {
+        throw new Error((file.name || '视频') + '：' + (e && e.message || e));
+      }
+      var w = v.videoWidth || 0, h = v.videoHeight || 0;
+      if (!w || !h) throw new Error('拿不到视频尺寸：' + (file.name || '') + '（格式不被浏览器支持？）');
+      return {
+        width: w, height: h,
+        duration: isFinite(v.duration) ? v.duration : 0,
+        name: file.name || ''
+      };
+    } finally {
+      try { if (v.removeAttribute) v.removeAttribute('src'); if (v.load) v.load(); } catch (e) { /* 忽略 */ }
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  /**
+   * 跑一遍视频，按需要抓帧。
+   *
+   * @param {File} file
+   * @param {object} o
+   *   longEdge    目标长边（0 = 原始尺寸）
+   *   limit       最多保留多少帧（0/undefined = 不限）
+   *   keepEvery   每 N 个呈现帧保留 1 个（默认 1 = 全部保留）
+   *   wantPixels  false 时只数帧、不建位图（探测用）
+   *   stopAfter   媒体时间达到这个秒数就停（探测用）
+   *   poolSize    画布池大小（默认 6；池子决定"能积压多少帧拷贝"）
+   *   onProgress  ({frames, seen, time, duration, inflight, playbackRate}) => void
+   *   signal      {cancelled}
+   */
+  async function run(file, o) {
+    o = o || {};
+    var url = URL.createObjectURL(file);
+    var v = videoEl();
+    var wantPixels = o.wantPixels !== false;
+    var res = {
+      frames: [], width: 0, height: 0, duration: 0,
+      drawnW: 0, drawnH: 0,
+      seen: 0, dropped: 0, decoded: 0,
+      method: 'rvfc', stopped: false, mediaEnd: 0,
+      keepEvery: Math.max(1, o.keepEvery || 1),
+      limit: o.limit > 0 ? o.limit : Infinity,
+      // 背压与吞吐的诊断信息（"为什么慢"必须可查）
+      maxInflight: 0, throttles: 0, pauses: 0, direct: false, failedBitmaps: 0
+    };
+    try {
+      v.src = url;
+      try {
+        await once(v, 'loadedmetadata');
+      } catch (e) {
+        throw new Error((file.name || '视频') + '：' + (e && e.message || e));
+      }
+      res.width = v.videoWidth || 0;
+      res.height = v.videoHeight || 0;
+      res.duration = isFinite(v.duration) ? v.duration : 0;
+      if (!res.width || !res.height) {
+        throw new Error('拿不到视频尺寸：' + (file.name || '') + '（格式不被浏览器支持？）');
+      }
+
+      var scale = o.longEdge > 0 ? Math.min(1, o.longEdge / Math.max(res.width, res.height)) : 1;
+      res.drawnW = Math.max(1, Math.round(res.width * scale));
+      res.drawnH = Math.max(1, Math.round(res.height * scale));
+
+      /*
+       * 画布池 + 背压。池子大小 - 1 就是暂停阈值，
+       * 这样"下一个回调到来时一定有一块空画布"，绝不因为没画布而丢帧。
+       */
+      var POOL = Math.max(2, o.poolSize || 6);
+      var SLOW_AT = 2;
+      var PAUSE_AT = POOL - 1;
+      var pool = [];
+      var poolAt = 0;
+      var pending = [];
+      var inflight = 0;
+      var paused = false;
+
+      if (wantPixels) {
+        for (var pi = 0; pi < POOL; pi++) {
+          var cv = document.createElement('canvas');
+          cv.width = res.drawnW;
+          cv.height = res.drawnH;
+          var c2d = cv.getContext('2d', { alpha: false });
+          if (!c2d) throw new Error('拿不到 2D 上下文，无法抽取视频帧');
+          pool.push({ canvas: cv, ctx: c2d });
+        }
+      }
+
+      var stopResolve = null;
+      var stopPromise = new Promise(function (r) { stopResolve = r; });
+      function stop() {
+        if (res.stopped) return;
+        res.stopped = true;
+        try { v.pause(); } catch (e) { /* 忽略 */ }
+        if (stopResolve) stopResolve();
+      }
+
+      /** 按积压量调整播放速度：跟不上就降速，快用满池子就暂停 */
+      function throttle() {
+        if (!wantPixels || res.stopped) return;
+        var want = inflight >= PAUSE_AT ? 0.0625 : (inflight >= SLOW_AT ? 0.25 : 1);
+        if (Math.abs((v.playbackRate || 1) - want) > 1e-6) {
+          try { v.playbackRate = want; res.throttles++; } catch (e) { /* 忽略 */ }
+        }
+        if (inflight >= PAUSE_AT && !paused && !v.paused) {
+          paused = true;
+          res.pauses++;
+          try { v.pause(); } catch (e) { /* 忽略 */ }
+        } else if (inflight <= 1 && paused) {
+          paused = false;
+          try { v.play(); } catch (e) { /* 忽略 */ }
+        }
+      }
+
+      /** 抓当前这一帧：同步取快照，异步拷贝，**不阻塞回调链** */
+      function grab() {
+        if (o.signal && o.signal.cancelled) { stop(); return; }
+        var keep = ((res.seen - 1) % res.keepEvery) === 0;
+        var t = v.currentTime;
+        res.seen++;
+        res.mediaEnd = t;
+
+        if (keep) {
+          if (res.frames.length >= res.limit) { stop(); return; }
+          var rec = {
+            bitmap: null, width: res.drawnW, height: res.drawnH,
+            time: t, index: res.frames.length
+          };
+          res.frames.push(rec);
+          if (wantPixels) {
+            var entry = pool[poolAt];
+            poolAt = (poolAt + 1) % POOL;
+            var p;
+            if (res.direct) {
+              // 一步到位：直接从 <video> 取快照并缩放，省掉整帧的 canvas 拷贝
+              p = createImageBitmap(v, {
+                resizeWidth: res.drawnW, resizeHeight: res.drawnH, resizeQuality: 'medium',
+                premultiplyAlpha: 'none', colorSpaceConversion: 'none'
+              });
+            } else {
+              entry.ctx.drawImage(v, 0, 0, res.drawnW, res.drawnH);
+              p = createImageBitmap(entry.canvas, {
+                premultiplyAlpha: 'none', colorSpaceConversion: 'none'
+              });
+            }
+            inflight++;
+            if (inflight > res.maxInflight) res.maxInflight = inflight;
+            pending.push(p.then(function (bmp) {
+              rec.bitmap = bmp;
+              inflight--;
+              throttle();
+            }, function (err) {
+              // 单帧拷贝失败不能拖垮整段：记下来，最后如实报告
+              rec.error = err && err.message || String(err);
+              res.failedBitmaps++;
+              inflight--;
+              throttle();
+            }));
+            throttle();
+          }
+        }
+
+        if (o.onProgress) {
+          o.onProgress({
+            frames: res.frames.length, seen: res.seen, time: t, duration: res.duration,
+            inflight: inflight, playbackRate: v.playbackRate || 1
+          });
+        }
+        if (o.stopAfter > 0 && t >= o.stopAfter) stop();
+      }
+
+      function play() {
+        var p = v.play();
+        // 自动播放可能被拒（没有用户手势时）。被拒就直接报错，而不是静默卡住。
+        if (p && p.catch) p.catch(function (e) { stop(); res.playError = e && e.message || String(e); });
+      }
+
+      /**
+       * 探一下"能不能直接从 <video> 取快照并缩放"（Chrome 支持，个别浏览器不支持）。
+       * 探到了就能省掉整帧 canvas 拷贝 —— 这是吞吐量最大的一项优化。
+       */
+      function probeDirect() {
+        if (!wantPixels || res.direct || res.directTried) return;
+        res.directTried = true;
+        try {
+          var t = createImageBitmap(v, { resizeWidth: 8, resizeHeight: 8, resizeQuality: 'low' });
+          if (t && t.then) {
+            t.then(function (b) {
+              /*
+               * 光"能解析"不够：还要它**真的按我们要的尺寸缩放**。
+               * 个别实现会忽略 resize*（返回原生尺寸），那样帧的记账尺寸
+               * 与实际位图就不一致了 —— 宁可退回 canvas 路径。
+               */
+              var ok = b && b.width === 8 && b.height === 8;
+              res.direct = !!ok;
+              if (b && b.close) b.close();
+              if (!ok) res.directRejected = true;
+            }, function () { res.direct = false; });
+          }
+        } catch (e) { res.direct = false; }
+      }
+
+      if (typeof v.requestVideoFrameCallback === 'function') {
+        var onFrame = function () {
+          if (res.stopped) return;
+          /*
+           * 【关键】先登记下一帧的回调，再处理这一帧。
+           * 反过来写（await 完拷贝才登记）就是第一版那个丢 70% 帧的 bug。
+           */
+          v.requestVideoFrameCallback(onFrame);
+          probeDirect();
+          grab();
+        };
+        v.requestVideoFrameCallback(onFrame);
+        play();
+        await Promise.race([once(v, 'ended'), stopPromise]);
+      } else {
+        /*
+         * 退化路径：没有 requestVideoFrameCallback 时用 rAF 采样。
+         * 只在 currentTime 真的变化时抓，避免同一帧被存两次；
+         * 但 60Hz 的采样对 60fps 视频仍可能漏帧 —— 方法名会如实报出去。
+         */
+        res.method = 'raf';
+        var raf = (typeof requestAnimationFrame === 'function')
+          ? requestAnimationFrame
+          : function (f) { return setTimeout(f, 16); };
+        var last = -1;
+        var loop = function () {
+          if (res.stopped) return;
+          if (v.currentTime !== last) { last = v.currentTime; grab(); }
+          raf(loop);
+        };
+        play();
+        raf(loop);
+        await Promise.race([once(v, 'ended'), stopPromise]);
+      }
+
+      if (res.playError) throw new Error('视频无法播放：' + res.playError);
+
+      // 等所有在飞的拷贝落地 —— 否则会返回一堆 bitmap 还是 null 的帧
+      if (pending.length) await Promise.all(pending);
+      res.pending = pending.length;
+
+      if (v.getVideoPlaybackQuality) {
+        var q = v.getVideoPlaybackQuality();
+        res.dropped = q.droppedVideoFrames || 0;
+        res.decoded = q.totalVideoFrames || 0;
+      }
+      // 拷贝失败的帧不能留在序列里（宁缺勿假，并把数量报出去）
+      if (res.failedBitmaps) {
+        res.frames = res.frames.filter(function (f) { return f.bitmap; });
+        for (var k = 0; k < res.frames.length; k++) res.frames[k].index = k;
+      }
+      res.kept = res.frames.length;
+      return res;
+    } catch (e) {
+      closeFrames(res.frames);
+      throw e;
+    } finally {
+      try { v.pause(); } catch (e) { /* 忽略 */ }
+      try {
+        if (v.removeAttribute) v.removeAttribute('src');
+        if (v.load) v.load();
+      } catch (e) { /* 忽略 */ }
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  /**
+   * 探测帧率：播放一小段，看每两帧之间隔了多少媒体时间。
+   *
+   * 用**相邻帧时间差的中间值**来反推帧率，而不是"帧数 / 总时长"：
+   * 如果解码器偶尔丢一帧，时间差会变成 2/fps，取中间值仍然得到 1/fps，
+   * 而"帧数/总时长"会被系统性拉低（于是估的总帧数偏小、选的分辨率偏大）。
+   * 探测不建位图（wantPixels=false），所以几乎不占内存、也不会被拷贝拖慢。
+   */
+  async function probe(file, opts) {
+    opts = opts || {};
+    var r = await run(file, {
+      wantPixels: false,
+      keepEvery: 1,
+      limit: opts.maxFrames || PROBE_MAX_FRAMES,
+      stopAfter: opts.seconds || PROBE_SECONDS,
+      signal: opts.signal,
+      onProgress: opts.onProgress
+    });
+    var deltas = [];
+    for (var i = 1; i < r.frames.length; i++) {
+      var d = r.frames[i].time - r.frames[i - 1].time;
+      if (d > 1e-6) deltas.push(d);
+    }
+    deltas.sort(function (a, b) { return a - b; });
+    var median = deltas.length ? deltas[Math.floor(deltas.length / 2)] : 0;
+    var span = r.mediaEnd;
+    var fps = median > 1e-6 ? 1 / median : ((span > 0.2 && r.frames.length >= 2) ? (r.frames.length - 1) / span : 0);
+    return {
+      width: r.width, height: r.height, duration: r.duration,
+      fps: fps || FALLBACK_FPS,
+      fpsEstimated: !fps,
+      probedFrames: r.frames.length,
+      probedSpan: span,
+      frameDelta: median,
+      method: r.method,
+      dropped: r.dropped
+    };
+  }
+
+  /** 完整抽帧：把每一帧（或每 keepEvery 帧）抓成 ImageBitmap */
+  async function extract(file, opts) {
+    var r = await run(file, {
+      longEdge: opts.longEdge || 0,
+      limit: opts.limit || 0,
+      keepEvery: opts.keepEvery || 1,
+      wantPixels: true,
+      poolSize: opts.poolSize,
+      onProgress: opts.onProgress,
+      signal: opts.signal
+    });
+    return {
+      frames: r.frames,
+      width: r.width, height: r.height,
+      frameW: r.drawnW, frameH: r.drawnH,
+      duration: r.duration,
+      seen: r.seen, dropped: r.dropped, decoded: r.decoded,
+      method: r.method, keepEvery: r.keepEvery,
+      maxInflight: r.maxInflight, throttles: r.throttles, pauses: r.pauses,
+      direct: r.direct, failedBitmaps: r.failedBitmaps, pending: r.pending,
+      stoppedEarly: r.stopped && r.frames.length >= r.limit && isFinite(r.limit)
+    };
+  }
+
+  function closeFrames(frames) {
+    for (var i = 0; i < frames.length; i++) {
+      if (frames[i] && frames[i].bitmap && frames[i].bitmap.close) frames[i].bitmap.close();
+    }
+    if (frames) frames.length = 0;
+  }
+
+  /** 估算一个视频有多少帧（抽帧前用它决定分辨率） */
+  function estimateFrames(duration, fps, keepEvery) {
+    var step = Math.max(1, keepEvery || 1);
+    return Math.max(1, Math.round((duration || 0) * (fps || FALLBACK_FPS) / step));
+  }
+
+  STC.video = {
+    isVideo: isVideo,
+    meta: meta,
+    probe: probe,
+    extract: extract,
+    estimateFrames: estimateFrames,
+    closeFrames: closeFrames,
+    PROBE_SECONDS: PROBE_SECONDS,
+    PROBE_MAX_FRAMES: PROBE_MAX_FRAMES,
+    FALLBACK_FPS: FALLBACK_FPS,
+    defaultPoolSize: 6
+  };
+})(window.STC = window.STC || {});
+
+/* ===================================================== 50-shaders.js */
+/* 时空立方体 · 着色器
+ *
+ * 四个 program：
+ *   plane  帧平面 / 立方体六个面（带纹理，可半透明）
+ *   band   侧面颜色条（从「边界像素图集」里取一行或一列）
+ *   solid  纯色几何（白色线框、立方体外框、时间轴）
+ *   point  点云（实例化，一个实例 = 原图的一个像素）
+ *
+ * 关于「原画质」在这里的落点：
+ *   - 三种着色器都不做任何颜色变换，纹理采样值原样输出；
+ *   - 点云用 NEAREST 采样，取到的就是那个像素的原始字节；
+ *   - 正方形点模式（uSquare=1）下每个点严格等于一个原始像素，不做任何加权。
+ */
+(function (STC) {
+  'use strict';
+
+  /* ------------------------------------------------------- 顶点：位置+UV */
+  /*
+   * 四边形的四个角，行主序，每行 5 个数：x y z u v。
+   *
+   * uv 的约定（写错就会得到镜像的画面，而且画面里"有东西"、很容易看不出来）：
+   *   u = 0 → 图像左边缘      u = 1 → 图像右边缘
+   *   v = 1 → 图像底边        v = 0 → 图像顶边
+   *
+   * 为什么 v 是"反"的：纹理上传时开了 UNPACK_FLIP_Y_WEBGL，
+   * 采样坐标 v 随之翻转，于是 v=0 落在图像**底部**、v=1 落在**顶部**。
+   * 屏幕上方对应世界 +y，所以要让它显示图像顶部，就必须给 v=0。
+   *
+   * 顶点顺序（本文件与参考光栅器共用，见 quadLayout）：
+   *   0 = (-0.5,-0.5) 左下   1 = (0.5,-0.5) 右下
+   *   2 = (-0.5, 0.5) 左上   3 = (0.5, 0.5) 右上
+   */
+  var V_QUAD = [
+    -0.5, -0.5, 0.0, 0.0, 1.0,
+     0.5, -0.5, 0.0, 1.0, 1.0,
+    -0.5,  0.5, 0.0, 0.0, 0.0,
+     0.5,  0.5, 0.0, 1.0, 0.0
+  ];
+
+  /* ---------------------------------------- 顶点：位置 + 每实例的世界坐标 */
+  /* 体积色带借用同一套布局；下面这个函数保留给需要"四条带"的老路径。
+     顶点 (u, v)：u 沿边（0→1），v 沿厚度（0=前，1=后） */
+
+  function bandVerts(kind) {
+    // kind: 0=左 1=右 2=顶 3=底；pos = (u, v)，uv = (v, u)
+    var uvs = [[1, 0], [0, 0], [1, 1], [0, 1]];
+    var pos = [
+      [0, 0], [1, 0], [0, 1], [1, 1]
+    ];
+    var out = [];
+    for (var i = 0; i < 4; i++) out.push(pos[i][0], pos[i][1], 0, uvs[i][0], uvs[i][1]);
+    void kind;
+    return out;
+  }
+
+  /* ------------------------------------------------------------ 帧平面 */
+
+  /* -------------------------------------------------- 帧平面（含轮廓） */
+  /*
+   * 轮廓模式的规则与 CPU 侧 `STC.view.outlineContrast` **必须一致**：
+   *   取上下左右四个邻居，算「逐通道最大差」，四者取最大；超过阈值就是分界线。
+   * 用逐通道最大差而不是亮度差，是因为"对比鲜明的颜色分界线"里
+   * 红↔绿这种等亮度的边界，亮度差接近 0，会被漏掉。
+   *
+   * 邻居的步长用 `max(fwidth(vUv), uTexel)`：
+   *   - fwidth 让线宽始终约等于**一个屏幕像素**（照片被缩小显示时不会细到看不见，
+   *     放大时也不会糊成一片）；
+   *   - 下限 uTexel 保证不会在同一纹素里取样（否则放大到 1 纹素以上时全是噪声）。
+   */
+  var PLANE_VS = [
+    '#version 300 es',
+    'layout(location=0) in vec3 aPos;',
+    'layout(location=1) in vec2 aUv;',
+    'uniform mat4 uProj;',
+    'uniform mat4 uView;',
+    'uniform mat4 uModel;',
+    'out vec2 vUv;',
+    'void main(){',
+    '  vUv = aUv;',
+    '  gl_Position = uProj * uView * uModel * vec4(aPos, 1.0);',
+    '}'
+  ].join('\n');
+
+  var PLANE_FS = [
+    '#version 300 es',
+    'precision highp float;',
+    'in vec2 vUv;',
+    'uniform sampler2D uTex;',
+    'uniform float uOpacity;',
+    'uniform int uHasTex;',
+    'uniform int uOutline;',              // 1 = 只保留轮廓（内部 discard）
+    'uniform float uEdgeThreshold;',      // 0..1，逐通道最大差的门槛
+    'uniform vec2 uTexel;',               // 1 / 纹理尺寸
+    'uniform int uClipOn;',               // 1 = 只画选区内的像素
+    'uniform vec4 uClip;',                // (x0, y0, x1, y1)，归一化 uv
+    'out vec4 fragColor;',
+    'float chanMax(vec4 a, vec4 b){',
+    '  vec3 d = abs(a.rgb - b.rgb);',
+    '  return max(max(d.r, d.g), d.b);',
+    '}',
+    // 纯拷贝：不调色、不伽马、不预乘，取到什么写什么
+    'void main(){',
+    /*
+     * 切割（选区）：选区外的片元**最先**丢弃 —— 不采样、不算轮廓、不写深度，
+     * 于是那块地方露出后面的帧（或背景），而不是"一块透明的照片"。
+     * 判据与 CPU 侧 STC.view.clipContains 完全一致：uClip = (x0,y0,x1,y1)、
+     * 含边界。v=0 是图像**顶部**（与像素编辑器的 y 向下一致）。
+     */
+    '  if (uClipOn == 1 && (vUv.x < uClip.x || vUv.x > uClip.z ||',
+    '                        vUv.y < uClip.y || vUv.y > uClip.w)) discard;',
+    // 纹理没上传成功时必须**显式**报出来。WebGL 对"采样器没绑定纹理"的采样结果
+    // 是未定义的，多数驱动返回纯白 —— 于是故障表现成"一块正常的白"，根本查不出来。
+    // 这里改成醒目的品红：看见品红就是纹理没上传，而不是照片内容白。
+    '  if (uHasTex != 1) { fragColor = vec4(1.0, 0.0, 1.0, uOpacity); return; }',
+    '  vec4 c = texture(uTex, vUv);',
+    '  if (uOutline == 1) {',
+    '    vec2 tx = max(fwidth(vUv), uTexel);',
+    '    if (tx.x <= 0.0) tx.x = uTexel.x;',
+    '    if (tx.y <= 0.0) tx.y = uTexel.y;',
+    '    float m = 0.0;',
+    '    m = max(m, chanMax(c, texture(uTex, vUv + vec2(tx.x, 0.0))));',
+    '    m = max(m, chanMax(c, texture(uTex, vUv - vec2(tx.x, 0.0))));',
+    '    m = max(m, chanMax(c, texture(uTex, vUv + vec2(0.0, tx.y))));',
+    '    m = max(m, chanMax(c, texture(uTex, vUv - vec2(0.0, tx.y))));',
+    // 只保留分界线：内部整片丢弃，于是画面变成一张线稿
+    '    if (m < uEdgeThreshold) discard;',
+    // 线条颜色 = 本地色往白里提一点：深色边缘压在深色背景上也看得见
+    '    fragColor = vec4(mix(c.rgb, vec3(1.0), 0.6), uOpacity);',
+    '    return;',
+    '  }',
+    '  fragColor = vec4(c.rgb, c.a * uOpacity);',
+    '}'
+  ].join('\n');
+
+  /* -------------------------------------------------------- 侧面颜色条 */
+  /*
+   * 一条色带 = 「某一帧的某条边」沿**厚度方向**挤出的一个四边形，
+   * 也就是那一张照片的侧立面。
+   *
+   * 顶点 (u, v)：u 沿边从 0 到 1，v 沿厚度从 0（前）到 1（后）。
+   * 世界坐标由 uniform 给出：
+   *   uAxisY —— 1 = 这条边沿 y 展开（左右墙），0 = 沿 x 展开（上下墙）
+   *   uSpan  —— 沿边方向的**半长**：左右墙是 halfH，上下墙是 halfW
+   *   uOff   —— 固定轴上的偏移：左右墙是 ±halfW，上下墙是 ±halfH
+   *   uThick —— 厚度（世界单位）
+   *   uRow   —— 这一帧在边纹理里的行坐标（纹理每一行是一帧）
+   *
+   * 三个量必须分开给：早先只用一个 uLong 同时当"沿边半长"和"固定偏移"，
+   * 于是左右墙的半长被写成了 halfW（正确值是 halfH），
+   * 侧立面比照片高出 (halfW−halfH)，上下墙又比照片窄 —— 用户看到的
+   * "加出来的厚度尺寸不对"就是这个。
+   */
+  var BAND_VS = [
+    '#version 300 es',
+    'layout(location=0) in vec2 aPos;',   // (u, v)
+    'uniform mat4 uProj;',
+    'uniform mat4 uView;',
+    'uniform mat4 uModel;',
+    'uniform float uSpan;',
+    'uniform float uOff;',
+    'uniform int uAxisY;',
+    'uniform float uThick;',
+    'uniform float uRow;',                  // 这一帧在边纹理里的行坐标
+    'out vec2 vUv;',
+    'void main(){',
+    '  float u = (aPos.x - 0.5) * 2.0;',           // -1 .. 1，沿边的归一化位置
+    '  float z = -aPos.y * uThick;',                // 前=0，后=-thick
+    '  vec3 p = (uAxisY == 1) ? vec3(uOff, u * uSpan, z)',
+    '                         : vec3(u * uSpan, uOff, z);',
+    // 沿边的纹理坐标：左右墙的图像第 0 行在 +y 那一端，上下墙的第 0 列在 -x 那一端
+    '  float t = (u + 1.0) * 0.5;',
+    '  vUv = vec2((uAxisY == 1) ? (1.0 - t) : t, uRow);',
+    '  gl_Position = uProj * uView * uModel * vec4(p, 1.0);',
+    '}'
+  ].join('\n');
+
+  var BAND_FS = [
+    '#version 300 es',
+    'precision highp float;',
+    'in vec2 vUv;',
+    'uniform sampler2D uEdgeTex;',
+    'uniform float uOpacity;',
+    'out vec4 fragColor;',
+    'void main(){',
+    // 这里**必须是真实颜色**。早先图集只存了每个边界像素的 R 分量、
+    // 四条边还挤在 RGBA 四个通道里，于是这里只能取 max() 当灰度用 ——
+    // 结果整个侧面是一片灰，而且四个面颜色完全一样。
+    '  vec4 c = texture(uEdgeTex, vUv);',
+    '  fragColor = vec4(c.rgb, c.a * uOpacity);',
+    '}'
+  ].join('\n');
+
+  /* ------------------------------------------------------------ 纯色几何 */
+
+  var SOLID_VS = [
+    '#version 300 es',
+    'layout(location=0) in vec3 aPos;',
+    'uniform mat4 uProj;',
+    'uniform mat4 uView;',
+    'uniform mat4 uModel;',
+    'void main(){',
+    '  gl_Position = uProj * uView * uModel * vec4(aPos, 1.0);',
+    '}'
+  ].join('\n');
+
+  var SOLID_FS = [
+    '#version 300 es',
+    'precision highp float;',
+    'uniform vec4 uColor;',
+    'out vec4 fragColor;',
+    'void main(){ fragColor = uColor; }'
+  ].join('\n');
+
+  /* ---------------------------------------------------------------- 点云 */
+  /*
+   * 一个实例 = 一个采样像素，实例被撑成屏幕对齐的小方块（两个三角形）。
+   *
+   * 逐实例的数据有两组，都由 CPU 侧按采样步长烘焙好：
+   *   location 2 : aPosPx  —— 该像素在照片**局部坐标**里的位置，范围 [-0.5, 0.5]
+   *                           （由 `STC.view.pixelLocal` 算：图像顶部在 +y，
+   *                            与帧平面的 uv 朝向严格一致）
+   *   location 3 : aColor  —— 该像素的原始 RGBA 字节（0..255，着色器里除以 255）
+   * location 0 是每个实例共用的单位方块四角（±1，共 6 个顶点）。
+   *
+   * **必须用 aPos 在裁剪空间里把方块撑开。**
+   * 之前的写法把 aPos 声明了却没用，改用 gl_PointSize 控制大小 —— 而
+   * gl_PointSize 只在 gl.POINTS 下有效，这里画的是 gl.TRIANGLES：
+   * 六个顶点全部落在同一个位置，三角形退化，一个像素都画不出来。
+   * 这就是"点云完全看不见"的根因。
+   *
+   * **密度按亮度加权**：亮度越高（或越低，由 uLumDir 切换）的像素越可能留下一个点。
+   * 做法是给每个像素算一个稳定的伪随机阈值，密度量低于它就不画。
+   * 阈值的分布是均匀的，所以"密度量 > 阈值"的概率正比于密度量 ——
+   * 于是亮（暗）的区域点密、另一头点疏，而且**不需要额外的显存**。
+   * 用哈希而不是随机数，是为了让同一个像素每帧都得到同样的结果（不会闪）。
+   *
+   * uLumWeight：亮度的幂次。1 = 密度严格正比于亮度；调小则暗部也保留更多点。
+   */
+  var POINT_VS = [
+    '#version 300 es',
+    'layout(location=0) in vec3 aPos;',
+    'layout(location=2) in vec2 aPosPx;',
+    'layout(location=3) in vec4 aColor;',
+    'uniform mat4 uProj;',
+    'uniform mat4 uView;',
+    'uniform mat4 uModel;',
+    'uniform float uBaseSize;',
+    'uniform vec2 uViewport;',
+    'uniform int uSquare;',
+    'uniform float uSizePx;',
+    'uniform float uOrthoSize;',
+    'uniform int uOrtho;',
+    'uniform float uLumWeight;',
+    'uniform float uLumThreshold;',
+    'uniform int uLumDir;',                  // 0 = 亮处更密，1 = 暗处更密
+    'uniform int uClipOn;',                  // 1 = 只画选区内的点
+    'uniform vec4 uClip;',                   // (x0, y0, x1, y1)，归一化 uv
+    'out vec4 vColor;',
+    'out vec2 vLocal;',
+    'void main(){',
+    '  vColor = aColor;',
+    '  vLocal = aPos.xy * 0.5;',              // 单位方块四角 ±1 → [-0.5, 0.5]
+    '  vec4 c = aColor / 255.0;',
+    '  float lum = dot(c.rgb, vec3(0.299, 0.587, 0.114));',
+    // dens 是"参与密度的量"：亮处更密时就是亮度，暗处更密时取反。
+    '  float dens = uLumDir == 1 ? (1.0 - clamp(lum, 0.0, 1.0)) : clamp(lum, 0.0, 1.0);',
+    // 稳定的 [0,1) 伪随机数：由像素坐标决定，保证不闪烁
+    '  float h = fract(sin(dot(aPosPx, vec2(127.1, 311.7))) * 43758.5453123);',
+    '  float w = clamp(uLumWeight, 0.05, 1.0);',
+    '  float keepProb = pow(dens, w);',
+    // 密度量低于门槛或随机数落在外面 → 把点扔到裁剪空间之外（等价于不画）
+    '  if (dens < uLumThreshold || h > keepProb) {',
+    '    gl_Position = vec4(2.0, 2.0, 2.0, 1.0);',
+    '    return;',
+    '  }',
+    /*
+     * 切割：选区外的点同样不画。
+     * uv 的换算是 aPosPx 的逆：局部坐标 (lx, ly) ↔ uv = (lx+0.5, 0.5-ly)，
+     * 因为图像第 0 行（顶）在 +y —— 与帧平面、与像素编辑器**同一套朝向**。
+     */
+    '  vec2 uvp = vec2(aPosPx.x + 0.5, 0.5 - aPosPx.y);',
+    '  if (uClipOn == 1 && (uvp.x < uClip.x || uvp.x > uClip.z ||',
+    '                       uvp.y < uClip.y || uvp.y > uClip.w)) {',
+    '    gl_Position = vec4(2.0, 2.0, 2.0, 1.0);',
+    '    return;',
+    '  }',
+    // 局部坐标直接当模型坐标用（uModel 负责缩放到照片尺寸）。
+    // **不要在这里对 y 取负**：位置由 CPU 侧按 view.pixelLocal 烘焙好，
+    // 那套公式已经保证图像顶部落在 +y、与帧平面一致。
+    '  vec4 mv = uView * uModel * vec4(aPosPx.x, aPosPx.y, 0.0, 1.0);',
+    '  vec4 clip = uProj * mv;',
+    '  float persp = uViewport.y / max(-mv.z * 2.0, 0.001);',
+    '  float size = uSquare == 1 ? uSizePx : (uOrtho == 1 ? uOrthoSize : (uBaseSize * persp));',
+    '  size = clamp(size, 1.0, 64.0);',
+    // 屏幕上「一个像素」在裁剪空间里有多宽（w 分量负责透视/正交的换算）
+    '  vec2 perPixel = 2.0 / max(uViewport, vec2(1.0));',
+    '  clip.xy += aPos.xy * 0.5 * size * perPixel * clip.w;',
+    '  gl_Position = clip;',
+    '}'
+  ].join('\n');
+
+  var POINT_FS = [
+    '#version 300 es',
+    'precision highp float;',
+    // 整数精度必须显式声明，且要与顶点着色器一致：
+    // 顶点着色器里 int 默认就是 highp，而片元着色器**没有** int 的默认精度，
+    // 于是同一个 uSquare 在两边精度不同，链接直接失败：
+    //   Precisions of uniform 'uSquare' differ between VERTEX and FRAGMENT shaders.
+    'precision highp int;',
+    'in vec4 vColor;',
+    'in vec2 vLocal;',
+    'uniform float uOpacity;',
+    'uniform int uSquare;',
+    'out vec4 fragColor;',
+    'void main(){',
+    '  vec4 c = vColor / 255.0;',
+    '  if (uSquare == 1) {',
+    // 正方形点：整格都算数，边缘不做羽化 —— 保持「一个点 = 一个像素」的语义
+    '    fragColor = vec4(c.rgb, c.a * uOpacity);',
+    '    return;',
+    '  }',
+    // 圆点：用方块内的局部坐标切一个圆
+    // （不能用 gl_PointCoord —— 那是 gl.POINTS 才有的，这里是三角形）
+    '  float r = length(vLocal);',
+    '  float a = 1.0 - smoothstep(0.42, 0.5, r);',
+    '  if (a <= 0.0) discard;',
+    '  fragColor = vec4(c.rgb, c.a * uOpacity * a);',
+    '}'
+  ].join('\n');
+
+  STC.shaders = {
+    V_QUAD: V_QUAD,
+    quadLayout: quadLayout,
+    bandVerts: bandVerts,
+    PLANE_VS: PLANE_VS, PLANE_FS: PLANE_FS,
+    BAND_VS: BAND_VS, BAND_FS: BAND_FS,
+    SOLID_VS: SOLID_VS, SOLID_FS: SOLID_FS,
+    POINT_VS: POINT_VS, POINT_FS: POINT_FS
+  };
+
+  /**
+   * 把 V_QUAD 拆成「顶点位置」与「uv」两个数组，并保持顶点顺序。
+   *
+   * 抽出来是因为：参考光栅器（CPU 侧）必须用**与 GPU 完全相同**的 uv，
+   * 手抄一份迟早抄错 —— 这个项目里就抄错过三次，每次都表现为
+   * "画面里有东西、中心像素还对得上"，只有拿已知位置的图形核对才会露馅。
+   * 让两边共用这一份派生结果，就不存在"抄错"这回事了。
+   */
+  function quadLayout() {
+    var pos = [], uv = [];
+    for (var i = 0; i < V_QUAD.length; i += 5) {
+      pos.push([V_QUAD[i], V_QUAD[i + 1], V_QUAD[i + 2]]);
+      uv.push([V_QUAD[i + 3], V_QUAD[i + 4]]);
+    }
+    return { pos: pos, uv: uv };
+  }
+})(window.STC = window.STC || {});
+
+/* ===================================================== 55-view.js */
+/* 时空立方体 · 计算核心（无 DOM 依赖，可在 Node 里直接跑）
+ *
+ * 这个文件存在的唯一理由是**可验证性**。
+ *
+ * 这个会话的运行环境禁止命名管道，Chromium 的多进程 IPC 因此失败、
+ * 渲染器进程起不来，所以「启动无头浏览器截图断言」这条路在这里是走不通的。
+ * 于是把真正的计算逻辑（相机、投影、逐帧解算、深度排序）集中到这里，
+ * 全部做成纯函数：不碰 document、不碰 WebGL、不碰时间。
+ * 这样 Node 里可以逐值断言它们，而不是只能"看起来没问题"。
+ *
+ * app.js 与 renderer.js 只负责把这里算出来的结果喂给 GPU。
+ */
+(function (STC) {
+  'use strict';
+
+  var M = STC.math;
+
+  /**
+   * 正交取景的视野半高 = 包围球半径 × 这个系数。
+   *
+   * 取 1.16 的理由：包围球半径正好是立方体对角线的一半，
+   * 所以正对时立方体在画面里占约 1/1.16 ≈ 86% 高度，转到对角线时占满 ——
+   * 既能保证任何角度都不被裁掉，又不会显得太小。**关键是与视角无关。**
+   */
+  var ORTHO_SPHERE_FILL = 1.16;
+
+  /* ============================================================== 相机 */
+
+  /**
+   * 由「几何 + 相机状态 + 视口尺寸」算出视线、投影、视图矩阵。
+   *
+   * **投影一律用正交（orthographic）**：立方体各面都是严格的矩形，
+   * 切片几何就是真正的 xoz 平面，没有透视缩放、没有近大远小。
+   * 这是刻意的选择 —— 读图场景里透视会让远处的帧变小，
+   * 帧与帧之间就失去可比性。
+   *
+   * 约定：方位角 az = 0 且仰角 el = 0 时，相机在 +Z 轴上看向立方体中心，
+   * 也就是正对第一帧（第一帧在 z = 0，是立方体的前表面）。
+   *
+   * 坐标一致性 —— 这里错开半个深度，立方体就会被裁掉：
+   *   帧摆在 z ∈ [0, depth]，第一帧 z=0、最后一帧 z=depth
+   *   所以立方体的几何中心是 targetZ = depth/2，取景与深度排序都必须以它为准。
+   *
+   * @param {{planeW:number, planeH:number, depth:number}} geo
+   * @param {{az:number, el:number, zoom:number, panU:number, panV:number}} c
+   * @param {{w:number, h:number}} vp
+   */
+  function camParams(geo, c, vp) {
+    var hx = geo.planeW * 0.5, hy = geo.planeH * 0.5, hz = geo.depth * 0.5;
+    var targetZ = hz;
+    var radius = M.boundRadius(hx, hy, hz);
+
+    var az = M.deg(c.az), el = M.deg(c.el);
+    // 从相机指向场景的方向
+    var dir = [
+      -Math.cos(el) * Math.sin(az),
+      -Math.sin(el),
+      -Math.cos(el) * Math.cos(az)
+    ];
+    // 相机的右向量（水平，且与视线垂直）
+    var right = [Math.cos(az), 0, -Math.sin(az)];
+    // 上向量 = 视线 × 右向量
+    var up = [
+      dir[1] * right[2] - dir[2] * right[1],
+      dir[2] * right[0] - dir[0] * right[2],
+      dir[0] * right[1] - dir[1] * right[0]
+    ];
+
+    var aspect = vp.w / Math.max(vp.h, 1);
+    var target = [0, 0, targetZ];
+    // 正交下相机距离只影响裁剪，不影响成像大小，所以取一个宽松的固定值
+    var distance = radius * 4;
+
+    var offU = c.panU * radius, offV = c.panV * radius;
+    var eye = [
+      target[0] - dir[0] * distance + right[0] * offU + up[0] * offV,
+      target[1] - dir[1] * distance + right[1] * offU + up[1] * offV,
+      target[2] - dir[2] * distance + right[2] * offU + up[2] * offV
+    ];
+
+    // 平移之后视线要重新指向目标
+    var d2 = [target[0] - eye[0], target[1] - eye[1], target[2] - eye[2]];
+    var dl = Math.hypot(d2[0], d2[1], d2[2]) || 1;
+    d2 = [d2[0] / dl, d2[1] / dl, d2[2] / dl];
+
+    /*
+     * 正交视锥：**按包围球定死尺度**，不随视角变化。
+     *
+     * 这里刻意不用"按旋转后的包围盒拟合"：那样立方体转到对角线时投影范围最大、
+     * 转到正对时最小，两者相差 √3 ≈ 1.73 倍，看起来就是"一转动就忽大忽小"。
+     * 包围球半径与旋转无关，所以取 halfH = radius × 系数 就能得到**恒定的尺度**：
+     * 无论怎么转，同一个世界长度在屏幕上永远是同样多像素。
+     *
+     * 代价是正对时四周会多留一些空 —— 这是"不缩放"必须付出的，也正是想要的效果。
+     */
+    var halfH = radius * ORTHO_SPHERE_FILL / Math.max(c.zoom, 0.05);
+    var halfW = halfH * aspect;
+
+    // 极窄的窗口（aspect < 1）下，按包围球算出的横向范围可能仍然装不下立方体。
+    // 这时只把**横向**撑开：纵向尺度保持不变（那是"大小不随视角变"的落点），
+    // 横向在窄窗口里放开不构成问题 —— 因为 aspect 与视角无关，
+    // 所以撑开量也是恒定的，转动视角依然不会忽大忽小。
+    var tightW = radius * ORTHO_SPHERE_FILL;
+    if (halfW < tightW) halfW = tightW;
+
+    // 正交矩阵的 near/far 是**到相机的绝对距离**（都是正的），不是以目标点为原点。
+    // 相机在 distance 处看向 target，场景沿视线最远伸到 distance+radius，
+    // 最近到 distance-radius，所以两端各留 2*radius 的余量。
+    var pad = 2 * radius;
+    var near = Math.max(0.01, distance - pad);
+    var far = distance + pad;
+    var projM = M.ortho(-halfW, halfW, -halfH, halfH, near, far);
+    var viewM = M.lookAt(eye, target, [0, 1, 0]);
+
+    // 世界单位 → 像素（点大小用；正交下与深度无关）
+    var scale = vp.h / (2 * halfH);
+
+    return {
+      ortho: true,
+      eye: eye, target: target, dir: d2, dist: distance, radius: radius,
+      proj: projM, view: viewM, near: near, far: far, scale: scale,
+      right: right, up: up,
+      halfW: halfW, halfH: halfH,
+      fitH: radius * ORTHO_SPHERE_FILL, fitW: radius * ORTHO_SPHERE_FILL * aspect,
+      sphereFill: ORTHO_SPHERE_FILL
+    };
+  }
+
+  /**
+   * 正交取景的视野半高由 camParams 直接按包围球算出（见 ORTHO_SPHERE_FILL）。
+   *
+   * 这里额外暴露一个「按旋转后包围盒拟合」的版本，**只用于诊断和测试**：
+   * 它能让画面在正对时尽量铺满，但代价是尺度随视角变化（对角线时 1.73 倍），
+   * 所以实际渲染不用它 —— 用户明确要求"大小不随视角变"。
+   */
+  function orthoBounds(hx, hy, hz, right, up, aspect) {
+    var maxU = 0, maxV = 0;
+    for (var i = 0; i < 8; i++) {
+      var x = (i & 1) ? hx : -hx;
+      var y = (i & 2) ? hy : -hy;
+      var z = (i & 4) ? hz : -hz;
+      maxU = Math.max(maxU, Math.abs(x * right[0] + y * right[1] + z * right[2]));
+      maxV = Math.max(maxV, Math.abs(x * up[0] + y * up[1] + z * up[2]));
+    }
+    var halfH = Math.max(maxV, maxU / Math.max(aspect, 1e-6));
+    return { maxU: maxU, maxV: maxV, halfH: halfH, halfW: halfH * aspect };
+  }
+
+  /** 世界坐标 → 画布像素坐标（左上为原点，与 probe 的取点方式一致）
+   *
+   * 必须做透视除法（除以 w）：GPU 在光栅化前会自己做这一步，
+   * 但这个函数是"某个世界坐标应该出现在哪个像素"的判据，
+   * 少除一个 w 会算出偏大的偏移量，于是把"立方体是否完整入画"判错。
+   */
+  function projectToPixel(cp, vp, x, y, z) {
+    var m = M.mul(cp.proj, cp.view, M.m4());
+    var n = M.xformPoint(m, x, y, z);
+    var w = n[3];
+    if (!w || Math.abs(w) < 1e-9) w = 1;
+    var nx = n[0] / w, ny = n[1] / w, nz = n[2] / w;
+    return [
+      (nx * 0.5 + 0.5) * vp.w,
+      (1 - (ny * 0.5 + 0.5)) * vp.h,
+      nz
+    ];
+  }
+
+  /** 从相机出发沿视线看，某个 z 位置排在第几（数值越大越远） */
+  function frameDepth(cp, z) {
+    return -(cp.dir[0] * cp.eye[0] + cp.dir[1] * cp.eye[1] + cp.dir[2] * (z - cp.eye[2]));
+  }
+
+  /* ========================================================== 逐帧解算 */
+
+  /**
+   * 把「当前状态」解算成渲染器要的逐帧条目。
+   * 纯函数：给定同样的输入永远得到同样的输出，因此可以被逐值断言。
+   *
+   * @param {{geo:object, frames:Array}} seq
+   * @param {{allGhost:boolean, opCur:number, opOther:number, otherMode:string}} ui
+   * @param {number} cur 当前帧下标
+   */
+  function resolve(seq, ui, cur) {
+    var n = seq.frames.length;
+    var step = seq.geo && n > 1 ? seq.geo.depth / (n - 1) : 0;
+    var items = [];
+    var stat = { total: n, opaque: 0, ghost: 0, points: 0, hidden: 0, currentIndex: -1 };
+
+    for (var i = 0; i < n; i++) {
+      var f = seq.frames[i];
+      var isCur = !ui.allGhost && i === cur;
+      var op = ui.allGhost ? ui.opOther : (isCur ? ui.opCur : ui.opOther);
+      var asPoints = ui.otherMode === 'points' && !isCur;
+
+      // 点云缓冲还没建好就先不画，避免闪一帧空白
+      if (asPoints && !f.pointVao) op = 0;
+      if (op <= 0.002) op = 0;
+
+      if (op >= 0.998) stat.opaque++;
+      else if (op > 0) stat.ghost++;
+      else stat.hidden++;
+      if (asPoints && op > 0) stat.points++;
+      if (isCur) stat.currentIndex = i;
+
+      items.push({
+        i: i,
+        z: i * step,
+        // 相邻帧间距：渲染器用它把挤出厚度夹到不会穿模的范围
+        frameStep: step,
+        opacity: op,
+        current: isCur,
+        pointCloud: asPoints && op > 0,
+        vao: asPoints && f.pointVao ? f.pointVao.vao : null,
+        count: asPoints && f.pointVao ? f.pointVao.count : 0,
+        texture: f.texture,
+        w: seq.geo ? seq.geo.planeW : 1,
+        h: seq.geo ? seq.geo.planeH : 1,
+        // 纹理的像素尺寸：轮廓模式要用它算"一个纹素在 uv 里有多大"
+        texW: f.width || 0,
+        texH: f.height || 0
+      });
+    }
+    return { items: items, stats: stat };
+  }
+
+  /* ========================================================== 深度排序 */
+
+  /** 给每个条目补上沿视线的深度，并返回由远到近的数组（半透明必须这样排） */
+  function sortFarToNear(items, cp) {
+    for (var i = 0; i < items.length; i++) {
+      items[i].depth = frameDepth(cp, items[i].z);
+    }
+    items.sort(function (a, b) { return b.depth - a.depth; });
+    return items;
+  }
+
+  /* ============================================================ 点云 */
+
+  /**
+   * 采样网格：步长 stride 下，多少列多少行、总共多少个点。
+   * 这个数是「点云有多少个点」的唯一真相来源，
+   * 渲染时的实例数必须与它一致，否则会出现空隙或越界。
+   */
+  function pointGrid(w, h, stride) {
+    var s = Math.max(1, Math.floor(stride));
+    var cols = Math.floor((w - 1) / s) + 1;
+    var rows = Math.floor((h - 1) / s) + 1;
+    return { cols: cols, rows: rows, count: cols * rows };
+  }
+
+  /**
+   * 用总点数预算反推采样步长。
+   *
+   * 注意量纲：budget 是**所有帧加起来**的点数上限，
+   * 所以单帧上限是 budget / 帧数。步长 s 使单帧采样点数约为 像素数 / s²。
+   * 令 像素数/s² ≤ budget/帧数  →  s = ceil(sqrt(像素数 × 帧数 / budget))。
+   */
+  function pointStride(totalPixels, budget, frames) {
+    var n = frames && frames > 0 ? frames : 1;
+    var b = budget > 0 ? budget : 1;
+    if (totalPixels <= b) return 1;
+    return Math.max(1, Math.ceil(Math.sqrt(totalPixels * n / b)));
+  }
+
+  /* ==================================================== 切割：只留选区 */
+  /*
+   * 「切割」= 只显示某一块区域内的影像。
+   *
+   * 选区用**归一化 uv** 存：{x0, y0, x1, y1} ∈ [0,1]，朝向与帧平面的 vUv 完全一致：
+   *   u = 0 → 图像左边缘     u = 1 → 右边缘
+   *   v = 0 → 图像**顶部**   v = 1 → 底部
+   * （v 的朝向见 50-shaders.js 里 V_QUAD 的约定：v=0 给的是四边形的上方顶点。）
+   *
+   * 存归一化坐标而不是像素，是因为它必须**对所有帧生效**：
+   * 各帧像素尺寸可能不同（混排照片与视频、或用了缩放），归一化之后
+   * "同一块区域"在各帧上指的就是同一块画面内容。
+   *
+   * 这几个函数都是纯函数，着色器里的判据与它们是同一套（见 PLANE_FS 的 uClip），
+   * 所以"选区内/外"可以在 Node 里逐像素断言，而不是只能靠眼睛看。
+   */
+
+  function clamp01(v) {
+    return v < 0 ? 0 : (v > 1 ? 1 : (isFinite(v) ? v : 0));
+  }
+
+  /** 把任意的 {x0,y0,x1,y1} 规整成 [0,1] 内、且 x0≤x1、y0≤y1 的选区 */
+  function normalizeClip(r) {
+    if (!r) return { x0: 0, y0: 0, x1: 1, y1: 1 };
+    var ax = clamp01(r.x0), bx = clamp01(r.x1);
+    var ay = clamp01(r.y0), by = clamp01(r.y1);
+    return {
+      x0: Math.min(ax, bx), y0: Math.min(ay, by),
+      x1: Math.max(ax, bx), y1: Math.max(ay, by)
+    };
+  }
+
+  /** 选区是不是"整个画面"（等价于没有切割） */
+  function clipIsFull(r) {
+    var c = normalizeClip(r);
+    return c.x0 <= 0 && c.y0 <= 0 && c.x1 >= 1 && c.y1 >= 1;
+  }
+
+  /** 选区面积占整幅画面的比例（0..1） */
+  function clipArea(r) {
+    var c = normalizeClip(r);
+    return (c.x1 - c.x0) * (c.y1 - c.y0);
+  }
+
+  /**
+   * 选区是否至少有 1 像素宽/高 —— 太小的选区会变成"整幅都看不见"，这里给个下限。
+   * 退化成一个点（宽高都是 0）时**以那个点为中心撑开**，而不是只把某一条边挪出去。
+   */
+  function clipAtLeastOnePixel(r, w, h) {
+    var c = normalizeClip(r);
+    var minU = w > 0 ? 1 / w : 1;
+    var minV = h > 0 ? 1 / h : 1;
+    var x0 = c.x0, x1 = c.x1, y0 = c.y0, y1 = c.y1;
+    if (x1 - x0 < minU) {
+      var cx = Math.min(Math.max((x0 + x1) / 2, minU / 2), 1 - minU / 2);
+      x0 = cx - minU / 2;
+      x1 = cx + minU / 2;
+    }
+    if (y1 - y0 < minV) {
+      var cy = Math.min(Math.max((y0 + y1) / 2, minV / 2), 1 - minV / 2);
+      y0 = cy - minV / 2;
+      y1 = cy + minV / 2;
+    }
+    return { x0: x0, y0: y0, x1: x1, y1: y1 };
+  }
+
+  /** 图像像素矩形（边界坐标，不是像素中心）→ 归一化选区 */
+  function pixelsToClip(w, h, x0, y0, x1, y1) {
+    if (!(w > 0) || !(h > 0)) return { x0: 0, y0: 0, x1: 1, y1: 1 };
+    return normalizeClip({ x0: x0 / w, y0: y0 / h, x1: x1 / w, y1: y1 / h });
+  }
+
+  /** 归一化选区 → 图像像素矩形（用于面板里显示"选了多少像素"） */
+  function clipToPixels(r, w, h) {
+    var c = normalizeClip(r);
+    return {
+      x0: c.x0 * w, y0: c.y0 * h, x1: c.x1 * w, y1: c.y1 * h,
+      w: (c.x1 - c.x0) * w, h: (c.y1 - c.y0) * h
+    };
+  }
+
+  /**
+   * 图像像素中心是不是落在选区内。
+   * 判据与 PLANE_FS 里那段必须**完全一致**（含边界：>= 且 <=）。
+   */
+  function clipContains(r, u, v) {
+    var c = normalizeClip(r);
+    return u >= c.x0 && u <= c.x1 && v >= c.y0 && v <= c.y1;
+  }
+
+  /**
+   * 图像像素中心 → 照片的**局部坐标**（[-0.5,0.5]²）。
+   *
+   * 这一条是点云与照片"朝向上必须一致"的唯一真相来源：
+   * 帧平面的 V_QUAD 约定是 u=0 在 -x 端、v=0 在 +y 端，而 v=0 是图像顶部，
+   * 所以图像第 0 行（顶）落在 **+y**。点云如果直接拿 (x/w-0.5, z/h-0.5) 当局部坐标，
+   * 就会与照片**上下颠倒** —— 这正是 6 号 bug 那一类错误（当时改错了方向，
+   * 换成这条共用规则之后两边不可能再各写一套）。
+   */
+  function pixelLocal(w, h, x, z) {
+    return [(x + 0.5) / w - 0.5, 0.5 - (z + 0.5) / h];
+  }
+
+  /* ------------------------------------------------ 框选面板的拖拽逻辑 */
+  /*
+   * 这两条也是纯函数：编辑器只负责把鼠标坐标换算成 uv，
+   * "拖到了哪个手柄、拖完变成什么选区"由这里决定 —— 于是可以在 Node 里断言，
+   * 不需要真实鼠标，也不需要浏览器。
+   */
+
+  /**
+   * 命中判定：鼠标落在哪个手柄上。
+   * @returns 'nw'|'n'|'ne'|'e'|'se'|'s'|'sw'|'w'|'move'|'new'
+   *          （'new' = 落在选区之外，按下去就画一个新矩形）
+   */
+  function cropHit(rect, u, v, tolU, tolV) {
+    var c = normalizeClip(rect);
+    var tu = tolU === undefined ? 0.02 : tolU;
+    var tv = tolV === undefined ? 0.02 : tolV;
+    /*
+     * 选区还是"整个画面"时，按哪里都算"画新矩形"。
+     * 它本来就无处可移（平移会被夹回原位），若按"内部 = 移动"处理，
+     * 用户拖了半天什么都不会发生 —— 看起来就像框选坏了。
+     */
+    if (clipIsFull(c)) return 'new';
+    var inX = u >= c.x0 - tu && u <= c.x1 + tu;
+    var inY = v >= c.y0 - tv && v <= c.y1 + tv;
+    if (!inX || !inY) return 'new';
+    var L = Math.abs(u - c.x0) <= tu, R = Math.abs(u - c.x1) <= tu;
+    var T = Math.abs(v - c.y0) <= tv, B = Math.abs(v - c.y1) <= tv;
+    if (L && T) return 'nw';
+    if (R && T) return 'ne';
+    if (L && B) return 'sw';
+    if (R && B) return 'se';
+    if (T) return 'n';
+    if (B) return 's';
+    if (L) return 'w';
+    if (R) return 'e';
+    return 'move';
+  }
+
+  /**
+   * 拖拽之后的选区。
+   * @param {object} rect 起始选区（第一次按下时的选区）
+   * @param {string} mode cropHit 的结果
+   * @param {{u:number,v:number}} a 按下时的点
+   * @param {{u:number,v:number}} b 当前的点
+   */
+  function cropDrag(rect, mode, a, b) {
+    var c = normalizeClip(rect);
+    if (mode === 'new') {
+      return normalizeClip({ x0: a.u, y0: a.v, x1: b.u, y1: b.v });
+    }
+    if (mode === 'move') {
+      var w = c.x1 - c.x0, h = c.y1 - c.y0;
+      // 整体不出画面：先按位移走，再夹回来（而不是把矩形压扁）
+      var x0 = Math.min(Math.max(c.x0 + (b.u - a.u), 0), 1 - w);
+      var y0 = Math.min(Math.max(c.y0 + (b.v - a.v), 0), 1 - h);
+      return { x0: x0, y0: y0, x1: x0 + w, y1: y0 + h };
+    }
+    var r = { x0: c.x0, y0: c.y0, x1: c.x1, y1: c.y1 };
+    if (mode.indexOf('w') >= 0) r.x0 = b.u;
+    if (mode.indexOf('e') >= 0) r.x1 = b.u;
+    if (mode.indexOf('n') >= 0) r.y0 = b.v;
+    if (mode.indexOf('s') >= 0) r.y1 = b.v;
+    // normalizeClip 会把"拖过头"的矩形翻正，所以手柄可以互换、不会变成负面积
+    return normalizeClip(r);
+  }
+
+  /* ======================================================== 边界像素图集 */
+  /*
+   * 四个侧面各需要「每帧的一条边界像素」：
+   *   左 = 每一行取第 0 列        右 = 每一行取最后一列
+   *   上 = 每一列取第 0 行        下 = 每一列取最后一行
+   *
+   * 每一条边单独一张纹理，尺寸 = （沿边的长度）×（帧数）：
+   *   左/右：width = h，height = n      上/下：width = w，height = n
+   * 每个纹素是**完整的 RGBA**，也就是那条边界像素的真实颜色。
+   *
+   * 这里曾经把四条边分别压进 RGBA 的四个通道（R=左 G=右 B=上 A=下），
+   * 于是侧面只能是灰度的，而且纹理只上传了 1 行高、其余帧的数据被静默丢掉。
+   * 两个错误叠在一起的表现就是"侧面颜色全是灰色、每帧还都一样"。
+   * 现在不再节省这点显存：侧面用真实颜色，帧用纹理的行来区分。
+   */
+
+  /** 一条边有多少个采样点（沿边方向的像素数） */
+  function edgeLength(which, w, h) {
+    return (which === 'left' || which === 'right') ? h : w;
+  }
+
+  /**
+   * 把一帧的一条边写进图集的第 rowBase 行（每像素 RGBA）。
+   *
+   * @param {Uint8ClampedArray|Uint8Array} px 该帧的原始像素
+   * @param {number} dstW 图集宽度（所有帧里最长的那个边），用**最近邻**重采样：
+   *                      目标列 j ← 源下标 floor(j * srcLen / dstW)
+   *                      尺寸一致时这是一一对应，不做任何插值。
+   * @returns {number} 写进去的像素个数
+   */
+  function packEdge(px, w, h, which, out, rowBase, dstW) {
+    var srcLen = edgeLength(which, w, h);
+    if (!srcLen || !dstW) return 0;
+    var written = 0;
+    for (var j = 0; j < dstW; j++) {
+      var at = Math.min(srcLen - 1, Math.floor(j * srcLen / dstW));
+      var i;
+      if (which === 'left') i = (at * w) * 4;
+      else if (which === 'right') i = (at * w + w - 1) * 4;
+      else if (which === 'top') i = at * 4;
+      else i = ((h - 1) * w + at) * 4;
+      var o = rowBase + j * 4;
+      out[o] = px[i];
+      out[o + 1] = px[i + 1];
+      out[o + 2] = px[i + 2];
+      out[o + 3] = 255;
+      written++;
+    }
+    return written;
+  }
+
+  /**
+   * 侧面在几何上的四条边 —— **渲染器与参考渲染共用这一张表**。
+   *
+   * 这里的 `span` 与 `off` 必须分别给出，不能像早先那样共用一个 uLong：
+   * 左右墙沿 y 展开，半长是 **halfH**；上下墙沿 x 展开，半长是 **halfW**。
+   * 当时两者都用了 halfW，于是左右墙比照片高出 (halfW-halfH)，
+   * 上下墙又比照片窄 —— 表现就是"加出来的侧面尺寸不对"。
+   */
+  function bandSides(geo) {
+    var halfW = geo.planeW * 0.5, halfH = geo.planeH * 0.5;
+    return [
+      { side: 'left', axisY: 1, off: -halfW, span: halfH },
+      { side: 'right', axisY: 1, off: halfW, span: halfH },
+      { side: 'top', axisY: 0, off: halfH, span: halfW },
+      { side: 'bottom', axisY: 0, off: -halfH, span: halfW }
+    ];
+  }
+
+  /**
+   * 世界点沿边方向的位置 → 该边纹理的横向坐标（0..1）。
+   * @param {number} axisY 1 = 边沿 y（左右墙），0 = 边沿 x（上下墙）
+   * @param {number} along -1..1（由 aPos.x 换算出来的归一化位置）
+   *
+   * 左右墙：世界 +y 是图像顶部，所以图像第 0 行落在 t=1 那一端 → 取 1-t。
+   * 上下墙：世界 +x 是图像右侧，图像第 0 列落在 t=0 那一端 → 取 t。
+   */
+  function edgeCoord(axisY, along) {
+    var t = (along + 1) * 0.5;
+    return axisY ? 1 - t : t;
+  }
+
+  /** 第 i 帧在纹理里的行坐标（取样点落在纹素中心，配合 NEAREST 精确命中） */
+  function frameRow(i, n) {
+    if (n <= 1) return 0.5;
+    return (Math.max(0, Math.min(n - 1, i)) + 0.5) / n;
+  }
+
+  /**
+   * 「平均色」模式：把每条边压成一个均值（它其实是一整个面只用一种颜色）。
+   *
+   * 这里的语义是**沿整条边取样求平均**，取样间隔为 step：
+   *   左边缘 = 最左一列自上而下取平均；右边缘 = 最右一列
+   *   上边缘 = 最上一行；下边缘 = 最下一行
+   * 四条边一律按升序扫，避免"有的边正着扫、有的边倒着扫"这种说不清的行为。
+   */
+  function averageEdges(px, w, h, step) {
+    var s = Math.max(1, step || 4);
+
+    function meanColumn(col) {
+      var a = [0, 0, 0], c = 0;
+      for (var z = 0; z < h; z += s) {
+        var i = (z * w + col) * 4;
+        a[0] += px[i]; a[1] += px[i + 1]; a[2] += px[i + 2]; c++;
+      }
+      return c ? [Math.round(a[0] / c), Math.round(a[1] / c), Math.round(a[2] / c)] : [0, 0, 0];
+    }
+
+    function meanRow(row) {
+      var a = [0, 0, 0], c = 0;
+      for (var x = 0; x < w; x += s) {
+        var i = (row * w + x) * 4;
+        a[0] += px[i]; a[1] += px[i + 1]; a[2] += px[i + 2]; c++;
+      }
+      return c ? [Math.round(a[0] / c), Math.round(a[1] / c), Math.round(a[2] / c)] : [0, 0, 0];
+    }
+
+    return {
+      left: meanColumn(0),
+      right: meanColumn(w - 1),
+      top: meanRow(0),
+      bottom: meanRow(h - 1)
+    };
+  }
+
+  /**
+   * 侧面颜色条在时间轴上的取样：世界 z → 帧下标。
+   * 侧面从 z=0（第一帧）拉到 z=depth（最后一帧），
+   * 所以这个映射必须是单调的、且两端刚好落在首末帧上。
+   */
+  function zToFrame(z, depth, n) {
+    if (n <= 1) return 0;
+    var t = depth > 0 ? z / depth : 0;
+    return t * (n - 1);
+  }
+
+  /**
+   * packEdge 的「直接返回四条边」版本，供参考渲染与逐值核对使用。
+   * 与应用共用同一套下标算式，不存在"两套实现各错各的"。
+   * 每一条边返回该边每个位置的 [r,g,b]。
+   */
+  function edgeColors(px, w, h) {
+    var res = { left: [], right: [], top: [], bottom: [] };
+    ['left', 'right', 'top', 'bottom'].forEach(function (which) {
+      var len = edgeLength(which, w, h);
+      var out = new Uint8Array(len * 4);
+      packEdge(px, w, h, which, out, 0, len);
+      for (var j = 0; j < len; j++) {
+        res[which].push([out[j * 4], out[j * 4 + 1], out[j * 4 + 2]]);
+      }
+    });
+    return res;
+  }
+
+  /* ======================================================== 轮廓提取 */
+  /*
+   * 「提取画面中对比鲜明的颜色分界线，并且只保留轮廓」这件事的**唯一真相**在这里，
+   * 着色器里的 PLANE_FS 是它的 GPU 版（公式逐项对应，见 50-shaders.js 的注释）。
+   *
+   * 判据：一个像素与它上下左右四个邻居的**逐通道最大差**，四者取最大。
+   * 为什么不用亮度差？红↔绿这种"等亮度的强对比"亮度差接近 0，会被整片漏掉，
+   * 而那恰恰是"对比鲜明的颜色分界线"的典型例子。
+   *
+   * @param {Uint8ClampedArray|Uint8Array} px RGBA 像素
+   * @param {number} w @param {number} h
+   * @param {number} x @param {number} y 像素坐标（整数）
+   * @returns {number} 0..1 的对比度（超过阈值就算分界线）
+   */
+  function outlineContrast(px, w, h, x, y) {
+    var i = (y * w + x) * 4;
+    var r = px[i], g = px[i + 1], b = px[i + 2];
+    var m = 0;
+    // 上下左右四个邻居（越界就跳过，不做出界采样）
+    var dx = [1, -1, 0, 0], dy = [0, 0, 1, -1];
+    for (var k = 0; k < 4; k++) {
+      var nx = x + dx[k], ny = y + dy[k];
+      if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
+      var j = (ny * w + nx) * 4;
+      var dr = Math.abs(px[j] - r), dg = Math.abs(px[j + 1] - g), db = Math.abs(px[j + 2] - b);
+      var d = dr > dg ? dr : dg;
+      if (db > d) d = db;
+      if (d > m) m = d;
+    }
+    return m / 255;
+  }
+
+  /**
+   * 整张图的轮廓掩码：1 = 分界线，0 = 内部。
+   * 纯函数，用来把"轮廓到底提得对不对"变成可断言的事实。
+   */
+  function outlineMask(px, w, h, threshold) {
+    var t = threshold === undefined ? 0.25 : threshold;
+    var mask = new Uint8Array(w * h);
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        if (outlineContrast(px, w, h, x, y) >= t) mask[y * w + x] = 1;
+      }
+    }
+    return mask;
+  }
+
+  STC.view = {
+    camParams: camParams,
+    projectToPixel: projectToPixel,
+    frameDepth: frameDepth,
+    resolve: resolve,
+    sortFarToNear: sortFarToNear,
+    pointGrid: pointGrid,
+    pointStride: pointStride,
+    // 切割选区（纯函数：着色器里的 uClip 判据与它们同源）
+    normalizeClip: normalizeClip,
+    clipIsFull: clipIsFull,
+    clipArea: clipArea,
+    clipAtLeastOnePixel: clipAtLeastOnePixel,
+    pixelsToClip: pixelsToClip,
+    clipToPixels: clipToPixels,
+    clipContains: clipContains,
+    // 图像像素 → 照片局部坐标（点云与照片朝向一致）
+    pixelLocal: pixelLocal,
+    // 框选面板：手柄命中与拖拽（纯函数，可无浏览器断言）
+    cropHit: cropHit,
+    cropDrag: cropDrag,
+    packEdge: packEdge,
+    edgeLength: edgeLength,
+    edgeColors: edgeColors,
+    averageEdges: averageEdges,
+    bandSides: bandSides,
+    edgeCoord: edgeCoord,
+    frameRow: frameRow,
+    outlineContrast: outlineContrast,
+    outlineMask: outlineMask,
+    zToFrame: zToFrame
+  };
+})(window.STC = window.STC || {});
+
+/* ===================================================== 60-renderer.js */
+/* 时空立方体 · 渲染器
+ *
+ * 一次 render() 的绘制顺序是刻意安排的，顺序错了就会出现「后面的帧挡住前面的帧」：
+ *
+ *   1. 侧面颜色条 —— 不透明、写深度（它们是立方体的外墙）
+ *   2. 不透明的帧平面 —— 写深度，互相正确遮挡
+ *   3. 半透明的帧平面 —— 不写深度，按离相机由远到近排序，否则混合结果取决于先后
+ *   4. 点云 —— 不写深度，在平面之后
+ *   5. 白色线框 / 立方体外框 / 时间轴 —— 最后画，永远压在内容之上
+ *
+ * 另外，帧平面之间不写深度（只读），所以正对时看到的永远是所有帧的叠加，
+ * 而不是「最近的那张把后面全挡住」—— 轨迹要能透出来，这是前提。
+ */
+(function (STC) {
+  'use strict';
+
+  var S = STC.shaders;
+
+  function create(ctx, canvas) {
+    var gl = ctx.gl;
+    var P = {};
+    var geom = {};
+
+    /* ------------------------------------------------------------ program */
+
+    function build() {
+      P.plane = ctx.program(S.PLANE_VS, S.PLANE_FS, 'plane', ['aPos', 'aUv']);
+      P.band = ctx.program(S.BAND_VS, S.BAND_FS, 'band', ['aPos']);
+      P.solid = ctx.program(S.SOLID_VS, S.SOLID_FS, 'solid', ['aPos']);
+      P.point = ctx.program(S.POINT_VS, S.POINT_FS, 'point', ['aPos', 'aUv2', 'aPosPx', 'aColor']);
+      if (!P.plane || !P.band || !P.solid || !P.point) return false;
+
+      var quad = ctx.buffer(new Float32Array(S.V_QUAD));
+      geom.quad = ctx.vao(function () {
+        ctx.attrib(0, quad, 3, gl.FLOAT, false, 20, 0);
+        ctx.attrib(1, quad, 2, gl.FLOAT, false, 20, 12);
+      });
+
+      // 一条侧立面：四个角 = 「沿边的两端」(u=-1/1) × 「前/后」(v=0/1)。
+      // 世界坐标由 BAND_VS 用 uSpan/uOff/uAxisY + 模型矩阵算出。
+      geom.volBand = ctx.vao(function () {
+        var b = ctx.buffer(new Float32Array([
+          0, 0,          // 前，u=0
+          1, 0,          // 前，u=1
+          0, 1,          // 后，u=0
+          1, 1           // 后，u=1
+        ]));
+        ctx.attrib(0, b, 2, gl.FLOAT, false, 8, 0);
+      });
+
+      /*
+       * 「一帧的显示区域描边」= **真正的矩形线框**（4 条线段，8 个顶点）。
+       *
+       * 早先这里是用 BAND_VS 把四角缩到中心画出来的 —— 那画出来的是四条
+       * 从角到中心的线，而且四个顶点组成的 TRIANGLE_STRIP 其实**填满**了整个
+       * 矩形。于是"描边"变成了一层半透明白色蒙版，200 帧叠起来整片发白。
+       * 现在它就是 4 条边，按 GL_LINES 画。
+       */
+      geom.rect = ctx.vao(function () {
+        var b = ctx.buffer(new Float32Array([
+          -0.5, -0.5, 0.5, -0.5,
+          0.5, -0.5, 0.5, 0.5,
+          0.5, 0.5, -0.5, 0.5,
+          -0.5, 0.5, -0.5, -0.5
+        ]));
+        ctx.attrib(0, b, 2, gl.FLOAT, false, 8, 0);
+      });
+      geom.rectCount = 8;
+
+      var c = new THREE_LESS_QUAD();
+      geom.pointCorners = ctx.buffer(c.data);
+      geom.pointCornerCount = c.count;
+
+      /*
+       * 立方体外框：**12 条棱**，每条两个端点。
+       *
+       * 这里必须是**真正的 VAO**。早先写的是 `geom.cage = ctx.buffer(...)`，
+       * 然后在渲染时 `gl.bindVertexArray(geom.cage)` —— 把一个 Buffer 当 VAO 绑定，
+       * WebGL2 会直接报 INVALID_OPERATION 并保留原来绑定的 VAO，
+       * 于是外框（以及同样写错的时间轴）**一次都画不出来**。
+       * 这也是"白色线框完全没显示"的根因。
+       */
+      geom.cage = ctx.vao(function () {
+        var b = ctx.buffer(new Float32Array(cageVerts()));
+        ctx.attrib(0, b, 3, gl.FLOAT, false, 0, 0);
+      });
+      geom.cageCount = 24;
+
+      /*
+       * 时间轴：从第一帧中心指向最后一帧中心的一条线，**末端带箭头**。
+       *
+       * 加箭头是因为用户看到这条黄线时的第一反应是"它为什么指着正面？"——
+       * 一条两端都一样的线看不出方向，而它想表达的恰恰是**时间往哪边走**：
+       * 起点 = 第一帧（正面），箭头 = 最后一帧（背面）。
+       * 顶点：主线 2 个 + 箭头四条 8 个 = 10 个（GL_LINES）。
+       * 箭头做成四根刺（±x、±y 各两根），这样从任何视角看都是一个锥形箭头，
+       * 而不会在某个方向上退化成一条线。
+       */
+      geom.axis = ctx.vao(function () {
+        var tip = [0, 0, 1], back = 0.93, w = 0.055;
+        var v = [0, 0, 0, tip[0], tip[1], tip[2]];
+        var barbs = [[w, 0], [-w, 0], [0, w], [0, -w]];
+        for (var i = 0; i < barbs.length; i++) {
+          v.push(tip[0], tip[1], tip[2]);
+          v.push(barbs[i][0], barbs[i][1], back);
+        }
+        var b = ctx.buffer(new Float32Array(v));
+        ctx.attrib(0, b, 3, gl.FLOAT, false, 0, 0);
+      });
+      geom.axisCount = 10;
+
+      buildDebugTextures();
+
+      return true;
+    }
+
+    function THREE_LESS_QUAD() {
+      // 两个三角形拼成一个单位方块，供点云实例化使用
+      this.data = new Float32Array([-1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1, 1]);
+      this.count = 6;
+    }
+
+    /**
+     * 单位立方体的 **12 条棱**（8 个顶点两两相连），供 GL_LINES 使用。
+     * 这才是"立方体的线框"，而不是每张照片的显示区域 —— 后者在 200 帧时
+     * 会有 200 个白框叠在一起，整个画面就白了。
+     */
+    function cageVerts() {
+      var v = [];
+      var c = [
+        [-0.5, -0.5, -0.5], [0.5, -0.5, -0.5], [0.5, 0.5, -0.5], [-0.5, 0.5, -0.5],
+        [-0.5, -0.5, 0.5], [0.5, -0.5, 0.5], [0.5, 0.5, 0.5], [-0.5, 0.5, 0.5]
+      ];
+      var edges = [
+        [0, 1], [1, 2], [2, 3], [3, 0],
+        [4, 5], [5, 6], [6, 7], [7, 4],
+        [0, 4], [1, 5], [2, 6], [3, 7]
+      ];
+      for (var i = 0; i < edges.length; i++) {
+        var a = c[edges[i][0]], b = c[edges[i][1]];
+        v.push(a[0], a[1], a[2], b[0], b[1], b[2]);
+      }
+      return v;
+    }
+
+    /* ------------------------------------------------------------ 纹理 */
+
+    function uploadFrame(f, filter) {
+      if (f.texture) return f.texture;
+      if (f.textureFailed) return null;          // 已经失败过，不反复重试
+      f.texture = ctx.texture2D({
+        source: f.bitmap,
+        filter: (filter === 'nearest') ? gl.NEAREST : gl.LINEAR,
+        flipY: true,
+        label: f.name
+      });
+      if (!f.texture) {
+        /*
+         * 上传真的失败了。这时**必须**显式记下来：
+         * 采样器没有纹理时 WebGL 的返回是未定义的，多数驱动给纯白 ——
+         * 于是故障表现成"一块正常的白"，从画面上根本看不出来。
+         * 着色器那边还会把它画成品红（见 PLANE_FS 的 uHasTex），双保险。
+         */
+        f.textureFailed = true;
+        ctx.report('texture', '第 ' + (f.index + 1) + ' 帧（' + f.name +
+          '）纹理上传失败。这一帧会显示成品红，而不是它的真实内容。\n' +
+          '常见原因：单张尺寸超过 GPU 上限（本机 ' + ctx.info.maxTextureSize + '），' +
+          '或该图解码后不是有效的位图。');
+      }
+      return f.texture;
+    }
+
+    function releaseFrames(frames) {
+      for (var i = 0; i < frames.length; i++) {
+        if (frames[i].texture) { gl.deleteTexture(frames[i].texture); frames[i].texture = null; }
+        if (frames[i].pointVao) {
+          gl.deleteVertexArray(frames[i].pointVao.vao);
+          gl.deleteBuffer(frames[i].pointVao.posBuf);
+          gl.deleteBuffer(frames[i].pointVao.colBuf);
+          frames[i].pointVao = null;
+        }
+        if (frames[i].bitmap && frames[i].bitmap.close) { frames[i].bitmap.close(); frames[i].bitmap = null; }
+      }
+    }
+
+    /* ------------------------------------------------------------ 点云 */
+
+    /**
+     * 为一个采样点建实例缓冲。
+     * 颜色直接拷贝原图字节 —— 不做加权平均，不做降采样，
+     * 所以点云里每个点的颜色就是那个像素的原始值。
+     */
+    function buildPoints(frame, stride) {
+      if (frame.pointVao) return frame.pointVao;
+
+      var w = frame.width, h = frame.height;
+      var w2 = Math.floor((w - 1) / stride) + 1;
+      var h2 = Math.floor((h - 1) / stride) + 1;
+      var n = w2 * h2;
+
+      var canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      var c2 = canvas.getContext('2d', { willReadFrequently: true, alpha: true });
+      c2.drawImage(frame.bitmap, 0, 0);
+      var px;
+      try {
+        px = c2.getImageData(0, 0, w, h).data;
+      } catch (e) {
+        ctx.report('points', frame.name + '：无法读取像素（' + (e && e.message || e) +
+          '）。若用 file:// 打开，浏览器会禁止读回像素，请改用本地服务启动。');
+        return null;
+      }
+
+      var pos = new Float32Array(n * 2);
+      var col = new Float32Array(n * 4);
+      var p = 0, q = 0;
+      for (var z = 0; z < h; z += stride) {
+        for (var x = 0; x < w; x += stride) {
+          /*
+           * 局部坐标**必须**用 view.pixelLocal 这一份共用公式：
+           * 它保证图像第 0 行（顶）落在 +y，也就是与帧平面的 uv 朝向一致。
+           * 早先这里直接写 (x/w-0.5, z/h-0.5)，等于把 y 取了负号，
+           * 于是点云相对照片**上下颠倒** —— 而两条路径各写一套公式时，
+           * 这种错只能靠肉眼发现（见 16 号 bug）。
+           */
+          var pl = STC.view.pixelLocal(w, h, x, z);
+          pos[p++] = pl[0];
+          pos[p++] = pl[1];
+          var s = (z * w + x) * 4;
+          col[q++] = px[s];
+          col[q++] = px[s + 1];
+          col[q++] = px[s + 2];
+          col[q++] = px[s + 3];
+        }
+      }
+
+      var posBuf = ctx.buffer(pos);
+      var colBuf = ctx.buffer(col);
+      var cornerBuf = geom.pointCorners;
+      var vao = ctx.vao(function () {
+        // location 0：单位方块的四角（每顶点）
+        gl.bindBuffer(gl.ARRAY_BUFFER, cornerBuf);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+        // location 2：逐实例的像素坐标
+        gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+        gl.enableVertexAttribArray(2);
+        gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribDivisor(2, 1);
+        // location 3：逐实例的原始颜色
+        gl.bindBuffer(gl.ARRAY_BUFFER, colBuf);
+        gl.enableVertexAttribArray(3);
+        gl.vertexAttribPointer(3, 4, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribDivisor(3, 1);
+      });
+
+      frame.pointVao = { vao: vao, count: n, posBuf: posBuf, colBuf: colBuf };
+      return frame.pointVao;
+    }
+
+    function dropPoints(frame) {
+      if (!frame.pointVao) return;
+      gl.deleteVertexArray(frame.pointVao.vao);
+      gl.deleteBuffer(frame.pointVao.posBuf);
+      gl.deleteBuffer(frame.pointVao.colBuf);
+      frame.pointVao = null;
+    }
+
+    /* --------------------------------------------------- 边界像素图集 */
+    /*
+     * 每一条边单独一张纹理，尺寸 =（沿边的像素数）×（帧数）：
+     *   左/右：width = 最长的 h，height = n
+     *   上/下：width = 最长的 w，height = n
+     * 每个纹素是那条边界像素的**真实 RGBA**，纹理的一行就是一帧。
+     *
+     * 这一版纠正了两个会同时发作的老错误：
+     *   1. 老图集把四条边挤进 RGBA 四个通道、每个通道只存一个 R 分量，
+     *      于是侧面只能是灰的；
+     *   2. 老代码算出 W×n 的像素却按 W×1 上传，n-1 帧被静默丢掉，
+     *      于是所有帧的侧面颜色完全一样。
+     *
+     * 「平均色」模式：每条边压成一个均值，只存 1 列（width=1），
+     * 采样时靠 CLAMP_TO_EDGE 取到那一列，省显存。
+     */
+    function buildEdgeAtlas(seq, mode, onProgress) {
+      var frames = seq.frames;
+      var n = frames.length;
+      if (!n) return null;
+      if (mode === 'off') return null;
+
+      var W = 0, H = 0, i;
+      for (i = 0; i < n; i++) {
+        if (frames[i].width > W) W = frames[i].width;
+        if (frames[i].height > H) H = frames[i].height;
+      }
+      if (W > ctx.info.maxTextureSize || H > ctx.info.maxTextureSize || n > ctx.info.maxTextureSize) {
+        ctx.report('edge', '侧面颜色条图集 ' + W + '×' + n + ' 超出纹理上限，已关闭侧面。');
+        return null;
+      }
+
+      // avg 模式每条边只有一个颜色 → 宽度 1
+      var widthOf = {
+        left: mode === 'avg' ? 1 : H,
+        right: mode === 'avg' ? 1 : H,
+        top: mode === 'avg' ? 1 : W,
+        bottom: mode === 'avg' ? 1 : W
+      };
+      var buf = {};
+      var SIDES = ['left', 'right', 'top', 'bottom'];
+      for (i = 0; i < SIDES.length; i++) {
+        buf[SIDES[i]] = new Uint8Array(widthOf[SIDES[i]] * n * 4);
+      }
+
+      var canvas = document.createElement('canvas');
+      var c2 = null;
+
+      for (i = 0; i < n; i++) {
+        var f = frames[i];
+        if (canvas.width !== f.width || canvas.height !== f.height) {
+          canvas.width = f.width;
+          canvas.height = f.height;
+          c2 = canvas.getContext('2d', { willReadFrequently: true, alpha: true });
+        }
+        c2.clearRect(0, 0, f.width, f.height);
+        c2.drawImage(f.bitmap, 0, 0);
+        var px;
+        try {
+          px = c2.getImageData(0, 0, f.width, f.height).data;
+        } catch (e) {
+          ctx.report('edge', '无法读取像素（' + (e && e.message || e) + '）。' +
+            'file:// 下浏览器会禁止读回像素，请改用本地服务启动。');
+          return null;
+        }
+
+        var w = f.width, h = f.height;
+
+        if (mode === 'avg') {
+          // 语义见 55-view.js 的 averageEdges：每条边整条取样求平均
+          var m = STC.view.averageEdges(px, w, h, 4);
+          for (var s = 0; s < SIDES.length; s++) {
+            var side = SIDES[s];
+            var rgb = m[side];
+            var off = i * widthOf[side] * 4;
+            var cnt = widthOf[side];
+            for (var j = 0; j < cnt; j++) {
+              buf[side][off + j * 4] = rgb[0];
+              buf[side][off + j * 4 + 1] = rgb[1];
+              buf[side][off + j * 4 + 2] = rgb[2];
+              buf[side][off + j * 4 + 3] = 255;
+            }
+          }
+        } else {
+          // 边界像素：侧面就是原图最外一列/一行沿时间轴的拉伸，颜色是真的
+          for (var s2 = 0; s2 < SIDES.length; s2++) {
+            var side2 = SIDES[s2];
+            var dstW = widthOf[side2];
+            STC.view.packEdge(px, w, h, side2, buf[side2], i * dstW * 4, dstW);
+          }
+        }
+
+        if (onProgress && (i % 4 === 3 || i === n - 1)) {
+          onProgress({ phase: 'edge', done: i + 1, total: n });
+        }
+      }
+
+      releaseEdgeTextures(seq);
+      seq.edgeTex = {};
+      var bytes = 0;
+      for (i = 0; i < SIDES.length; i++) {
+        var nm = SIDES[i];
+        var tex = ctx.edgeTexture(widthOf[nm], n, buf[nm], gl.NEAREST);
+        if (!tex) { releaseEdgeTextures(seq); return null; }
+        seq.edgeTex[nm] = tex;
+        bytes += widthOf[nm] * n * 4;
+      }
+      seq.edgeBytes = bytes;
+      seq.edgeRows = n;
+      seq.edgeMode = mode;
+      return seq.edgeTex;
+    }
+
+    /** 释放四张边纹理（没有就什么都不做） */
+    function releaseEdgeTextures(seq) {
+      if (!seq) return;
+      if (seq.edgeTex) {
+        for (var k in seq.edgeTex) {
+          if (seq.edgeTex[k]) gl.deleteTexture(seq.edgeTex[k]);
+        }
+        seq.edgeTex = null;
+      }
+      // 兼容老字段：万一还有单张图集的引用，一并释放
+      if (seq.edgeTexture) { gl.deleteTexture(seq.edgeTexture); seq.edgeTexture = null; }
+      seq.edgeBytes = 0;
+    }
+
+    /* ------------------------------------------------------------ 渲染 */
+
+    var mats = {
+      proj: STC.math.m4(),
+      view: STC.math.m4(),
+      model: STC.math.m4()
+    };
+
+    /** 按「沿视线的深度」把列表排成由远到近（半透明必须这个顺序画） */
+    function sortFarToNear(list, eye, dir) {
+      return STC.view.sortFarToNear(list, { eye: eye, dir: dir });
+    }
+
+    // 标记的颜色。立方体线框就是用户说的「白色线框」，所以它必须是白的；
+    // 时间轴是橙色，用来区分时间方向。
+    var WHITE_NORMAL = [1, 1, 1, 0.45];
+    var WHITE_SELECTED = [1, 1, 1, 0.98];
+    var CUBE_EDGE = [1, 1, 1, 0.85];
+    var AXIS_COLOR = [0.95, 0.72, 0.25, 0.95];
+
+    function setColor(prog, rgba) {
+      prog.set('uColor', function (l) {
+        gl.uniform4f(l, rgba[0], rgba[1], rgba[2], rgba[3]);
+      });
+    }
+
+    /**
+     * @param {object} o  {seq, resolved, cam, proj, view, viewport, ui}
+     *   resolved: STC.resolve(...) 的结果，每帧带 {z, opacity, current, pointCloud, vao, texture, w, h, count}
+     */
+    function render(o) {
+      var seq = o.seq, R = o.resolved, ui = o.ui, vp = o.viewport;
+      var eye = o.cam.eye, dir = o.cam.dir;
+      var halfW = seq.geo.planeW * 0.5;
+      var halfH = seq.geo.planeH * 0.5;
+      var halfD = seq.geo.depth * 0.5;
+
+      gl.viewport(0, 0, vp.w, vp.h);
+      gl.clearColor(0.02, 0.027, 0.043, 1);
+      gl.enable(gl.DEPTH_TEST);
+      gl.depthFunc(gl.LEQUAL);
+      gl.depthMask(true);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.enable(gl.BLEND);
+      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.disable(gl.CULL_FACE);
+
+      mats.proj.set(o.proj);
+      mats.view.set(o.view);
+
+      /*
+       * 每条侧立面 = 那一帧的某条边沿厚度方向挤出的四边形。
+       * 颜色是那条边上的**真实像素颜色**（每帧一行，行号由 uRow 给出），
+       * 沿厚度方向是常数 —— 一张薄片的侧立面本来就只有一个颜色。
+       *
+       * **不透明度跟着那一帧的照片走**：薄片的立面就是那张照片的边，
+       * 照片是 12% 半透明，它的边也必须 12%。所以这里和帧平面用同一套规则：
+       *   不透明的立面先画、写深度；
+       *   半透明的立面由远到近画、**不写深度**（否则半透明的薄片会互相挡掉）。
+       *
+       * bandDebug（`?banddebug=1` 或 STC.app.setBandDebug(true)）会把四个立面
+       * 直接涂成红/绿/蓝/黄四种纯色 —— 这样"某个侧面到底有没有被画出来"
+       * 一眼就能看出来，不用靠照片本身的边缘颜色去猜。
+       */
+      var bandOpaque = [], bandGhost = [];
+      if (P.band && seq.edgeTex && ui.showBands && ui.edgeMode !== 'off') {
+        for (var bi = 0; bi < R.items.length; bi++) {
+          var bIt = R.items[bi];
+          if (bIt.opacity <= 0.002) continue;          // 完全透明 = 连立面也看不见
+          if (thicknessOf(bIt, ui) <= 0) continue;     // 厚度为 0 时立面没有面积
+          if (bIt.opacity >= 0.998) bandOpaque.push(bIt);
+          else bandGhost.push(bIt);
+        }
+        sortFarToNear(bandGhost, eye, dir);
+
+        var sides = STC.view.bandSides(seq.geo);
+        P.band.use();
+        P.band.set('uProj', function (l) { gl.uniformMatrix4fv(l, false, mats.proj); });
+        P.band.set('uView', function (l) { gl.uniformMatrix4fv(l, false, mats.view); });
+        P.band.set('uEdgeTex', function (l) { gl.uniform1i(l, 0); });
+        gl.activeTexture(gl.TEXTURE0);
+
+        // 不透明的一批写深度，半透明的一批不写、由远到近
+        var bandLists = [[bandOpaque, true], [bandGhost, false]];
+        for (var bl = 0; bl < 2; bl++) {
+          var list = bandLists[bl][0], writeDepth = bandLists[bl][1];
+          if (!list.length) continue;
+          gl.depthMask(writeDepth);
+          for (var e = 0; e < list.length; e++) {
+            var ie = list[e];
+            var d = thicknessOf(ie, ui);
+            STC.math.modelMat(1, 1, 1, [0, 0, ie.z + d * 0.5], mats.model);
+            P.band.set('uModel', function (l) { gl.uniformMatrix4fv(l, false, mats.model); });
+            P.band.set('uThick', function (l) { gl.uniform1f(l, d); });
+            P.band.set('uOpacity', function (l) { gl.uniform1f(l, ie.opacity); });
+            P.band.set('uRow', function (l) {
+              gl.uniform1f(l, STC.view.frameRow(ie.i, seq.frames.length));
+            });
+            for (var k = 0; k < 4; k++) {
+              (function (side, idx) {
+                P.band.set('uSpan', function (l) { gl.uniform1f(l, side.span); });
+                P.band.set('uOff', function (l) { gl.uniform1f(l, side.off); });
+                P.band.set('uAxisY', function (l) { gl.uniform1i(l, side.axisY); });
+                // 每条边一张纹理，画之前绑对应的那张
+                gl.bindTexture(gl.TEXTURE_2D,
+                  ui.bandDebug ? geom.debugTex[idx] : seq.edgeTex[side.side]);
+              })(sides[k], k);
+              gl.bindVertexArray(geom.volBand);
+              gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            }
+          }
+        }
+        gl.depthMask(true);
+        gl.bindVertexArray(null);
+      }
+
+      /* ---- 2 & 3. 帧平面 ---- */
+      var opaqueList = [], transList = [];
+      for (var i = 0; i < R.items.length; i++) {
+        var it = R.items[i];
+        if (it.pointCloud || it.opacity <= 0.002 || !it.texture) continue;
+        if (it.opacity >= 0.998) opaqueList.push(it);
+        else transList.push(it);
+      }
+      sortFarToNear(transList, eye, dir);
+
+      if (P.plane) {
+        P.plane.use();
+        P.plane.set('uProj', function (l) { gl.uniformMatrix4fv(l, false, mats.proj); });
+        P.plane.set('uView', function (l) { gl.uniformMatrix4fv(l, false, mats.view); });
+        P.plane.set('uTex', function (l) { gl.uniform1i(l, 0); });
+        gl.activeTexture(gl.TEXTURE0);
+
+        drawPlanes(opaqueList, true, ui);
+        drawPlanes(transList, false, ui);
+      }
+
+      /* ---- 4. 点云 ---- */
+      if (P.point && ui.otherMode === 'points') {
+        var pts = [];
+        for (var m = 0; m < R.items.length; m++) {
+          var im = R.items[m];
+          if (im.pointCloud && im.opacity > 0.002 && im.vao) pts.push(im);
+        }
+        if (pts.length) {
+          sortFarToNear(pts, eye, dir);
+          P.point.use();
+          P.point.set('uProj', function (l) { gl.uniformMatrix4fv(l, false, mats.proj); });
+          P.point.set('uView', function (l) { gl.uniformMatrix4fv(l, false, mats.view); });
+          P.point.set('uViewport', function (l) { gl.uniform2f(l, vp.w, vp.h); });
+          P.point.set('uSquare', function (l) { gl.uniform1i(l, ui.square ? 1 : 0); });
+          P.point.set('uBaseSize', function (l) { gl.uniform1f(l, ui.dotSize * 0.5); });
+          P.point.set('uOrtho', function (l) { gl.uniform1i(l, o.projOrtho ? 1 : 0); });
+          // 正交下点大小就是像素数：uSizePx、uOrthoSize 同义。
+          // **不能**再乘世界→像素比例，否则 200 帧那种尺度下会变成亚像素、整片消失。
+          P.point.set('uOrthoSize', function (l) { gl.uniform1f(l, Math.max(1, ui.dotSize)); });
+          P.point.set('uLumWeight', function (l) { gl.uniform1f(l, ui.lumWeight); });
+          P.point.set('uLumThreshold', function (l) { gl.uniform1f(l, ui.lumThreshold); });
+          P.point.set('uLumDir', function (l) { gl.uniform1i(l, ui.lumDir === 'dark' ? 1 : 0); });
+          // 切割对点云同样生效（选区外的点不画）—— 否则切到点云就会"选区失效"
+          P.point.set('uClipOn', function (l) { gl.uniform1i(l, ui.clipOn ? 1 : 0); });
+          P.point.set('uClip', function (l) {
+            var c = ui.clip || [0, 0, 1, 1];
+            gl.uniform4f(l, c[0], c[1], c[2], c[3]);
+          });
+          gl.depthMask(false);
+          for (var q = 0; q < pts.length; q++) {
+            (function (pq) {
+              P.point.set('uModel', function (l) {
+                gl.uniformMatrix4fv(l, false,
+                  STC.math.modelMat(seq.geo.planeW, seq.geo.planeH, 1, [0, 0, pq.z], mats.model));
+              });
+              P.point.set('uOpacity', function (l) { gl.uniform1f(l, pq.opacity); });
+              P.point.set('uSizePx', function (l) { gl.uniform1f(l, Math.max(1, Math.round(ui.dotSize))); });
+              gl.bindVertexArray(pq.vao);
+              gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, pq.count);
+            })(pts[q]);
+          }
+          gl.bindVertexArray(null);
+          gl.depthMask(true);
+        }
+      }
+
+      /* ---- 5. 标记：写在最后，永远压在内容之上 ---- */
+      /*
+       * 标记是**参照物**，不是场景内容：外框、时间轴、显示区域描边都要能被看见。
+       * 所以这一段关掉深度测试 —— 否则外框会被立方体自己的不透明面挡住，
+       * 用户看到的就是"线框没画出来"。
+       */
+      gl.depthMask(false);
+      gl.disable(gl.DEPTH_TEST);
+      if (P.solid) {
+        P.solid.use();
+        P.solid.set('uProj', function (l) { gl.uniformMatrix4fv(l, false, mats.proj); });
+        P.solid.set('uView', function (l) { gl.uniformMatrix4fv(l, false, mats.view); });
+
+        /*
+         * 「每张照片的显示区域」描边 —— 默认**关闭**。
+         * 现在是**真正的矩形线框**（GL_LINES，8 个顶点）。
+         * 需要时可以在面板里单独打开（当前帧会更亮一点，便于定位）。
+         */
+        if (ui.showFrameOutline) {
+          /*
+           * 开了「切割」之后，这个框跟着**选区**走，而不是画整张照片 ——
+           * 描边的意义是"这一帧有多少面积真的被画出来了"，选区外那一圈
+           * 实际上是空的，再框一整张会误导人。
+           * 单位矩形的局部坐标是 [-0.5,0.5]²（u=0 在 -x、v=0 在 +y），
+           * 所以按选区缩放/平移即可：
+           *   x 中心 = ((x0+x1)/2 - 0.5) · planeW      宽度 = (x1-x0) · planeW
+           *   y 中心 = (0.5 - (y0+y1)/2) · planeH      高度 = (y1-y0) · planeH
+           */
+          var clipOn = !!ui.clipOn && ui.clip;
+          var cq = clipOn ? STC.view.normalizeClip({
+            x0: ui.clip[0], y0: ui.clip[1], x1: ui.clip[2], y1: ui.clip[3]
+          }) : null;
+          for (var e2 = 0; e2 < R.items.length; e2++) {
+            var ie2 = R.items[e2];
+            if (cq) {
+              STC.math.modelMat(
+                (cq.x1 - cq.x0) * seq.geo.planeW,
+                (cq.y1 - cq.y0) * seq.geo.planeH, 1,
+                [((cq.x0 + cq.x1) / 2 - 0.5) * seq.geo.planeW,
+                  (0.5 - (cq.y0 + cq.y1) / 2) * seq.geo.planeH, ie2.z], mats.model);
+            } else {
+              STC.math.modelMat(seq.geo.planeW, seq.geo.planeH, 1, [0, 0, ie2.z], mats.model);
+            }
+            P.solid.set('uModel', function (l) { gl.uniformMatrix4fv(l, false, mats.model); });
+            setColor(P.solid, ie2.current ? WHITE_SELECTED : WHITE_NORMAL);
+            gl.bindVertexArray(geom.rect);
+            gl.drawArrays(gl.LINES, 0, geom.rectCount);
+          }
+          gl.bindVertexArray(null);
+        }
+
+        /*
+         * 立方体外框：**12 条棱**（不是每张照片的框）。
+         * 外框的范围要盖住"第一帧前表面 → 最后一帧后表面"，
+         * 也就是所有薄片的并集：[-d/2, depth + d/2]。
+         */
+        if (ui.showCube) {
+          var firstD = R.items.length ? thicknessOf(R.items[0], ui) : 0;
+          var shellD = seq.geo.depth + firstD;
+          STC.math.modelMat(halfW * 2, halfH * 2, shellD, [0, 0, halfD], mats.model);
+          P.solid.set('uModel', function (l) { gl.uniformMatrix4fv(l, false, mats.model); });
+          setColor(P.solid, CUBE_EDGE);
+          gl.bindVertexArray(geom.cage);
+          gl.drawArrays(gl.LINES, 0, geom.cageCount);
+        }
+
+        if (ui.showAxis) {
+          // 时间轴：单位长度，箭头在 z=1 那一端（= 最后一帧），所以模型矩阵的
+          // z 缩放就是 depth，平移半个 depth 让它从第一帧指到最后一帧。
+          STC.math.modelMat(1, 1, seq.geo.depth, [0, 0, halfD], mats.model);
+          P.solid.set('uModel', function (l) { gl.uniformMatrix4fv(l, false, mats.model); });
+          setColor(P.solid, AXIS_COLOR);
+          gl.bindVertexArray(geom.axis);
+          gl.drawArrays(gl.LINES, 0, geom.axisCount);
+        }
+      }
+
+      gl.bindVertexArray(null);
+      gl.depthMask(true);
+      gl.enable(gl.DEPTH_TEST);
+      gl.disable(gl.BLEND);
+      return {
+        planeDraws: opaqueList.length + transList.length,
+        pointDraws: ui.otherMode === 'points' ? countPoints(R) : 0
+      };
+    }
+
+    function countPoints(R) {
+      var n = 0;
+      for (var i = 0; i < R.items.length; i++) {
+        if (R.items[i].pointCloud && R.items[i].vao) n += R.items[i].count;
+      }
+      return n;
+    }
+
+    function drawPlanes(list, writeDepth, ui) {
+      if (!list.length) return;
+      gl.depthMask(!!writeDepth);
+      for (var i = 0; i < list.length; i++) {
+        var it = list[i];
+        /*
+         * 照片画在**薄片的中面**上（薄片 = [z-d/2, z+d/2]）。
+         * 薄片的正面边界就是 z+d/2，中面才是"这张照片在时间轴上的位置"，
+         * 点云也是画在 z 上的 —— 两者必须一致，否则切到点云时整层会平移。
+         */
+        STC.math.modelMat(it.w, it.h, 1, [0, 0, it.z], mats.model);
+        P.plane.set('uModel', function (l) { gl.uniformMatrix4fv(l, false, mats.model); });
+        P.plane.set('uOpacity', function (l) { gl.uniform1f(l, it.opacity); });
+        // 纹理缺失时不静默采到默认白纹理，而是让着色器画成品红 —— 故障可见
+        P.plane.set('uHasTex', function (l) { gl.uniform1i(l, it.texture ? 1 : 0); });
+        /*
+         * 轮廓模式：只保留"对比鲜明的颜色分界线"，内部整片 discard。
+         * uTexel 是 1/纹理尺寸，着色器用它兜住采样步长的下限（见 PLANE_FS 注释）。
+         */
+        P.plane.set('uOutline', function (l) { gl.uniform1i(l, ui.outline ? 1 : 0); });
+        P.plane.set('uEdgeThreshold', function (l) { gl.uniform1f(l, ui.edgeThreshold); });
+        /*
+         * 切割：选区外的片元在着色器里直接丢弃。
+         * uClip = (x0, y0, x1, y1)，归一化 uv（v=0 是图像顶部）。
+         * 这里不做任何"裁剪几何"的花样 —— 几何还是那一整个四边形，
+         * 只是不在选区内的片元不画，所以照片本身没有被修改。
+         */
+        P.plane.set('uClipOn', function (l) { gl.uniform1i(l, ui.clipOn ? 1 : 0); });
+        P.plane.set('uClip', function (l) {
+          var c = ui.clip || [0, 0, 1, 1];
+          gl.uniform4f(l, c[0], c[1], c[2], c[3]);
+        });
+        P.plane.set('uTexel', function (l) {
+          gl.uniform2f(l, it.texW > 0 ? 1 / it.texW : 1, it.texH > 0 ? 1 / it.texH : 1);
+        });
+        if (it.texture) gl.bindTexture(gl.TEXTURE_2D, it.texture);
+        gl.bindVertexArray(geom.quad);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+      gl.bindVertexArray(null);
+      gl.depthMask(true);
+    }
+
+    /**
+     * 这一帧的挤出厚度。
+     * 用户设定的厚度是"每帧一份"，但因帧距而异：帧距小的时候若还是满厚度，
+     * 相邻帧会互相穿插。所以这里夹到帧距的 90%，保证永远不会穿模。
+     */
+    /**
+     * 诊断用的四张 1×1 纯色纹理：红=左、绿=右、蓝=上、黄=下。
+     * 打开 `?banddebug=1`（或 STC.app.setBandDebug(true)）时，四个立面直接涂成
+     * 这四种颜色 —— "某个侧面到底有没有画出来"就不再依赖照片本身的边缘颜色。
+     * 在 build() 里一次建好：只有 4 个像素，换来的是渲染路径上没有任何分支/懒加载。
+     */
+    function buildDebugTextures() {
+      var colors = [[255, 40, 40], [40, 220, 40], [60, 120, 255], [255, 210, 40]];
+      geom.debugTex = colors.map(function (c) {
+        return ctx.edgeTexture(1, 1, new Uint8Array([c[0], c[1], c[2], 255]), gl.NEAREST);
+      });
+    }
+
+    function thicknessOf(it, ui) {
+      var want = (ui && ui.thickness) || 0;
+      if (want <= 0) return 0;
+      var step = it.frameStep || 0;
+      if (step <= 0) return want;
+      return Math.min(want, step * 0.9);
+    }
+
+    return {
+      gl: gl,
+      build: build,
+      programs: P,
+      geom: geom,
+      uploadFrame: uploadFrame,
+      releaseFrames: releaseFrames,
+      buildPoints: buildPoints,
+      dropPoints: dropPoints,
+      buildEdgeAtlas: buildEdgeAtlas,
+      releaseEdgeTextures: releaseEdgeTextures,
+      render: render
+    };
+  }
+
+  STC.renderer = { create: create };
+})(window.STC = window.STC || {});
+
+/* ===================================================== 70-app.js */
+/* 时空立方体 · 主程序
+ *
+ * 数据流：
+ *   文件 → 排序（EXIF 拍摄时间优先）→ 原画质解码 → ImageBitmap
+ *        → 纹理（按需上传，先上传最可能马上要看的帧）
+ *        → 逐帧沿 Z 轴摆到 z_i = i * step，第一帧在 z=0（前表面）
+ *        → 侧面颜色条由「边界像素图集」提供
+ *
+ * 三个滑块/开关分别对应：
+ *   帧滑块        —— 哪一帧是「当前帧」（它按 opCur 显示）
+ *   其他帧不透明度 —— 非当前帧的不透明度（半透明平面，或者点云）
+ *   全部半透明     —— 取消「当前帧」的特殊地位，所有帧同一个不透明度
+ */
+(function (STC) {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  var state = {
+    seq: null,
+    files: null,
+    frame: 0,
+    allGhost: false,
+    opCur: 1.0,
+    opOther: 0.12,
+    otherMode: 'plane',
+    edgeMode: 'edge',
+    /* 厚度条（每张薄片的四个立面）的开关。关掉时连图集一起释放，省显存。 */
+    showBands: true,
+    /* 诊断：把四个立面涂成红/绿/蓝/黄，用来确认"四个面都画出来了" */
+    bandDebug: false,
+    /* 每帧的挤出厚度（世界单位）。0 = 没有厚度、侧面是零宽的线。
+       有了厚度，正视图里也能看到侧面那条颜色带。 */
+    thickness: 0.02,
+    /* 帧距：cube 在时间轴上的总深度（世界单位）。越大帧之间越散、轨迹拉得越长。 */
+    spacing: 1.6,
+    /* 点云的密度加权：参与密度的量越大，保留的点越多。
+       lumDir='bright' → 亮处密；'dark' → 暗处密（用户两种都要）。 */
+    lumWeight: 0.85,
+    lumThreshold: 0.02,
+    lumDir: 'bright',
+    dotSize: 5,
+    square: true,
+    nearest: false,
+    showFrameOutline: false,   // 默认关闭 —— 200 帧时它会把画面叠成一片白
+    showCube: true,
+    showAxis: true,
+    sort: 'exif',
+    lastSort: 'exif',
+    /* 分辨率策略：
+     *   'auto'  → 按预算与帧数自动解一个长边，保证全部帧都能装下
+     *   'orig'  → 不缩放（帧数多时会撞预算，程序会如实报告装到第几帧）
+     *   '960'/'1280'/'1920' → 固定长边
+     * 这是显存硬约束下必须由用户做的选择，不是可以替他默认的。 */
+    resMode: 'auto',
+    /* 视频抽帧：1 = 每一帧都保留（默认）。2/3/5 = 每 N 个呈现帧保留 1 个。
+       默认必须是 1 —— 用户要的就是"每一帧都留"。 */
+    videoStep: 1,
+    /* 轮廓模式：只保留"对比鲜明的颜色分界线"，内部整片丢弃。
+       edgeThreshold 是逐通道最大差的门槛（0..1）。 */
+    outline: false,
+    edgeThreshold: 0.25,
+    /* 切割：只显示选区内的影像。
+       clipRect 用**归一化 uv** 存（v=0 是图像顶部），所以对所有帧都生效；
+       选区是在某一张照片上框出来的（见 openCrop），但作用范围是整个立方体。 */
+    clip: false,
+    clipRect: { x0: 0, y0: 0, x1: 1, y1: 1 },
+    busy: false,
+    signal: { cancelled: false },
+    loadError: null
+  };
+
+  var cam = {
+    az: 32, el: 20, dist: 1, zoom: 1, panU: 0, panV: 0,
+    fov: STC.math.deg(40)
+  };
+
+  var DEFAULT_VIEW = { az: 32, el: 20, zoom: 1, panU: 0, panV: 0 };
+
+  var glCtx = null, R = null, canvas = null;
+  var viewport = { w: 1, h: 1, dpr: 1 };
+
+  /* ============================================================== 初始化 */
+
+  function boot() {
+    canvas = $('view');
+    armFatalDismiss();
+
+    /*
+     * 这个顺序是刻意的：**先做输入，再做渲染**。
+     *
+     * 之前的顺序是「WebGL 初始化 → bindUI() → resize()」，中间任何一步抛异常，
+     * 后面的 bindUI() 就不会执行 —— 结果是拖放监听不存在（浏览器于是把拖入的
+     * 文件当链接打开，一次开出上百个标签页），切换控件的监听也全部缺失。
+     * 一个渲染层的小问题，把整个交互层一起拖垮了。
+     *
+     * 现在交互绑定放在最前、并且各自 try 住，无论如何输入都是通的。
+     */
+    try {
+      bindUI();
+    } catch (e) {
+      appendFatal('界面事件绑定失败（部分控件可能无响应）：' + (e && e.message || e) +
+        '\n\n' + (e && e.stack || ''));
+    }
+
+    try {
+      resize();
+    } catch (e) {
+      appendFatal('画布尺寸初始化失败：' + (e && e.message || e));
+    }
+
+    try {
+      window.addEventListener('resize', resize);
+      // 窗口尺寸变了，框选面板里那块画布的显示尺寸也会变 —— 选区框要跟着重新贴上去
+      window.addEventListener('resize', function () { if (cropDraft) cropLayout(); });
+      window.addEventListener('keydown', onKey);
+    } catch (e) { /* 忽略：这两个不是关键路径 */ }
+
+    var glError = null;
+    try {
+      glCtx = STC.gl.create(canvas);
+      R = STC.renderer.create(glCtx, canvas);
+      if (!R.build()) {
+        glError = '着色器编译/链接失败，画面不会正常显示。\n\n' + glCtx.errors.join('\n\n');
+      }
+    } catch (e) {
+      glError = 'WebGL 初始化失败：' + (e && e.message || e) + '\n\n' + (e && e.stack || '');
+    }
+    if (glError) {
+      fatal(glError);
+      return;
+    }
+
+    try {
+      var q = new URLSearchParams(location.search);
+      if (q.get('hold') === '1') document.body.dataset.hold = '1';
+      // ?banddebug=1：四个立面涂成红/绿/蓝/黄，用来确认它们都画出来了
+      if (q.get('banddebug') === '1') state.bandDebug = true;
+      if (q.get('bands') === '0') state.showBands = false;
+      if (q.get('demo')) {
+        loadPaths(parseDemo(q.get('demo'), parseInt(q.get('n') || '0', 10)));
+      } else {
+        status('拖入一批照片，或点「打开照片」' + hintLimits());
+      }
+      loop();
+    } catch (e) {
+      fatal('启动收尾阶段失败：' + (e && e.message || e) + '\n\n' + (e && e.stack || ''));
+    }
+  }
+
+  function hintLimits() {
+    return '　（单张纹理上限 ' + glCtx.info.maxTextureSize + '×' + glCtx.info.maxTextureSize +
+      '，纹理预算 ' + Math.round(STC.seq.RAM_BUDGET / 1048576) + ' MB）';
+  }
+
+  function fatal(msg) {
+    var el = $('fatal');
+    fatalText = msg;
+    el.textContent = msg;
+    el.setAttribute('title', msg);
+    showFatal();
+    veil(false);
+    status('启动失败');
+  }
+
+  function status(s) { $('status').textContent = s; }
+
+  /* ============================================================== 相机 */
+  /* 真正的计算在 55-view.js 里（纯函数，Node 里可逐值断言）；
+     这里只负责把当前的几何/相机/视口喂进去。 */
+
+  function camParams() {
+    var geo = state.seq ? state.seq.geo : { planeW: 1, planeH: 1, depth: 1.6 };
+    return STC.view.camParams(geo, cam, viewport);
+  }
+
+  function applyView(name) {
+    if (name === 'front') { cam.az = 0; cam.el = 0; cam.zoom = 1; cam.panU = cam.panV = 0; }
+    else if (name === 'iso') { cam.az = DEFAULT_VIEW.az; cam.el = DEFAULT_VIEW.el; cam.zoom = 1; cam.panU = cam.panV = 0; }
+    else if (name === 'top') { cam.az = 0; cam.el = 88; cam.zoom = 1; cam.panU = cam.panV = 0; }
+    else if (name === 'reset') { cam.az = DEFAULT_VIEW.az; cam.el = DEFAULT_VIEW.el; cam.zoom = DEFAULT_VIEW.zoom; cam.panU = cam.panV = 0; }
+    segOn('viewMode', name === 'reset' ? 'iso' : name);
+  }
+
+  /* ============================================================== 每帧解算 */
+
+  function resolve(seq, ui, cur) {
+    return STC.view.resolve(seq, ui, cur);
+  }
+
+  /* ========================================================== 纹理上传 */
+  /*
+   * 纹理是**按需**上传的，但最终必须把全部帧都传完 ——
+   * 否则没传到的帧会拿不到纹理，在 WebGL 里采样成纯白（或品红）。
+   * 所以这里分成两段：
+   *   1. ensureFrames(near) —— 优先把当前帧附近传好，保证立刻有画可看；
+   *   2. 后台渐进循环 —— 有空就把剩下的补上，并且随着你拖滑块不断重新排序，
+   *      始终优先保证"当前看得到的那些帧"是齐的。
+   * 每传几张就让出主线程，否则几百张图会把页面卡死。
+   */
+  var uploadGen = 0;
+  var uploadWant = 0;
+  var uploadRunning = false;
+
+  /** 按到 want 的距离排出上传顺序（近的优先） */
+  function uploadOrder(seq, want) {
+    var order = [];
+    var n = seq.frames.length;
+    for (var d = 0; d < n; d++) {
+      if (want - d >= 0) order.push(want - d);
+      if (d > 0 && want + d < n) order.push(want + d);
+    }
+    return order;
+  }
+
+  /**
+   * 把离 want 最近的若干帧传好。
+   * @param {number} want 目标帧
+   * @param {number} limit 最多传多少帧（传 Infinity 表示全部）
+   */
+  async function ensureFrames(want, limit) {
+    var seq = state.seq;
+    if (!seq) return 0;
+    var order = uploadOrder(seq, want);
+    var max = limit === undefined ? Infinity : limit;
+    var done = 0;
+    for (var k = 0; k < order.length && done < max; k++) {
+      if (state.signal.cancelled) break;
+      var f = seq.frames[order[k]];
+      if (!f.texture && !f.textureFailed && f.bitmap) {
+        R.uploadFrame(f, state.nearest ? 'nearest' : 'linear');
+        done++;
+        if (done % 4 === 0) { hud(); await tick(); }
+      }
+    }
+    hud();
+    return done;
+  }
+
+  /**
+   * 后台把剩余帧补齐。它是**幂等且可重入**的：重复调用只会更新"优先目标"，
+   * 不会叠加多个循环；换新序列时 uploadGen 一变，旧循环自己退出。
+   */
+  async function uploadRemaining() {
+    uploadWant = state.frame;
+    if (uploadRunning) return;
+    uploadRunning = true;
+    var gen = uploadGen;
+    try {
+      while (gen === uploadGen && !state.signal.cancelled && state.seq) {
+        // 每次重新取一遍顺序：用户拖了滑块，优先目标就跟着变
+        var want = uploadWant;
+        var moved = await ensureFrames(want, 8);
+        if (moved === 0 && want === uploadWant) break;   // 这一轮没得传了，收工
+        await tick();
+      }
+    } finally {
+      if (gen === uploadGen) uploadRunning = false;
+    }
+    hud();
+  }
+
+  function cancelUploads() { uploadGen++; uploadRunning = false; }
+
+  function tick() { return new Promise(function (r) { setTimeout(r, 0); }); }
+
+  /* ============================================================== 渲染 */
+
+  function frame() {
+    if (!state.seq || !R) return;
+    var cur = Math.min(state.frame, state.seq.frames.length - 1);
+    var res = resolve(state.seq, state, cur);
+    var cp = camParams();
+    var out = R.render({
+      seq: state.seq, resolved: res, cam: cp,
+      proj: cp.proj, view: cp.view,
+      projOrtho: cp.ortho, pointScale: cp.scale,
+      viewport: viewport,
+      ui: {
+        otherMode: state.otherMode, edgeMode: state.edgeMode,
+        showBands: state.showBands, bandDebug: state.bandDebug,
+        dotSize: state.dotSize, square: state.square,
+        thickness: state.thickness,
+        lumWeight: state.lumWeight, lumThreshold: state.lumThreshold,
+        lumDir: state.lumDir,
+        outline: state.outline, edgeThreshold: state.edgeThreshold,
+        clipOn: state.clip, clip: clipVec4(),
+        showFrameOutline: state.showFrameOutline,
+        showCube: state.showCube, showAxis: state.showAxis
+      }
+    });
+    lastStats = { res: res.stats, out: out, cam: cp };
+    hud();
+  }
+
+  var lastStats = null;
+  var rafPending = false;
+  var running = true;
+
+  function loop() {
+    if (!running) return;
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(function () { rafPending = false; frame(); });
+    }
+    requestAnimationFrame(loop);
+  }
+
+  /** 停掉渲染循环。浏览器里用不到，Node 自检必须调它，否则事件循环永不退出。 */
+  function stop() {
+    running = false;
+  }
+
+  function invalidate() {
+    // 下一帧 rAF 自然会重画；这里把状态暴露到 DOM 上，供无头自检读取
+    document.body.dataset.frame = String(state.frame);
+    document.body.dataset.renderTick = String(++renderTick);
+    // 用户换了帧：让后台上传循环把优先目标跟过去
+    uploadWant = state.frame;
+  }
+
+  var renderTick = 0;
+
+  function hud() {
+    if (!lastStats || !state.seq) { $('hud').textContent = ''; return; }
+    var s = lastStats.res, o = lastStats.out;
+    var mem = 0;
+    var uploaded = 0;
+    for (var i = 0; i < state.seq.frames.length; i++) {
+      if (state.seq.frames[i].texture) { mem += state.seq.frames[i].bytes; uploaded++; }
+    }
+    var pts = 0;
+    for (var j = 0; j < state.seq.frames.length; j++) {
+      if (state.seq.frames[j].pointVao) pts += state.seq.frames[j].pointVao.count;
+    }
+    var bits = [
+      '帧 ' + (state.frame + 1) + '/' + s.total,
+      '已上传 ' + uploaded + '/' + s.total + ' 帧（' + (mem / 1048576).toFixed(1) + ' MB 显存）',
+      '不透明 ' + s.opaque + ' · 半透明 ' + s.ghost + ' · 点云 ' + (pts / 1e6).toFixed(2) + 'M 点',
+      '侧面 ' + (state.seq.edgeBytes ? (state.seq.edgeBytes / 1048576).toFixed(1) + ' MB' : '关闭'),
+      '绘制 ' + o.planeDraws + ' 次平面 + ' + (o.pointDraws ? '1 次点云实例' : '0')
+    ];
+    // 切割生效时把选区也写在画面上 —— 否则"画面缺了一块"会像故障
+    if (state.clip) bits.push('切割 ' + Math.round(STC.view.clipArea(state.clipRect) * 100) + '%');
+    $('hud').textContent = bits.join('  ·  ');
+    clipInfoTick();
+  }
+
+  /**
+   * 面板里那行选区说明要跟着**当前帧**走（它显示的是"本帧约多少像素"）。
+   * 只在有选区时更新，并且只在文本真的变了才写 DOM —— 它每帧都会被调到。
+   */
+  function clipInfoTick() {
+    var el = $('clipInfo');
+    if (!el) return;
+    if (STC.view.clipIsFull(state.clipRect) && el.textContent === '选区：整个画面（未切割）') return;
+    var t = clipInfoText();
+    if (el.textContent !== t) el.textContent = t;
+  }
+
+  /* ============================================================== 尺寸 */
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(1, Math.round(canvas.clientWidth * dpr));
+    var h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
+    viewport = { w: w, h: h, dpr: dpr };
+    if (document.body) document.body.dataset.viewport = w + 'x' + h;
+  }
+
+  /* ============================================================== 加载 */
+
+  function parseDemo(spec, n) {
+    // 支持 ?demo=./sample/frame_%03d.png&n=24  或  ?demo=a.jpg,b.jpg
+    if (spec.indexOf(',') >= 0) return spec.split(',').map(trim).filter(Boolean);
+    if (spec.indexOf('%') >= 0) {
+      var pad = /%0?(\d+)d/.exec(spec);
+      var width = pad ? parseInt(pad[1], 10) : 3;
+      var out = [];
+      var count = n > 0 ? n : 24;
+      for (var i = 0; i < count; i++) {
+        out.push(spec.replace(/%0?\d+d/, String(i).padStart(width, '0')));
+      }
+      return out;
+    }
+    return [spec];
+  }
+
+  function trim(s) { return s.trim(); }
+
+  /** 从一批 URL 加载（用于无头自检与示例；日常用不到） */
+  async function loadPaths(paths) {
+    if (state.busy) return;
+    veil(true, '正在读取 ' + paths.length + ' 张照片…', 0);
+    try {
+      var files = [];
+      for (var i = 0; i < paths.length; i++) {
+        var resp = await fetch(paths[i]);
+        if (!resp.ok) throw new Error(paths[i] + ' → HTTP ' + resp.status);
+        var blob = await resp.blob();
+        files.push(new File([blob], paths[i].split('/').pop(), { type: blob.type }));
+      }
+      await ingest(files);
+    } catch (e) {
+      veil(false);
+      fatal('加载示例失败：' + (e && e.message || e) + '\n' +
+        '（file:// 下 fetch 会被浏览器拦掉，请用本地服务打开。）');
+    }
+  }
+
+  async function loadFiles(files) {
+    if (state.busy) return;
+    state.files = Array.from(files);
+    await ingest(state.files);
+  }
+
+  async function ingest(files) {
+    state.busy = true;
+    state.signal = { cancelled: false };
+    state.loadError = null;
+    clearFatal();
+    resetSeq();
+
+    var t0 = performance.now();
+    // 抽帧速度的滚动估计（400ms 窗口），用来显示"帧/秒"和"约还需几秒"
+    var videoRate = 0;
+    var videoRateMark = { t: 0, frames: 0 };
+    veil(true, '正在排序…', 0);
+    try {
+      var resOpt = { longEdge: 0, autoLongEdge: false };
+      if (state.resMode === 'auto') resOpt.autoLongEdge = true;
+      else if (state.resMode !== 'orig') resOpt.longEdge = parseInt(state.resMode, 10) || 0;
+
+      var seq = await STC.seq.load(files, {
+        sort: state.sort,
+        maxTextureSize: glCtx.info.maxTextureSize,
+        budget: STC.seq.defaultBudget(),
+        longEdge: resOpt.longEdge,
+        autoLongEdge: resOpt.autoLongEdge,
+        videoStep: state.videoStep,
+        depthRatio: state.spacing,
+        signal: state.signal,
+        onProgress: function (p) {
+          if (p.phase === 'exif') {
+            veil(true, '正在读取拍摄时间… ' + p.done + '/' + p.total, p.done / p.total * 0.2);
+          } else if (p.phase === 'measure') {
+            veil(true, '正在确定序列尺寸…', 0.2);
+          } else if (p.phase === 'video-meta') {
+            veil(true, '正在读取视频信息… ' + (p.done + 1) + '/' + p.total, 0.2);
+          } else if (p.phase === 'video-probe') {
+            veil(true, '正在探测视频帧率… ' + (p.name || ''), 0.22);
+          } else if (p.phase === 'video') {
+            /*
+             * 抽帧按"处理能力"推进：跟不上就自动降速（必要时暂停），
+             * 所以可能要花得比视频时长更久 —— 进度里要给出速度和预计剩余时间，
+             * 否则用户会以为卡死了。
+             */
+            var frac = p.duration > 0 ? Math.min(1, p.time / p.duration) : 0;
+            var mm = Math.floor(p.time / 60), ss = (p.time % 60).toFixed(1);
+            var now = performance.now();
+            if (videoRateMark.t !== now || !videoRateMark.frames) { /* 首次 */ }
+            if (videoRateMark.frames && now > videoRateMark.t + 400 && p.frames > videoRateMark.frames) {
+              videoRate = (p.frames - videoRateMark.frames) / ((now - videoRateMark.t) / 1000);
+              videoRateMark = { t: now, frames: p.frames };
+            } else if (!videoRateMark.frames) {
+              videoRateMark = { t: now, frames: p.frames };
+            }
+            var eta = '';
+            if (videoRate > 0.2 && p.seen > 0 && p.duration > 0) {
+              var remainFrames = Math.max(0, Math.round(p.duration * (p.seen / Math.max(p.time, 0.001)) * (1 / (p.keepEvery || 1))) - p.frames);
+              if (isFinite(remainFrames) && remainFrames > 0) eta = '　约还需 ' + Math.ceil(remainFrames / videoRate) + ' 秒';
+            }
+            var slow = p.playbackRate && p.playbackRate < 0.99
+              ? '　跟不上，已降到 ' + p.playbackRate.toFixed(2) + '× 速度（保帧优先）' : '';
+            veil(true, '正在抽取视频帧 ' + (p.name || '') + '　' +
+              (mm > 0 ? mm + '分' : '') + ss + ' 秒 / ' +
+              (p.duration > 0 ? p.duration.toFixed(1) + ' 秒' : '?') +
+              '　已抓 ' + p.frames + ' 帧（呈现 ' + p.seen + '）' +
+              (videoRate > 0.2 ? '　' + videoRate.toFixed(1) + ' 帧/秒' : '') + eta + slow,
+              0.25 + frac * 0.55, true);
+          } else {
+            veil(true, '正在解码 ' + p.done + '/' + p.total, 0.2 + p.done / p.total * 0.6);
+          }
+        }
+      });
+      state.seq = seq;
+      state.frame = 0;
+      // 统一用第一帧的宽高比（按短边对齐后不拉伸），其余帧保持各自原始纹理
+      seq.geo = STC.seq.layout(1, seq.baseH / seq.baseW, seq.frames.length, state.spacing);
+      $('frame').max = String(seq.frames.length - 1);
+      $('frame').disabled = false;
+      $('frame').value = '0';
+      $('lbFrame').textContent = '1 / ' + seq.frames.length;
+      $('lbThick').textContent = thickText(state.thickness);   // 有了照片宽度才能换算成像素
+      document.body.dataset.frames = String(seq.frames.length);
+      document.body.dataset.baseSize = seq.baseW + 'x' + seq.baseH;
+      document.body.dataset.origSize = seq.origW + 'x' + seq.origH;
+      document.body.dataset.scaled = seq.scaled ? '1' : '0';
+
+      veil(true, '正在上传纹理…', 0.8);
+      // 先把当前帧附近的传好，保证立刻有画可看；剩下的交给后台补齐
+      await ensureFrames(0, 24);
+      uploadRemaining();
+
+      if (state.showBands && state.edgeMode !== 'off') {
+        veil(true, '正在生成厚度条…', 0.85);
+        await tick();
+        R.buildEdgeAtlas(seq, state.edgeMode, function (p) {
+          veil(true, '正在生成厚度条 ' + p.done + '/' + p.total, 0.85 + p.done / p.total * 0.15);
+        });
+      }
+      if (state.otherMode === 'points') await ensurePoints();
+
+      // 点云密度
+      var stride = STC.seq.pointStride(seq.frames, STC.seq.POINT_BUDGET);
+      document.body.dataset.stride = String(stride);
+      document.body.dataset.edgeMode = state.edgeMode;
+      document.body.dataset.textureBytes = String(seq.bytes);
+
+      veil(false);
+      var ms = Math.round(performance.now() - t0);
+      var resNote = seq.scaled
+        ? '每帧 ' + seq.baseW + '×' + seq.baseH + '（原图 ' + seq.origW + '×' + seq.origH +
+          ' → 长边缩到 ' + seq.longEdge + (seq.autoChosen ? '，自动适配' : '') + '）'
+        : '每帧 ' + seq.baseW + '×' + seq.baseH + '（原画质，未缩放）';
+      var vidNote = '';
+      if (seq.video && seq.video.length) {
+        for (var vk = 0; vk < seq.video.length; vk++) {
+          var vv = seq.video[vk];
+          vidNote += '　· 视频 ' + vv.name + '：' + vv.duration.toFixed(1) + ' 秒 → ' +
+            vv.kept + ' 帧' + (vv.keepEvery > 1 ? '（每 ' + vv.keepEvery + ' 帧取 1，' : '（') +
+            '呈现 ' + vv.seen + ' 帧' + (vv.dropped ? '，丢 ' + vv.dropped : '') + '）';
+        }
+      }
+      status('已载入 ' + seq.frames.length + ' 帧 · ' + resNote + ' · ' +
+        (seq.bytes / 1048576).toFixed(1) + ' MB 显存 · 用时 ' + ms + ' ms' + vidNote);
+      if (seq.notes && seq.notes.length) {
+        appendFatal('视频抽帧提示：\n' + seq.notes.join('\n\n'));
+      }
+      if (seq.failed && seq.failed.length) {
+        appendFatal('以下内容被跳过：\n' + seq.failed.join('\n'));
+      }
+      if (seq.trimmed) appendFatal('帧数超过 ' + STC.seq.MAX_FRAMES + '，等间隔抽稀掉了 ' + seq.trimmed + ' 帧。');
+      if (seq.budgetHit) {
+        var bh = seq.budgetHit;
+        appendFatal('显存预算已满：载入到第 ' + bh.at + '/' + bh.total +
+          ' 帧时停止（已用 ' + bh.usedMB + ' MB，本帧还需 ' + bh.needMB +
+          ' MB，预算 ' + bh.budgetMB + ' MB）。\n\n' +
+          (bh.kind === 'video'
+            ? '这个视频估计共 ' + bh.estimate + ' 帧，按当前分辨率只装得下 ' + (bh.kept || bh.at) +
+              ' 帧。要留住整段，请把「视频抽帧」改成「每 2 / 3 / 5 帧取 1」，' +
+              '或把顶栏「分辨率」改成更低的值。'
+            : '相册有 ' + seq.requested + ' 帧，全都要的话请把顶栏的「分辨率」改成' +
+              '「自动适配」或固定的 1920 / 1280 / 960 —— ' +
+              '或者保持原画质、分两批做。') +
+          '\n程序不会背着你压缩像素，也不会替你丢帧。');
+      }
+      if (seq.noExif) {
+        status($('status').textContent + '　（' + seq.noExif + ' 张没有 EXIF 拍摄时间，按文件名排在其后）');
+      }
+      // 换了序列：选区可能已经退化成"整幅"（例如整批照片换了尺寸），面板要跟着刷新
+      refreshClipUI();
+      applyView('iso');
+      invalidate();
+    } catch (e) {
+      veil(false);
+      var msg = String(e && e.message || e);
+      if (msg.indexOf('已取消') < 0) fatal('载入失败：\n' + msg);
+    } finally {
+      state.busy = false;
+    }
+  }
+
+  function resetSeq() {
+    cancelUploads();
+    if (state.seq) {
+      R.releaseFrames(state.seq.frames);
+      R.releaseEdgeTextures(state.seq);
+      state.seq = null;
+    }
+  }
+
+  /** 惰性建点云缓冲；只对「会被显示的点云帧」建 */
+  async function ensurePoints() {
+    var seq = state.seq;
+    if (!seq) return;
+    var stride = STC.seq.pointStride(seq.frames, STC.seq.POINT_BUDGET);
+    for (var i = 0; i < seq.frames.length; i++) {
+      var f = seq.frames[i];
+      if (f.pointVao) continue;
+      if (!f.texture) R.uploadFrame(f, state.nearest ? 'nearest' : 'linear');
+      R.buildPoints(f, stride);
+      if (i % 2 === 1) {
+        veil(true, '正在建点云 ' + (i + 1) + '/' + seq.frames.length, (i + 1) / seq.frames.length * 0.15);
+        await tick();
+      }
+    }
+  }
+
+  function dropAllPoints() {
+    if (!state.seq) return;
+    for (var i = 0; i < state.seq.frames.length; i++) R.dropPoints(state.seq.frames[i]);
+  }
+
+  function rebuildEdgeAtlas(mode) {
+    if (!state.seq) return;
+    state.edgeMode = mode;
+    if (mode === 'off') {
+      R.releaseEdgeTextures(state.seq);
+      document.body.dataset.edgeMode = 'off';
+      return;
+    }
+    veil(true, '正在生成厚度条…', 0);
+    setTimeout(function () {
+      R.buildEdgeAtlas(state.seq, mode, function (p) {
+        veil(true, '正在生成厚度条 ' + p.done + '/' + p.total, p.done / p.total);
+      });
+      document.body.dataset.edgeMode = mode;
+      veil(false);
+    }, 0);
+  }
+
+  /**
+   * 厚度条总开关。关掉时连图集一起释放；重新打开时按当前模式重建。
+   * @param {boolean} on
+   */
+  function setBands(on) {
+    state.showBands = !!on;
+    if ($('showBands')) $('showBands').checked = state.showBands;
+    document.body.dataset.showBands = state.showBands ? '1' : '0';
+    if (!state.seq) { invalidate(); return; }
+    if (state.showBands) {
+      rebuildEdgeAtlas(state.edgeMode === 'off' ? 'edge' : state.edgeMode);
+    } else {
+      R.releaseEdgeTextures(state.seq);
+      document.body.dataset.edgeMode = 'off';
+    }
+    invalidate();
+  }
+
+  /* ============================================================== 遮罩 */
+
+  function veil(on, text, frac, cancellable) {
+    var v = $('veil');
+    var c = $('veilCancel');
+    if (on) {
+      v.classList.add('on');
+      if (text) $('veilText').textContent = text;
+      $('veilBar').style.width = Math.round((frac || 0) * 100) + '%';
+      if (c) c.style.display = cancellable ? '' : 'none';
+    } else {
+      $('veilBar').style.width = '100%';
+      v.classList.remove('on');
+      if (c) c.style.display = 'none';
+    }
+  }
+
+  /*
+   * 提示条：显示 3 秒后渐隐消失。
+   *
+   * 之所以要有这个：视频抽帧那类提示（丢帧、降速、抽稀）**是必然会出现的**
+   * —— 丢帧在多任务系统里无法完全避免 —— 如果一直挂在画面上，用户每次都要
+   * 手动去关，最后就变成"永远有一块红字挡着"。
+   * 所以：显示 3 秒 → 0.9 秒淡出 → 不再占位；想看完整内容点一下它就会再显示 3 秒
+   * （完整文本同时留在 title 里，鼠标悬停也能看到）。
+   */
+  var FATAL_HOLD_MS = 3000;
+  var fatalTimer = null;
+  var fatalFadeTimer = null;
+
+  function appendFatal(msg) {
+    var el = $('fatal');
+    if (!el) return;
+    var text = (el.textContent ? el.textContent + '\n\n' : '') + msg;
+    fatalText = text;
+    el.textContent = text;
+    el.setAttribute('title', text);
+    showFatal();
+  }
+
+  function showFatal() {
+    var el = $('fatal');
+    if (!el || !fatalText) return;
+    el.classList.add('on');
+    el.classList.remove('out');
+    if (fatalTimer) clearTimeout(fatalTimer);
+    if (fatalFadeTimer) clearTimeout(fatalFadeTimer);
+    fatalTimer = setTimeout(function () {
+      el.classList.add('out');
+      // 淡出结束后彻底不占位（pointer-events 已在 CSS 里关掉）
+      fatalFadeTimer = setTimeout(function () { el.classList.remove('on'); }, 1000);
+    }, FATAL_HOLD_MS);
+  }
+
+  function armFatalDismiss() {
+    var el = $('fatal');
+    if (!el) return;
+    el.addEventListener('click', function () { showFatal(); });
+  }
+
+  /** 清掉提示（换一批照片时用） */
+  function clearFatal() {
+    var el = $('fatal');
+    if (fatalTimer) clearTimeout(fatalTimer);
+    if (fatalFadeTimer) clearTimeout(fatalFadeTimer);
+    fatalText = '';
+    if (el) {
+      el.textContent = '';
+      el.classList.remove('on');
+      el.classList.remove('out');
+    }
+  }
+
+  var fatalText = '';
+
+  /* ============================================== 切割（选区）与框选面板 */
+
+  /** 提交给着色器的选区向量 (x0,y0,x1,y1)；关掉切割时也照传，着色器用 uClipOn 判断 */
+  function clipVec4() {
+    var c = STC.view.normalizeClip(state.clipRect);
+    return [c.x0, c.y0, c.x1, c.y1];
+  }
+
+  /** 当前这一帧的像素尺寸（用来把归一化选区显示成"选了多少像素"） */
+  function clipFrameSize() {
+    if (!state.seq || !state.seq.frames.length) return null;
+    var f = state.seq.frames[Math.min(state.frame, state.seq.frames.length - 1)];
+    if (!f || !f.width) return null;
+    return { w: f.width, h: f.height, name: f.name };
+  }
+
+  function clipInfoText() {
+    var c = STC.view.normalizeClip(state.clipRect);
+    if (STC.view.clipIsFull(c)) return '选区：整个画面（未切割）';
+    var pct = Math.round(STC.view.clipArea(c) * 100);
+    var fs = clipFrameSize();
+    var px = fs
+      ? '，本帧约 ' + Math.round((c.x1 - c.x0) * fs.w) + '×' + Math.round((c.y1 - c.y0) * fs.h) +
+        ' 像素 @ (' + Math.round(c.x0 * fs.w) + ', ' + Math.round(c.y0 * fs.h) + ')'
+      : '';
+    return '选区：画面面积的 ' + pct + '%' + px;
+  }
+
+  function refreshClipUI() {
+    var info = $('clipInfo');
+    if (info) info.textContent = clipInfoText();
+    var box = $('clip');
+    if (box) {
+      box.checked = !!state.clip;
+      // 选区就是整幅画面时，勾上也没有任何效果 —— 直接置灰，避免"我勾了却没变化"
+      var full = STC.view.clipIsFull(state.clipRect);
+      box.disabled = full;
+      box.parentNode && box.parentNode.classList &&
+        box.parentNode.classList.toggle('dim', full);
+    }
+    var edit = $('clipEdit');
+    if (edit) edit.textContent = STC.view.clipIsFull(state.clipRect) ? '框选区域…' : '重新框选…';
+    var all = $('clipAll');
+    if (all) all.disabled = STC.view.clipIsFull(state.clipRect);
+    document.body.dataset.clip = state.clip ? '1' : '0';
+  }
+
+  /**
+   * 设置选区（唯一入口）。
+   * @param {object} r 归一化选区（任意方向都会被规整）
+   * @param {boolean} [on] 是否同时打开切割；省略则保持当前开关
+   */
+  function setClipRect(r, on) {
+    var c = STC.view.normalizeClip(r);
+    var fs = clipFrameSize();
+    // 至少留 1 像素，否则会出现"整幅都看不见"这种看起来像 bug 的状态
+    state.clipRect = fs ? STC.view.clipAtLeastOnePixel(c, fs.w, fs.h) : c;
+    if (on !== undefined) state.clip = !!on;
+    if (STC.view.clipIsFull(state.clipRect)) state.clip = false;
+    refreshClipUI();
+    invalidate();
+  }
+
+  function clearClip() { setClipRect({ x0: 0, y0: 0, x1: 1, y1: 1 }, false); }
+
+  /* ---- 框选面板：在一张照片上画矩形 ---- */
+  var cropDraft = null;   // { rect, back, drag:{mode,a} }
+
+  function cropOpen() {
+    var fs = state.seq && state.seq.frames.length
+      ? state.seq.frames[Math.min(state.frame, state.seq.frames.length - 1)] : null;
+    var box = $('crop');
+    if (!fs || !fs.bitmap) { appendFatal('还没有可框选的画面：请先打开一批照片或一段视频。'); return; }
+    if (!box) return;
+    var cv = $('cropCanvas');
+    if (cv) {
+      cv.width = fs.width;
+      cv.height = fs.height;
+      var c2 = cv.getContext ? cv.getContext('2d') : null;
+      if (c2) {
+        try { c2.drawImage(fs.bitmap, 0, 0, fs.width, fs.height); }
+        catch (e) { appendFatal('这张照片画不出来，无法框选：' + (e && e.message || e)); return; }
+      }
+    }
+    cropDraft = { rect: STC.view.normalizeClip(state.clipRect), back: state.clipRect, drag: null };
+    box.hidden = false;
+    document.body.dataset.crop = '1';
+    cropLayout();
+    cropInfo();
+  }
+
+  function cropClose(apply) {
+    var box = $('crop');
+    if (cropDraft && apply) setClipRect(cropDraft.rect, true);
+    else if (cropDraft) setClipRect(cropDraft.back, state.clip);
+    cropDraft = null;
+    if (box) box.hidden = true;
+    document.body.dataset.crop = '0';
+  }
+
+  /**
+   * 画布（照片那块区域）在屏幕上的矩形。
+   *
+   * **一切坐标换算都必须以它为基准** —— 外层 `#cropWrap` 是 flex 子项，
+   * 默认会被拉伸到整个面板的宽度，而画布受 max-width/max-height 限制常常窄得多。
+   * 早先这里用的是 wrap 的矩形，于是"拖着鼠标画出来的框"看着跟手，
+   * 换算出的 uv 却整体偏小 —— 用户看到的正是**选出来的区域被挪到了画面左边**。
+   */
+  function cropBox() {
+    var cv = $('cropCanvas');
+    if (cv && cv.getBoundingClientRect) {
+      var r = cv.getBoundingClientRect();
+      if (r && r.width > 0 && r.height > 0) return r;
+    }
+    var wrap = $('cropWrap');
+    if (wrap && wrap.getBoundingClientRect) return wrap.getBoundingClientRect();
+    return { left: 0, top: 0, width: 400, height: 300 };
+  }
+
+  /** 把选区画到面板上（px 定位，锚在画布的真实位置上，不受外面容器宽度影响） */
+  function cropLayout() {
+    var el = $('cropRect');
+    if (!el || !cropDraft) return;
+    var wrap = $('cropWrap');
+    var wr = wrap && wrap.getBoundingClientRect ? wrap.getBoundingClientRect() : { left: 0, top: 0 };
+    var cb = cropBox();
+    var c = cropDraft.rect;
+    var x0 = c.x0 * cb.width, y0 = c.y0 * cb.height;
+    el.style.left = (cb.left - wr.left + x0) + 'px';
+    el.style.top = (cb.top - wr.top + y0) + 'px';
+    el.style.width = Math.max(0, (c.x1 - c.x0) * cb.width) + 'px';
+    el.style.height = Math.max(0, (c.y1 - c.y0) * cb.height) + 'px';
+  }
+
+  function cropInfo() {
+    var el = $('cropInfo');
+    if (!el || !cropDraft) return;
+    var c = cropDraft.rect;
+    var fs = clipFrameSize();
+    var px = fs ? '　' + Math.round((c.x1 - c.x0) * fs.w) + '×' + Math.round((c.y1 - c.y0) * fs.h) +
+      ' px @ (' + Math.round(c.x0 * fs.w) + ', ' + Math.round(c.y0 * fs.h) + ')' : '';
+    el.textContent = c.x0 <= 0 && c.y0 <= 0 && c.x1 >= 1 && c.y1 >= 1 ? '整个画面' : (Math.round(STC.view.clipArea(c) * 100) + '%' + px);
+  }
+
+  /** 鼠标坐标 → 归一化 uv（v=0 是图像顶部，与着色器一致）；基准是**画布** */
+  function cropUv(ev) {
+    var r = cropBox();
+    var clamp = function (x) { return x < 0 ? 0 : (x > 1 ? 1 : x); };
+    return {
+      u: clamp((ev.clientX - r.left) / Math.max(1, r.width)),
+      v: clamp((ev.clientY - r.top) / Math.max(1, r.height))
+    };
+  }
+
+  /** 手柄的命中容差：按"屏幕像素"给，换算成 uv（同样以画布为准） */
+  function cropTol() {
+    var r = cropBox();
+    return { du: 9 / Math.max(1, r.width), dv: 9 / Math.max(1, r.height) };
+  }
+
+  function cropDown(ev) {
+    if (!cropDraft) return;
+    var p = cropUv(ev);
+    var tol = cropTol();
+    // 手柄上按下时，手柄自己决定了模式（比坐标判定更准）
+    var h = ev.target && ev.target.dataset && ev.target.dataset.h;
+    var mode = h || STC.view.cropHit(cropDraft.rect, p.u, p.v, tol.du, tol.dv);
+    cropDraft.drag = { mode: mode, a: p };
+    if (mode === 'new') cropDraft.rect = { x0: p.u, y0: p.v, x1: p.u, y1: p.v };
+    if (ev.preventDefault) ev.preventDefault();
+    if (ev.stopPropagation) ev.stopPropagation();
+    cropLayout();
+    cropInfo();
+  }
+
+  function cropMove(ev) {
+    if (!cropDraft || !cropDraft.drag) return;
+    var p = cropUv(ev);
+    cropDraft.rect = STC.view.cropDrag(cropDraft.rect, cropDraft.drag.mode, cropDraft.drag.a, p);
+    cropLayout();
+    cropInfo();
+    if (ev.preventDefault) ev.preventDefault();
+  }
+
+  function cropUp(ev) {
+    if (!cropDraft || !cropDraft.drag) return;
+    var fs = clipFrameSize();
+    // 拖出来的矩形小于 1 像素时视为"没选"，保持原样而不是给一个空选区
+    var c = cropDraft.rect;
+    if (fs && (c.x1 - c.x0) * fs.w < 1.5 && (c.y1 - c.y0) * fs.h < 1.5) {
+      cropDraft.rect = STC.view.normalizeClip(state.clipRect);
+    }
+    cropDraft.drag = null;
+    cropLayout();
+    cropInfo();
+    if (ev && ev.preventDefault) ev.preventDefault();
+  }
+
+  /* ============================================================== UI */
+
+  function segOn(id, value) {
+    var box = $(id);
+    if (!box) return;
+    var bs = box.querySelectorAll('button');
+    for (var i = 0; i < bs.length; i++) {
+      bs[i].classList.toggle('on', bs[i].dataset.v === value);
+    }
+  }
+
+  function bindUI() {
+    /*
+     * 选文件的主路径**不在这里**，也不依赖 JS：
+     * index.html 里「打开照片」是一个铺满按钮的透明 <input type="file">，
+     * 用户点到的就是 input 本身，浏览器原生打开对话框。
+     * 这里只补两件事：接住 change 事件、以及一个键盘/程序触发的备用入口。
+     */
+    var fileEl = $('file');
+    if (fileEl) {
+      fileEl.addEventListener('change', function (e) {
+        if (e.target.files && e.target.files.length) loadFiles(e.target.files);
+      });
+    } else {
+      appendFatal('界面里缺少 id="file" 的文件选择控件，无法加载照片。');
+    }
+
+    // 备用入口：Alt+O 或代码调用。正常点击走的是 input 原生行为。
+    var openEl = $('open');
+    if (openEl) {
+      openEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPicker(); }
+      });
+    }
+
+    $('sort').addEventListener('change', function (e) {
+      state.sort = e.target.value;
+      if (state.files) ingest(state.files);
+    });
+
+    $('res').addEventListener('change', function (e) {
+      state.resMode = e.target.value;
+      if (state.files) ingest(state.files);
+    });
+
+    // 视频抽帧步长：1 = 每一帧都保留（默认）
+    if ($('videoStep')) {
+      $('videoStep').value = String(state.videoStep);
+      $('videoStep').addEventListener('change', function (e) {
+        state.videoStep = Math.max(1, parseInt(e.target.value, 10) || 1);
+        if (state.files) ingest(state.files);
+      });
+    }
+
+    // 「取消」：抽帧是实时的，长视频必须能中途停下来
+    if ($('veilCancel')) {
+      $('veilCancel').addEventListener('click', function () {
+        if (state.signal) state.signal.cancelled = true;
+        $('veilText').textContent = '正在取消…';
+      });
+    }
+
+    $('frame').addEventListener('input', function (e) {
+      state.frame = parseInt(e.target.value, 10) || 0;
+      $('lbFrame').textContent = (state.frame + 1) + ' / ' + (state.seq ? state.seq.frames.length : '—');
+      invalidate();
+    });
+
+    $('allGhost').addEventListener('change', function (e) { state.allGhost = e.target.checked; invalidate(); });
+
+    slider('opCur', 'lbOpCur', function (v) { state.opCur = v; invalidate(); });
+    slider('opOther', 'lbOpOther', function (v) { state.opOther = v; invalidate(); });
+
+    segOn('otherMode', state.otherMode);
+    $('otherMode').addEventListener('click', async function (e) {
+      var v = e.target.dataset && e.target.dataset.v;
+      if (!v) return;
+      state.otherMode = v;
+      segOn('otherMode', v);
+      if (v === 'points') {
+        veil(true, '正在建点云…', 0);
+        await tick();
+        await ensurePoints();
+        veil(false);
+      } else {
+        dropAllPoints();
+      }
+      document.body.dataset.otherMode = v;
+      invalidate();
+    });
+
+    segOn('edgeMode', state.edgeMode);
+    $('edgeMode').addEventListener('click', function (e) {
+      var v = e.target.dataset && e.target.dataset.v;
+      if (!v) return;
+      state.edgeMode = v;
+      segOn('edgeMode', v);
+      if (state.showBands) rebuildEdgeAtlas(v);
+      else document.body.dataset.edgeMode = 'off';
+    });
+
+    /*
+     * 「显示厚度条」这一个开关管两件事：画不画、以及要不要留那四张图集纹理。
+     * 关掉时把图集释放掉（200 帧的图集也就几 MB，但没必要占着）。
+     */
+    $('showBands').addEventListener('change', function (e) {
+      setBands(e.target.checked);
+    });
+
+    $('bandDebug').addEventListener('change', function (e) {
+      state.bandDebug = e.target.checked;
+      document.body.dataset.bandDebug = state.bandDebug ? '1' : '0';
+      invalidate();
+    });
+
+    // 轮廓提取：一个开关 + 一个对比门槛
+    if ($('outline')) {
+      $('outline').addEventListener('change', function (e) {
+        state.outline = !!e.target.checked;
+        document.body.dataset.outline = state.outline ? '1' : '0';
+        invalidate();
+      });
+    }
+    if ($('edge')) {
+      slider('edge', 'lbEdge', function (v) { state.edgeThreshold = v; invalidate(); });
+    }
+
+    slider('dot', 'lbDot', function (v) { state.dotSize = v; invalidate(); });
+    slider('thick', 'lbThick', function (v) { state.thickness = v; invalidate(); }, thickText);
+    slider('spacing', 'lbSpacing', function (v) {
+      state.spacing = v;
+      // 帧距改了要重排几何；不重新解码，只重算 layout，所以是瞬间的
+      if (state.seq) {
+        state.seq.geo = STC.seq.layout(1, state.seq.baseH / state.seq.baseW,
+          state.seq.frames.length, v);
+      }
+      invalidate();
+    });
+    slider('lumW', 'lbLumW', function (v) { state.lumWeight = v; invalidate(); });
+    slider('lumT', 'lbLumT', function (v) { state.lumThreshold = v; invalidate(); });
+
+    segOn('lumDir', state.lumDir);
+    $('lumDir').addEventListener('click', function (e) {
+      var v = e.target.dataset && e.target.dataset.v;
+      if (!v) return;
+      state.lumDir = v;
+      segOn('lumDir', v);
+      document.body.dataset.lumDir = v;
+      invalidate();
+    });
+    document.body.dataset.lumDir = state.lumDir;
+    $('square').addEventListener('change', function (e) { state.square = e.target.checked; invalidate(); });
+    $('showOutline').addEventListener('change', function (e) {
+      state.showFrameOutline = e.target.checked; invalidate();
+    });
+    $('showCube').addEventListener('change', function (e) { state.showCube = e.target.checked; invalidate(); });
+    $('showAxis').addEventListener('change', function (e) { state.showAxis = e.target.checked; invalidate(); });
+
+    /*
+     * 切割：一个开关 + 一个框选面板。
+     * 开关只决定"选区生不生效"，选区本身存在 state.clipRect 里（归一化 uv），
+     * 所以关掉再打开不会丢掉已经框好的区域。
+     */
+    if ($('clip')) {
+      $('clip').addEventListener('change', function (e) {
+        state.clip = !!e.target.checked && !STC.view.clipIsFull(state.clipRect);
+        refreshClipUI();
+        invalidate();
+      });
+    }
+    if ($('clipEdit')) $('clipEdit').addEventListener('click', function () { cropOpen(); });
+    if ($('clipAll')) $('clipAll').addEventListener('click', function () { clearClip(); });
+
+    if ($('cropOk')) $('cropOk').addEventListener('click', function () { cropClose(true); });
+    if ($('cropCancel')) $('cropCancel').addEventListener('click', function () { cropClose(false); });
+    if ($('cropAll')) {
+      $('cropAll').addEventListener('click', function () {
+        if (!cropDraft) return;
+        cropDraft.rect = { x0: 0, y0: 0, x1: 1, y1: 1 };
+        cropLayout();
+        cropInfo();
+      });
+    }
+    // 框选面板上的鼠标/触摸：按下 → 拖动 → 松开
+    if ($('cropWrap')) {
+      $('cropWrap').addEventListener('mousedown', cropDown);
+      // touchstart 在元素上是非 passive 的，可以 preventDefault 阻止滚动
+      $('cropWrap').addEventListener('touchstart', cropDown, { passive: false });
+    }
+    if ($('crop')) {
+      // 监听挂在 document 上：拖到面板外面也要跟得住（否则一松手就停在边界）。
+      // touchmove 在 document 上默认是 passive 的，必须显式关掉才能 preventDefault。
+      document.addEventListener('mousemove', cropMove);
+      document.addEventListener('mouseup', cropUp);
+      document.addEventListener('touchmove', cropMove, { passive: false });
+      document.addEventListener('touchend', cropUp);
+      // 遮罩外面点一下 = 取消（与 Esc 一致）
+      $('crop').addEventListener('mousedown', function (e) {
+        if (e.target === $('crop')) cropClose(false);
+      });
+    }
+    refreshClipUI();
+
+    segOn('viewMode', 'iso');
+    $('viewMode').addEventListener('click', function (e) {
+      var v = e.target.dataset && e.target.dataset.v;
+      if (!v) return;
+      applyView(v);
+      invalidate();
+    });
+
+    $('shot').addEventListener('click', function () {
+      canvas.toBlob(function (b) {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(b);
+        a.download = 'space-time-cube-' + Date.now() + '.png';
+        a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+      }, 'image/png');
+    });
+
+    bindInput();
+  }
+
+  function slider(id, labelId, cb, fmt) {
+    var s = $(id);
+    if (!s) return;
+    // 只为同步"格式化后的显示值"而解析（例如 1.6 → "1.60"）
+    var parseLabel = function (text, fallback) {
+      var v = parseFloat(text);
+      return isFinite(v) ? v : fallback;
+    };
+    var show = function (v) { $(labelId).textContent = fmt ? fmt(v) : v.toFixed(2); };
+    var f = function () {
+      var v = parseFloat(s.value);
+      if (!isFinite(v)) return;      // 拿不到有效数字就什么都不做
+      show(v);
+      cb(v);
+    };
+    s.addEventListener('input', f);
+    if (String(s.value).trim() !== '') {
+      f();
+    } else {
+      // 元素上没有值（或值是空的）——只有显示标签可按 HTML 文本同步，
+      // 状态保持代码里的默认值。**绝不把 NaN 写进状态**：
+      // 它一旦进入几何，depth 会变成 null，整条渲染链路静默失效。
+      var fallback = parseLabel($(labelId).textContent, null);
+      if (fallback !== null) show(fallback);
+    }
+  }
+
+  /**
+   * 帧厚度的显示文案。
+   * 厚度是"占照片宽度的比例"，光看 0.020 没有直觉，所以同时给出两个换算法：
+   *   ≈N px  —— 换算成**原图像素**（用户要的就是"一个像素或更厚一点"这个量级）；
+   *   帧距的 X% —— 相对帧间距有多大，一眼能看出是不是被夹住了。
+   */
+  function thickText(v) {
+    var parts = [v.toFixed(3)];
+    if (state.seq) {
+      parts.push('≈' + Math.round(v * state.seq.baseW) + ' px');
+      var step = state.seq.geo && state.seq.frames.length > 1
+        ? state.seq.geo.depth / (state.seq.frames.length - 1) : 0;
+      if (step > 0) {
+        var ratio = v / step;
+        parts.push('帧距的 ' + Math.round(ratio * 100) + '%' + (ratio > 0.9 ? '（已夹到 90%）' : ''));
+      }
+    }
+    return parts[0] + '（' + parts.slice(1).join(' · ') + '）';
+  }
+
+  function bindDrop() {
+    if (dragArmed) return;      // 只能武装一次，避免重复监听
+    dragArmed = true;
+    /*
+     * 拖放必须用**捕获阶段**绑在 document 上。
+     *
+     * 之前只绑了 window 的冒泡阶段，而且是在 bindUI() 末尾才绑 —— 一旦前面
+     * 任何一行抛异常，这两个监听就完全不存在，浏览器于是执行默认行为：
+     * 把拖入的每个文件当链接打开，一次拖 100 张照片就开出 100 个标签页。
+     * 这就是用户遇到的那个现象的真正原因。
+     *
+     * 现在：监听在脚本求值时就注册（见文件末尾的 armDragGuard），不依赖 boot() 成功；
+     * 用 capture: true，任何元素上的拖放都会被先拦下；
+     * dragover 里设 dropEffect='copy'，给出正确的光标反馈。
+     */
+    document.addEventListener('dragover', onDragOver, true);
+    document.addEventListener('dragenter', onDragOver, true);
+    document.addEventListener('drop', onDrop, true);
+    document.addEventListener('dragend', clearDragHint, true);
+    document.addEventListener('dragleave', onDragLeave, true);
+    // 双保险：万一有事件绕过捕获阶段，冒泡阶段也拦一次
+    window.addEventListener('dragover', onDragOver, false);
+    window.addEventListener('drop', swallowDrop, false);
+  }
+
+  var dragArmed = false;
+
+  /** 在脚本求值阶段就武装拖放拦截，绝不等到 boot() */
+  function armDragGuard() {
+    try {
+      bindDrop();
+      document.body.dataset.dragArmed = '1';
+    } catch (e) {
+      // 连这个都失败就只能退回到不支持拖放，但至少说清楚
+      try {
+        document.body.dataset.dragArmed = '0';
+        appendFatal('拖放拦截注册失败（拖入文件可能会被浏览器当链接打开）：' +
+          (e && e.message || e));
+      } catch (e2) { /* 无计可施 */ }
+    }
+  }
+
+  function onDragOver(e) {
+    var dt = e.dataTransfer;
+    if (!dt) return;
+    // 无条件阻止默认行为：默认行为就是"打开文件"
+    e.preventDefault();
+    e.stopPropagation();
+    try { dt.dropEffect = 'copy'; } catch (err) { /* 某些浏览器只读，忽略 */ }
+    hintDrag(true);
+  }
+
+  function clearDragHint() { hintDrag(false); }
+
+  /** 拖出窗口时也要复位提示，否则"松手即可载入"会一直挂着 */
+  function onDragLeave(e) {
+    if (e.relatedTarget === null || e.target === document.documentElement) hintDrag(false);
+  }
+
+  var dragHintOn = false;
+  function hintDrag(on) {
+    if (on === dragHintOn) return;
+    dragHintOn = on;
+    if (on) status('松手即可载入这批照片' + hintLimits());
+    else status('拖入一批照片，或点「打开照片」' + hintLimits());
+  }
+
+  /** 兜底：万一 drop 事件落在别的元素上，也绝不让浏览器去导航 */
+  function swallowDrop(e) {
+    if (e.defaultPrevented) return;
+    e.preventDefault();
+    var dt = e.dataTransfer;
+    if (dt && dt.files && dt.files.length) loadFiles(dt.files);
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    hintDrag(false);
+    var dt = e.dataTransfer;
+    if (dt && dt.items && dt.items.length && !(dt.files && dt.files.length)) {
+      // 极少数情况下 files 为空但 items 里有文件
+      var picked = [];
+      for (var i = 0; i < dt.items.length; i++) {
+        if (dt.items[i].kind === 'file') {
+          var f = dt.items[i].getAsFile();
+          if (f) picked.push(f);
+        }
+      }
+      if (picked.length) return loadFiles(picked);
+    }
+    if (dt && dt.files && dt.files.length) return loadFiles(dt.files);
+    appendFatal('拖入的内容里没有文件。请按「打开照片」从文件对话框选择图片。');
+  }
+
+  /**
+   * 以程序方式打开文件对话框（备用路径）。
+   *
+   * 正常点击「打开照片」走的是 index.html 里那个透明 input 的原生行为，
+   * 不经过这里。这个函数用在：键盘触发、或用户在控制台里手动调用。
+   * 两条路都试：直接 click 现有 input；不行就现场造一个再 click。
+   */
+  function openPicker() {
+    var input = $('file');
+    if (!input) { appendFatal('界面里缺少 id="file" 的文件选择控件。'); return; }
+    try {
+      input.click();
+    } catch (err) {
+      appendFatal('click() 打开文件对话框失败：' + (err && err.message || err) +
+        '\n（正常点击「打开照片」按钮本身不受影响，那走的是浏览器原生行为。）');
+    }
+  }
+
+  /** 现场造一个 input 再试一次；只在需要兜底时调用 */
+  function openPickerFallback() {
+    try {
+      var tmp = document.createElement('input');
+      tmp.type = 'file';
+      tmp.accept = 'image/*';
+      tmp.multiple = true;
+      tmp.style.position = 'fixed';
+      tmp.style.left = '-9999px';
+      tmp.addEventListener('change', function () {
+        if (tmp.files && tmp.files.length) loadFiles(tmp.files);
+        if (tmp.parentNode) tmp.parentNode.removeChild(tmp);
+      });
+      document.body.appendChild(tmp);
+      tmp.click();
+      status('已尝试用备用方式打开文件对话框…');
+    } catch (err) {
+      appendFatal('备用方式也打不开文件对话框：' + (err && err.message || err));
+    }
+  }
+
+  function bindInput() {
+    var down = false, button = 0, lastX = 0, lastY = 0, moved = 0;
+    canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    canvas.addEventListener('pointerdown', function (e) {
+      down = true; button = e.button; lastX = e.clientX; lastY = e.clientY; moved = 0;
+      canvas.classList.add('drag');
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - lastX, dy = e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY;
+      moved += Math.abs(dx) + Math.abs(dy);
+      if (button === 2 || e.shiftKey) {
+        cam.panU -= dx / viewport.h * 1.6;
+        cam.panV += dy / viewport.h * 1.6;
+      } else {
+        cam.az -= dx * 0.28;
+        cam.el = STC.math.clamp(cam.el + dy * 0.28, -89, 89);
+      }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+      down = false;
+      canvas.classList.remove('drag');
+      if (moved < 4) { /* 单击不做事，避免误触 */ }
+      try { canvas.releasePointerCapture(e.pointerId); } catch (err) { /* 忽略 */ }
+    });
+    canvas.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      cam.zoom = STC.math.clamp(cam.zoom * Math.pow(0.999, e.deltaY * 1.6), 0.15, 12);
+    }, { passive: false });
+    canvas.addEventListener('dblclick', function () { applyView('reset'); invalidate(); });
+  }
+
+  function onKey(e) {
+    // 框选面板打开时，Esc 取消、回车应用（这两个键在别处没有用途）
+    if (cropDraft) {
+      if (e.key === 'Escape') { cropClose(false); e.preventDefault(); return; }
+      if (e.key === 'Enter') { cropClose(true); e.preventDefault(); return; }
+      return;
+    }
+    if (e.key === 'r' || e.key === 'R') { applyView('reset'); invalidate(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      if (!state.seq) return;
+      var d = e.key === 'ArrowLeft' ? -1 : 1;
+      state.frame = STC.math.clamp(state.frame + d, 0, state.seq.frames.length - 1);
+      $('frame').value = String(state.frame);
+      $('lbFrame').textContent = (state.frame + 1) + ' / ' + state.seq.frames.length;
+      invalidate();
+      e.preventDefault();
+    }
+  }
+
+  /* --------------------------------------------------------- 对外接口 */
+  /* 无头自检用；也方便在 F12 里直接操作 */
+
+  window.STC.app = {
+    state: state,
+    cam: cam,
+    resolve: resolve,
+    loadFiles: loadFiles,
+    loadPaths: loadPaths,
+    setFrame: function (i) {
+      state.frame = STC.math.clamp(i, 0, (state.seq ? state.seq.frames.length : 1) - 1);
+      $('frame').value = String(state.frame);
+      invalidate();
+    },
+    setAllGhost: function (on) { state.allGhost = !!on; $('allGhost').checked = !!on; invalidate(); },
+    setOpacity: function (cur, other) {
+      if (cur !== undefined) { state.opCur = cur; $('opCur').value = String(cur); $('lbOpCur').textContent = cur.toFixed(2); }
+      if (other !== undefined) { state.opOther = other; $('opOther').value = String(other); $('lbOpOther').textContent = other.toFixed(2); }
+      invalidate();
+    },
+    setView: function (v) { applyView(v); invalidate(); },
+    setOtherMode: function (m) {
+      state.otherMode = m; segOn('otherMode', m);
+      document.body.dataset.otherMode = m; invalidate();
+    },
+    setEdgeMode: function (m) {
+      state.edgeMode = m;
+      segOn('edgeMode', m);
+      state.showBands = true;
+      if ($('showBands')) $('showBands').checked = true;
+      rebuildEdgeAtlas(m);
+    },
+    /** 厚度条总开关（面板上那个复选框的程序入口） */
+    setBands: setBands,
+    /**
+     * 诊断：把四个立面涂成红/绿/蓝/黄。
+     * 用于回答"某个侧面到底有没有被画出来" —— 不依赖照片边缘的颜色。
+     * 也可以直接用 `?banddebug=1` 打开。
+     */
+    setBandDebug: function (on) {
+      state.bandDebug = !!on;
+      if ($('bandDebug')) $('bandDebug').checked = state.bandDebug;
+      document.body.dataset.bandDebug = state.bandDebug ? '1' : '0';
+      invalidate();
+    },
+    setThickness: function (v) {
+      state.thickness = v;
+      $('thick').value = String(v); $('lbThick').textContent = thickText(v);
+      invalidate();
+    },
+    setSpacing: function (v) {
+      state.spacing = v;
+      $('spacing').value = String(v); $('lbSpacing').textContent = v.toFixed(2);
+      if (state.seq) {
+        state.seq.geo = STC.seq.layout(1, state.seq.baseH / state.seq.baseW,
+          state.seq.frames.length, v);
+      }
+      invalidate();
+    },
+    setLum: function (w, t) {
+      if (w !== undefined) { state.lumWeight = w; $('lumW').value = String(w); $('lbLumW').textContent = w.toFixed(2); }
+      if (t !== undefined) { state.lumThreshold = t; $('lumT').value = String(t); $('lbLumT').textContent = t.toFixed(2); }
+      invalidate();
+    },
+    setLumDir: function (d) {
+      state.lumDir = d === 'dark' ? 'dark' : 'bright';
+      segOn('lumDir', state.lumDir);
+      document.body.dataset.lumDir = state.lumDir;
+      invalidate();
+    },
+    setFrameOutline: function (on) {
+      state.showFrameOutline = !!on;
+      $('showOutline').checked = !!on;
+      invalidate();
+    },
+    setDotSize: function (v) {
+      state.dotSize = v; $('dot').value = String(v); $('lbDot').textContent = v.toFixed(1);
+      invalidate();
+    },
+    ensurePoints: ensurePoints,
+    /** 渲染器实例（自检与排查用：能读到 geom / programs 的真实内容） */
+    renderer: function () { return R; },
+    diagnostics: function () {
+      return {
+        gl: glCtx ? glCtx.info : null,
+        shaderErrors: glCtx ? glCtx.errors.slice() : [],
+        frames: state.seq ? state.seq.frames.length : 0,
+        baseSize: state.seq ? state.seq.baseW + 'x' + state.seq.baseH : null,
+        origSize: state.seq ? state.seq.origW + 'x' + state.seq.origH : null,
+        scaled: state.seq ? state.seq.scaled : false,
+        longEdge: state.seq ? state.seq.longEdge : 0,
+        autoChosen: state.seq ? state.seq.autoChosen : 0,
+        budgetMB: state.seq ? Math.round(state.seq.budget / 1048576) : 0,
+        resMode: state.resMode,
+        thickness: state.thickness,
+        spacing: state.spacing,
+        depth: state.seq ? state.seq.geo.depth : 0,
+        frameStep: state.seq && state.seq.frames.length > 1
+          ? state.seq.geo.depth / (state.seq.frames.length - 1) : 0,
+        lumWeight: state.lumWeight,
+        lumThreshold: state.lumThreshold,
+        lumDir: state.lumDir,
+        showFrameOutline: state.showFrameOutline,
+        dotSize: state.dotSize,
+        textureBytes: state.seq ? state.seq.bytes : 0,
+        failed: state.seq ? state.seq.failed : [],
+        trimmed: state.seq ? state.seq.trimmed : 0,
+        budgetHit: state.seq ? state.seq.budgetHit : null,
+        noExif: state.seq ? state.seq.noExif : 0,
+        frame: state.frame,
+        stats: lastStats ? lastStats.res : null
+      };
+    },
+    probe: probe,
+    /**
+     * 把一个世界坐标投影到画布像素坐标，返回 [x, y, 在视锥内?]。
+     * 无头自检靠它算出「某个已知特征应该出现在哪个像素」，
+     * 这样断言的不是「画面里有点东西」，而是「那个东西正好在该在的位置」。
+     */
+    projectPoint: function (x, y, z) {
+      var p = STC.view.projectToPixel(camParams(), viewport, x, y, z).slice();
+      p[2] = p[2] > -1 && p[2] < 1;
+      return p;
+    },
+    viewport: function () { return viewport; },
+    setResMode: function (m) {
+      state.resMode = m;
+      var el = $('res');
+      if (el) el.value = m;
+      if (state.files) ingest(state.files);
+    },
+    /** 立刻同步重画一次（无头自检在 probe 之前调用，避免读到上一帧） */
+    renderNow: frame,
+    /** 停掉渲染循环：Node 自检收尾时用，否则事件循环不会退出 */
+    stop: stop,
+    camParams: camParams,
+    /** 备用入口：在控制台里执行 STC.app.openPicker() 也能打开文件对话框 */
+    openPicker: openPicker,
+    openPickerFallback: openPickerFallback,
+    /** 输入通路自检：确认拖放与选文件这两个入口都活着 */
+    inputDiagnostics: function () {
+      var input = $('file');
+      return {
+        dragArmed: dragArmed,
+        dragArmedAttr: document.body ? document.body.dataset.dragArmed : null,
+        fileInputPresent: !!input,
+        fileInputType: input ? input.type : null,
+        fileInputMultiple: input ? !!input.multiple : null,
+        fileInputAccept: input ? input.accept : null,
+        // 透明覆盖式 input 的关键：它必须可见、且可点，否则原生点击不会触发
+        fileInputVisible: input ? !input.hasAttribute('hidden') : false,
+        openWrapPresent: !!$('openWrap')
+      };
+    },
+    /** 等 rAF 真的画过一帧再返回，probe 读到的一定是这一帧 */
+    settle: function () { return new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); }); },
+
+    /*
+     * 切割：只显示选区内的影像。
+     * 选区一律用**归一化 uv**：{x0,y0,x1,y1}∈[0,1]，v=0 是图像**顶部**。
+     * 正因为归一化，它对所有帧生效（混排不同尺寸的照片/视频也不会错位）。
+     */
+    setClipRect: function (r, on) { setClipRect(r, on); },
+    clearClip: function () { clearClip(); },
+    openClipEditor: function () { cropOpen(); },
+    clipEditorOpen: function () { return !!cropDraft; },
+    clipInfo: function () { return clipInfoText(); }
+  };
+
+  /**
+   * 读回一个像素。无头自检用它来断言「正视图里看到的就是第一帧」。
+   * 返回归一化的 RGBA（0..1）。
+   */
+  function probe(x, y) {
+    var gl = glCtx.gl;
+    var px = new Uint8Array(4);
+    gl.readPixels(x, viewport.h - 1 - y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    return [px[0] / 255, px[1] / 255, px[2] / 255, px[3] / 255];
+  }
+
+  if (document.readyState === 'loading') {
+    // 先武装拖放拦截，再等 DOM：拖放不依赖任何 DOM 元素
+    armDragGuard();
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    armDragGuard();
+    boot();
+  }
+})(window.STC = window.STC || {});
+})();
+</script>
+</body>
+</html>

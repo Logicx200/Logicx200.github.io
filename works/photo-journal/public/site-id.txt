@@ -1,0 +1,2 @@
+photo-journal site root
+它是本项目的 public 目录，网页导入会把 data/ 与 media/ 写到这里。

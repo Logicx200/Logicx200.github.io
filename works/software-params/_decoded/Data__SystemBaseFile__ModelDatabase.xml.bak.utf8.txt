@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+    <ModelFileInfo remark="模型库文件路径" value="" />
+    <BGModel remark="背景信息" />
+    <JamModel remark="干扰信息" />
+    <MissileLaunchPlatformModel remark="导弹发射平台信息" />
+    <MissileModel remark="导弹信息" />
+    <SensorModel remark="传感器信息" />
+    <TargetModel remark="目标信息" />
+</root>

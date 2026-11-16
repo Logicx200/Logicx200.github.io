@@ -1,0 +1,14 @@
+PASS  .bat 是纯 ASCII（cmd 按 ANSI 码页解析，非 ASCII 会破坏行结构）   [0 个非 ASCII 字节]
+PASS  .bat 使用 CRLF 行尾   [CRLF=83 孤立LF=0]
+PASS  .bat 没有 BOM   [40 65 63]
+PASS  .bat 里每个 goto 目标都有对应标签   [goto 2 个，标签 6 个]
+PASS  .bat 包含「探测 Node」   [where node]
+PASS  .bat 包含「探测 Python」   [where python]
+PASS  .bat 包含「调用 server.js」   [server.js]
+PASS  .bat 包含「Python 回退」   [http.server]
+PASS  .bat 包含「打开浏览器」   [start "" ]
+PASS  .ps1 带 UTF-8 BOM（否则 Windows PowerShell 5.1 会把中文按 ANSI 读）   [有 BOM]
+PASS  .ps1 花括号配平   [{ 11 } 11]
+PASS  Python 回退路径能真正提供服务（含中文路径）   [HTTP 200，1616 字节]
+
+12/12 通过

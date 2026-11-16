@@ -1,0 +1,81 @@
+{
+ "generatedAt": "2026-09-25T14:55:51.638Z",
+ "title": "我的摄影记录",
+ "subtitle": "",
+ "author": "",
+ "source": "网页导入",
+ "stats": {
+  "photos": 47,
+  "withGps": 0,
+  "withExifDate": 45,
+  "fromFolderName": 0,
+  "fromMtime": 2,
+  "withLocation": 2,
+  "lowConfidence": 47,
+  "firstDate": "2025-02-26",
+  "lastDate": "2025-03-23",
+  "bytes": 44556120
+ },
+ "years": {
+  "2025": 47
+ },
+ "months": [
+  {
+   "key": "2025-03",
+   "count": 33,
+   "cover": "media/thumbs/daaf7b935d46bd48361e.webp"
+  },
+  {
+   "key": "2025-02",
+   "count": 14,
+   "cover": "media/thumbs/39b830f9f297d0cac4a4.webp"
+  }
+ ],
+ "locations": [
+  {
+   "name": "未识别地点",
+   "lat": null,
+   "lng": null,
+   "count": 45,
+   "first": "2025-02-26",
+   "last": "2025-03-22",
+   "cover": "media/thumbs/39b830f9f297d0cac4a4.webp"
+  },
+  {
+   "name": "微信图片",
+   "lat": null,
+   "lng": null,
+   "count": 2,
+   "first": "2025-03-23",
+   "last": "2025-03-23",
+   "cover": "media/thumbs/daaf7b935d46bd48361e.webp"
+  }
+ ],
+ "cameras": [
+  {
+   "name": "NIKON CORPORATION NIKON D3100",
+   "count": 45
+  }
+ ],
+ "lenses": [
+  {
+   "name": "18.0-55.0 mm f/3.5-5.6",
+   "count": 28
+  },
+  {
+   "name": "0.0 mm f/0.0",
+   "count": 17
+  },
+  {
+   "name": "24.0-70.0 mm f/4.0",
+   "count": 2
+  }
+ ],
+ "editors": [
+  {
+   "name": "Lightroom",
+   "count": 47
+  }
+ ],
+ "tags": []
+}

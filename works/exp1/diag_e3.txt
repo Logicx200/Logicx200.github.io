@@ -1,0 +1,17 @@
+good = [ 3  4  5  7  9 10 12 14 18 20]
+nuniq[good] max = [1 1 1 1 1 1 1 1 1 1]
+best phase = [[  0.   0.]
+ [210. 120.]
+ [ 90. 120.]
+ [  0. 210.]
+ [ 60. 270.]
+ [ 90.  60.]
+ [  0. 330.]
+ [120. 240.]
+ [ 90. 240.]
+ [ 30.  30.]]
+scan(seeds, best) diag = [ True  True  True  True  True  True  True  True  True  True]
+eval_pairs dt=10 = [1 1 1 1 1 1 1 1 1 1]  (sum=10)
+eval_pairs dt=30 = [1 1 1 1 1 1 1 1 1 1]  (sum=10)
+single eval_pairs = [ True]
+scan single dt=30 = True, nuniq=1

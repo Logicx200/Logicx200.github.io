@@ -1,0 +1,89 @@
+{
+  "n_index_blocks": 2,
+  "n_data_files": 6,
+  "n_data_rows": 44010,
+  "per_file_rows": {
+    "atmo_Q2L_b02_part01.csv": 10000,
+    "atmo_Q2L_b02_part02.csv": 10000,
+    "atmo_Q2L_b02_part03.csv": 2005,
+    "atmo_Q2M_b01_part01.csv": 10000,
+    "atmo_Q2M_b01_part02.csv": 10000,
+    "atmo_Q2M_b01_part03.csv": 2005
+  },
+  "index_n_rows_sum": 44010,
+  "rows_match": true,
+  "checks": [
+    {
+      "block_id": "2",
+      "row_no_continuous": true,
+      "n_rows_matches_index": true,
+      "meta_consistent": true,
+      "n_rows": 22005
+    },
+    {
+      "block_id": "1",
+      "row_no_continuous": true,
+      "n_rows_matches_index": true,
+      "meta_consistent": true,
+      "n_rows": 22005
+    }
+  ],
+  "n_non_numeric_values": 0,
+  "n_transmittance_out_of_0_1": 0,
+  "physics_ranges": {
+    "长波红外": {
+      "solar_irradiance_W_m2": {
+        "min": 0.54226,
+        "max": 0.77957,
+        "mean": 0.6809934514883295,
+        "n_unique": 25
+      },
+      "path_transmittance": {
+        "min": 0.0063223,
+        "max": 0.9592,
+        "mean": 0.7244221897977797,
+        "n_unique": 4121
+      },
+      "path_radiance_W_m2sr": {
+        "min": 0.38992,
+        "max": 5643.3,
+        "mean": 25.573153460577075,
+        "n_unique": 4213
+      },
+      "background_radiance_W_m2sr": {
+        "min": 0.27688,
+        "max": 15.931,
+        "mean": 3.0559389061576963,
+        "n_unique": 5837
+      }
+    },
+    "中波红外": {
+      "solar_irradiance_W_m2": {
+        "min": 3.8217,
+        "max": 5.0285,
+        "mean": 4.5173830265849695,
+        "n_unique": 25
+      },
+      "path_transmittance": {
+        "min": 0.014121,
+        "max": 0.78838,
+        "mean": 0.5690080272665352,
+        "n_unique": 4099
+      },
+      "path_radiance_W_m2sr": {
+        "min": 0.11578,
+        "max": 9261.6,
+        "mean": 35.465493249261435,
+        "n_unique": 3878
+      },
+      "background_radiance_W_m2sr": {
+        "min": 0.071224,
+        "max": 0.69548,
+        "mean": 0.19634461763235608,
+        "n_unique": 10305
+      }
+    }
+  },
+  "grid_summary_csv": "F:\\DeepSeek工作区\\软件参数提取\\Q2解析\\grid_summary.csv",
+  "condition_combos_csv": "F:\\DeepSeek工作区\\软件参数提取\\Q2解析\\condition_combos.csv"
+}

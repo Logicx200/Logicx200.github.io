@@ -1,0 +1,6 @@
+_probe/
+tests/.tmp/
+tests/screenshots/
+*.log
+.DS_Store
+Thumbs.db

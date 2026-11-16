@@ -1,0 +1,12 @@
+a range  : 7035.9 .. 7386.6 km
+e range  : 0.00010 .. 0.04741
+perigee alt range: 424.6 .. 913.1 km
+apo alt range    : 665.1 .. 1224.5 km
+shapes with perigee < 200 km: 0 / 3000
+shapes with perigee < 0    : 0
+ephemeris (345, 721, 3) in 0.19s
+sc_traj_batch 20 cand: 235.0 ms  -> 11749 us/cand
+finite? False   r_end=[7083142.31339599 7025514.22763563 7080876.71985759 6955086.84402889
+ 6992890.04949854]
+bbox filter keeps (mean per cand): 344.9 / 345
+detail loop per cand: 15.15 ms  (hits=0)

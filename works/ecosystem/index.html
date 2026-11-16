@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>食物链 · 生态模拟</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #070b12; }
+  body { font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; }
+  #c { display: block; width: 100%; height: 100%; }
+  #panel {
+    position: fixed; top: 16px; right: 16px; z-index: 10;
+    background: rgba(10, 16, 28, 0.78); backdrop-filter: blur(8px);
+    border: 1px solid rgba(120, 180, 255, 0.18); border-radius: 12px;
+    padding: 14px 16px; color: #dbe6f5; width: 236px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  }
+  #panel h1 { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: #eaf3ff; }
+  .counts { font-size: 13px; line-height: 1.9; }
+  .counts b { font-weight: 600; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; vertical-align: 1px; }
+  .btns { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  button {
+    flex: 1; min-width: 66px; background: rgba(79, 216, 255, 0.12);
+    border: 1px solid rgba(79, 216, 255, 0.35); color: #cdeaf7;
+    border-radius: 8px; padding: 6px 8px; font-size: 12px; cursor: pointer;
+  }
+  button:hover { background: rgba(79, 216, 255, 0.24); }
+  button.on { background: rgba(79, 216, 255, 0.32); }
+  #legend {
+    position: fixed; top: 16px; left: 16px; z-index: 9;
+    color: #8fa6bf; font-size: 12px; line-height: 1.9;
+    background: rgba(10,16,28,0.55); border-radius: 8px; padding: 8px 12px;
+  }
+  #chart {
+    position: fixed; left: 0; bottom: 0; z-index: 8;
+    width: 100%; height: 84px; display: block;
+    background: rgba(7, 11, 18, 0.72);
+    border-top: 1px solid rgba(120,180,255,0.14);
+  }
+  /* 设置抽屉 */
+  #settings {
+    position: fixed; top: 0; right: 0; z-index: 30;
+    width: 300px; height: 100%;
+    background: rgba(9, 14, 24, 0.96);
+    border-left: 1px solid rgba(120,180,255,0.2);
+    transform: translateX(100%); transition: transform .22s ease;
+    display: flex; flex-direction: column;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.5);
+  }
+  #settings.open { transform: translateX(0); }
+  #settingsHead {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px; border-bottom: 1px solid rgba(120,180,255,0.16);
+    color: #eaf3ff; font-size: 14px; font-weight: 600;
+  }
+  #btnCloseSettings { flex: 0 0 auto; width: 28px; height: 28px; min-width: 28px; }
+  #settingsBody { flex: 1; overflow-y: auto; padding: 8px 16px 16px; }
+  .sec { margin-top: 14px; }
+  .secTitle { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .srow { margin: 7px 0; }
+  .srow label { display: flex; justify-content: space-between; font-size: 12px; color: #a9bdd6; margin-bottom: 3px; }
+  .srow label b { color: #eaf3ff; font-weight: 600; }
+  .srow input[type=range] { width: 100%; accent-color: #4fd8ff; cursor: pointer; }
+  .settingsFoot { padding: 12px 16px; border-top: 1px solid rgba(120,180,255,0.16); }
+  .settingsFoot .note { font-size: 11px; color: #6f8aa5; margin-top: 8px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<canvas id="chart"></canvas>
+<div id="legend">
+  <div><span class="dot" style="background:#7ee87e"></span>昆虫（被鸟吃）</div>
+  <div><span class="dot" style="background:#4fd8ff"></span>鸟（吃昆虫、被鹰吃）</div>
+  <div><span class="dot" style="background:#ff8a3d"></span>鹰（吃鸟，会饿死/老死）</div>
+  <div style="margin-top:4px; color:#5f7a96">射线方向=飞行方向，长度=速度</div>
+</div>
+<div id="panel">
+  <h1>🌿 食物链 · 生态模拟</h1>
+  <div class="counts">
+    <div><span class="dot" style="background:#7ee87e"></span>昆虫 <b id="cntInsect">0</b></div>
+    <div><span class="dot" style="background:#4fd8ff"></span>鸟 <b id="cntBird">0</b></div>
+    <div><span class="dot" style="background:#ff8a3d"></span>鹰 <b id="cntEagle">0</b></div>
+  </div>
+  <div class="btns">
+    <button id="btnPause">暂停</button>
+    <button id="btnReset">重置</button>
+    <button id="btnScale" class="on">线性</button>
+    <button id="btnSettings">⚙️ 配置</button>
+  </div>
+</div>
+<div id="settings">
+  <div id="settingsHead">
+    <span>⚙️ 参数配置</span>
+    <button id="btnCloseSettings">✕</button>
+  </div>
+  <div id="settingsBody"></div>
+  <div class="settingsFoot">
+    <button id="btnApplyInit" style="width:100%">重置并应用初始数量</button>
+    <div class="note">参数改动即时生效；「数量上限」只限制新增个体，已存在的个体不会被强制移除。底部曲线：原点固定，数据持续累积，仅坐标轴上限随最大值增长。</div>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ==================== 基础 ====================
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W = 0, H = 0;
+
+function resizeCanvas(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.lineCap = 'round';
+}
+window.addEventListener('resize', resizeCanvas);
+
+const chart = document.getElementById('chart');
+const cctx = chart.getContext('2d');
+function resizeChart(){
+  chart.width = chart.clientWidth;
+  chart.height = chart.clientHeight;
+}
+window.addEventListener('resize', resizeChart);
+
+// ==================== 物种参数（推荐配置） ====================
+const SPEC = {
+  insect: {
+    color:'#7ee87e', dotSize:2, rayFactor:0,
+    init:1500, cap:3500,
+    minSpeed:0.3, maxSpeed:3.0,
+    metabolism:0.012, graze:0.04,
+    maxEnergy:40, reproThresh:30, childCost:13,
+    lifespan:4200, lifespanVar:0.35, breedCd:200,
+    wander:0.6,
+    flee:{ weight:2.8, radius:85 },
+    crowdRadius:40, crowdLimit:6,
+    edgeMargin:40, edgeWeight:0.15
+  },
+  bird: {
+    color:'#4fd8ff', dotSize:3, rayFactor:4.6,
+    init:300, cap:1200,
+    minSpeed:1.8, maxSpeed:5.0,
+    metabolism:0.05,
+    maxEnergy:80, reproThresh:62, childCost:26,
+    lifespan:7200, lifespanVar:0.35, breedCd:500,
+    perception:50, sepRadius:20, sep:0.15, align:0.05, coh:0.006,
+    flee:{ weight:2.4, radius:150 },
+    hunt:{ weight:0.8, radius:70, eatRadius:12, foodValue:15, digestCd:60 },
+    edgeMargin:55, edgeWeight:0.12
+  },
+  eagle: {
+    color:'#ff8a3d', dotSize:5, rayFactor:5.5,
+    init:20, cap:120,
+    minSpeed:1.4, maxSpeed:6.0,
+    metabolism:0.08,
+    maxEnergy:120, reproThresh:95, childCost:40,
+    lifespan:14400, lifespanVar:0.35, breedCd:1200,
+    perception:80, sepRadius:45, sep:0.1,
+    wander:0.35,
+    hunt:{ weight:0.8, radius:220, eatRadius:16, foodValue:42, digestCd:110 },
+    edgeMargin:60, edgeWeight:0.1
+  }
+};
+
+// ==================== 种群（类型化数组） ====================
+const FIELDS = ['x','y','vx','vy','energy','age','digest','breed','lifespan'];
+function newPop(spec){ return { spec, count:0, cap:0, x:null,y:null,vx:null,vy:null,energy:null,age:null,digest:null,breed:null,lifespan:null,dead:null }; }
+const insects = newPop(SPEC.insect);
+const birds = newPop(SPEC.bird);
+const eagles = newPop(SPEC.eagle);
+
+function ensure(p, n){
+  if (n <= p.cap) return;
+  const nc = Math.max(n, Math.ceil(p.cap * 1.5), 256);
+  for (const k of FIELDS){
+    const old = p[k];
+    const arr = new Float32Array(nc);
+    if (old && p.count > 0) arr.set(old.subarray(0, p.count), 0);
+    p[k] = arr;
+  }
+  const nd = new Int8Array(nc);
+  if (p.dead && p.count > 0) nd.set(p.dead.subarray(0, p.count), 0);
+  p.dead = nd;
+  p.cap = nc;
+}
+
+function spawn(p, x, y, vx, vy, energy){
+  ensure(p, p.count + 1);
+  const i = p.count++;
+  p.x[i]=x; p.y[i]=y; p.vx[i]=vx; p.vy[i]=vy;
+  p.energy[i]=energy; p.age[i]=0; p.digest[i]=0; p.breed[i]=0; p.dead[i]=0;
+  p.lifespan[i] = p.spec.lifespan * (1 + (Math.random()-0.5)*2*p.spec.lifespanVar);
+  return i;
+}
+
+function seed(p){
+  const n = p.spec.init;
+  for (let i=0;i<n;i++){
+    const a = Math.random()*Math.PI*2;
+    const sp = p.spec.minSpeed + Math.random()*(p.spec.maxSpeed-p.spec.minSpeed);
+    const idx = spawn(p, Math.random()*W, Math.random()*H, Math.cos(a)*sp, Math.sin(a)*sp, p.spec.maxEnergy*0.6);
+    p.age[idx] = Math.random() * p.lifespan[idx] * 0.6;
+  }
+}
+
+function swapPop(p, i, j){
+  for (const k of FIELDS){ const t=p[k][i]; p[k][i]=p[k][j]; p[k][j]=t; }
+  const t=p.dead[i]; p.dead[i]=p.dead[j]; p.dead[j]=t;
+}
+
+// ==================== 空间哈希网格 ====================
+const grids = {
+  insect: { cellSize:100, w:0,h:0, head:null, next:null, xs:null, ys:null },
+  bird:   { cellSize:220, w:0,h:0, head:null, next:null, xs:null, ys:null },
+  eagle:  { cellSize:140, w:0,h:0, head:null, next:null, xs:null, ys:null }
+};
+function gridBounds(g, W, H, maxN){
+  const w = Math.max(1, Math.ceil(W / g.cellSize));
+  const h = Math.max(1, Math.ceil(H / g.cellSize));
+  if (g.head === null || w !== g.w || h !== g.h){ g.w = w; g.h = h; g.head = new Int32Array(w * h); }
+  if (g.next === null || g.next.length < maxN){ g.next = new Int32Array(maxN); }
+}
+function gridBuild(g, xs, ys, n){
+  g.xs = xs; g.ys = ys;
+  g.head.fill(-1);
+  const cs = g.cellSize, gw = g.w;
+  for (let i=0;i<n;i++){
+    let cx=(xs[i]/cs)|0, cy=(ys[i]/cs)|0;
+    if(cx<0)cx=0; else if(cx>=gw)cx=gw-1;
+    if(cy<0)cy=0; else if(cy>=g.h)cy=g.h-1;
+    const c = cy*gw + cx;
+    g.next[i] = g.head[c];
+    g.head[c] = i;
+  }
+}
+function forEachIn(g, x, y, radius, cb){
+  const cs = g.cellSize, r2 = radius*radius;
+  let cx=(x/cs)|0, cy=(y/cs)|0;
+  if(cx<0)cx=0; else if(cx>=g.w)cx=g.w-1;
+  if(cy<0)cy=0; else if(cy>=g.h)cy=g.h-1;
+  const x0=Math.max(0,cx-1), x1=Math.min(g.w-1,cx+1);
+  const y0=Math.max(0,cy-1), y1=Math.min(g.h-1,cy+1);
+  for(let gy=y0; gy<=y1; gy++){
+    for(let gx=x0; gx<=x1; gx++){
+      let idx = g.head[gy*g.w+gx];
+      while(idx !== -1){
+        const dx = x - g.xs[idx], dy = y - g.ys[idx];
+        const d2 = dx*dx + dy*dy;
+        if (d2 < r2) cb(idx, dx, dy, d2);
+        idx = g.next[idx];
+      }
+    }
+  }
+}
+function nearestIn(g, x, y, radius, deadArr){
+  const cs = g.cellSize, r2 = radius*radius;
+  let cx=(x/cs)|0, cy=(y/cs)|0;
+  if(cx<0)cx=0; else if(cx>=g.w)cx=g.w-1;
+  if(cy<0)cy=0; else if(cy>=g.h)cy=g.h-1;
+  const x0=Math.max(0,cx-1), x1=Math.min(g.w-1,cx+1);
+  const y0=Math.max(0,cy-1), y1=Math.min(g.h-1,cy+1);
+  let best=-1, bestD2=r2;
+  for(let gy=y0; gy<=y1; gy++){
+    for(let gx=x0; gx<=x1; gx++){
+      let idx = g.head[gy*g.w+gx];
+      while(idx !== -1){
+        if(!deadArr[idx]){
+          const dx = x - g.xs[idx], dy = y - g.ys[idx];
+          const d2 = dx*dx + dy*dy;
+          if (d2 < bestD2){ bestD2 = d2; best = idx; }
+        }
+        idx = g.next[idx];
+      }
+    }
+  }
+  return best;
+}
+
+// ==================== 通用：边界 / 限速积分 / 死亡 / 繁殖 ====================
+function steerEdges(x, y, vx, vy, dt, s){
+  const m = s.edgeMargin, w = s.edgeWeight;
+  if (x < m) vx += w*dt*((m-x)/m);
+  if (x > W-m) vx -= w*dt*((x-(W-m))/m);
+  if (y < m) vy += w*dt*((m-y)/m);
+  if (y > H-m) vy -= w*dt*((y-(H-m))/m);
+  return [vx, vy];
+}
+function integrate(p, i, vx, vy, dt, minS, maxS){
+  const sp = Math.hypot(vx, vy);
+  let ns = sp < minS ? minS : (sp > maxS ? maxS : sp);
+  if (sp < 1e-5){ const a = Math.random()*Math.PI*2; p.vx[i]=Math.cos(a)*ns; p.vy[i]=Math.sin(a)*ns; }
+  else { p.vx[i]=(vx/sp)*ns; p.vy[i]=(vy/sp)*ns; }
+  p.x[i] += p.vx[i]*dt;
+  p.y[i] += p.vy[i]*dt;
+  if (p.x[i] < -30) p.x[i]=W+30; else if (p.x[i]>W+30) p.x[i]=-30;
+  if (p.y[i] < -30) p.y[i]=H+30; else if (p.y[i]>H+30) p.y[i]=-30;
+}
+function finalize(p, i, dt){
+  p.age[i] += dt;
+  if (p.age[i] > p.lifespan[i]) p.dead[i] = 1;   // 老死
+  else if (p.energy[i] <= 0) p.dead[i] = 1;      // 饿死
+  if (p.breed[i] > 0) p.breed[i] -= dt;
+  if (p.digest[i] > 0) p.digest[i] -= dt;
+}
+function tryReproduce(p, i, dt, crowdOK){
+  if (p.dead[i]) return;
+  if (crowdOK === false) return;
+  if (p.count >= p.spec.cap) return;             // ★ 关键：繁殖受数量上限约束（之前的 bug 就在这里）
+  if (p.energy[i] > p.spec.reproThresh && p.breed[i] <= 0){
+    p.energy[i] -= p.spec.childCost;
+    p.breed[i] = p.spec.breedCd;
+    const a = Math.random()*Math.PI*2;
+    spawn(p, p.x[i] + (Math.random()-0.5)*10, p.y[i] + (Math.random()-0.5)*10,
+      Math.cos(a)*p.spec.minSpeed, Math.sin(a)*p.spec.minSpeed, p.spec.childCost);
+  }
+}
+
+// ==================== 更新：昆虫 ====================
+function updateInsect(s, dt){
+  const n0 = s.count, sp = s.spec;
+  for (let i=0;i<n0;i++){
+    if (s.dead[i]) continue;
+    const x=s.x[i], y=s.y[i];
+    let vx=s.vx[i], vy=s.vy[i];
+
+    let crowd = 0;
+    forEachIn(grids.insect, x, y, sp.crowdRadius, ()=>{ crowd++; });
+
+    let graze = sp.graze;
+    if (crowd > sp.crowdLimit) graze *= Math.max(0.05, sp.crowdLimit / crowd);
+    s.energy[i] += graze*dt;
+    s.energy[i] -= sp.metabolism*dt;
+
+    vx += (Math.random()-0.5)*2*sp.wander*dt;
+    vy += (Math.random()-0.5)*2*sp.wander*dt;
+
+    forEachIn(grids.bird, x, y, sp.flee.radius, (idx, dx, dy, d2)=>{
+      const d = Math.sqrt(d2) || 1e-4;
+      const w = (sp.flee.radius - d) / sp.flee.radius;
+      vx += (dx/d)*w*sp.flee.weight*dt;
+      vy += (dy/d)*w*sp.flee.weight*dt;
+    });
+
+    const ev = steerEdges(x, y, vx, vy, dt, sp);
+    integrate(s, i, ev[0], ev[1], dt, sp.minSpeed, sp.maxSpeed);
+    finalize(s, i, dt);
+    tryReproduce(s, i, dt, crowd < sp.crowdLimit);
+  }
+}
+
+// ==================== 更新：鸟 ====================
+function updateBird(s, dt){
+  const n0 = s.count, sp = s.spec;
+  for (let i=0;i<n0;i++){
+    if (s.dead[i]) continue;
+    const x=s.x[i], y=s.y[i];
+    let vx=s.vx[i], vy=s.vy[i];
+
+    let sx=0,sy=0, ax=0,ay=0, cx=0,cy=0, nc=0;
+    forEachIn(grids.bird, x, y, sp.perception, (idx, dx, dy, d2)=>{
+      const d = Math.sqrt(d2) || 1e-4;
+      if (d < sp.sepRadius){ const f = (sp.sepRadius - d) / sp.sepRadius; sx += (dx/d)*f; sy += (dy/d)*f; }
+      ax += s.vx[idx]; ay += s.vy[idx];
+      cx += s.x[idx]; cy += s.y[idx];
+      nc++;
+    });
+    if (nc > 0){
+      const inv = 1/nc;
+      vx += (ax*inv - vx)*sp.align*dt;
+      vy += (ay*inv - vy)*sp.align*dt;
+      const cohx = cx*inv - x, cohy = cy*inv - y;
+      const cl = Math.hypot(cohx, cohy) || 1;
+      vx += (cohx/cl)*sp.coh*dt;
+      vy += (cohy/cl)*sp.coh*dt;
+      vx += sx*sp.sep*dt;
+      vy += sy*sp.sep*dt;
+    }
+
+    forEachIn(grids.eagle, x, y, sp.flee.radius, (idx, dx, dy, d2)=>{
+      const d = Math.sqrt(d2) || 1e-4;
+      const w = (sp.flee.radius - d) / sp.flee.radius;
+      vx += (dx/d)*w*sp.flee.weight*dt;
+      vy += (dy/d)*w*sp.flee.weight*dt;
+    });
+
+    if (s.digest[i] <= 0){
+      const t = nearestIn(grids.insect, x, y, sp.hunt.radius, insects.dead);
+      if (t !== -1){
+        const tx = insects.x[t], ty = insects.y[t];
+        const dist = Math.hypot(tx-x, ty-y) || 1;
+        const look = Math.min(dist / Math.max(sp.maxSpeed, 0.001), 60);
+        const px = tx + insects.vx[t]*look, py = ty + insects.vy[t]*look;
+        const ddx = px-x, ddy = py-y, dl = Math.hypot(ddx,ddy) || 1;
+        vx += (ddx/dl)*sp.hunt.weight*dt;
+        vy += (ddy/dl)*sp.hunt.weight*dt;
+        if (dist < sp.hunt.eatRadius){
+          insects.dead[t] = 1;
+          s.energy[i] += sp.hunt.foodValue;
+          s.digest[i] = sp.hunt.digestCd;
+        }
+      }
+    }
+
+    s.energy[i] -= sp.metabolism*dt;
+
+    const ev = steerEdges(x, y, vx, vy, dt, sp);
+    integrate(s, i, ev[0], ev[1], dt, sp.minSpeed, sp.maxSpeed);
+    finalize(s, i, dt);
+    tryReproduce(s, i, dt, true);
+  }
+}
+
+// ==================== 更新：鹰 ====================
+function updateEagle(s, dt){
+  const n0 = s.count, sp = s.spec;
+  for (let i=0;i<n0;i++){
+    if (s.dead[i]) continue;
+    const x=s.x[i], y=s.y[i];
+    let vx=s.vx[i], vy=s.vy[i];
+
+    forEachIn(grids.eagle, x, y, sp.perception, (idx, dx, dy, d2)=>{
+      const d = Math.sqrt(d2) || 1e-4;
+      if (d < sp.sepRadius){ const f = (sp.sepRadius - d) / sp.sepRadius; vx += (dx/d)*f*sp.sep*dt; vy += (dy/d)*f*sp.sep*dt; }
+    });
+
+    let hunting = false;
+    if (s.digest[i] <= 0){
+      const t = nearestIn(grids.bird, x, y, sp.hunt.radius, birds.dead);
+      if (t !== -1){
+        hunting = true;
+        const tx = birds.x[t], ty = birds.y[t];
+        const dist = Math.hypot(tx-x, ty-y) || 1;
+        const look = Math.min(dist / Math.max(sp.maxSpeed, 0.001), 80);
+        const px = tx + birds.vx[t]*look, py = ty + birds.vy[t]*look;
+        const ddx = px-x, ddy = py-y, dl = Math.hypot(ddx,ddy) || 1;
+        vx += (ddx/dl)*sp.hunt.weight*dt;
+        vy += (ddy/dl)*sp.hunt.weight*dt;
+        if (dist < sp.hunt.eatRadius){
+          birds.dead[t] = 1;
+          s.energy[i] += sp.hunt.foodValue;
+          s.digest[i] = sp.hunt.digestCd;
+        }
+      }
+    }
+    if (!hunting){
+      vx += (Math.random()-0.5)*2*sp.wander*dt;
+      vy += (Math.random()-0.5)*2*sp.wander*dt;
+    }
+
+    s.energy[i] -= sp.metabolism*dt;
+
+    const ev = steerEdges(x, y, vx, vy, dt, sp);
+    integrate(s, i, ev[0], ev[1], dt, sp.minSpeed, sp.maxSpeed);
+    finalize(s, i, dt);
+    tryReproduce(s, i, dt, true);
+  }
+}
+
+// ==================== 死亡清理 & 迁入护栏 ====================
+function compact(p){
+  let n = p.count, i = 0;
+  while (i < n){
+    if (p.dead[i]){ n--; if (i < n) swapPop(p, i, n); }
+    else i++;
+  }
+  p.count = n;
+}
+const FLOOR = { insect:120, bird:30, eagle:3 };
+function immigrate(p, perFrame){
+  const add = Math.min(perFrame, Math.max(0, p.spec.cap - p.count));
+  for (let k=0;k<add;k++){
+    const a = Math.random()*Math.PI*2;
+    const sp = p.spec.minSpeed + Math.random()*(p.spec.maxSpeed - p.spec.minSpeed);
+    spawn(p, Math.random()*W, Math.random()*H, Math.cos(a)*sp, Math.sin(a)*sp, p.spec.maxEnergy*0.5);
+  }
+}
+function tick(dt){
+  gridBounds(grids.insect, W, H, insects.cap);
+  gridBounds(grids.bird, W, H, birds.cap);
+  gridBounds(grids.eagle, W, H, eagles.cap);
+  gridBuild(grids.insect, insects.x, insects.y, insects.count);
+  gridBuild(grids.bird, birds.x, birds.y, birds.count);
+  gridBuild(grids.eagle, eagles.x, eagles.y, eagles.count);
+
+  updateInsect(insects, dt);
+  updateBird(birds, dt);
+  updateEagle(eagles, dt);
+
+  compact(insects); compact(birds); compact(eagles);
+
+  if (insects.count < FLOOR.insect) immigrate(insects, 20);
+  if (birds.count < FLOOR.bird) immigrate(birds, 6);
+  if (eagles.count < FLOOR.eagle) immigrate(eagles, 1);
+}
+
+// ==================== 渲染 ====================
+function drawRays(p, color, factor){
+  if (p.count === 0) return;
+  ctx.beginPath();
+  for (let i=0;i<p.count;i++){ ctx.moveTo(p.x[i], p.y[i]); ctx.lineTo(p.x[i] + p.vx[i]*factor, p.y[i] + p.vy[i]*factor); }
+  ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.stroke();
+}
+function drawDots(p, color, size){
+  if (p.count === 0) return;
+  const half = size/2;
+  ctx.beginPath();
+  for (let i=0;i<p.count;i++){ ctx.rect(p.x[i]-half, p.y[i]-half, size, size); }
+  ctx.fillStyle = color; ctx.fill();
+}
+function render(){
+  ctx.clearRect(0,0,W,H);
+  drawDots(insects, SPEC.insect.color, SPEC.insect.dotSize);
+  drawRays(birds, 'rgba(130,200,255,0.28)', SPEC.bird.rayFactor);
+  drawDots(birds, SPEC.bird.color, SPEC.bird.dotSize);
+  drawRays(eagles, 'rgba(255,160,90,0.32)', SPEC.eagle.rayFactor);
+  drawDots(eagles, SPEC.eagle.color, SPEC.eagle.dotSize);
+}
+
+// ==================== 底部曲线：原点固定 / 数据累积 / 仅上限增长 ====================
+let histI = [], histB = [], histE = [];
+let sampleTimer = 0;
+let yMax = 10;          // 动态上限（只增不减）
+let logScale = false;   // 默认线性
+
+function niceCeil(v){
+  if (v <= 1) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(v)));
+  const r = v / p;
+  return (r <= 1 ? 1 : r <= 2 ? 2 : r <= 5 ? 5 : 10) * p;
+}
+function samplePop(dtMs){
+  sampleTimer += dtMs;
+  if (sampleTimer >= 500){
+    sampleTimer = 0;
+    histI.push(insects.count); histB.push(birds.count); histE.push(eagles.count);
+    const m = Math.max(insects.count, birds.count, eagles.count, 1);
+    if (m > yMax) yMax = niceCeil(m);   // 上限只会往上长
+  }
+}
+function yPos(v){
+  const ch = chart.height;
+  if (logScale) return ch - (Math.log2(Math.max(1,v)) / Math.log2(Math.max(2,yMax))) * ch;
+  return ch - (v / yMax) * ch;
+}
+function xPos(k, n){ return n <= 1 ? 0 : (k / (n - 1)) * chart.width; }
+function drawSeries(vals, color){
+  const n = vals.length;
+  if (n < 2) return;
+  cctx.beginPath();
+  for (let k=0;k<n;k++){
+    const x = xPos(k, n), y = yPos(vals[k]);
+    if (k===0) cctx.moveTo(x,y); else cctx.lineTo(x,y);
+  }
+  cctx.strokeStyle = color; cctx.lineWidth = 1.6; cctx.stroke();
+}
+function drawChart(){
+  if (chart.width !== chart.clientWidth || chart.height !== chart.clientHeight) resizeChart();
+  const cw = chart.width, ch = chart.height;
+  cctx.clearRect(0,0,cw,ch);
+  cctx.strokeStyle = 'rgba(120,180,255,0.08)'; cctx.lineWidth = 1;
+  for (let i=1;i<=4;i++){
+    const y = ch - (i/4)*ch;
+    cctx.beginPath(); cctx.moveTo(0,y); cctx.lineTo(cw,y); cctx.stroke();
+  }
+  cctx.fillStyle = 'rgba(150,180,210,0.7)';
+  cctx.font = '10px sans-serif';
+  cctx.fillText('上限 ' + Math.round(yMax) + (logScale ? '（对数）' : '（线性）'), 6, 12);
+  drawSeries(histI, SPEC.insect.color);
+  drawSeries(histB, SPEC.bird.color);
+  drawSeries(histE, SPEC.eagle.color);
+}
+
+// ==================== 主循环 ====================
+let last = performance.now();
+let running = true;
+function frame(now){
+  requestAnimationFrame(frame);
+  let dtMs = now - last; last = now;
+  if (dtMs > 100) dtMs = 100;
+  if (running){
+    const dt = Math.min(dtMs / 16.6667, 3);
+    tick(dt);
+    render();
+    samplePop(dtMs);
+    drawChart();
+    updateHud();
+  }
+}
+function updateHud(){
+  document.getElementById('cntInsect').textContent = insects.count.toLocaleString();
+  document.getElementById('cntBird').textContent = birds.count.toLocaleString();
+  document.getElementById('cntEagle').textContent = eagles.count.toLocaleString();
+}
+
+// ==================== UI ====================
+document.getElementById('btnPause').addEventListener('click', function(){
+  running = !running;
+  this.textContent = running ? '暂停' : '继续';
+});
+document.getElementById('btnReset').addEventListener('click', function(){
+  insects.count = 0; birds.count = 0; eagles.count = 0;
+  histI.length = 0; histB.length = 0; histE.length = 0;
+  yMax = 10;
+  seed(insects); seed(birds); seed(eagles);
+  updateHud();
+});
+const btnScale = document.getElementById('btnScale');
+btnScale.addEventListener('click', function(){
+  logScale = !logScale;
+  this.textContent = logScale ? '对数' : '线性';
+  this.classList.toggle('on', !logScale);
+});
+const btnSettings = document.getElementById('btnSettings');
+const settingsPanel = document.getElementById('settings');
+btnSettings.addEventListener('click', ()=>{ settingsPanel.classList.add('open'); });
+document.getElementById('btnCloseSettings').addEventListener('click', ()=>{ settingsPanel.classList.remove('open'); });
+document.getElementById('btnApplyInit').addEventListener('click', ()=>{
+  insects.count = 0; birds.count = 0; eagles.count = 0;
+  histI.length = 0; histB.length = 0; histE.length = 0;
+  yMax = 10;
+  seed(insects); seed(birds); seed(eagles);
+  updateHud();
+});
+
+// ==================== 自定义配置面板 ====================
+const CFG = [
+  { title:'昆虫（底层猎物）', color:'#7ee87e', sp:SPEC.insect, rows:[
+    {key:'init', label:'初始数量', min:0, max:4000, step:50},
+    {key:'cap', label:'数量上限', min:100, max:8000, step:100},
+    {key:'maxSpeed', label:'最大速度', min:0.5, max:8, step:0.1},
+    {key:'metabolism', label:'代谢率/帧', min:0, max:0.05, step:0.001},
+    {key:'graze', label:'进食率/帧', min:0, max:0.1, step:0.001},
+    {key:'reproThresh', label:'繁殖阈值', min:5, max:80, step:1},
+    {key:'breedCd', label:'繁殖冷却(秒)', min:0.5, max:60, step:0.5, scale:60},
+    {key:'lifespan', label:'寿命(秒)', min:10, max:300, step:5, scale:60},
+    {path:['flee','weight'], label:'逃避强度', min:0, max:6, step:0.1}
+  ]},
+  { title:'鸟（中层，捕食+猎物）', color:'#4fd8ff', sp:SPEC.bird, rows:[
+    {key:'init', label:'初始数量', min:0, max:2000, step:20},
+    {key:'cap', label:'数量上限', min:50, max:3000, step:50},
+    {key:'maxSpeed', label:'最大速度', min:0.5, max:10, step:0.1},
+    {key:'metabolism', label:'代谢率/帧', min:0, max:0.08, step:0.001},
+    {key:'reproThresh', label:'繁殖阈值', min:5, max:100, step:1},
+    {key:'breedCd', label:'繁殖冷却(秒)', min:0.5, max:120, step:0.5, scale:60},
+    {key:'lifespan', label:'寿命(秒)', min:10, max:600, step:5, scale:60},
+    {path:['hunt','radius'], label:'捕食半径', min:20, max:200, step:5},
+    {path:['hunt','weight'], label:'追击强度', min:0, max:4, step:0.1},
+    {path:['hunt','foodValue'], label:'捕食奖励', min:1, max:60, step:1},
+    {path:['hunt','digestCd'], label:'消化冷却(秒)', min:0.5, max:30, step:0.5, scale:60},
+    {path:['flee','weight'], label:'逃避强度', min:0, max:6, step:0.1}
+  ]},
+  { title:'鹰（顶层捕食者）', color:'#ff8a3d', sp:SPEC.eagle, rows:[
+    {key:'init', label:'初始数量', min:0, max:200, step:1},
+    {key:'cap', label:'数量上限', min:10, max:500, step:10},
+    {key:'maxSpeed', label:'最大速度', min:0.5, max:10, step:0.1},
+    {key:'metabolism', label:'代谢率/帧', min:0, max:0.15, step:0.001},
+    {key:'reproThresh', label:'繁殖阈值', min:5, max:150, step:1},
+    {key:'breedCd', label:'繁殖冷却(秒)', min:0.5, max:120, step:0.5, scale:60},
+    {key:'lifespan', label:'寿命(秒)', min:10, max:900, step:5, scale:60},
+    {path:['hunt','radius'], label:'捕食半径', min:20, max:300, step:5},
+    {path:['hunt','weight'], label:'追击强度', min:0, max:4, step:0.1},
+    {path:['hunt','foodValue'], label:'捕食奖励', min:1, max:100, step:1},
+    {path:['hunt','digestCd'], label:'消化冷却(秒)', min:0.5, max:30, step:0.5, scale:60}
+  ]}
+];
+function fmt(v, step){
+  let d = 0;
+  if (step < 1){ d = step < 0.1 ? (step < 0.01 ? 3 : 2) : 1; }
+  return v.toFixed(d);
+}
+function getVal(sp, row){
+  if (row.path){ let o = sp; for (const k of row.path) o = o[k]; return o; }
+  return sp[row.key];
+}
+function setVal(sp, row, v){
+  if (row.path){ let o = sp; for (let k=0;k<row.path.length-1;k++) o = o[row.path[k]]; o[row.path[row.path.length-1]] = v; }
+  else sp[row.key] = v;
+}
+function makeRow(sp, row){
+  const wrap = document.createElement('div');
+  wrap.className = 'srow';
+  const label = document.createElement('label');
+  const val = document.createElement('b');
+  const input = document.createElement('input');
+  input.type = 'range';
+  const scale = row.scale || 1;
+  input.min = row.min; input.max = row.max; input.step = row.step;
+  const initVal = getVal(sp, row) / scale;
+  input.value = initVal;
+  val.textContent = fmt(initVal, row.step);
+  input.addEventListener('input', ()=>{
+    const v = parseFloat(input.value);
+    setVal(sp, row, v * scale);
+    val.textContent = fmt(v, row.step);
+  });
+  label.appendChild(document.createTextNode(row.label + '  '));
+  label.appendChild(val);
+  wrap.appendChild(label);
+  wrap.appendChild(input);
+  return wrap;
+}
+function buildSettings(){
+  const body = document.getElementById('settingsBody');
+  body.innerHTML = '';
+  for (const sec of CFG){
+    const secDiv = document.createElement('div');
+    secDiv.className = 'sec';
+    const t = document.createElement('div');
+    t.className = 'secTitle';
+    t.style.color = sec.color;
+    t.textContent = sec.title;
+    secDiv.appendChild(t);
+    for (const row of sec.rows) secDiv.appendChild(makeRow(sec.sp, row));
+    body.appendChild(secDiv);
+  }
+}
+
+// ==================== 启动 ====================
+resizeCanvas();
+resizeChart();
+buildSettings();
+seed(insects); seed(birds); seed(eagles);
+updateHud();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

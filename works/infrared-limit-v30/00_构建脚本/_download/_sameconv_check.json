@@ -1,0 +1,54 @@
+{
+  "MWIR": {
+    "H2O": {
+      "ref": 0.8653908405763802,
+      "correct": 0.8499935356807481,
+      "ref_convention": 0.8651352299083849,
+      "reldiff_correct_vs_ref_pct": -1.779231322274788,
+      "reldiff_refconv_vs_ref_pct": -0.029537020269942982,
+      "bug_effect_pct": -1.7502112622601484
+    },
+    "CO2": {
+      "ref": 0.7220467872872123,
+      "correct": 0.6502395286983618,
+      "ref_convention": 0.7215071228163026,
+      "reldiff_correct_vs_ref_pct": -9.944959226068462,
+      "reldiff_refconv_vs_ref_pct": -0.07474092820732858,
+      "bug_effect_pct": -9.877600908464723
+    },
+    "CH4": {
+      "ref": 0.9970307936054291,
+      "correct": 0.9968413634250424,
+      "ref_convention": 0.9970279206349626,
+      "reldiff_correct_vs_ref_pct": -0.01899943127150472,
+      "reldiff_refconv_vs_ref_pct": -0.0002881526312892291,
+      "bug_effect_pct": -0.018711332557408422
+    }
+  },
+  "LWIR": {
+    "H2O": {
+      "ref": 0.8638475599894029,
+      "correct": 0.8502755240295714,
+      "ref_convention": 0.8641158102576172,
+      "reldiff_correct_vs_ref_pct": -1.5711146952823496,
+      "reldiff_refconv_vs_ref_pct": 0.031052963582789417,
+      "bug_effect_pct": -1.6016702927724058
+    },
+    "CO2": {
+      "ref": 0.9745317656393555,
+      "correct": 0.9729564887095667,
+      "ref_convention": 0.9743676917272339,
+      "reldiff_correct_vs_ref_pct": -0.16164449280473558,
+      "reldiff_refconv_vs_ref_pct": -0.016836178963741677,
+      "bug_effect_pct": -0.14483269813324595
+    },
+    "CH4": {
+      "ref": 0.9824920132166559,
+      "correct": 0.981730984849254,
+      "ref_convention": 0.9824652331566578,
+      "reldiff_correct_vs_ref_pct": -0.07745898767260728,
+      "reldiff_refconv_vs_ref_pct": -0.0027257280097781056,
+      "bug_effect_pct": -0.07473529674374424
+    }
+  }
+}

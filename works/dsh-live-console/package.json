@@ -1,0 +1,27 @@
+{
+  "name": "dsh-live-console",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Host-only DSH plugin serving one live HTML console for every conversation: background-job output, three-tier progress bars (explicit output progress > history estimate > activity), session activity log, and an automatic progress-reporting convention injected into every agent's system prompt.",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "lib",
+    "cordis.patch.yml"
+  ],
+  "scripts": {
+    "check": "node test/progress-check.mjs && node test/console-check.mjs && node test/client-check.mjs && node test/graph-check.mjs && node test/archive-check.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "license": "MIT"
+}

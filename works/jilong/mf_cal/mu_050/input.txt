@@ -1,0 +1,27 @@
+!计算区块数
+*nregions,1
+!分析类型 1:单层单相流
+*type,1
+*erosion,0
+*density,0
+*grav_inertia,0
+!计算维度 2:二维
+*ndim,2
+*mbc,0
+*remesh,0
+*mpi,0
+*omp,2
+*limiter,1
+*q1_flag,1
+*solver,1
+!各向异性网格: dx=30.0 m(横) dy=300.0 m(纵)
+*create,grid,input,1,770,117,322900.000000,3126000.000000,30.0,300.0
+*create,topo,file,dem,1,z.txt
+*create,h,file,dem,1,h.txt
+*create,bound,custom,1
+*material,1,density,2000
+*material,1,friction,1,0,0.05,0
+*material,1,earthpress,0.65,0.4228
+*material_assign,1,0,1
+*time,1,400,0.01,0.25
+*output,1,tecplot,1,1,1,200

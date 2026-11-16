@@ -1,0 +1,6 @@
+ephemeris (345, 721, 3) built in 0.2s
+scan: shapes=300 phases=144 cand=43200 elapsed=244.2s
+hit fraction = 14.4144%  (6227 events)
+shapes with any feasible phase = 292/300
+max uniq per candidate = 4   mean uniq = 0.1590
+uniq on feasible = 1.10

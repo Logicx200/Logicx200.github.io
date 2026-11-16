@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADS-B 监视雷达 · RTL-SDR V4</title>
+<link rel="stylesheet" href="radar.css">
+</head>
+<body>
+<canvas id="radar"></canvas>
+<div id="scanlines"></div>
+<div id="vignette"></div>
+<div id="hud">
+  <div id="hud-title">ADS-B 监视雷达</div>
+  <div id="hud-status"></div>
+</div>
+<aside id="panel">
+  <div class="receiver" id="receiver"></div>
+  <div class="controls" id="controls"></div>
+  <div class="targets" id="targets"></div>
+</aside>
+<script src="radar.js"></script>
+</body>
+</html>

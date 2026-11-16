@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.cache/
+.npm-cache/
+install.log
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 演示数据（npm run demo 生成，可随时重建）
+demo-archive/
+
+# 重要：站点本体（public/data、public/media）必须提交，不要忽略
+# public/vendor 是生成物，忽略与否都行：提交它可以让别人克隆后直接跑网页导入
+# public/vendor/
+!public/
+!public/data/
+!public/media/
+!public/assets/
+!public/src/

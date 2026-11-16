@@ -1,0 +1,32 @@
+{
+  "name": "dsh-usage-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Token-usage and spend dashboard for the DeepSeek Harness Web GUI: folds every durable session log, prices it at DeepSeek's peak/off-peak rate card, and renders it as a resident right-sidebar page.",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "lib",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-sidebar-right",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ],
+      "platform": "web"
+    }
+  },
+  "license": "MIT"
+}

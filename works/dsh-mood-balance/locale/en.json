@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "DSH Mood Balance",
+    "description": "Serves the current DeepSeek account balance to the DSH Mood Eyes widget on the local GUI."
+  }
+}

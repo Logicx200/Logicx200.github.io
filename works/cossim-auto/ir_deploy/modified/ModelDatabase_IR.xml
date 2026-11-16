@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+    <ModelFileInfo remark="模型库文件路径" value="" />
+    <BGModel remark="背景信息">
+        <SubBGInfo remark="背景ID" Id="1">
+            <Type remark="背景类型" tips="1:沙漠 2:戈壁 3:荒漠 4:城市 5:乡村 6:森林 7:丘陵 8:山区 9:海岛 10:海港" value="9" />
+            <Class remark="背景类别" tips="1:地面背景 2:海面背景 3:天空背景" value="1" />
+            <BackgroundName remark="背景名称" value="与那国岛" />
+            <KeyAreaLength remark="重点区域尺寸长" type="double" min="0" max="1000000" value="20000" />
+            <KeyAreaWidth remark="重点区域尺寸宽" type="double" min="0" max="1000000" value="20000" />
+            <KeyAreaResolution remark="重点区域分辨率" type="double" decimals="1" min="0" max="1000000" value="0.5" />
+            <BgLength remark="背景区域尺寸长" type="double" min="0" max="1000000" value="100000" />
+            <BgWidth remark="背景区域尺寸宽" type="double" min="0" max="1000000" value="100000" />
+            <BgResolution remark="背景区域分辨率" type="double" min="0" max="1000000" value="1" />
+            <KeyAreaLon remark="重点区域中心点经度" type="double" decimals="7" min="0" max="1000000" value="122.9875683" />
+            <KeyAreaLat remark="重点区域中心纬度" type="double" decimals="7" min="0" max="1000000" value="24.4562142" />
+            <KeyAreaHig remark="重点区域中心高度" type="double" decimals="2" min="0" max="1000000" value="0" />
+            <SrtName remark="显示名称" value="与那国岛" />
+            <BackgroundDescribe remark="背景描述信息" value="台湾岛XXXXXX" />
+            <ModelName remark="模型名称" value="与那国岛" />
+            <ModelPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Background/yngd/yonaguni_vis.osg" />
+            <BackgroundModelingPath remark="地面背景建模结果文件路径" value="/background/city/FLT" />
+            <MaterialPath remark="地面背景材质温度数据文件路径" value="/background/city/FLT/texture" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="基隆港XXXXXXX" />
+        </SubBGInfo>
+    </BGModel>
+    <JamModel remark="干扰信息">
+        <SubJamInfo remark="干扰ID" Id="0">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="1" />
+            <ProductName remark="型号名称" value="直射阳光" />
+            <DisplaytName remark="显示名称" value="直射阳光" />
+            <JamDescribe remark="干扰描述信息" value="直射阳光干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="4" />
+            <JamTitle remark="模型名称" value="直射阳光" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/sunLight/sun.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="直射阳光" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="1">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="3" />
+            <ProductName remark="型号名称" value="爆炸强光" />
+            <DisplaytName remark="显示名称" value="爆炸强光" />
+            <JamDescribe remark="干扰描述信息" value="爆炸强光干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="爆炸强光" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/baozha/baozhanew.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="爆炸强光" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="2">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="4" />
+            <ProductName remark="型号名称" value="火焰" />
+            <DisplaytName remark="显示名称" value="火焰" />
+            <JamDescribe remark="干扰描述信息" value="火焰干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="火焰" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/fire/FireAndSmoke.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="火焰" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="3">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="5" />
+            <ProductName remark="型号名称" value="强光干扰弹" />
+            <DisplaytName remark="显示名称" value="强光干扰弹" />
+            <JamDescribe remark="干扰描述信息" value="强光干扰弹" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="强光干扰弹" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/qggrd/qggrdnew.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="强光干扰弹" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="4">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="6" />
+            <ProductName remark="型号名称" value="战场扬尘" />
+            <DisplaytName remark="显示名称" value="战场扬尘" />
+            <JamDescribe remark="干扰描述信息" value="战场扬尘干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="战场扬尘" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/yc/ycnew.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="战场扬尘" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="5">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="7" />
+            <ProductName remark="型号名称" value="烟幕弹" />
+            <DisplaytName remark="显示名称" value="烟幕弹" />
+            <JamDescribe remark="干扰描述信息" value="烟幕弹干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="烟幕弹" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/ymd/ymd.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="烟幕弹" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="6">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="6" />
+            <ProductName remark="型号名称" value="独立云" />
+            <DisplaytName remark="显示名称" value="独立云" />
+            <JamDescribe remark="干扰描述信息" value="独立云干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="独立云" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/yun/yun.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="独立云" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="7">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="8" />
+            <ProductName remark="型号名称" value="烟雾喷射" />
+            <DisplaytName remark="显示名称" value="烟雾喷射" />
+            <JamDescribe remark="干扰描述信息" value="烟雾喷射干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="烟雾喷射" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/ywps/ywpsnew.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="烟雾喷射" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="8">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="9" />
+            <ProductName remark="型号名称" value="水幕" />
+            <DisplaytName remark="显示名称" value="水幕" />
+            <JamDescribe remark="干扰描述信息" value="水幕干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="水幕" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/shuimu/水炮new.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="水幕" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="9">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="12" />
+            <ProductName remark="型号名称" value="点面结合诱饵弹" />
+            <DisplaytName remark="显示名称" value="点面结合诱饵弹" />
+            <JamDescribe remark="干扰描述信息" value="点面结合诱饵弹干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="点面结合诱饵弹" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/dmjh/dmjh.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="点面结合诱饵弹" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="10">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="10" />
+            <ProductName remark="型号名称" value="点源诱饵弹" />
+            <DisplaytName remark="显示名称" value="点源诱饵弹" />
+            <JamDescribe remark="干扰描述信息" value="点源诱饵弹干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="点源诱饵弹" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/dyyrd/诱饵弹new.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="点源诱饵弹" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="11">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="13" />
+            <ProductName remark="型号名称" value="激光压制" />
+            <DisplaytName remark="显示名称" value="激光压制" />
+            <JamDescribe remark="干扰描述信息" value="激光压制干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="4" />
+            <JamTitle remark="模型名称" value="激光压制" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/jgyz/jgyznew.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="激光压制" />
+        </SubJamInfo>
+        <SubJamInfo remark="干扰ID" Id="12">
+            <JamType remark="干扰类型" tips="1:直射阳光 2:镜面反射 3:爆炸强光 4:火焰 5:强光干扰弹 6:战场扬尘 7:烟幕弹 8:烟幕喷射 9:水幕干扰 10:点源诱饵弹 11:面源诱饵弹 12:点面结合诱饵弹 13:激光压制" value="11" />
+            <ProductName remark="型号名称" value="面源诱饵弹" />
+            <DisplaytName remark="显示名称" value="面源诱饵弹" />
+            <JamDescribe remark="干扰描述信息" value="面源诱饵弹干扰" />
+            <ImplType remark="实现方式" tips="1:贴图 2:粒子 3:UE模型 4:入瞳贴图" value="2" />
+            <JamTitle remark="模型名称" value="面源诱饵弹" />
+            <JamPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Jam/jgyz/jgyznew.xml" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="面源诱饵弹" />
+        </SubJamInfo>
+    </JamModel>
+    <MissileLaunchPlatformModel remark="导弹发射平台信息">
+        <SubMissileLaunchPlatInfo remark="导弹发射平台ID" Id="0">
+            <Type remark="平台类型" tips="1:陆基 2:车载 3:舰载 4:机载 5:潜射" value="1" />
+            <ProductName remark="型号名称" value="J20" />
+            <DisplaytName remark="显示名称" value="歼20" />
+            <ProductDescribe remark="型号描述信息" value="歼20" />
+            <MovementModel remark="运动模型动态链接库" value="ball.dll" />
+            <MovementDescribe remark="运动模型描述信息" value="运动模型" />
+            <MissileLaunchPlatformName remark="模型名称" value="hm" />
+            <MissileLaunchPlatformPath remark="模型路径" value="/target/hm" />
+            <MissileLaunchPlatformVersionInfo remark="版本信息" value="Version1.0" />
+            <MissileLaunchPlatformDescribe remark="模型描述信息" value="导弹发射平台" />
+            <MountingMissileName remark="挂载导弹型号名称" value="hm" />
+            <MountingMissileNum remark="挂载数量" value="1" />
+        </SubMissileLaunchPlatInfo>
+    </MissileLaunchPlatformModel>
+    <MissileModel remark="导弹信息">
+        <SubMissileInfo remark="导弹ID" Id="0">
+            <MissileType remark="类型" tips="1:弹道导弹 2:飞航导弹 3:制导火箭弹 4:制导炮弹 5:反坦克弹 6:巡飞弹" value="1" />
+            <ProductName remark="型号名称" value="AIM-120D" />
+            <DisplaytName remark="显示名称" value="120D" />
+            <TargetDescribe remark="型号描述信息" value="AIM-120D" />
+            <MovementModel remark="运动模型动态链接库" value="ball.dll" />
+            <MovementDescribe remark="运动模型描述信息" value="运动模型" />
+            <MissileName remark="模型名称" value="hm" />
+            <MissilePath remark="模型路径" value="/target/hm" />
+            <MissileVersionInfo remark="版本信息" value="Version1.0" />
+            <MissileDescribe remark="模型描述信息" value="导弹" />
+        </SubMissileInfo>
+    </MissileModel>
+    <SensorModel remark="传感器信息">
+        <SubSensorInfo remark="传感器ID" Id="0">
+            <SensorType remark="类型" tips="4:可见光" value="4" />
+            <ProductName remark="型号名称" value="可见光传感器" />
+            <DisplaytName remark="显示名称" value="可见光传感器" />
+            <SensorDescribe remark="传感器描述信息" value="可见光传感器" />
+            <BandMin remark="波段下限" type="double" decimals="1" min="0" max="999" value="0.4" />
+            <BandMax remark="波段上限" type="double" decimals="1" min="0" max="999" value="0.8" />
+            <FPS remark="帧率" value="50" />
+            <Colourful remark="是否彩色" tips="1:彩色 2:灰度 3:全波段" value="2" />
+            <FovH remark="水平视场角" type="double" decimals="2" min="0" max="180" value="40" />
+            <FovV remark="垂直视场角" type="double" decimals="2" min="0" max="180" value="30" />
+            <DpiH remark="水平分辨率" type="int" min="1" max="9999" value="1024" />
+            <DpiV remark="垂直分辨率" type="int" min="1" max="9999" value="768" />
+            <BitWidth remark="位宽模式" tips="1:8位 2:16位 3:24位 4:10位 5:12位 6:14位" value="1" />
+            <ResCoefficient remark="响应系数" type="int" min="0" max="99999" value="1746" />
+            <ResBias remark="响应偏置" type="int" min="-99999" max="99999" value="1733" />
+            <ImgOutModeInjection remark="注入式输出方式" tips="1:显卡 2:注入 3:模拟器 4:电阻阵" value="1" />
+            <EffectFovH remark="场景产生器水平视场角" type="double" decimals="2" min="0" max="180" value="40" />
+            <EffectFovV remark="场景产生器垂直视场角" type="double" decimals="2" min="0" max="180" value="30" />
+            <EffectDpiH remark="场景产生器水平分辨率" type="int" min="1" max="9999" value="1024" />
+            <EffectDpiV remark="场景产生器垂直分辨率" type="int" min="1" max="9999" value="768" />
+            <EffectBitWidth remark="场景产生器位宽模式" tips="1:8位 2:16位 3:24位 4:10位 5:12位 6:14位" value="1" />
+            <EffectResCoefficient remark="场景产生器响应系数" type="int" min="0" max="99999" value="1746" />
+            <EffectResBias remark="场景产生器响应偏置" type="int" min="-99999" max="99999" value="1733" />
+            <ImgOutModeRadiant remark="辐射式输出方式" tips="1:显卡 2:注入 3:模拟器 4:电阻阵" value="1" />
+        </SubSensorInfo>
+        <SubSensorInfo remark="传感器ID" Id="2">
+            <SensorType remark="类型" tabs="1:中波红外 2:长波红外-制冷 3:长波红外-非制冷 4:可见光 5:短波" value="1" />
+            <ProductName remark="型号名称" value="中波红外_测试" />
+            <DisplaytName remark="显示名称" value="中波红外_测试" />
+            <SensorDescribe remark="传感器描述信息" value="中波红外_测试" />
+            <BandMin remark="波段下限" type="double" decimals="1" min="0" max="999" value="3.7" />
+            <BandMax remark="波段上限" type="double" decimals="1" min="0" max="999" value="4.8" />
+            <FPS remark="帧率" value="50" />
+            <Colourful remark="是否彩色" tips="1:彩色 2:灰度 3:全波段" value="2" />
+            <FovH remark="水平视场角" type="double" decimals="2" min="0" max="180" value="3.75" />
+            <FovV remark="垂直视场角" type="double" decimals="2" min="0" max="180" value="3" />
+            <DpiH remark="水平分辨率" type="int" min="1" max="9999" value="1024" />
+            <DpiV remark="垂直分辨率" type="int" min="1" max="9999" value="768" />
+            <BitWidth remark="位宽模式" tips="1:8位 2:16位 3:24位 4:10位 5:12位 6:14位" value="1" />
+            <ResCoefficient remark="响应系数" type="int" min="0" max="99999" value="1746" />
+            <ResBias remark="响应偏置" type="int" min="-99999" max="99999" value="1733" />
+            <ImgOutModeInjection remark="注入式输出方式" tips="1:显卡 2:注入 3:模拟器 4:电阻阵" value="1" />
+            <EffectFovH remark="场景产生器水平视场角" type="double" decimals="2" min="0" max="180" value="3.75" />
+            <EffectFovV remark="场景产生器垂直视场角" type="double" decimals="2" min="0" max="180" value="3" />
+            <EffectDpiH remark="场景产生器水平分辨率" type="int" min="1" max="9999" value="1024" />
+            <EffectDpiV remark="场景产生器垂直分辨率" type="int" min="1" max="9999" value="768" />
+            <EffectBitWidth remark="场景产生器位宽模式" tips="1:8位 2:16位 3:24位 4:10位 5:12位 6:14位" value="1" />
+            <EffectResCoefficient remark="场景产生器响应系数" type="int" min="0" max="99999" value="1746" />
+            <EffectResBias remark="场景产生器响应偏置" type="int" min="-99999" max="99999" value="1733" />
+            <ImgOutModeRadiant remark="辐射式输出方式" tips="1:显卡 2:注入 3:模拟器 4:电阻阵" value="1" />
+        </SubSensorInfo>
+        <SubSensorInfo remark="传感器ID" Id="1">
+            <SensorType remark="类型" tips="4:可见光" value="4" />
+            <ProductName remark="型号名称" value="可见光传感器_1" />
+            <DisplaytName remark="显示名称" value="可见光传感器" />
+            <SensorDescribe remark="传感器描述信息" value="XXXX" />
+            <BandMin remark="波段下限" type="double" decimals="1" min="0" max="999" value="0.4" />
+            <BandMax remark="波段上限" type="double" decimals="1" min="0" max="999" value="0.8" />
+            <FPS remark="帧率" value="50" />
+            <Colourful remark="是否彩色" tips="1:彩色 2:灰度 3:全波段" value="1" />
+            <FovH remark="水平视场角" type="double" decimals="2" min="0" max="180" value="40" />
+            <FovV remark="垂直视场角" type="double" decimals="2" min="0" max="180" value="30" />
+            <DpiH remark="水平分辨率" type="int" min="1" max="9999" value="1024" />
+            <DpiV remark="垂直分辨率" type="int" min="1" max="9999" value="768" />
+            <BitWidth remark="位宽模式" tips="1:8位 2:16位 3:24位 4:10位 5:12位 6:14位" value="1" />
+            <ResCoefficient remark="响应系数" type="int" min="0" max="99999" value="1746" />
+            <ResBias remark="响应偏置" type="int" min="-99999" max="99999" value="1733" />
+            <ImgOutModeInjection remark="注入式输出方式" tips="1:显卡 2:注入 3:模拟器 4:电阻阵" value="1" />
+            <EffectFovH remark="场景产生器水平视场角" type="double" decimals="2" min="0" max="180" value="40" />
+            <EffectFovV remark="场景产生器垂直视场角" type="double" decimals="2" min="0" max="180" value="30" />
+            <EffectDpiH remark="场景产生器水平分辨率" type="int" min="1" max="9999" value="1024" />
+            <EffectDpiV remark="场景产生器垂直分辨率" type="int" min="1" max="9999" value="768" />
+            <EffectBitWidth remark="场景产生器位宽模式" tips="1:8位 2:16位 3:24位 4:10位 5:12位 6:14位" value="1" />
+            <EffectResCoefficient remark="场景产生器响应系数" type="int" min="0" max="99999" value="1746" />
+            <EffectResBias remark="场景产生器响应偏置" type="int" min="-99999" max="99999" value="1733" />
+            <ImgOutModeRadiant remark="辐射式输出方式" tips="1:显卡 2:注入 3:模拟器 4:电阻阵" value="1" />
+        </SubSensorInfo>
+    </SensorModel>
+    <TargetModel remark="目标信息">
+        <SubTargetInfo remark="目标ID" Id="0">
+            <EntityClass remark="实体类别" tips="1:目标(含假目标) 2:干扰发射平台" value="1" />
+            <TargetType remark="类型" tips="1:地面静止目标/平台 2:地面运动目标/平台 3:海上静止目标/平台 4:海上运动目标/平台 5:空中飞机目标/平台 7:海港停泊目标/平台" value="1" />
+            <ProductName remark="型号名称" value="爱国者导弹发射车" />
+            <DisplaytName remark="显示名称" value="爱国者导弹发射车" />
+            <TargetDescribe remark="型号描述信息" value="爱国者导弹发射车" />
+            <DLLName remark="动态链接库名称" value="target.dll" />
+            <SportDescribe remark="运动状态描述信息" value="运动模型" />
+            <TargetName remark="模型名称" value="爱国者导弹发射车" />
+            <TargetPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Target/agzfsc/agzfsc_vis.osg" />
+            <TargetModelingPath remark="实体建模结果文件路径" value="/target/agzfsc" />
+            <MaterialPath remark="实体材质温度数据文件路径" value="/target/agzfsc/texture" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="陆地模型" />
+        </SubTargetInfo>
+        <SubTargetInfo remark="目标ID" Id="1">
+            <EntityClass remark="实体类别" tips="1:目标(含假目标) 2:干扰发射平台" value="1" />
+            <TargetType remark="类型" tips="1:地面静止目标/平台 2:地面运动目标/平台 3:海上静止目标/平台 4:海上运动目标/平台 5:空中飞机目标/平台 7:海港停泊目标/平台" value="4" />
+            <ProductName remark="型号名称" value="阿利伯克级驱逐舰" />
+            <DisplaytName remark="显示名称" value="阿利伯克级驱逐舰" />
+            <TargetDescribe remark="型号描述信息" value="阿利伯克级驱逐舰" />
+            <DLLName remark="动态链接库名称" value="target.dll" />
+            <SportDescribe remark="运动状态描述信息" value="运动模型" />
+            <TargetName remark="模型名称" value="阿利伯克级驱逐舰" />
+            <TargetPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Target/albk/albk_vis.osg" />
+            <TargetModelingPath remark="实体建模结果文件路径" value="/target/albk" />
+            <MaterialPath remark="实体材质温度数据文件路径" value="/target/albk/texture" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="海洋模型" />
+        </SubTargetInfo>
+        <SubTargetInfo remark="目标ID" Id="2">
+            <EntityClass remark="实体类别" tips="1:目标(含假目标) 2:干扰发射平台" value="1" />
+            <TargetType remark="类型" tips="1:地面静止目标/平台 2:地面运动目标/平台 3:海上静止目标/平台 4:海上运动目标/平台 5:空中飞机目标/平台 7:海港停泊目标/平台" value="5" />
+            <ProductName remark="型号名称" value="F16战斗机" />
+            <DisplaytName remark="显示名称" value="F16战斗机" />
+            <TargetDescribe remark="型号描述信息" value="F16战斗机" />
+            <DLLName remark="动态链接库名称" value="target.dll" />
+            <SportDescribe remark="运动状态描述信息" value="运动模型" />
+            <TargetName remark="模型名称" value="F16战斗机" />
+            <TargetPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Target/F16/f16_vis.osg" />
+            <TargetModelingPath remark="实体建模结果文件路径" value="/target/F16" />
+            <MaterialPath remark="实体材质温度数据文件路径" value="/target/F16/texture" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="空中模型" />
+        </SubTargetInfo>
+        <SubTargetInfo remark="目标ID" Id="3">
+            <EntityClass remark="实体类别" tips="1:目标(含假目标) 2:干扰发射平台" value="1" />
+            <TargetType remark="类型" tips="1:地面静止目标/平台 2:地面运动目标/平台 3:海上静止目标/平台 4:海上运动目标/平台 5:空中飞机目标/平台 7:海港停泊目标/平台" value="5" />
+            <ProductName remark="型号名称" value="F22战斗机" />
+            <DisplaytName remark="显示名称" value="F22战斗机机" />
+            <TargetDescribe remark="型号描述信息" value="F22战斗机" />
+            <DLLName remark="动态链接库名称" value="target.dll" />
+            <SportDescribe remark="运动状态描述信息" value="运动模型" />
+            <TargetName remark="模型名称" value="F22战斗机机" />
+            <TargetPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Target/f22/f22_vis.osg" />
+            <TargetModelingPath remark="实体建模结果文件路径" value="/target/f22" />
+            <MaterialPath remark="实体材质温度数据文件路径" value="/target/f22/texture" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="空中模型" />
+        </SubTargetInfo>
+        <SubTargetInfo remark="目标ID" Id="4">
+            <EntityClass remark="实体类别" tips="1:目标(含假目标) 2:干扰发射平台" value="1" />
+            <TargetType remark="类型" tips="1:地面静止目标/平台 2:地面运动目标/平台 3:海上静止目标/平台 4:海上运动目标/平台 5:空中飞机目标/平台 7:海港停泊目标/平台" value="1" />
+            <ProductName remark="型号名称" value="悍马车" />
+            <DisplaytName remark="显示名称" value="悍马车" />
+            <TargetDescribe remark="型号描述信息" value="悍马车" />
+            <DLLName remark="动态链接库名称" value="target.dll" />
+            <SportDescribe remark="运动状态描述信息" value="运动模型" />
+            <TargetName remark="模型名称" value="悍马车" />
+            <TargetPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Target/hm/hm_vis.osg" />
+            <TargetModelingPath remark="实体建模结果文件路径" value="/target/hm" />
+            <MaterialPath remark="实体材质温度数据文件路径" value="/target/hm/texture" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="陆地模型" />
+        </SubTargetInfo>
+        <SubTargetInfo remark="目标ID" Id="5">
+            <EntityClass remark="实体类别" tips="1:目标(含假目标) 2:干扰发射平台" value="1" />
+            <TargetType remark="类型" tips="1:地面静止目标/平台 2:地面运动目标/平台 3:海上静止目标/平台 4:海上运动目标/平台 5:空中飞机目标/平台 7:海港停泊目标/平台" value="4" />
+            <ProductName remark="型号名称" value="尼米兹级航空母舰" />
+            <DisplaytName remark="显示名称" value="尼米兹级航空母舰" />
+            <TargetDescribe remark="型号描述信息" value="尼米兹级航空母舰" />
+            <DLLName remark="动态链接库名称" value="target.dll" />
+            <SportDescribe remark="运动状态描述信息" value="运动模型" />
+            <TargetName remark="模型名称" value="尼米兹级航空母舰" />
+            <TargetPath remark="模型路径" value="D:/XGGDCOSSim2/Data/ModelData/Target/nimitz/nimitz_vis.osg" />
+            <TargetModelingPath remark="实体建模结果文件路径" value="/target/nimitz" />
+            <MaterialPath remark="实体材质温度数据文件路径" value="/target/nimitz/texture" />
+            <VersionInfo remark="版本信息" value="Version1.0" />
+            <ModelDescribe remark="模型描述信息" value="海洋模型" />
+        </SubTargetInfo>
+    </TargetModel>
+</root>

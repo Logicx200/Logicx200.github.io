@@ -1,0 +1,3 @@
+- insert:
+    - id: dsh-mood-balance
+      name: '@local/dsh-mood-balance'

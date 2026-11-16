@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>BBBike - Custom OpenStreetMap Extracts: Garmin, Shapefile, PBF &amp; More</title>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="Free OpenStreetMap extracts of any area, drawn as a rectangle or polygon: Garmin, Shapefile, PBF, OsmAnd, Mapsforge, SVG, GeoPackage, MBTiles and more." name="description">
+<link href="/llms.txt" rel="describedby" title="LLM summary" type="text/plain">
+<link href="https://extract.bbbike.org/" rel="canonical">
+<link rel="stylesheet" type="text/css" href="/html/extract.css">
+</head>
+<body onload="init();">
+  <div id="all">
+
+    <div id="border">
+      <div id="main">
+        <!-- <div id="top"></top> -->
+    <div id="sidebar_left">
+<div id="intro">
+<div id="message">
+<noscript><span id="noscript">Please enable JavaScript in your browser. Thanks!</span></noscript>
+<span id="toolbar"></span>
+
+<span id="tools-titlebar">
+ <span id="language">
+<span id="active_language" lang="en" title="English">en</span> <!-- active language -->
+<a hreflang="de" lang="de" title="Deutsch" href="?lang=de">de</a>
+<a hreflang="fr" lang="fr" title="Français" href="?lang=fr">fr</a>
+<a hreflang="es" lang="es" title="Español" href="?lang=es">es</a>
+<a hreflang="ru" lang="ru" title="Русский" href="?lang=ru">ru</a>
+<a hreflang="zh" lang="zh" title="中文（简体）" href="?lang=zh">zh</a>
+<a hreflang="ar" lang="ar" title="العربية" href="?lang=ar">ar</a>
+</span> <!-- language -->
+
+     <span id="social">
+    <a href="https://www.bbbike.org/feed/bbbike-world.xml"><img class="logo" width="14" height="14" title="What's new on BBBike.org" src="/images/rss-icon.png" alt=""></a>
+    </span>
+ -
+ <span class="extract-introjs"><a title="Short guided tour: how to create an extract" href="javascript:void(0);" onclick="introjs_start(); ">intro</a> - </span>
+ <span id="tools-help"><a class='tools-helptrigger' title='About the BBBike extract service: what it does and how to use it' rel='nofollow' href='/extract-dialog/en/about.html'><span>about</span></a></span>
+ <span id="pageload-indicator">&nbsp;<img src="/images/indicator.gif" width="14" height="14" alt="" title="Loading JavaScript libraries"> Loading JavaScript</span>
+ <span class="jqmWindow jqmWindowLarge" id="tools-helpwin"></span>
+</span>
+
+<span id="debug"></span>
+<span id="locate">
+<span style="display:none" id="tools-pageload"></span>
+<a title="where am I?" href="javascript:locateMe()"><img id="location-icon" src="/images/location-icon.png" width="25" height="23" alt="where am I?"></a>
+</span>
+</div>
+<hr>
+
+<form method="get" action="/" enctype="multipart/form-data" id="extract" onsubmit="return checkform();"><div id="table">
+<table><tr><td>
+<span class='lnglatbox' title='South West, valid values: lng -180 .. 180, lat -90 .. 90'>Left lower corner (South-West)<br>&nbsp;&nbsp; <span title='Longitude'>lng</span>: <input type="text" name="sw_lng"  size="8" id="sw_lng" /> <span title='Latitude'>lat</span>: <input type="text" name="sw_lat"  size="8" id="sw_lat" />
+</span>
+</td> <td><span title="hide longitude,latitude box" class="lnglatbox" onclick="javascript:toggle_lnglatbox ();"><input class="uncheck" type="radio">hide lng/lat</span>
+</td></tr> <tr><td>
+<span class='lnglatbox' title='North East, valid values: lng -180 .. 180, lat -90 .. 90'>Right top corner (North-East)<br>&nbsp;&nbsp; <span title='Longitude'>lng</span>: <input type="text" name="ne_lng"  size="8" id="ne_lng" /> <span title='Latitude'>lat</span>: <input type="text" name="ne_lat"  size="8" id="ne_lat" /></span>
+</td> <td><span></span></td></tr> <tr><td>
+<span class='' title='PBF: fast and compact, OSM XML gzip: standard OSM format, about twice as large, Garmin in different styles, Esri shapefile, OsmAnd for Android and iOS'>Format <a class='tools-helptrigger' rel='nofollow' href='/extract-dialog/en/format.html'><img src='/images/help-16px.png' alt=''></a><br></span>
+
+<select name="format"  data-intro="&lt;h3&gt;How does it work?&lt;/h3&gt;
+&lt;p&gt;This short tour shows you how to extract OpenStreetMap data in your favorite format.&lt;/p&gt;
+&lt;p&gt;Please select a format (OSM, PBF, Garmin, Shapefile, Mapsforge, MBTiles, PMTiles, OsmAnd, SVG, GeoJSON, SQLite, etc.).&lt;/p&gt;" data-position="auto" data-step="1" data-tooltipclass="extract-introjs" id="format">
+<optgroup label="OSM">
+<option value="osm.pbf">Protocol Buffer (PBF)</option>
+<option value="osm.xz">OSM XML 7z (xz)</option>
+<option value="osm.gz">OSM XML gzip</option>
+<option value="csv.xz">CSV 7z (xz)</option>
+<option value="o5m.xz">o5m 7z (xz)</option>
+<option value="opl.xz">Osmium OPL 7z (xz)</option>
+<option value="text.xz">Osmium Text 7z (xz)</option>
+</optgroup>
+<optgroup label="GeoData">
+<option selected="selected" value="geopackage.zip">GeoPackage</option>
+<option value="shp.zip">Shapefile (Esri)</option>
+<option value="parquet.zip">GeoParquet</option>
+<option value="geojson.xz">Osmium GeoJSON 7z (xz)</option>
+<option value="geojsonseq.xz">Osmium GeoJSONSeq 7z (xz)</option>
+<option value="sqlite.xz">Osmium SQLite 7z (xz)</option>
+</optgroup>
+<optgroup label="Garmin">
+<option value="garmin-osm-latin1.zip">Garmin OSM (latin1)</option>
+<option value="garmin-cycle-latin1.zip">Garmin Cycle (latin1)</option>
+<option value="garmin-leisure-latin1.zip">Garmin Leisure (latin1)</option>
+<option value="garmin-onroad-latin1.zip">Garmin Onroad (latin1)</option>
+<option value="garmin-ontrail-latin1.zip">Garmin Ontrail (latin1)</option>
+<option value="garmin-bbbike-latin1.zip">Garmin BBBike (latin1)</option>
+<option value="garmin-openfietslite-latin1.zip">Garmin Openfietsmap Lite (latin1)</option>
+<option value="garmin-openfietsfull-latin1.zip">Garmin Openfietsmap Full (latin1)</option>
+<option value="garmin-oseam-latin1.zip">Garmin OpenSeaMap (latin1)</option>
+<option value="garmin-opentopo-latin1.zip">Garmin OpenTopoMap (latin1)</option>
+<option value="garmin-osm.zip">Garmin OSM (UTF-8)</option>
+<option value="garmin-cycle.zip">Garmin Cycle (UTF-8)</option>
+<option value="garmin-leisure.zip">Garmin Leisure (UTF-8)</option>
+<option value="garmin-onroad.zip">Garmin Onroad (UTF-8)</option>
+<option value="garmin-ontrail.zip">Garmin Ontrail (UTF-8)</option>
+<option value="garmin-bbbike.zip">Garmin BBBike (UTF-8)</option>
+<option value="garmin-openfietslite.zip">Garmin Openfietsmap Lite (UTF-8)</option>
+<option value="garmin-openfietsfull.zip">Garmin Openfietsmap Full (UTF-8)</option>
+<option value="garmin-oseam.zip">Garmin OpenSeaMap (UTF-8)</option>
+<option value="garmin-opentopo.zip">Garmin OpenTopoMap (UTF-8)</option>
+</optgroup>
+<optgroup label="Vector Tiles">
+<option value="mbtiles-basic.zip">MBTiles Basic</option>
+<option value="mbtiles-shortbread.zip">MBTiles Shortbread</option>
+<option value="pmtiles-basic.zip">PMTiles Basic</option>
+<option value="pmtiles-shortbread.zip">PMTiles Shortbread</option>
+</optgroup>
+<optgroup label="SVG">
+<option value="svg-google.zip">SVG Google</option>
+<option value="svg-hiking.zip">SVG Hiking</option>
+<option value="svg-osm.zip">SVG Mapnik</option>
+<option value="svg-urbanight.zip">SVG Night</option>
+<option value="svg-wireframe.zip">SVG Wireframe</option>
+<option value="svg-cadastre.zip">SVG Cadastre</option>
+</optgroup>
+<optgroup label="Android Apps">
+<option value="obf.zip">OsmAnd (OBF)</option>
+<option value="mapsforge-osm.zip">Mapsforge OSM</option>
+</optgroup>
+<optgroup label="BBBike">
+<option value="bbbike-perltk.zip">BBBike Perl/Tk</option>
+</optgroup>
+<optgroup label="Contours (SRTM)">
+<option value="srtm.osm.pbf">SRTM World PBF (40m)</option>
+<option value="srtm.osm.xz">SRTM World OSM XML 7z (40m)</option>
+<option value="srtm.garmin-srtm.zip">SRTM World Garmin (40m)</option>
+<option value="srtm.obf.zip">SRTM World OsmAnd (40m)</option>
+</optgroup>
+</select>
+
+</td><td class="center"><span title="show longitude,latitude box" class="lnglatbox_toggle" onclick="javascript:toggle_lnglatbox ();"><input class="uncheck" type="radio">show lng/lat</span><br>
+<span class="center" id="square_km_small" title="area covers N square kilometers"></span>
+</td></tr> <tr><td><span class='' title='Give the city or area to extract a name. The name is optional, but better fill it out to find it later again.'>Name of area to extract <a class='tools-helptrigger-small' rel='nofollow' href='/extract-dialog/en/name.html'><img src='/images/help-16px.png' alt=''></a><a class='tools-helptrigger-small' rel='nofollow' href='/extract-dialog/en/search.html'> or search</a><br></span>
+<input type="text" name="city"  data-intro="&lt;h3&gt;Name of extract&lt;/h3&gt;
+&lt;p&gt;Please use a meaningful name for the extract, so you can find it again later.&lt;/p&gt;" data-position="auto" data-step="2" data-tooltipclass="extract-introjs" id="city" />
+</td><td class="center"><span class="center" title="file data size approx." id="size_small"></span>
+</td></tr> <tr><td>
+<span title='Required, you will be notified by email if your extract is ready for download.'>Your email address <a class='tools-helptrigger-small' rel='nofollow' href='/extract-dialog/en/email.html'><img src='/images/help-16px.png' alt=''></a><br></span>
+<input type="text" name="email"  autocapitalize="none" autocomplete="email" autocorrect="off" data-intro="&lt;h3&gt;Email address&lt;/h3&gt;
+&lt;p&gt;Please enter your email address. 
+The email field is required. You will be notified by email when your extract is ready for download.&lt;/p&gt;" data-position="auto" data-step="3" data-tooltipclass="extract-introjs" id="email" inputmode="email" spellcheck="false" />
+<input type="hidden" name="as" value="-1" id="as" />
+<input type="hidden" name="pg" value="0" id="pg" />
+<input type="hidden" name="coords" value="" id="coords" />
+<input type="hidden" name="oi" value="0" id="oi" />
+<input type="hidden" name="layers" value="" id="layers" />
+</td><td class="center"><span id="time_small" class="center" title="approx. extract time in minutes"></span>
+</td></tr> <tr><td><input type="submit" name="submit" value="extract" data-intro="&lt;h3&gt;Start the extract&lt;/h3&gt;
+&lt;p&gt;You have already chosen the area - great! Please click on this extract button to start the extract. Thanks and enjoy!&lt;/p&gt;" data-position="auto" data-step="5" data-tooltipclass="extract-intro" id="submit_extract" title="start extract" />
+</td> <td></td></tr></table>
+<input type="hidden" name="expire" value="1792686724"  />
+</div>
+<input type="hidden" name="lang" value="en"  />
+</form>
+
+  <div id="export_osm">
+    <div id="export_osm_too_large" style="display:none">
+      <span class="export_heading error">Area too large. <span id="size"></span>
+      Please zoom in!
+      You may also download <a target="_blank" href="/extract.html#other_extract_services">pre-extracted areas</a>
+      from other services or try out the
+      <a href="/support.html">extract pro service</a>
+      </span>
+      <div class="export_details"></div>
+    </div>
+  </div> <!-- export_osm -->
+ <div id="manual_area">
+  <div id="sidebar_content">
+    <span class="export_hint">
+      <span id="drag_box">
+        <span id="drag_box_select" style="display:none">
+            <button class="link">Select a different area</button>
+            <a class='tools-helptrigger' rel='nofollow' href='/extract-dialog/en/select-area.html'><img src='/images/help-16px.png' alt=""></a>
+        </span>
+        <span id="drag_box_default" data-step="4" data-intro="<h3>Click &amp; move or resize</h3>
+<p>Please click on the <b>create</b> button. 
+Then you can move or resize the box. Finally, click on the <b>extract</b> button to start the extract.</p>" data-position='auto' data-tooltipClass="extract-intro">
+            Now move the map to your desired location. <br>
+            Then click <button class="link">create</button> to make the bounding box.
+            <a class='tools-helptrigger' rel='nofollow' href='/extract-dialog/en/select-area.html'><img src='/images/help-16px.png' alt=""></a>
+
+	<div id="bbox-howto">
+	  <picture class="bbox-howto">
+  	    <source srcset="/images/bbox-howto.webp" type="image/webp">
+	      <img src="/images/bbox-howto.gif" width="360" height="240" alt="Click create, then drag the corners of the box">
+	  </picture>
+	</div>
+
+            <br>
+        </span>
+      </span>
+    </span>
+    <span id="square_km"></span>
+
+    <div id="polygon_controls" style="display:none">
+	<input id="createVertices" type="radio" name="type" onclick="polygon_update()">
+	<label class="link" for="createVertices">add points to polygon
+	<img src="/html/OpenLayers/2.12/theme/default/img/add_point_on.png" alt="">  <a class='tools-helptrigger' rel='nofollow' href='/extract-dialog/en/polygon.html'><img src='/images/help-16px.png' alt=""></a><br>
+	</label>
+
+	<input id="rotate" type="radio" name="type" onclick="polygon_update()">
+	<label class="link" for="rotate">resize or drag polygon
+	<img src="/html/OpenLayers/2.12/theme/default/img/move_feature_on.png" alt="move feature">
+	</label>
+
+    <div><p>To change the polygon, first click on it. Then you can move, resize or extend it. When you are done, press the <b>extract</b> button.</p></div>
+    </div>
+
+    <div id="format_image"></div>
+
+  </div> <!-- sidebar_content -->
+ </div><!-- manual_area -->
+</div>
+</div> <!-- sidebar_left -->
+
+<div id="content" class="site_index">
+    <!-- define a DIV into which the map will appear. Make it take up the whole window -->
+     <div id="map"></div>
+     <span id="timestamp"></span>
+</div><!-- content -->
+
+
+<div id="footer">
+    <p class="normalscreen" id="big_donate_image">
+<a class="donate_button" href="/community.html" title="Donate via PayPal or bank transfer">Donate</a></p>
+  
+  <div id="footer_top">
+    <a href="https://extract.bbbike.org/">Home</a> |
+    <a target="_blank" href="/extract.html">Help</a> |
+    <a target="_blank" href="/garmin.html">Garmin</a> |
+    <a href="https://download2.bbbike.org/osm/extract" target="_blank">Status</a> |
+    <!-- <a href="https://mc.bbbike.org/mc/" id="mc_link" target="_blank">map compare</a> | -->
+    <a href="https://download2.bbbike.org/osm/">Download</a> |
+    <a href="/support.html" title="Commercial support">Pro Service</a>
+    
+  </div>
+
+  <hr>
+  <div id="copyright" class="normalscreen">
+    &copy; 2026 <a href="https://www.bbbike.org">BBBike.org</a>
+    by <a href="https://wolfram.schneider.org">Wolfram Schneider</a><br>
+    Map data &copy; <a href="https://www.openstreetmap.org/copyright" title="OpenStreetMap License">OpenStreetMap</a> contributors
+  <div id="footer_community"></div>
+  </div> <!-- copyright -->
+</div>
+
+</div></div></div> <!-- layout -->
+
+<link  href="/html/introjs/2.9.3/introjs.css" rel="stylesheet" type="text/css">
+
+<script src="/html/OpenLayers/2.12/OpenLayers-min.js"></script>
+<script src="/html/OpenLayers/2.12/OpenStreetMap.js"></script>
+<script src="/html/jquery/jquery-1.8.3.min.js"></script>
+<script src="/html/jquery/jqModal-1.1.0.js"></script>
+<script src="/html/jquery/jquery-ui-1.9.1.custom.min.js"></script>
+<script src="/html/jquery/jquery.cookie-1.3.1.js"></script>
+<script src="/html/jquery/jquery.iecors.js"></script>
+<script src="/html/introjs/2.9.3/intro.min.js"></script>
+<script src="/html/extract-language.js"></script>
+<script src="/html/extract.js"></script>
+<script>
+  $('#pageload-indicator').hide();
+  
+  
+  $(".lnglatbox_toggle").css("display", "inline")
+  
+</script>
+
+<!-- pre-load some images for slow mobile networks -->
+<div id="slow-network" style="display:none">
+  <img src="/images/close.png" alt="close button">
+</div>
+
+
+<!-- bbbike_extract_status: 0, pro version: 0 -->
+<!-- bbbike_extract_download_url:  -->
+
+</body>
+</html>

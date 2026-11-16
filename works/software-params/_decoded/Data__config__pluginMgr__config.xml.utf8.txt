@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<system>
+    <module name="框架通用服务">
+		<plugin Version="v1.0.0" userAdminRight="false" name="org.commontk.eventadmin" pluginName="liborg_commontk_eventadmin">
+        </plugin>
+		<plugin Version="v1.0.0" userAdminRight="false" name="日志管理底层服务插件" pluginName="libxg_cossim_log">
+        </plugin>
+        <plugin Version="v1.0.0" userAdminRight="false" name="布局插件" pluginName="libcossim_layout_ui">
+            <description>提供系统的布局管理，用于保存和恢复用户的窗口布局。</description>
+        </plugin>
+    </module>
+	<module name="界面通用服务">
+        <plugin Version="v1.0.0" name="方案管理界面插件" pluginName="libcossim_workspace_ui">
+            <description>提供方案管理界面。</description>
+        </plugin>
+        <plugin Version="v1.0.0" name="时空参数界面插件" pluginName="libcossim_spacetime_ui">
+            <description>提供时空参数界面。</description>
+        </plugin>
+        <plugin Version="v1.0.0" name="环境参数界面插件" pluginName="libcossim_environment_ui">
+            <description>提供环境参数界面。</description>
+        </plugin>
+		<plugin Version="v1.0.0" name="传感器参数界面插件" pluginName="libcossim_sensor_ui">
+            <description>提供传感器参数界面。</description>
+        </plugin>
+        <plugin Version="v1.0.0" name="地形参数界面插件" pluginName="libcossim_background_ui">
+            <description>提供地形参数界面。</description>
+        </plugin>
+        <plugin Version="v1.0.0" name="目标参数界面插件" pluginName="libcossim_target_ui">
+            <description>提供目标参数界面。</description>
+        </plugin>
+        <plugin Version="v1.0.0" name="干扰参数界面插件" pluginName="libcossim_jam_ui">
+            <description>提供干扰参数界面。</description>
+        </plugin>
+		<plugin Version="v1.0.0" name="仿真控制插件" pluginName="libcossim_controls_ui">
+            <description>提供仿真控制界面。</description>
+        </plugin>
+		<plugin Version="v1.0.0" name="数据制备插件" pluginName="libcossim_prepare_ui">
+            <description>提供数据控制界面。</description>
+        </plugin>
+    </module>
+</system>

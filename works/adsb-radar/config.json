@@ -1,0 +1,9 @@
+{
+  "source": "rtlsdr",
+  "lat": 37.72,
+  "lon": 112.66,
+  "range_km": 250,
+  "gain": "40.2",
+  "ppm": 0,
+  "alt_m": 800
+}

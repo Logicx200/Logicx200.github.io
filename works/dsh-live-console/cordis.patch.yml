@@ -1,0 +1,36 @@
+# dsh-live-console bundle patch: the single host-only loader row this package
+# contributes to a profile that names it in `dsh.profile.bundles`.
+#
+# The row starts a host plugin that registers four raw routes on the DSH web
+# carrier (the same HTTP listener the GUI uses) and a small system-prompt
+# section. It declares no `dsh.client` half, so it cannot affect the interface.
+- insert:
+    - id: live-console
+      name: dsh-live-console
+      config:
+        # 'auto'   = open once at activation, and re-open when a conversation
+        #           starts work while no console page is connected
+        # 'once'   = open once at activation only
+        # 'never'  = never open the browser; the page stays reachable at
+        #           http://127.0.0.1:<gui-port>/live-console
+        autoOpen: auto
+        # Delay after activation before the first browser open, so the GUI is up.
+        openDelayMs: 2500
+        # Global system-prompt section telling every agent how to report progress
+        # on long-running commands ('[progress 3/10]' / '[progress 42%]').
+        progressPrompt: true
+        # Retain a finished job card for this long, in milliseconds.
+        keepSettledMs: 60000
+        # Maximum retained stdout+stderr per job for the log viewer, in bytes.
+        maxLogBytes: 262144
+        # Remember per-command durations/output sizes under $DSH_HOME to estimate
+        # progress for commands that do not report any.
+        history: true
+        # Token spend and account balance on the page. `usage` folds every durable
+        # session log (a few seconds of CPU on activation, refreshed only while a
+        # console page is open); `balance` hits api.deepseek.com at most once a
+        # minute with the DEEPSEEK_API_KEY ref from $DSH_HOME/.credentials.yaml.
+        usage: true
+        balance: true
+        # Published rate-card conversion used only for the CNY column.
+        usdToCny: 7.1

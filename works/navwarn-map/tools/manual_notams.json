@@ -1,0 +1,64 @@
+[
+ {
+  "id": "A 5898/26",
+  "fir": "ZHWH",
+  "kind": "临时危险区",
+  "begin_utc": "2026-11-18T22:44:00+00:00",
+  "end_utc": "2026-11-18T23:10:00+00:00",
+  "geom": {
+   "kind": "polygon",
+   "coords": [
+    [
+     30.583333,
+     109.95
+    ],
+    [
+     30.55,
+     110.316667
+    ],
+    [
+     29.9,
+     110.216667
+    ],
+    [
+     29.95,
+     109.833333
+    ]
+   ]
+  },
+  "qline": "ZHWH/QRDCA/IV/BO/W/000/999/3015N11004E022",
+  "e": "A TEMPORARY DANGER AREA ESTABLISHED BOUNDED BY: N303500E1095700-N303300E1101900-N295400E1101300-N295700E1095000, BACK TO START. VERTICAL LIMITS:SFC-UNL. AIRCRAFT ARE FORBIDDEN TO FLY INTO THE AREA. F)SFC G)UNL",
+  "source": "用户提供的原始 NOTAM 文本（CREATED: 11 NOV 2026 03:08 / SOURCE: ZBBBYNYX）"
+ },
+ {
+  "id": "A 5897/26",
+  "fir": "ZLHW ZHWH",
+  "kind": "临时危险区",
+  "begin_utc": "2026-11-18T22:43:00+00:00",
+  "end_utc": "2026-11-18T23:05:00+00:00",
+  "geom": {
+   "kind": "polygon",
+   "coords": [
+    [
+     33.566667,
+     110.516667
+    ],
+    [
+     33.533333,
+     110.733333
+    ],
+    [
+     33.166667,
+     110.683333
+    ],
+    [
+     33.183333,
+     110.45
+    ]
+   ]
+  },
+  "qline": "ZXXX/QRDCA/IV/BO/W/000/999/3322N11036E013",
+  "e": "A TEMPORARY DANGER AREA ESTABLISHED BOUNDED BY: N333400E1103100-N333200E1104400-N331000E1104100-N331100E1102700, BACK TO START. VERTICAL LIMITS:SFC-UNL. AIRCRAFT ARE FORBIDDEN TO FLY INTO THE AREA.",
+  "source": "用户提供的原始 NOTAM 文本（CREATED: 11 NOV 2026 03:08 / SOURCE: ZBBBYNYX）"
+ }
+]

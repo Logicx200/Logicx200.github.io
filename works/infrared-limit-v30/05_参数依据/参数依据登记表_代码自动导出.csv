@@ -1,0 +1,42 @@
+﻿param_id,参数,符号,取值,单位,类别,依据说明,来源,置信度,影响方向
+BAND_MWIR,中波波段,λ_MWIR,3.7–4.8,μm,软件实测,模型 Config.ini 中波字段,XGGDCOSSim2 Data/ModelData/*/Config.ini,高,决定衍射极限与大气吸收谱
+BAND_LWIR,长波波段,λ_LWIR,8.0–12.0,μm,软件实测,模型 Config.ini 长波字段,XGGDCOSSim2 Data/ModelData/*/Config.ini,高,长波衍射极限更松、水汽连续吸收更强
+FOV,视场,FOV,3.75×3.0,deg,软件实测,默认想定红外传感器显示参数,DefaultPlanFile 默认想定 2,高,决定 IFOV 与搜索范围
+NPX,探测器阵列,N,1024×768,px,软件实测,默认想定红外传感器,DefaultPlanFile,高,与 FOV 共同决定 IFOV
+IFOV,瞬时视场,IFOV,63.91,μrad,推导,IFOV = FOV_h / N_h = 3.75°/1024,由 FOV 与 NPX 推出,高,决定 Nyquist 频率与识别距离上限
+PITCH,像元间距,p,28.7,μm,设定,1024×768 型制冷 MWIR 焦平面常用 25–30 μm；与 IFOV 自洽：f=p/IFOV,工程设定，待实测替换,中,与焦距同向缩放，不改变 IFOV/FOV 时对识别距离无影响
+FOCAL,焦距,f,0.449,m,推导,f = p / IFOV,由 PITCH 与 IFOV 推出,高,与口径共同决定 F#
+APERTURE,有效口径,D,0.1497,m,推导,D = f / F#，F#=3.0,由焦距与 F# 推出,高,决定衍射截止频率，是识别距离的硬上限
+FNO,F 数,F#,3.0,-,设定,制冷型 MWIR 常用 F/2–F/4,工程设定,中,F# 增大→口径减小→衍射极限变差
+NETD,噪声等效温差,NETD,25,mK,设定,制冷型 InSb/SLS 在 F/3、300 K 下典型 20–30 mK,器件手册典型值,中,决定 MRTD(0)=k·NETD，即对比度地板
+TAU_OPT,光学透过率,τ_opt,0.80,-,设定,MWIR 光学链典型 0.75–0.85,工程设定,中,按对比度线性折减（等价系统 NETD≈31 mK）
+JITTER,视线抖动,σ_jit,20,μrad,设定,机载稳像后典型 10–30 μrad,工程设定,中,高频 MTF 下降，使 f_max 提前收敛
+KMRTD,MRTD 标定系数,k,2.5,-,设定,MRTD(0)=k·NETD 的工程近似（Ratches/Lloyd 框架）,需实测标定,低,直接线性抬高对比度地板
+N50_NVESD,N50（NVESD/TTP）,N50,4.0 / 16.5 / 26.6,cycles,文献,TTP metric 标定值（探测/识别/辨认）,"Vollmerhausen & Jacobs 2004, DOI:10.21236/ADA422493",中,N50 越大识别距离越近；与 Johnson 口径相差约 2 倍
+N50_JOHNSON,N50（经典 Johnson）,N50,2.0 / 8.0 / 16.0,line pairs,文献,Johnson 判据原始口径,Johnson 1958; Lloyd 1975,中,作为口径敏感性对照
+TTPF_E,TTPF 形状参数,E,2.0,-,文献,TTPF 标准形式,Vollmerhausen & Jacobs 2004,中,只改变 P(R) 过渡带陡缓，不改变 R50 位置
+SPEC-GRID,光谱网格步长,Δν,0.05,cm⁻¹,推导,HITRAN 1 atm 线宽 0.05–0.1 cm⁻¹，取 0.05 cm⁻¹ 原生网格避免重采样漏线；收敛性已校核,HITRAN2020 + 06_校验/光谱大气校验.md,高,过粗会低估气体吸收、高估波段透过率
+TREF,波段对比度加权参考温度,T_ref,293.15（背景温度）,K,推导,对比度加权 w∝dB/dT 应取场景背景温度；原固定 288.15 K 为近似,Planck 定律 + 本项目背景 20 ℃,高,仅微调波段加权，<1% 量级
+ATM-ISO,大气温度/气压廓线,"T(z), p(z)",ISO 2533 分层,-,文献,0–11 km 直减 6.5 K/km、11–20 km 等温 216.65 K；气压用气压公式而非单一指数标高,ISO 2533:1975,高,8 km 处气压较原指数廓线低约 4.5%，影响干气体柱含量
+ATM-CURV,斜程几何,R_E,6371,km,文献,球面地球弦长几何，层高取视线各点到地心距离减地球半径；不含大气折射,WGS-84 平均半径；几何光学,高,百 km 级地面距离下透过率与等效斜距修正约 1–3%
+ATM-RAYLEIGH,Rayleigh 散射口径,β_mol,0.008735·λ^-4.08 / 8 km,km⁻¹,文献,0.008735·λ^-4.08 为 550 nm 垂直光学厚度系数（550 nm 处 τ≈0.10），除以 8 km 标高得地面消光系数,6S / Bodhaine 1999；原式误作每 km 系数、偏小 1.43 倍,高,红外波段消光 <1e-5 km⁻¹，对 R50 无可见影响，属口径修正
+ATM-SPECIES,光谱吸收物种,H2O/CO2/O3/N2O/CO/CH4,6 种,-,文献,HITRAN2020 逐线 Voigt，三温度 250/280/300 K，压力 1 atm，cm²/molecule,HITRAN2020（Gordon 2022）；HAPI 1.3；参考项目 hitran_slant 线表,高,决定 MWIR 4.3 μm 与 LWIR 9.6 μm 吸收带强度
+TGT_F16,目标包围盒-F16 战斗机,W×L×H,9.660×14.848×4.574,m,软件实测,OSG 顶点包围盒，按 1 单位 = 1 m,XGGDCOSSim2 ModelData/Target/F16,中（未几何标定）,特征尺寸直接决定分辨率受限的识别距离
+TGT_F22,目标包围盒-F22 战斗机,W×L×H,13.498×18.601×3.996,m,软件实测,OSG 顶点包围盒，按 1 单位 = 1 m,XGGDCOSSim2 ModelData/Target/F22,中（未几何标定）,特征尺寸直接决定分辨率受限的识别距离
+TGT_NIMITZ,目标包围盒-尼米兹级航空母舰,W×L×H,85.730×340.656×75.223,m,软件实测,OSG 顶点包围盒，按 1 单位 = 1 m,XGGDCOSSim2 ModelData/Target/NIMITZ,中（未几何标定）,特征尺寸直接决定分辨率受限的识别距离
+TGT_ALBK,目标包围盒-阿利伯克级驱逐舰,W×L×H,20.273×151.324×47.744,m,软件实测,OSG 顶点包围盒，按 1 单位 = 1 m,XGGDCOSSim2 ModelData/Target/ALBK,中（未几何标定）,特征尺寸直接决定分辨率受限的识别距离
+TGT_HM,目标包围盒-悍马车,W×L×H,2.814×5.091×3.203,m,软件实测,OSG 顶点包围盒，按 1 单位 = 1 m,XGGDCOSSim2 ModelData/Target/HM,中（未几何标定）,特征尺寸直接决定分辨率受限的识别距离
+TGT_AGZFSC,目标包围盒-爱国者导弹发射车,W×L×H,10.237×22.567×11.072,m,软件实测,OSG 顶点包围盒，按 1 单位 = 1 m,XGGDCOSSim2 ModelData/Target/AGZFSC,中（未几何标定）,特征尺寸直接决定分辨率受限的识别距离
+SIZE_RULE,特征尺寸口径,D_eff,"sqrt(W×H)（主）/ max(W,L,H)（备）",m,推导,等效方目标口径：与 TTP 的 √A_t 思路一致；备选为最大边口径,NVESD TTP metric 思路,中,两口径 R50 相差约 1.5–2.3 倍
+EPS_T,目标发射率,ε_t,0.90,-,文献,金属/涂装目标 3–5 μm 典型 0.85–0.95,Salisbury & D'Aria 1994; ASTER 库,中,ε 通过 ε_t·ΔB(T_t−T_b) 线性缩放对比度
+EPS_B,背景发射率,ε_b,0.95,-,文献,植被/土壤 8–14 μm 典型 0.94–0.97,Salisbury & D'Aria 1992,中,与目标反射项共同构成辐亮度；在“环境辐亮度=背景黑体”假设下对比度化简为 ε_t·ΔB
+T_BG,背景温度,T_bg,20,℃,软件实测,与那国岛 Config.ini 环境温度,ModelData/Background/yngd/Config.ini,高,与目标温度共同决定固有温差
+T_STATE,目标热状态,T_t,20/40/60,℃,软件实测,Config.ini 温度范围 0–60 ℃ 的三档取值,目标模型 Config.ini,高,热交叉（20 ℃）时对比度极小，是临界状态的关键工况
+AOD550,550 nm 气溶胶光学厚度,τ_a(550),0.587（基线）,-,推导,软件默认能见度 10 km → β550=3.912/10 → × 标高 1.5 km,Koschmieder 1924 + WMO-No.8 2021,高,决定气溶胶消光，是霾/沙尘工况的主控参数
+ALPHA,Ångström 指数,α,1.30（干净大陆）,-,文献,大陆型 1.2–1.5、城市 1.1–1.6、海洋 0.4–0.8、沙尘 0.2–0.5,Ångström 1929; Eck et al. 1999,高,同等 AOD 下 α 越小，长波衰减越强
+PWV,可降水量,PWV,1.28（基线）,cm,推导,15 ℃/50%RH + 2 km 水汽标高,ISO 2533 湿空气廓线,高,决定水汽吸收带强度
+H_AER,气溶胶标高,H_a,1.5,km,文献,大陆型 1–2 km,LOWTRAN 7 / OPAC,中,AOD↔地面消光的换算系数，线性影响透过率
+CN2,折射率结构常数,Cn²,1e-15（基线）,m^-2/3,文献,工程约定分级：弱 1e-16、中 1e-15、强 1e-14、极强 1e-13（Andrews & Phillips / Kopeika 教材体系）；ITU-R P.1817-1 只给定性湍流描述、未给 Cn² 数值表，不可写成“ITU 标准值”,Andrews & Phillips 2005; Kopeika 1998; ITU-R P.1817-1（定性）,中,决定湍流 MTF，仅在 Cn²≥1e-14 时显著
+CO2,CO2 混合比,x_CO2,420,ppm,文献,2024 年全球平均,WMO GHG Bulletin,高,4.3 μm 带吸收的主控量
+O3,O3 混合比,x_O3,35,ppb,文献,近地面背景 20–50 ppb,HITRAN2020 默认大气,中,9.6 μm 带吸收，下视短路径影响小
+MINOR,N2O/CH4/CO 背景浓度,x,332/1930/100,ppb,文献,HITRAN2020 默认大气,HITRAN2020,高,次要吸收体，量级 <1%

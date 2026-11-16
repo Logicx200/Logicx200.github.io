@@ -1,0 +1,12 @@
+ok    app.js  (esm)
+ok    loader.js  (esm)
+ok    shader.js  (esm)
+ok    test/selftest.js  (esm)
+ok    test/shell.js  (esm)
+ok    server.js  (cjs)
+ok    tools/png.js  (cjs)
+ok    tools/make-sample.js  (cjs)
+ok    tools/build-test.js  (cjs)
+ok    tools/syntax-check.js  (cjs)
+
+全部 10 个文件语法检查通过

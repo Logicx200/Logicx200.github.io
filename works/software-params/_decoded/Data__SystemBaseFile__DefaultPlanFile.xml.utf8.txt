@@ -1,0 +1,937 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<root>
+    <LinkFile remark="关联需拷贝的文件名称">
+        <TargetTrackFile remark="目标运动文件名称" type="char[512]">
+            <Item TargetID="301">导弹型号.csv</Item>
+        </TargetTrackFile>
+        <JamPlatTrackFile remark="干扰发射平台运动文件名称" type="char[512]">
+            <Item JamPlatID="401">导弹型号.csv</Item>
+        </JamPlatTrackFile>
+        <JammerMotionFile remark="干扰运动文件名称" type="char[512]">
+            <Item JamID="501">导弹型号.csv</Item>
+        </JammerMotionFile>
+        <MissPlatMovFile remark="导弹发射平台运动文件名称" type="char[512]">
+            <Item MissPlatID="1">导弹型号.csv</Item>
+        </MissPlatMovFile>
+        <GrndWindFile remark="地面风场文件名称" type="char[256]">导弹型号.xml</GrndWindFile>
+        <MissPlanFile remark="导弹类文件名称">
+            <Item MissID="1">
+                <MissEnvWindFile remark="导弹风场文件名称" type="char[256]">导弹型号.xml</MissEnvWindFile>
+                <MissPlanFile remark="导弹规划与制导设备仿真参数文件名称" type="char[512]">导弹型号.xml</MissPlanFile>
+                <OptImagGuidMod remark="光学成像制导模块序号" GuidModNo="1">
+                    <OptImagPSFFile remark="导引头成像单元点扩散函数文件名称" type="char[512]">导弹型号.dat</OptImagPSFFile>
+                    <OptImagHeterogFile remark="导引头成像单元非均匀性特性数据文件名称" type="char[512]">导弹型号.dat</OptImagHeterogFile>
+                    <AerHeatEffFile remark="导引头气动热效应文件名称" type="char[512]">导弹型号.dat</AerHeatEffFile>
+                    <MovVibEffFile remark="运动抖动模糊效应点扩散函数文件名称" type="char[512]">导弹型号.dat</MovVibEffFile>
+                </OptImagGuidMod>
+            </Item>
+        </MissPlanFile>
+        <TargetJamFile remark="目标平台干扰类动态战情文件名称" type="char[512]">导弹型号.csv</TargetJamFile>
+        <DeceptionLaserPulseTimingFile remark="欺骗激光脉冲时序文件名称" type="char[256]">
+            <Item JamID="501">导弹型号.dat</Item>
+        </DeceptionLaserPulseTimingFile>
+        <HighPlusSeqFile remark="高重频序列脉冲字文件名称" type="char[256]">
+            <Item JamID="501">导弹型号.dat</Item>
+        </HighPlusSeqFile>
+        <MisDynSceFile remark="导弹类动态战情文件名称" type="char[512]" MissID="1">导弹型号.csv</MisDynSceFile>
+    </LinkFile>
+    <MaterialParam remark="材质特性参数">
+        <OpticsMaterial remark="光学特性材质">
+            <MaterialDataFile remark="材质数据文件路径" type="char[256]" value="" />
+        </OpticsMaterial>
+    </MaterialParam>
+    <SpaceParam remark="时空参数">
+        <ScenarioCode remark="战情想定编号" type="char[128]" value="编号2" />
+        <ZeroTime remark="作战零点时间">
+            <year remark="年" type="unsigned short" min="1970" max="2099" value="2025" />
+            <month remark="月" type="unsigned char" min="1" max="12" value="10" />
+            <day remark="日" type="unsigned char" min="1" max="31" value="20" />
+            <hour remark="时" type="unsigned char" min="0" max="23" value="10" />
+            <minute remark="分" type="unsigned char" min="0" max="59" value="00" />
+            <second remark="秒" type="unsigned char" min="0" max="59" value="00" />
+        </ZeroTime>
+        <ZeroPos remark="地面坐标系原点位置">
+            <ZeroPosLon remark="经度" type="double" unit="°" min="-180" max="180" decimal="7" value="126.1234567" />
+            <ZeroPosLat remark="纬度" type="double" unit="°" min="-90" max="90" decimal="7" value="45.1234567" />
+            <ZeroPosAlt remark="海拔高度" type="double" unit="m" min="-10000" max="10000000" value="123.45" />
+        </ZeroPos>
+    </SpaceParam>
+    <WeatherParam remark="气象环境参数">
+        <WeatherType remark="天气类型" type="unsigned char" value="0">
+            <tips>0：晴天 1：多云 2：阴天 3：小雨 4：中雨 5：大雨 6：雷雨 7：小雪 8：中雪 9：大雪 10：雾 11：霾</tips>
+        </WeatherType>
+        <ImagBand remark="波段定义">
+            <LaserBandClass remark="激光波长类型" type="unsigned char" value="0">
+                <tips>0：无 1：可见光波段激光 2：1.064微米激光 3：中波红外激光 4：长波红外激光</tips>
+            </LaserBandClass>
+            <ImagBand1Class remark="波段1类型" type="unsigned char" value="1" read="1">
+                <tips>0：无 1：可见光成像 2：近红外成像 3：短波红外成像 4：中波红外成像 5：长波红外成像 6：可见光成像(彩色)</tips>
+            </ImagBand1Class>
+            <ImagBand2Class remark="波段2类型" type="unsigned char" value="0" read="1">
+                <tips>0：无 1：可见光成像 2：近红外成像 3：短波红外成像 4：中波红外成像 5：长波红外成像 6：可见光成像(彩色)</tips>
+            </ImagBand2Class>
+        </ImagBand>
+        <WeatherBase remark="基本气象参数">
+            <AtmTemperature remark="大气温度" type="double" unit="℃" min="-100" max="100" value="15" read="1"/>
+            <AtmHumidity remark="大气湿度" type="double" unit="%" min="0" max="100" value="50" read="1"/>
+            <AtmPressure remark="大气压强" type="double" unit="hPa" min="300" max="1100" value="1013" read="1"/>
+            <AtmVisibility remark="大气能见度" type="double" unit="m" min="0" max="100000" value="10000" read="1"/>
+            <AtmAerosol remark="气溶胶模式（覆盖modtran5所有模式）" type="unsigned char" value="0" read="1">
+                <tips>0：干净大陆 1：城市型(OPAC) 2：海洋型(OPAC) 3：沙漠型(OPAC) 4：乡村型 5：城市型 6：对流层模式 7：水平对流雾 8：发散型雾 9：无气溶胶</tips>
+            </AtmAerosol>
+            <AtmMode remark="大气模式" type="unsigned char" value="0" read="1">
+                <tips>0：美国标准大气 1：AFGL热带 2：AFGL中纬度夏季 3：AFGL中纬度冬季 4：AFGL亚北极冬季 5：AFGL亚北极夏季 6：自定义大气数据</tips>
+            </AtmMode>
+            <LauAtmTemperature remark="导弹发射点大气温度" type="double" unit="℃" min="-100" max="100" value="15" decimal="3"/>
+            <TranRadAtmModelFile remark="辐射传输计算大气卡片文件路径" type="char[256]" value="" />
+            <LaserAtmModelFile remark="激光透过率计算大气卡片文件路径" type="char[256]" value="" />
+            <BandAtmTranRadFile remark="波段1大气辐射传输数据文件路径" type="char[256]" value="" />
+            <Band2AtmTranRadFile remark="波段2大气辐射传输数据文件路径" type="char[256]" value="" />
+            <LaserAtmTranFile remark="激光大气透过率文件路径" type="char[256]" value="" read="10" />
+        </WeatherBase>
+        <TurWeather remark="湍流气象">
+            <TurModelFile remark="湍流气象模型文件路径" type="char[256]" value="" />
+            <TurImagSimFlag remark="成像大气湍流效应仿真" type="unsigned char" value="0">
+                <tips>0：不考虑 1：考虑</tips>
+            </TurImagSimFlag>
+            <AtmCn2 remark="地面大气折射率结构常数" type="double" unit="米的负3分之2幂" min="1.0e-20" max="1.0e-8" value="0" />
+            <LaserTurDataFile remark="激光大气湍流数据文件路径" type="char[256]" value="" />
+        </TurWeather>
+        <WindWeather remark="风场气象">
+            <GrndWindType remark="地面风类型" type="unsigned char" value="0">
+                <tips>0：固定风 1：随机风</tips>
+            </GrndWindType>
+            <MissEnvWindType remark="导弹环境风类型" type="unsigned char" value="0">
+                <tips>0：固定风 1：随机风</tips>
+            </MissEnvWindType>
+            <GrndWindX remark="地面风速X" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <GrndWindY remark="地面风速Y" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <GrndWindZ remark="地面风速Z" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <MissEnvWindX remark="导弹风速X" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <MissEnvWindY remark="导弹风速Y" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <MissEnvWindZ remark="导弹风速Z" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <GrndWindFile remark="地面风场文件名称" type="char[256]" value="" read="10" />
+            <MissEnvWindFile remark="导弹风场文件名称" type="char[256]" value="" read="10" />
+        </WindWeather>
+        <EnvCloud remark="环境云">
+            <CloudClass remark="云类型" type="unsigned char" value="0">
+                <tips>0：无云 1：卷云 2：积云 3：层云 4：卷积云 5：中度积云 6：高分辨率浓积云 7：积雨云 8：层积云 9：高耸积云</tips>
+            </CloudClass>
+            <WeatherCloudHeight remark="环境云高度" type="double" unit="m" min="0" max="40000" value="5000" />
+            <WeatherCloudThickness remark="环境云厚度" type="double" unit="m" min="0" max="10000" value="1000" />
+            <WeatherCloudDensity remark="环境云密度" type="double" unit="kg/m3" min="0" max="1000" value="5" />
+            <WeatherCloud1Transparency remark="环境云波段1透明度修正" type="double" min="0" max="1000" value="1" />
+            <WeatherCloud1Light remark="环境云波段1亮度修正系数" type="double" min="0" max="1000" value="1" />
+            <WeatherCloud1LightBias remark="环境云波段1亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+            <WeatherCloud2Transparency remark="环境云波段2透明度修正" type="double" min="0" max="1000" value="1" />
+            <WeatherCloud2Light remark="环境云波段2亮度修正系数" type="double" min="0" max="1000" value="1" />
+            <WeatherCloud2LightBias remark="环境云波段2亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+        </EnvCloud>
+        <StandCloud remark="独立云块">
+            <SubCloudNo remark="云块编号" type="unsigned char" value="0">
+                <CloudMode remark="云想定方式" type="unsigned char" value="1">
+                    <tips>1：参数想定 2：贴图想定 3：模型想定</tips>
+                </CloudMode>
+                <CloudMassType remark="云块类型" type="unsigned char" value="0" read="2">
+                    <tips>0：无云 1：卷云 2：积云 3：层云 4：卷积云 5：中度积云 6：高分辨率浓积云 7：积雨云 8：层级云 9：高耸积云</tips>
+                </CloudMassType>
+                <CloudPosX remark="云层位置X" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                <CloudPosY remark="云层位置Y" type="double" unit="m" min="-100000" max="100000" value="0" />
+                <CloudPosZ remark="云层高度Z" type="double" unit="m" min="-1000000" max="1000000" value="1000" />
+                <CloudSpeedX remark="云速度X" type="double" unit="m/s" min="-100" max="100" value="10" />
+                <CloudSpeedY remark="云速度Y" type="double" unit="m/s" min="-100" max="100" value="10" />
+                <CloudLengthX remark="云南北方向宽度" type="double" unit="m" min="0" max="100000" value="1000" />
+                <CloudLengthZ remark="云东西方向宽度" type="double" unit="m" min="0" max="100000" value="1000" />
+                <CloudThickness remark="云层厚度" type="double" unit="m" min="0" max="10000" value="300" />
+                <ReferenceObserAzimuth remark="参考观测方位角" type="double" unit="°" min="-180" max="180" value="0" read="2" />
+                <ReferenceObserPithAngle remark="参考观测俯仰角" type="double" unit="°" min="-90" max="90" value="0" read="2" />
+                <CloudRateRangeMin remark="最小粒子数" type="int" unit="°" min="0" max="99999" value="100" />
+                <CloudRateRangeMax remark="最大粒子数" type="int" unit="°" min="0" max="99999" value="100" />
+                <CloudSizeScaleFactor remark="粒子尺寸缩放系数" type="double" unit="" min="0.001" max="1000" value="1" />
+                <BandCloud1Transparency remark="云波段1透明度修正" type="double" min="0" max="1000" value="1" />
+                <BandCloud1Light remark="云波段1亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <BandCloud1LightBias remark="云波段1亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <BandCloud2Transparency remark="云波段2透明度修正" type="double" min="0" max="1000" value="1" />
+                <BandCloud2Light remark="云波段2亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <BandCloud2LightBias remark="云波段2亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <CloudChartletFile remark="云层贴图文件路径" type="char[256]" value="" />
+                <ParticModlelPsrsFile remark="干扰粒子基础模型参数文件" type="char[256]" value="" read="2" />
+                <GrainLasExtCoefFile remark="粒子特效激光消光系数文件" type="char[256]" value="" read="2" />
+            </SubCloudNo>
+        </StandCloud>
+        <Rain remark="雨">
+            <RainHeight remark="雨云高" type="double" unit="m" min="0" max="10000" value="1000" />
+            <RainConcentration remark="雨量" type="double" unit="mm/h" min="0" max="1000" value="10" />
+            <RaindropEffectGeneration remark="雨滴效果生成方式" type="unsigned char" value="0">
+                <tips>0：无 1：外部贴图 2：内部模型</tips>
+            </RaindropEffectGeneration>
+            <RaindropChartletFile remark="雨滴成像序列图文件路径" type="char[256]" value="" />
+        </Rain>
+        <Snow remark="雪">
+            <SnowHeight remark="雪云高" type="double" unit="m" min="0" max="10000" value="0" />
+            <SnowConcentration remark="雪量" type="double" unit="mm/h" min="0" max="1000" value="0" />
+            <SnowGeneration remark="雪效果生成方式" type="unsigned char" value="0">
+                <tips>0：无 1：外部贴图 2：内部模型</tips>
+            </SnowGeneration>
+            <SnowChartletFile remark="雪成像序列图文件路径" type="char[256]" value="" />
+        </Snow>
+        <Fog remark="雾">
+            <FogIntensity remark="雾效强度" type="double" min="0" max="1" value="0.5" />
+            <FogDistance remark="雾的距离" type="double" min="0" max="500000" value="5000" />
+            <FogWarmColor remark="雾效色调" type="double" min="0" max="1" value="0" />
+            <FogGrayColor remark="灰度强度" type="double" min="0" max="1" value="0.5" />
+            <FogEndHeight remark="雾效高度" type="double" min="0" max="500000" value="500" />
+            <FogSkyboxVisible remark="红外下天空盒渐变特效显隐" type="unsigned char" value="1">
+                <tips>0：关闭 1：开启</tips>
+            </FogSkyboxVisible>
+        </Fog>
+    </WeatherParam>
+    <SensorParam remark="传感器信息">
+        <SensorID remark="传感器ID" type="unsigned short" value="0" read="1" >
+            <Sensor remark="传感器参数">
+                <ModelID remark="模型ID" type="unsigned short" value="0" />
+                <SensorClass remark="传感器类型" type="unsigned char" value="1" read="1" >
+                    <tips>1：中波红外 2：长波红外-制冷 3：长波红外-非制冷 4：可见光 5：短波</tips>
+                </SensorClass>
+                <SensorModelName remark="传感器型号名称" type="char[64]" value="中波红外" read="1" />
+                <SensorDispName remark="传感器显示名称" type="char[128]" value="中波红外" read="1" />
+                <OpticAngle remark="视角类型" type="unsigned char" value="0">
+                    <tips>0：自由视角 1：第一视角 2：第三视角</tips>
+                </OpticAngle>
+                <SensorMotionFile remark="传感器运动文件" type="char[256]" value="" />
+                <SensorPos remark="传感器位置参数">
+                    <SensorPosX remark="传感器东坐标" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                    <SensorPosY remark="传感器北坐标" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                    <SensorPosZ remark="传感器天坐标" type="double" unit="m" min="-1000000" max="1000000" value="8000" />
+                </SensorPos>
+                <SensorAtt remark="传感器姿态参数">
+                    <SensorAttH remark="方位角" type="double" unit="°" min="-180" max="180" value="0" />
+                    <SensorAttP remark="俯仰角" type="double" unit="°" min="-90" max="90" value="-90" />
+                    <SensorAttR remark="横滚角" type="double" unit="°" min="-360" max="360" value="0" />
+                </SensorAtt>
+            </Sensor>
+            <SensorEffect remark="传感器效应参数">
+                <TextureLightMin remark="最小温度系数" type="double" min="0.0000" max="999.9999" value="0" />
+                <TextureLightMax remark="最大温度系数" type="double" min="0.0000" max="999.9999" value="60" />
+                <BandMin remark="工作波段最小值" type="double" unit="μm" min="0.00" max="999.00" value="3.7" read="1" />
+                <BandMax remark="工作波段最大值" type="double" unit="μm" min="0.00" max="999.00" value="4.8" read="1" />
+                <FPS remark="帧率" type="int" min="1" max="200" value="50" />
+                <FovH remark="水平视场角" type="double" unit="°" min="0.00" max="180.00" value="3.75" />
+                <FovV remark="垂直视场角" type="double" unit="°" min="0.00" max="180.00" value="3" />
+                <DpiH remark="水平分辨率" type="int" min="1" max="9999" value="1024" />
+                <DpiV remark="垂直分辨率" type="int" min="1" max="9999" value="768" />
+                <BitWidth remark="位宽模式" type="unsigned char" value="1">
+                    <tips>1：8位 2：16位 3：24位 4：10位 5：12位 6：14位</tips>
+                </BitWidth>
+                <ResCoefficient remark="响应系数" type="double" min="0" max="99999" value="1746" decimal="4" />
+                <ResBias remark="响应偏置" type="double" min="-99999" max="99999" value="1733" decimal="4" />
+                <ImgOutModeInjection remark="注入式图像输出方式" type="unsigned char" value="1" read="1">
+                    <tips>1：显卡 2：注入 3：模拟器 4：电阻阵</tips>
+                </ImgOutModeInjection>
+                <ImgScale remark="截图制备倍率" type="double" min="0.1" max="99.9" value="1" />
+                <RecPath remark="截图存储路径" type="char[256]" read="0" value="" />
+                <ReviseType remark="校正类型" type="unsigned char" value="0">
+                    <tips>0：非均匀性校正 1：固定样式噪声</tips>
+                </ReviseType>
+                <NonUniform remark="校正模型" type="char[256]" value="" />
+            </SensorEffect>
+            <DeviceEffect remark="设备效应参数">
+                <IsDisperse remark="弥散模型是否起效" type="unsigned char" value="0">
+                    <tips>0：无效 1：起效</tips>
+                </IsDisperse>
+                <DispersionFile remark="弥散模型文件路径" type="char[256]" value="" />
+                <IsNoise remark="噪声模型是否起效" type="unsigned char" value="0">
+                    <tips>0：无效 1：起效</tips>
+                </IsNoise>
+                <NoiseFile remark="噪声模型文件路径" type="char[256]" value="" />
+            </DeviceEffect>
+            <SceneGenEffect remark="场景产生器效应参数">
+                <SceneGenFovH remark="水平视场角" type="double" unit="°" min="0.00" max="180.00" value="3.75" />
+                <SceneGenFovV remark="垂直视场角" type="double" unit="°" min="0.00" max="180.00" value="3" />
+                <SceneGenDpiH remark="水平分辨率" type="int" min="1" max="9999" value="1024" />
+                <SceneGenDpiV remark="垂直分辨率" type="int" min="1" max="9999" value="768" />
+                <SceneGenBitWidth remark="位宽模式" type="unsigned char" value="1">
+                    <tips>1：8位 2：16位 3：24位 4：10位 5：12位 6：14位</tips>
+                </SceneGenBitWidth>
+                <SceneGenResCoefficient remark="响应系数" type="double" min="0" max="99999" value="1746" decimal="4" />
+                <SceneGenResBias remark="响应偏置" type="double" min="-99999" max="99999" value="1733" decimal="4" />
+                <ImgOutModeRadiant remark="辐射式图像输出方式" type="unsigned char" value="3" read="1">
+                    <tips>1：显卡 2：注入 3：模拟器 4：电阻阵</tips>
+                </ImgOutModeRadiant>
+            </SceneGenEffect>
+        </SensorID>
+    </SensorParam>
+    <BGParam remark="背景参数">
+        <SubBGID remark="背景ID" type="unsigned short" value="0">
+            <BGBase remark="背景基础参数">
+                <BgClass remark="背景类别" type="unsigned char" value="1" read="1">
+                    <tips>1：地面背景 2：海面背景 3：天空背景 4：太空背景</tips>
+                </BgClass>
+                <BgType remark="背景类型" type="unsigned char" value="1" read="1">
+                    <tips>1：沙漠 2：戈壁 3：荒漠 4：城市 5：乡村 6：森林 7：丘陵 8：山区 9：海岛 10：海港 11：浅海 12：深海 13：天空 14：太空</tips>
+                </BgType>
+                <BgName remark="背景名称" type="char[128]" value="桃园机场" read="1" />
+                <GrdIsIncSea remark="是否包括海洋" type="unsigned char" value="0">
+                    <tips>0：不包括 1：包括</tips>
+                </GrdIsIncSea>
+            </BGBase>
+            <GroundBG remark="地面背景">
+                <BgScenario remark="背景想定方式" type="unsigned char" visible="0" value="1">
+                    <tips>1：建模方式 2：外部导入</tips>
+                </BgScenario>
+                <BgSpaceLength remark="背景范围-长" type="double" unit="m" min="0" max="1000000" value="300" read="1" />
+                <BgSpaceWidth remark="背景范围-宽" type="double" unit="m" min="0" max="1000000" value="300" read="1" />
+                <BgFocusSpaceLength remark="重点区域-长" type="double" unit="m" min="0" max="1000000" value="10" read="1" />
+                <BgFocusSpaceWidth remark="重点区域-宽" type="double" unit="m" min="0" max="1000000" value="10" read="1" />
+                <BgModelResultFile remark="地面背景建模结果文件路径" type="char[256]" value="" visible="0" read="1" />
+                <BgMaterialTemperatureDataFile remark="地面背景材质温度数据文件路径" type="char[256]" value="" visible="0" read="1" />
+                <Bg1IntrinsicCharacterFile remark="地面背景本征特性文件路径" type="char[256]" visible="0" value="" />
+            </GroundBG>
+            <SeaBG remark="海面背景">
+                <SeaAltitudeLevel remark="海平面高度" type="double" unit="m" min="-99999" max="99999" value="0" />
+                <SeaWaveLevel remark="海况等级" type="unsigned char" unit="级" min="0" max="9" value="1" />
+                <SeaWindLevel remark="蒲福风级" type="unsigned char" unit="级" min="0" max="12" value="1" read="1" />
+                <SeaWindDirection remark="海洋风向" type="double" unit="°" min="0" max="360" value="0" />
+                <SeaColorFactor remark="海洋亮度系数" type="double" min="0" max="65535" value="1" />
+                <SeaColorBias remark="海洋亮度偏置" type="double" min="0" max="65535" value="0" />
+                <SeaLight remark="海洋定向光照" type="unsigned char" value="0">
+                    <tips>0：否 1：是</tips>
+                </SeaLight>
+                <SeaLightDir remark="海洋定向光源方向">
+                    <SeaLightDirX remark="定向光源-东" type="double" min="-1" max="1" decimal="3" value="0" />
+                    <SeaLightDirY remark="定向光源-北" type="double" min="-1" max="1" decimal="3" value="0" />
+                    <SeaLightDirZ remark="定向光源-天" type="double" min="-1" max="1" decimal="3" value="0" />
+                </SeaLightDir>
+            </SeaBG>
+        </SubBGID>
+    </BGParam>
+    <TargetJamPlatParam remark="目标及干扰发射平台实体参数">
+        <TargetJamFile remark="目标平台干扰类动态战情文件名称" type="char[256]" visible="0" value="" />
+        <EntityID remark="实体ID" type="unsigned short" value="0">
+            <TypeInfo remark="类型信息">
+                <EntityClass remark="实体类别" type="unsigned char" value="1" read="1" >
+                    <tips>1：目标(含假目标) 2：干扰发射平台</tips>
+                </EntityClass>
+                <TargetType remark="目标类型" type="unsigned char" value="2" read="1" >
+                    <tips>1：地面静止目标 2：地面运动目标 3：海上静止目标 4：海上运动目标 5：空中飞机目标 6：飞行导弹目标 7：海港停泊目标</tips>
+                </TargetType>
+                <JamPlatType remark="干扰发射平台类型" type="unsigned char" value="2" visible="0" read="1" >
+                    <tips>1：地面静止平台 2：地面运动平台 3：海上静止平台 4：海上运动平台 5：空中飞机平台 6：飞行导弹平台 7：海港停泊平台</tips>
+                </JamPlatType>
+                <EntityModelName remark="实体型号名称" type="char[64]" value="ah64直升机" read="1" />
+                <EntityDispName remark="实体显示名称" type="char[128]" value="ah64直升机" read="1" />
+                <MainTgtFlag remark="是否主目标" type="unsigned char" value="0">
+                    <tips>0：否 1：是</tips>
+                </MainTgtFlag>
+                <IsEnable remark="是否起效" type="unsigned char" value="1">
+                    <tips>0：无效 1：有效</tips>
+                </IsEnable>
+            </TypeInfo>
+            <StaticInfo remark="静止实体专属信息">
+                <EntityPosX remark="实体坐标-东" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                <EntityPosY remark="实体坐标-北" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                <EntityPosZ remark="实体坐标-天" type="double" unit="m" min="-1000000" max="1000000" value="10" />
+                <EntityAttH remark="姿态方位" type="double" unit="°" min="-180" max="180" value="0" />
+                <EntityAttP remark="姿态俯仰" type="double" unit="°" min="-90" max="90" value="0" />
+                <EntityAttR remark="姿态横滚" type="double" unit="°" min="-180" max="180" value="0" />
+                <EngineState remark="发动机工作状态" type="unsigned char" value="0">
+                    <tips>0：停止 1：工作/巡航 2：加力</tips>
+                </EngineState>
+            </StaticInfo>
+            <MoveInfo remark="实体运动专属信息">
+                <MoveType remark="运动想定方式" type="unsigned char" visible="0" value="1">
+                    <tips>1：轨迹数据文件 2：导弹实时解算</tips>
+                </MoveType>
+                <EntityTrackFile remark="实体运动文件名称" type="char[256]" visible="0" value="" />
+                <EntityPosX remark="实体坐标-东" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                <EntityPosY remark="实体坐标-北" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                <EntityPosZ remark="实体坐标-天" type="double" unit="m" min="-1000000" max="1000000" value="10" />
+                <EntityAttH remark="姿态方位" type="double" unit="°" min="-180" max="180" value="0" />
+                <EntityAttP remark="姿态俯仰" type="double" unit="°" min="-90" max="90" value="0" />
+                <EntityAttR remark="姿态横滚" type="double" unit="°" min="-180" max="180" value="0" />
+                <EngineState remark="发动机工作状态" type="unsigned char" value="0">
+                    <tips>0：停止 1：工作/巡航 2：加力</tips>
+                </EngineState>
+            </MoveInfo>
+            <OpticsQuality remark="实体光学特性想定" visible="0">
+                <ScenMode remark="实体特性想定方式" type="unsigned char" value="1" read="2">
+                    <tips>1：建模方式 2：外部导入</tips>
+                </ScenMode>
+                <ModelResultFile remark="实体建模结果文件路径" type="char[256]" value="" read="2"/>
+                <MaterialTemptureDataFile remark="实体材质温度数据文件路径" type="char[256]" value="" read="2" />
+                <IntrinsicCharacterFile remark="实体本征特性文件路径" type="char[256]" value="" read="2" />
+                <LaserScatScenMode remark="激光反射特性想定方式" type="unsigned char" value="1">
+                    <tips>1：恒值 2：朗伯漫反射 3：BRDF</tips>
+                </LaserScatScenMode>
+                <ReflectivityCoefficient remark="漫反射系数" type="double" min="0" max="1" value="1" />
+                <BidirectionalReflectanceFile remark="双向反射系数数据文件名称" type="char[256]" value="" />
+            </OpticsQuality>
+            <EntityAssist remark="实体建模辅助参数" visible="0">
+                <IsEffective remark="是否考虑毁伤效果仿真" type="unsigned char" value="0">
+                    <tips>0：不考虑 1：考虑</tips>
+                </IsEffective>
+                <CrepDeg remark="毁伤效果描述" type="unsigned char" unit="" min="0" max="20" value="0" />
+                <AppearanceScenarioMode remark="毁伤出现想定方式" type="unsigned char" value="1">
+                    <tips>1：基于时间 2：基于距离 3：基于爆炸动态战情</tips>
+                </AppearanceScenarioMode>
+                <StartTime remark="开始时间" type="int" unit="ms" min="-7200000" max="7200000" value="0" />
+                <MissTrgDistance remark="弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                <ModelBaryX remark="模型中心偏移-东" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <ModelBaryY remark="模型中心偏移-北" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <ModelBaryZ remark="模型中心偏移-天" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <ModelScale remark="模型缩放比例" type="double" min="0" max="999" value="1" />
+            </EntityAssist>
+        </EntityID>
+    </TargetJamPlatParam>
+    <JamParam remark="干扰参数">
+        <JamID remark="干扰ID" type="unsigned short" value="0">
+            <CommonParam remark="干扰想定共性参数">
+                <JamClass remark="干扰类型" type="unsigned char" value="1" read="1">
+                    <tips>1：阳光干扰-直射阳光 2：阳光干扰-镜面反射阳光 3：强光干扰-爆炸强光 4：强光干扰-燃烧火焰 5：强光干扰-强光干扰弹 6：战场扬尘干扰 7：烟幕弹干扰 8：烟幕喷射干扰 9：水幕干扰 10：点源诱饵弹干扰 11：面源诱饵弹干扰 12：点面结合诱饵弹干扰 13：激光压制干扰 14：激光角度欺骗干扰 15：激光高重频干扰 16：假目标干扰 17：伪装遮蔽干扰-目标本体伪装遮蔽 18：伪装遮蔽干扰-非目标本体伪装遮蔽</tips>
+                </JamClass>
+                <JamModelName remark="干扰型号名称" type="char[64]" value="点源诱饵弹干扰" read="1" />
+                <JamDispName remark="干扰显示名称" type="char[128]" value="点源诱饵弹干扰" read="1" />
+                <JamSimMode remark="干扰效应仿真方式" type="unsigned char" value="1" read="1">
+                    <tips>0：不考虑 1：场景贴图模拟 2：粒子系统模拟 3：模型模拟 4：入瞳贴图模拟 5：灰度贴图模拟 6：OpenGL粒子模拟 7：伪装模型</tips>
+                </JamSimMode>
+                <JamModelFile remark="干扰贴图序列文件夹名称" type="char[256]" value="" read="1" />
+                <Scale remark="缩放比例" type="double" min="0" max="999" value="1" />
+                <GrainLasExtCoefFile remark="粒子特效激光消光系数文件名称" type="char[256]" read="11" value=""/>
+            </CommonParam>
+            <ReflectLight remark="反射阳光干扰（干扰类型为1、2时想定）">
+                <IsTargetAssociated remark="是否关联目标" type="unsigned char" value="0">
+                    <tips>0：不关联 1：关联</tips>
+                </IsTargetAssociated>
+                <CorrTargetId remark="关联的实体（目标）ID" type="unsigned short" value="301" />
+                <AppearanceScenarioMode remark="出现想定方式" type="unsigned char" value="3">
+                    <tips>1：基于时间 2：基于距离 3：人工控制</tips>
+                </AppearanceScenarioMode>
+                <StartTime remark="开始时间" type="int" unit="ms" min="-7200000" max="7200000" value="0" />
+                <MissTrgDistance remark="弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                <Durationtime remark="持续时间" type="unsigned int" unit="ms" min="0" max="7200000" value="10000" />
+                <JamMotionState remark="干扰运动状态" type="unsigned char" value="0">
+                    <tips>0：静止 1：运动</tips>
+                </JamMotionState>
+                <JamXPos remark="干扰位置X" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                <JamYPos remark="干扰位置Y" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                <JamZPos remark="干扰位置Z" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                <JammerMotionFile remark="干扰运动文件名称" type="char[256]" read="10" value=""/>
+            </ReflectLight>
+            <StrongLight remark="强光干扰（干扰类型为3、4、5时想定）">
+                <AppearanceScenarioMode remark="出现想定方式" type="unsigned char" value="4" >
+                    <tips>1：基于时间 2：基于距离 3：基于动态战情 4：人工控制</tips>
+                </AppearanceScenarioMode>
+                <StartTime remark="开始时间" type="int" unit="ms" min="-7200000" max="7200000" value="0" />
+                <MissTrgDistance remark="弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                <Durationtime remark="持续时间" type="unsigned int" unit="ms" min="0" max="7200000" value="10000" />
+                <JamMotionState remark="干扰运动状态" type="unsigned char" value="0">
+                    <tips>0：静止 1：运动</tips>
+                </JamMotionState>
+                <JamXPos remark="干扰位置X" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                <JamYPos remark="干扰位置Y" type="double" unit="m" min="-1000000" max="1000000" value="0" />
+                <JamZPos remark="干扰位置Z" type="double" unit="m" min="-1000000" max="1000000" value="50" />
+                <JammerMotionFile remark="干扰运动文件名称" type="char[256]" value="" read="10"/>
+                <JamLength remark="干扰空间尺寸范围-长" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamWidth remark="干扰空间尺寸范围-宽" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamThickness remark="干扰空间尺寸范围-厚" type="double" unit="m" min="0" max="10000" value="100" />
+                <RefAzimuth remark="参考观测角方位" type="double" unit="°" min="-180" max="180" value="0" />
+                <RefElevation remark="参考观测角俯仰" type="double" unit="°" min="-90" max="90" value="0" />
+                <SizeScaleFactor remark="粒子尺寸缩放系数" type="double" unit="" min="0.001" max="1000" value="1" />
+                <Band1Transparency remark="波段1透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band1Light remark="波段1亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band1LightBias remark="波段1亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <Band2Transparency remark="波段2透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band2Light remark="波段2亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band2LightBias remark="波段2亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <ParticModlelParaFile remark="干扰粒子基础模型参数文件名称" type="char[256]" read="10" value="" />
+                <Partic1CharaMapFile remark="波段1粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+                <Partic2CharaMapFile remark="波段2粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+            </StrongLight>
+            <BattleDust remark="战场扬尘干扰（干扰类型为6时想定）">
+                <CorrTargetId remark="关联的实体（目标）ID" type="unsigned short" value="301" />
+                <AppearanceScenarioMode remark="出现想定方式" type="unsigned char" value="3">
+                    <tips>1：基于时间 2：基于距离 3：人工控制</tips>
+                </AppearanceScenarioMode>
+                <StartTime remark="开始时间" type="int" unit="ms" min="-7200000" max="7200000" value="0" />
+                <MissTrgDistance remark="弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                <Durationtime remark="持续时间" type="unsigned int" unit="ms" min="0" max="7200000" value="10000" />
+                <JamLength remark="干扰空间尺寸范围-长" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamWidth remark="干扰空间尺寸范围-宽" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamThickness remark="干扰空间尺寸范围-厚" type="double" unit="m" min="0" max="10000" value="100" />
+                <RefAzimuth remark="参考观测角方位" type="double" unit="°" min="-180" max="180" value="0" />
+                <RefElevation remark="参考观测角俯仰" type="double" unit="°" min="-90" max="90" value="0" />
+                <SizeScaleFactor remark="粒子尺寸缩放系数" type="double" unit="" min="0.001" max="1000" value="1" />
+                <Band1Transparency remark="波段1透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band1Light remark="波段1亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band1LightBias remark="波段1亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <Band2Transparency remark="波段2透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band2Light remark="波段2亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band2LightBias remark="波段2亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <ParticModlelParaFile remark="干扰粒子基础模型参数文件名称" type="char[256]" read="10" value="" />
+                <Partic1CharaMapFile remark="波段1粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+                <Partic2CharaMapFile remark="波段2粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+            </BattleDust>
+            <SmokeGrenade remark="烟幕弹干扰（干扰类型为7时想定）">
+                <CorrJamPlatId remark="关联的实体（干扰发射平台）ID" type="unsigned short" value="301" />
+                <AppearanceScenarioMode remark="出现想定方式" type="unsigned char" value="4">
+                    <tips>1：基于时间 2：基于距离 3：自动规则 4：人工控制</tips>
+                </AppearanceScenarioMode>
+                <StartTime remark="开始时间" type="int" unit="ms" min="-7200000" max="7200000" value="0" />
+                <MissTrgDistance remark="弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                <Durationtime remark="持续时间" type="unsigned int" unit="ms" min="0" max="7200000" value="20000" />
+                <SmokeGrenadeMode remark="烟幕弹干扰方式" type="unsigned char" value="1">
+                    <tips>1：驻车干扰 2：行进间干扰</tips>
+                </SmokeGrenadeMode>
+                <LaunchInitSpeed remark="发射初始速度" type="double" unit="m/s" min="0" max="2000" value="50" />
+                <LaunchAzimuth remark="发射方位角" type="double" unit="°" min="-180" max="180" value="0" />
+                <LaunchElevation remark="发射俯仰角" type="double" unit="°" min="-90" max="90" value="0" />
+                <GroupCount remark="组数量" type="unsigned char" min="0" max="100" value="1" />
+                <SalvoCount remark="齐射弹数量" type="unsigned char" min="0" max="100" value="1" />
+                <GroupInterval remark="组间隔/发射时间间隔" type="double" unit="s" min="0" max="3600" value="0" />
+                <IntraGroupInterval remark="组内发射时间间隔" type="double" unit="s" min="0" max="3600" value="0" />
+                <DetonationTime remark="起爆时间" type="unsigned char" unit="s" min="0" max="100" value="0" />
+                <SmokeXPos remark="烟幕位置X" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <SmokeYPos remark="烟幕位置Y" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <SmokeZPos remark="烟幕位置Z" type="double" unit="m" min="-10000" max="10000" value="50" />
+                <JamLength remark="干扰空间尺寸范围-长" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamWidth remark="干扰空间尺寸范围-宽" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamThickness remark="干扰空间尺寸范围-厚" type="double" unit="m" min="0" max="10000" value="100" />
+                <RefAzimuth remark="参考观测角方位" type="double" unit="°" min="-180" max="180" value="0" />
+                <RefElevation remark="参考观测角俯仰" type="double" unit="°" min="-90" max="90" value="90" />
+                <SizeScaleFactor remark="粒子尺寸缩放系数" type="double" unit="" min="0.001" max="1000" value="1" />
+                <Band1Transparency remark="波段1透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band1Light remark="波段1亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band1LightBias remark="波段1亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <Band2Transparency remark="波段2透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band2Light remark="波段2亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band2LightBias remark="波段2亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <ParticModlelParaFile remark="干扰粒子基础模型参数文件名称" type="char[256]" read="10" value="" />
+                <Partic1CharaMapFile remark="波段1粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+                <Partic2CharaMapFile remark="波段2粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+            </SmokeGrenade>
+            <SmokeEjection remark="烟幕喷射干扰（干扰类型为8时想定）">
+                <CorrJamPlatId remark="关联的实体（干扰发射平台）ID" type="unsigned short" value="301" />
+                <AppearanceScenarioMode remark="出现想定方式" type="unsigned char" value="4">
+                    <tips>1：基于时间 2：基于距离 3：自动规则 4：人工控制</tips>
+                </AppearanceScenarioMode>
+                <StartTime remark="开始时间" type="int" unit="ms" min="-7200000" max="7200000" value="0" />
+                <MissTrgDistance remark="弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                <Durationtime remark="持续时间" type="unsigned int" unit="ms" min="0" max="7200000" value="10000" />
+                <SomkeEjectionJamMode remark="烟幕喷射干扰方式" type="unsigned char" value="1">
+                    <tips>1：驻车干扰 2：行进间干扰</tips>
+                </SomkeEjectionJamMode>
+                <JamLength remark="干扰空间尺寸范围-长" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamWidth remark="干扰空间尺寸范围-宽" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamThickness remark="干扰空间尺寸范围-厚" type="double" unit="m" min="0" max="10000" value="100" />
+                <RefAzimuth remark="参考观测角方位" type="double" unit="°" min="-180" max="180" value="0" />
+                <RefElevation remark="参考观测角俯仰" type="double" unit="°" min="-90" max="90" value="0" />
+                <SizeScaleFactor remark="粒子尺寸缩放系数" type="double" unit="" min="0.001" max="1000" value="1" />
+                <Band1Transparency remark="波段1透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band1Light remark="波段1亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band1LightBias remark="波段1亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <Band2Transparency remark="波段2透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band2Light remark="波段2亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band2LightBias remark="波段2亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <ParticModlelParaFile remark="干扰粒子基础模型参数文件名称" type="char[256]" read="10" value="" />
+                <Partic1CharaMapFile remark="波段1粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+                <Partic2CharaMapFile remark="波段2粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+                <EjectionPort remark="喷射口">
+                    <EjectionPortID remark="喷射口ID" type="unsigned short" value="0">
+                        <LaunchInitSpeed remark="喷射初始速度" type="double" unit="m/s" min="0" max="2000" value="20" />
+                        <LaunchAzimuth remark="喷射方位角" type="double" unit="°" min="-180" max="180" value="45" />
+                        <LaunchElevation remark="喷射俯仰角" type="double" unit="°" min="-90" max="90" value="45" />
+                        <EjectionFlowRate remark="喷射流量" type="double" unit="m3/s" min="0" max="65535" value="90" />
+                        <SingleTankSmokeTotal remark="单罐烟幕总量" type="double" unit="m3" min="0" max="100000" value="90" />
+                        <EjectionPortPosX remark="喷射口位置X" type="double" unit="m" min="-10000" max="10000" value="0" />
+                        <EjectionPortPosY remark="喷射口位置Y" type="double" unit="m" min="-10000" max="10000" value="0" />
+                        <EjectionPortPosZ remark="喷射口位置Z" type="double" unit="m" min="-10000" max="10000" value="0" />
+                        <EjectionPortSweepAngle remark="喷射口扇扫角" type="double" unit="°" min="-180" max="180" value="0" />
+                    </EjectionPortID>
+                </EjectionPort>
+            </SmokeEjection>
+            <WaterCurtain remark="水幕干扰（干扰类型为9时想定）">
+                <CorrJamPlatId remark="关联的实体（干扰发射平台）ID" type="unsigned short" value="301" />
+                <AppearanceScenarioMode remark="出现想定方式" type="unsigned char" value="4">
+                    <tips>1：基于时间 2：基于距离 3：自动规则 4：人工控制</tips>
+                </AppearanceScenarioMode>
+                <StartTime remark="开始时间" type="int" unit="ms" min="-7200000" max="7200000" value="0" />
+                <MissTrgDistance remark="弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                <Durationtime remark="持续时间" type="unsigned int" unit="ms" min="0" max="7200000" value="20000" />
+                <WaterEjectionJamMode remark="水幕喷射干扰方式" type="unsigned char" value="1">
+                    <tips>1：驻车干扰 2：行进间干扰</tips>
+                </WaterEjectionJamMode>
+                <JamLength remark="干扰空间尺寸范围-长" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamWidth remark="干扰空间尺寸范围-宽" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamThickness remark="干扰空间尺寸范围-厚" type="double" unit="m" min="0" max="10000" value="100" />
+                <RefAzimuth remark="参考观测角方位" type="double" unit="°" min="-180" max="180" value="0" />
+                <RefElevation remark="参考观测角俯仰" type="double" unit="°" min="-90" max="90" value="0" />
+                <SizeScaleFactor remark="粒子尺寸缩放系数" type="double" unit="" min="0.001" max="1000" value="1" />
+                <Band1Transparency remark="波段1透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band1Light remark="波段1亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band1LightBias remark="波段1亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <Band2Transparency remark="波段2透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band2Light remark="波段2亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band2LightBias remark="波段2亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <ParticModlelParaFile remark="干扰粒子基础模型参数文件名称" type="char[256]" read="10" value="" />
+                <Partic1CharaMapFile remark="波段1粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+                <Partic2CharaMapFile remark="波段2粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+                <EjectionPort remark="喷射口">
+                    <EjectionPortID remark="喷射口ID" type="unsigned short" value="0">
+                        <LaunchInitSpeed remark="喷射初始速度" type="double" unit="m/s" min="0" max="2000" value="20" />
+                        <LaunchAzimuth remark="喷射方位角" type="double" unit="°" min="-180" max="180" value="0" />
+                        <LaunchElevation remark="喷射俯仰角" type="double" unit="°" min="-90" max="90" value="0" />
+                        <EjectionFlowRate remark="喷射流量" type="double" unit="m3/s" min="0" max="65535" value="100" />
+                        <EjectionPortPosX remark="喷射口位置X" type="double" unit="m" min="-10000" max="10000" value="0" />
+                        <EjectionPortPosY remark="喷射口位置Y" type="double" unit="m" min="-10000" max="10000" value="0" />
+                        <EjectionPortPosZ remark="喷射口位置Z" type="double" unit="m" min="-10000" max="10000" value="0" />
+                        <EjectionPortSweepAngle remark="喷射口扇扫角" type="double" unit="°" min="-180" max="180" value="0" />
+                    </EjectionPortID>
+                </EjectionPort>
+            </WaterCurtain>
+            <DecoyBomb remark="诱饵弹干扰（干扰类型为10、11、12时想定）">
+                <CorrEntityId remark="关联的实体（目标或干扰发射平台）ID" type="unsigned short" value="301" />
+                <AppearanceScenarioMode remark="出现想定方式" type="unsigned char" value="4">
+                    <tips>1：基于时间 2：基于距离 3：自动规则 4：人工控制</tips>
+                </AppearanceScenarioMode>
+                <StartTime remark="开始时间" type="int" unit="ms" min="-7200000" max="7200000" value="0" />
+                <MissTrgDistance remark="弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                <Durationtime remark="持续时间" type="unsigned int" unit="ms" min="0" max="7200000" value="10000" />
+                <DecoyInterferenceMethod remark="诱饵弹干扰方式" type="unsigned char" value="1">
+                    <tips>1：驻车干扰 2：行进间干扰</tips>
+                </DecoyInterferenceMethod>
+                <GroupCount remark="组数量" type="unsigned short" min="0" max="1000" value="1" />
+                <SalvoCount remark="齐射弹数量" type="unsigned char" min="0" max="100" value="1" />
+                <GroupInterval remark="组间隔/发射时间间隔" type="double" unit="s" min="0" max="3600" value="0.8" />
+                <IntraGroupInterval remark="组内发射时间间隔" type="double" unit="s" min="0" max="3600" value="0" />
+                <JamLength remark="干扰空间尺寸范围-长" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamWidth remark="干扰空间尺寸范围-宽" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamThickness remark="干扰空间尺寸范围-厚" type="double" unit="m" min="0" max="10000" value="100" />
+                <RefAzimuth remark="参考观测角方位" type="double" unit="°" min="-180" max="180" value="0" />
+                <RefElevation remark="参考观测角俯仰" type="double" unit="°" min="-90" max="90" value="0" />
+                <SizeScaleFactor remark="粒子尺寸缩放系数" type="double" unit="" min="0.001" max="1000" value="1" />
+                <Band1Transparency remark="波段1透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band1Light remark="波段1亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band1LightBias remark="波段1亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <Band2Transparency remark="波段2透明度修正" type="double" min="0" max="1000" value="1" />
+                <Band2Light remark="波段2亮度修正系数" type="double" min="0" max="1000" value="1" />
+                <Band2LightBias remark="波段2亮度修正偏置" type="double" unit="W/(sr.m2)" min="-1000" max="1000" value="0" />
+                <ParticModlelParaFile remark="干扰粒子基础模型参数文件名称" type="char[256]" read="10" value="" />
+                <Partic1CharaMapFile remark="波段1粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+                <Partic2CharaMapFile remark="波段2粒子物理特性映射曲线文件名称" type="char[256]" read="10" value="" />
+                <Source remark="发射源">
+                    <SourceID remark="发射源ID" type="unsigned short" value="0">
+                        <LaunchInitSpeed remark="发射初始速度" type="double" unit="m/s" min="0" max="2000" value="10" />
+                        <LaunchAzimuth remark="发射方位角" type="double" unit="°" min="-180" max="180" value="170" />
+                        <LaunchElevation remark="发射俯仰角" type="double" unit="°" min="-90" max="90" value="10" />
+                        <SourcePosX remark="发射源位置X" type="double" unit="m" min="-10000" max="10000" value="0" />
+                        <SourcePosY remark="发射源位置Y" type="double" unit="m" min="-10000" max="10000" value="0" />
+                        <SourcePosZ remark="发射源位置Z" type="double" unit="m" min="-10000" max="10000" value="0" />
+                    </SourceID>
+                </Source>
+            </DecoyBomb>
+            <LaserSuppress remark="激光压制干扰（干扰类型为13时想定）">
+                <CorrJamPlatId remark="关联的实体（干扰发射平台）ID" type="unsigned short" value="301" />
+                <AppearanceScenarioMode remark="出现想定方式" type="unsigned char" value="4">
+                    <tips>1：基于时间 2：基于距离 3：自动规则 4：人工控制</tips>
+                </AppearanceScenarioMode>
+                <StartTime remark="开始时间" type="int" unit="ms" min="-7200000" max="7200000" value="0" />
+                <MissTrgDistance remark="弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                <Durationtime remark="持续时间" type="unsigned int" unit="ms" min="0" max="7200000" value="20000" />
+                <LaserSuppressionMethod remark="激光压制干扰方式" type="unsigned char" value="1">
+                    <tips>1：驻车干扰 2：行进间干扰</tips>
+                </LaserSuppressionMethod>
+                <JamXPos remark="干扰位置X" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <JamYPos remark="干扰位置Y" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <JamZPos remark="干扰位置Z" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <TrackingChanelID remark="跟瞄通道ID" type="unsigned short" value="0"/>
+                <TrackDist remark="跟踪距离" type="double" unit="m" min="0" max="100000" value="2000" />
+                <TrackErrorYaw remark="方位跟瞄精度" type="double" unit="m" min="0" max="5000" decimal="3" value="0" />
+                <TrackErrorPitch remark="俯仰跟瞄精度" type="double" unit="m" min="0" max="5000" decimal="3" value="0" />
+                <PitchMax remark="俯仰上限" type="double" unit="m" min="-90" max="90" value="0" />
+                <PitchMin remark="俯仰下限" type="double" unit="m" min="-90" max="90" value="0" />
+                <YawMaxTrackVelocity remark="方位最大跟踪角速度" type="double" unit="°/s" min="0" max="1000" value="0" />
+                <YawMaxTrackAcceleration remark="方位最大跟踪角加速度" type="double" unit="°/s2" min="0" max="1000" value="0" />
+                <PitchMaxTrackVelocity remark="俯仰最大跟踪角速度" type="double" unit="°/s" min="0" max="1000" value="0" />
+                <PitchMaxTrackAcceleration remark="俯仰最大跟踪角加速度" type="double" unit="°/s2" min="0" max="1000" value="0" />
+                <LasWavebandType remark="激光波段类型" type="unsigned char" value="1">
+                    <tips>1：紫外 2：可见光 3：近红外 4：短波红外 5：中波红外 6：长波红外</tips>
+                </LasWavebandType>
+                <StartLambda remark="起始波长" type="unsigned int" unit="nm" min="0" max="100000" value="0" />
+                <EndLambda remark="截止波长" type="unsigned int" unit="nm" min="0" max="100000" value="0" />
+                <LaserLaunchPower remark="发射功率" type="double" unit="W" min="0" max="1000000" decimal="3" value="30" />
+                <LaserType remark="激光体制" type="unsigned char" value="1">
+                    <tips>1：脉冲激光 2：连续激光</tips>
+                </LaserType>
+                <LasBeamControlType remark="激光束控制方式" type="unsigned char" value="1">
+                    <tips>1：固定束散角 2：聚焦光束控制</tips>
+                </LasBeamControlType>
+                <LaserRepeatFreq remark="重复频率" type="unsigned int" unit="Hz" min="0" max="5000000" value="1000" />
+                <LasPulseWidth remark="脉冲宽度" type="double" unit="nm" min="0.000001" max="1000000" decimal="8" value="10" />
+                <LasDiameter remark="出光口径" type="double" unit="mm" min="1" max="1000" value="100" />
+                <LaserDivergAng remark="束散角" type="double" unit="mrad" min="0" max="10000" decimal="4" value="0.5" />
+                <LasSpotSizeFile remark="不同距离激光光斑尺寸数据文件" type="char[256]" read="10" value="" />
+            </LaserSuppress>
+            <LaserAngleDecept remark="激光角度欺骗干扰（干扰类型为14时想定）">
+                <CorrJamPlatId remark="关联的实体（干扰发射平台）ID" type="unsigned short" value="301" />
+                <LaserAngleDeceptionMethod remark="激光角度欺骗干扰方式" type="unsigned char" value="1">
+                    <tips>1：驻车干扰 2：行进间干扰</tips>
+                </LaserAngleDeceptionMethod>
+                <JamZBPosX remark="干扰装备激光告警头位置X" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <JamZBPosY remark="干扰装备激光告警头位置Y" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <JamZBPosZ remark="干扰装备激光告警头位置Z" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <FakeTargetPosX remark="假目标位置X" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <FakeTargetPosY remark="假目标位置Y" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <FakeTargetPosZ remark="假目标位置Z" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <FakeTargetAzimuth remark="假目标姿态方位角" type="double" unit="°" min="-180" max="180" value="0" />
+                <FakeTargetElevation remark="假目标姿态俯仰角" type="double" unit="°" min="-90" max="90" value="0" />
+                <FakeTargetRoll remark="假目标姿态滚转角" type="double" unit="°" min="-180" max="180" value="0" />
+                <FakeTargetNormalAzimuth remark="假目标法线方向方位" type="double" unit="°" min="-180" max="180" value="0" />
+                <FakeTargetNormalElevation remark="假目标法线方向俯仰" type="double" unit="°" min="-90" max="90" value="0" />
+                <FakeTargetReflectivityScenario remark="假目标反射特性想定方式" type="unsigned char" value="1">
+                    <tips>1：恒值 2：朗伯漫反射 3：BRDF</tips>
+                </FakeTargetReflectivityScenario>
+                <ReflectivityCoefficient remark="反射系数" type="double" min="0" max="1" value="0" />
+                <FakeTargetBidirectionalReflectanceFile remark="假目标双向反射系数数据文件路径" type="char[256]" read="10" value="" />
+                <LaserWarnSensitivity remark="激光告警灵敏度" type="double" unit="μW/cm2" min="0" max="100" value="0" />
+                <ScatteringInterceptRadius remark="散射截获半径" type="double" unit="m" min="0" max="10000" value="0" />
+                <JammingReactionTime remark="干扰反应时间" type="double" unit="s" min="0" max="100" value="0" />
+                <JammingDuration remark="干扰持续时间" type="double" unit="s" min="0" max="1000" value="10" />
+                <LasPulseEnergy remark="干扰激光脉冲能量" type="double" unit="mJ" min="0" max="1000" value="0" />
+                <LasPulseWidth remark="干扰激光脉冲宽度" type="double" unit="nm" min="0.000001" max="1000000" value="10" />
+                <JammingTimingStrategy remark="干扰时序策略" type="unsigned char" value="1">
+                    <tips>1：固定时序差 2：序列时序差</tips>
+                </JammingTimingStrategy>
+                <FixedTimingOffset remark="固定时序差值" type="double" unit="μs" min="-100" max="100" value="0" />
+                <DeceptionLaserPulseTimingFile remark="欺骗激光脉冲时序文件" type="char[256]" read="10" value="" />
+            </LaserAngleDecept>
+            <LaserHighRepetRate remark="激光高重频干扰（干扰类型为15时想定）">
+                <CorrJamPlatId remark="关联的实体（干扰发射平台）ID" type="unsigned short" value="301" />
+                <AppearanceScenarioMode remark="出现想定方式" type="unsigned char" value="4">
+                    <tips>1：基于时间 2：基于距离 3：自动规则 4：人工控制</tips>
+                </AppearanceScenarioMode>
+                <StartTime remark="开始时间" type="int" unit="ms" min="-7200000" max="7200000" value="0" />
+                <MissTrgDistance remark="弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                <Durationtime remark="持续时间" type="unsigned int" unit="ms" min="0" max="7200000" value="10000" />
+                <LaserHighRepetRateMethod remark="激光高重频干扰方式" type="unsigned char" value="1">
+                    <tips>1：驻车干扰 2：行进间干扰</tips>
+                </LaserHighRepetRateMethod>
+                <JamXPos remark="干扰位置X" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <JamYPos remark="干扰位置Y" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <JamZPos remark="干扰位置Z" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <TrackingChanelID remark="跟瞄通道ID" type="unsigned short" value="0" />
+                <TrackDist remark="跟踪距离" type="double" unit="m" min="0" max="100000" value="2000" />
+                <TrackErrorYaw remark="方位跟瞄精度" type="double" unit="m" min="0" max="5000" decimal="3" value="0" />
+                <TrackErrorPitch remark="俯仰跟瞄精度" type="double" unit="m" min="0" max="5000" decimal="3" value="0" />
+                <PitchMax remark="俯仰上限" type="double" unit="m" min="-90" max="90" value="0" />
+                <PitchMin remark="俯仰下限" type="double" unit="m" min="-90" max="90" value="0" />
+                <YawMaxTrackVelocity remark="方位最大跟踪角速度" type="double" unit="°/s" min="0" max="1000" value="0" />
+                <YawMaxTrackAcceleration remark="方位最大跟踪角加速度" type="double" unit="°/s2" min="0" max="1000" value="0" />
+                <PitchMaxTrackVelocity remark="俯仰最大跟踪角速度" type="double" unit="°/s" min="0" max="1000" value="0" />
+                <PitchMaxTrackAcceleration remark="俯仰最大跟踪角加速度" type="double" unit="°/s2" min="0" max="1000" value="0" />
+                <LasWavebandType remark="激光波段类型" type="unsigned char" value="1">
+                    <tips>1：紫外 2：可见光 3：近红外 4：短波红外 5：中波红外 6：长波红外</tips>
+                </LasWavebandType>
+                <StartLambda remark="起始波长" type="unsigned int" unit="nm" min="0" max="100000" value="0" />
+                <EndLambda remark="截止波长" type="unsigned int" unit="nm" min="0" max="100000" value="0" />
+                <LaserLaunchPower remark="发射功率" type="double" unit="W" min="0" max="1000000" decimal="3" value="10" />
+                <InterfType remark="干扰样式" type="unsigned char" value="1">
+                    <tips>1：重频和脉冲能量不变 2：重频和脉冲能量变化</tips>
+                </InterfType>
+                <LaserRepeatFreq remark="重复频率" type="unsigned int" unit="Hz" min="0" max="5000000" value="1000" />
+                <LasPulseWidth remark="脉冲宽度" type="double" unit="nm" min="0.000001" max="1000000" decimal="8" value="10" />
+                <LasDiameter remark="出光口径" type="double" unit="mm" min="1" max="1000" value="100" />
+                <LaserDivergAng remark="束散角" type="double" unit="mrad" min="0" max="10000" decimal="4" value="0.5" />
+                <HighPlusSeqFile remark="高重频序列脉冲字文件文件" type="char[256]" read="10" value="" />
+            </LaserHighRepetRate>
+            <FalseTarget remark="假目标干扰（干扰类型为16时想定）">
+                <CorrTargetId remark="关联的实体（目标）ID" type="unsigned short" value="301" />
+            </FalseTarget>
+            <Camouflage remark="伪装遮蔽干扰（干扰类型为17、18时想定）">
+                <CorrTargetId remark="关联的实体（目标）ID" type="unsigned short" value="301" />
+                <AutoFall remark="自由落体伪装屏蔽" type="unsigned char" value="1">
+                    <tips>0：不启用 1：启用</tips>
+                </AutoFall>
+                <JamType remark="干扰贴合类型" type="unsigned char" value="1">
+                    <tips>0：外扩覆盖模式 1：紧密贴合模式</tips>
+                </JamType>
+                <JamXPos remark="干扰位置X" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <JamYPos remark="干扰位置Y" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <JamZPos remark="干扰位置Z" type="double" unit="m" min="-10000" max="10000" value="100" />
+                <JamLength remark="干扰空间尺寸范围-长" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamWidth remark="干扰空间尺寸范围-宽" type="double" unit="m" min="0" max="10000" value="100" />
+                <JamAngle remark="角度" type="double" unit="m" min="-10000" max="10000" value="0" />
+            </Camouflage>
+        </JamID>
+    </JamParam>
+    <MissileWeapon remark="导弹武器系统">
+        <MissPlatID remark="平台ID" type="unsigned short" value="0">
+            <MissilePlatformInfo remark="导弹发射平台信息">
+                <MissPlatClass remark="平台类型" type="unsigned char" value="1">
+                    <tips>1：陆基 2：车载 3：舰载 4：机载 5：潜射</tips>
+                </MissPlatClass>
+                <MissPlatTypName remark="平台型号名称" type="char[64]" value="0" />
+                <MissPlatDispName remark="平台显示名称" type="char[128]" value="0" />
+                <MissPlatMovSta remark="平台运动状态" type="unsigned char" value="1">
+                    <tips>1：静止 2：运动</tips>
+                </MissPlatMovSta>
+                <MissPlatLon remark="平台位置经度" type="double" unit="°" min="-180" max="180" decimal="7" value="0" />
+                <MissPlatLat remark="平台位置纬度" type="double"  unit="°" min="-90" max="90" decimal="7" value="0" />
+                <MissPlatAlt remark="平台位置高度" type="double" unit="m" min="-100000" max="10000000" value="0" />
+                <MissPlatPosX remark="平台位置X" type="double" unit="m" min="20000000" max="20000000" value="0" />
+                <MissPlatPosY remark="平台位置Y" type="double" unit="m" min="20000000" max="20000000" value="0" />
+                <MissPlatPosZ remark="平台位置Z" type="double" unit="m" min="20000000" max="20000000" value="0" />
+                <MissPlatGesYaw remark="平台姿态偏航角" type="double" unit="°" min="-180" max="180" value="0" />
+                <MissPlatGesPitch remark="平台姿态俯仰角" type="double" unit="°" min="-90" max="90" value="0" />
+                <MissPlatGesRoll remark="平台姿态滚转角" type="double" unit="°" min="-180" max="180" value="0" />
+                <MissPlatEngSta remark="发动机状态" type="unsigned char" value="0">
+                    <tips>0：未开机 1：巡航 2：加力</tips>
+                </MissPlatEngSta>
+                <WaitLauMiss1ID remark="待发射导弹1ID" type="unsigned short" value="201" />
+                <ModelBaryX remark="模型中心偏移X" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <ModelBaryY remark="模型中心偏移Y" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <ModelBaryZ remark="模型中心偏移Z" type="double" unit="m" min="-10000" max="10000" value="0" />
+                <ModelScale remark="模型缩放比例" type="double" min="0" max="999" value="1" />
+            </MissilePlatformInfo>
+            <Missiles remark="导弹信息">
+                <MissID remark="导弹ID" type="unsigned short" value="0">
+                    <CorrMissPlatID remark="关联发射平台ID" type="unsigned short" value="101" />
+                    <MissileClass remark="导弹类型" type="unsigned char" value="1">
+                        <tips>1：弹道导弹 2：飞航导弹 3：制导火箭弹 4：制导炮弹 5：反坦克弹 6：巡飞弹</tips>
+                    </MissileClass>
+                    <MissTypName remark="导弹型号名称" type="char[64]" value="PL15" />
+                    <MissDispName remark="导弹显示名称" type="char[128]" value="" />
+                    <MainMissFlag remark="是否主导弹" type="unsigned char" value="0">
+                        <tips>0：否 1：是</tips>
+                    </MainMissFlag>
+                    <MissModVerNum remark="模型版本" type="char[32]" value="V01" />
+                    <MissHangYaw remark="导弹加挂姿态方位角" type="double" unit="°" min="-180" max="180" value="0" />
+                    <MissHangPitch remark="导弹加挂姿态俯仰角" type="double" unit="°" min="-90" max="90" value="0" />
+                    <MissHangRoll remark="导弹加挂姿态滚转角" type="double" unit="°" min="-180" max="180" value="0" />
+                    <MissLauLow remark="导弹发射规则" type="unsigned char" value="1">
+                        <tips>1：时间规则 2：距离规则 3：本系统人工发射 4：被试品人工发射</tips>
+                    </MissLauLow>
+                    <MissLauTime remark="发射时间" type="int" unit="ms" min="-8000000" max="8000000" value="0" />
+                    <MissLauRang remark="发射距离" type="double" unit="m" min="0" max="20000000" value="0" />
+                    <AttackTargID remark="预攻击目标ID" type="unsigned short" value="301" />
+                    <MissLauInitVel remark="导弹发射初速度" type="double" unit="m/s" min="0" max="10000" value="0" />
+                    <DamEffSimFlag remark="是否考虑毁伤效果仿真" type="unsigned char" value="0">
+                        <tips>0：不考虑 1：考虑</tips>
+                    </DamEffSimFlag>
+                    <PrelauSeekWork remark="导引头是否发射前工作" type="unsigned char" value="0">
+                        <tips>0：否吧 1：是</tips>
+                    </PrelauSeekWork>
+                    <PrelauSeekWorkRang remark="导引头发射前工作弹目距离" type="double" unit="m" min="0" max="100000" value="0" />
+                    <SatNavPertSimMode remark="卫星导航受扰效果模拟方式" type="unsigned char" value="0">
+                        <tips>0：不模拟 1：本系统数据文件方式 2：联合仿真他系统模拟方式</tips>
+                    </SatNavPertSimMode>
+                </MissID>
+                <DYTParam remark="末制导导引头参数">
+                    <CommonParam remark="导引头公共参数">
+                        <SeekTypName remark="导引头型号名称" type="char[64]" value="" />
+                        <SeekDispName remark="导引头显示名称" type="char[128]" value="" />
+                        <CorrMissID remark="关联导弹ID" type="unsigned short" value="201" />
+                        <SeekGuidModNum remark="导引头制导模块数量" type="unsigned char" value="1" />
+                        <SeekPlatNum remark="导引头平台数量" type="unsigned char" value="1" />
+                        <SeekInstYaw1 remark="导引头安装姿态方位角（平台1）" type="double" unit="°" min="-180" max="180" value="0" />
+                        <SeekInstPitch1 remark="导引头安装姿态俯仰角（平台1）" type="double" unit="°" min="-90" max="90" value="0" />
+                        <SeekInstRoll1 remark="导引头安装姿态滚转角（平台1）" type="double" unit="°" min="-180" max="180" value="0" />
+                        <SeekInstYaw2 remark="导引头安装姿态方位角（平台2）" type="double" unit="°" min="-180" max="180" value="0" />
+                        <SeekInstPitch2 remark="导引头安装姿态俯仰角（平台2）" type="double" unit="°" min="-90" max="90" value="0" />
+                        <SeekInstRoll2 remark="导引头安装姿态滚转角（平台2）" type="double" unit="°" min="-180" max="180" value="0" />
+                        <ComGuidSratFlag remark="复合制导策略" type="unsigned char" value="1">
+                            <tips>1：主副模式 2：接力模式 3：融合模式</tips>
+                        </ComGuidSratFlag>
+                        <MainGuidModNo remark="主制导模块序号" type="unsigned char" min="1" max="3" value="1" />
+                        <GuidMod1Class remark="制导模块1类型" type="unsigned char" value="0">
+                            <tips>0：无 1：激光 2：光学成像 3：主动雷达 4：被动雷达</tips>
+                        </GuidMod1Class>
+                        <GuidMod1Band remark="制导模块1工作波段" type="unsigned char" value="1">
+                            <tips>1：可见光 2：近红外 3：短波红外 4：中波红外 5：长波红外</tips>
+                        </GuidMod1Band>
+                        <GuidMod1PlatSerNum remark="制导模块1所属平台序号" type="unsigned char" min="1" max="2" value="1" />
+                        <GuidMod2Class remark="制导模块2类型" type="unsigned char" value="0">
+                            <tips>0：无 1：激光半主动 2：光学成像 3：主动雷达 4：被动雷达</tips>
+                        </GuidMod2Class>
+                        <GuidMod2Band remark="制导模块2工作波段" type="unsigned char" value="1">
+                            <tips>1：可见光 2：近红外 3：短波红外 4：中波红外 5：长波红外</tips>
+                        </GuidMod2Band>
+                        <GuidMod2PlatSerNum remark="制导模块2所属平台序号" type="unsigned char" min="1" max="2" value="1" />
+                        <GuidMod3Class remark="制导模块3类型" type="unsigned char" value="0">
+                            <tips>0：无 1：激光 2：光学成像 3：主动雷达 4：被动雷达</tips>
+                        </GuidMod3Class>
+                        <GuidMod3Band remark="制导模块3工作波段" type="unsigned char" value="1">
+                            <tips>1：可见光 2：近红外 3：短波红外 4：中波红外 5：长波红外</tips>
+                        </GuidMod3Band>
+                        <GuidMod3PlatSerNum remark="制导模块3所属平台序号" type="unsigned char" min="1" max="2" value="1" />
+                        <OptImagGuidModNum remark="光学成像制导模块数量" type="unsigned char" min="0" max="2" value="1" />
+                        <LaserGuidModNum remark="激光制导模块数量" type="unsigned char" min="0" max="1" value="1" />
+                    </CommonParam>
+                    <OptImagGuidMods remark="光学成像制导模块">
+                        <OptImagGuidMod remark="制导模块序号" type="unsigned char" value="0">
+                            <StartWavelength remark="起始波长" type="double" unit="μm" min="0" max="20" value="0" />
+                            <CutOffWavelength remark="终止波长" type="double" unit="μm" min="0" max="20" value="0" />
+                            <FieldYaw remark="方位视场" type="double" unit="°" min="0" max="90" value="0" />
+                            <FieldPitch remark="俯仰视场" type="double" unit="°" min="0" max="90" value="0" />
+                            <EntraPupDiam remark="入瞳直径" type="double" unit="mm" min="0" max="300" value="0" />
+                            <FocalLength remark="焦距" type="double" unit="mm" min="0" max="2000" value="0" />
+                            <YawPixelNum remark="方位像元数" type="unsigned short" min="0" max="10000" value="0" />
+                            <PitchPixelNum remark="俯仰像元数" type="unsigned short" min="0" max="10000" value="0" />
+                            <IntegralTime remark="积分时间" type="unsigned int" unit="μs" min="0" max="200000" value="0" />
+                            <FrameFreq remark="帧频" type="double" unit="Hz" min="0" max="500" value="0" />
+                            <GrayScale remark="灰度等级" type="unsigned char" unit="位" min="8" max="16" value="0" />
+                            <RadBright1 remark="响应特性点1辐射亮度" type="double" unit="W/(sr.m2)" min="0" max="10000" value="0" />
+                            <Sect1RespRatio remark="亮度区间1响应系数" type="double" unit="(sr.m2)/W" min="0" max="10000" value="0" />
+                            <Sect1RespBias remark="亮度区间1响应偏置" type="unsigned int" unit="灰度" min="0" max="10000" value="0" />
+                            <RadBright2 remark="响应特性点2辐射亮度" type="double" unit="W/(sr.m2)" min="0" max="10000" value="0" />
+                            <Sect2RespRatio remark="亮度区间2响应系数" type="double" unit="(sr.m2)/W" min="0" max="10000" value="0" />
+                            <Sect2RespBias remark="亮度区间2响应偏置" type="unsigned int" unit="灰度" min="0" max="10000" value="0" />
+                            <RadBright3 remark="响应特性点3辐射亮度" type="double" unit="W/(sr.m2)" min="0" max="10000" value="0" />
+                            <Sect3RespRatio remark="亮度区间3响应系数" type="double" unit="(sr.m2)/W" min="0" max="10000" value="0" />
+                            <Sect3RespBias remark="亮度区间3响应偏置" type="unsigned int" unit="灰度" min="0" max="10000" value="0" />
+                            <RadBright4 remark="响应特性点4辐射亮度" type="double" unit="W/(sr.m2)" min="0" max="10000" value="0" />
+                            <Sect4RespRatio remark="亮度区间4响应系数" type="double" unit="(sr.m2)/W" min="0" max="10000" value="0" />
+                            <Sect4RespBias remark="亮度区间4响应偏置" type="unsigned int" unit="灰度" min="0" max="10000" value="0" />
+                            <GrayVariance remark="噪声灰度方差" type="double" unit="灰度" min="0" max="1000" value="0" />
+                            <AerHeatRadSimFlag remark="气动热辐射热辐射效应仿真标识" type="unsigned char" value="0">
+                                <tips>0：不考虑 1：考虑</tips>
+                            </AerHeatRadSimFlag>
+                            <AerHeatPSFSimFlag remark="气动热图像退化效应仿真标识" type="unsigned char" value="0">
+                                <tips>0：不考虑 1：考虑</tips>
+                            </AerHeatPSFSimFlag>
+                            <MovVibEffSimFlag remark="运动抖动模糊效应仿真标识" type="unsigned char" value="0">
+                                <tips>0：不考虑 1：考虑</tips>
+                            </MovVibEffSimFlag>
+                        </OptImagGuidMod>
+                    </OptImagGuidMods>
+                    <LaserGuidMods remark="激光制导模块">
+                        <LaserGuidMod remark="制导模块序号" type="unsigned char" value="0">
+                            <AllField remark="全视场" type="double" unit="°" min="0" max="90" value="0" />
+                            <Wavelength remark="工作波长" type="double" unit="μm" min="0" max="20" value="0" />
+                            <Sensitivity remark="灵敏度" type="double" unit="fJ/cm2" min="0" max="100" value="0" />
+                            <IndicatorPosX remark="指示器位置X" type="double" unit="m" min="-100000" max="100000" value="0" />
+                            <IndicatorPosY remark="指示器位置Y" type="double" unit="m" min="-100000" max="100000" value="0" />
+                            <IndicatorPosZ remark="指示器位置Z" type="double" unit="m" min="-100000" max="100000" value="0" />
+                            <LasShootScenFlag remark="激光发射想定方式" type="unsigned char" value="1">
+                                <tips>1：基于时间 2：基于距离 3：基于事件</tips>
+                            </LasShootScenFlag>
+                            <StartLasShootTime remark="发射开始时间" type="int" unit="ms" min="-8000000" max="8000000" value="0" />
+                            <EndLasShootTime remark="发射结束时间" type="int" unit="ms" min="-8000000" max="8000000" value="0" />
+                            <StartLasShootRang remark="发射开始距离" type="double" unit="m" min="0" max="50000" value="0" />
+                            <EndLasShootRang remark="发射结束距离" type="double" unit="m" min="0" max="50000" value="0" />
+                            <LasPulseEnergy remark="指示器激光脉冲能量" type="double" unit="mJ" min="0" max="1000" value="0" />
+                            <LasDivAngle remark="指示器激光束散角" type="double" unit="mrad" min="0" max="10" value="0" />
+                            <LasPulseWidth remark="指示激光器脉冲宽度" type="double" unit="ns" min="0" max="10" value="0" />
+                            <LasRepFreq remark="指示器激光重频" type="double" unit="Hz" min="0" max="100" value="0" />
+                            <LasCodeClass remark="指示器激光编码类型" type="unsigned char" value="1">
+                                <tips>1：精确频率码 2：PCM码 3：变间隔码 4：伪随机码 5：水印码</tips>
+                            </LasCodeClass>
+                            <LasCodeNum remark="指示器激光编码编号" type="unsigned short" value="0" />
+                            <IndicAzimPrec remark="指示器方位照射精度" type="double" unit="mrad" min="0" max="10" value="0" />
+                            <IndicPitchPrec remark="指示器俯仰照射精度" type="double" unit="mrad" min="0" max="10" value="0" />
+                        </LaserGuidMod>
+                    </LaserGuidMods>
+                </DYTParam>
+            </Missiles>
+        </MissPlatID>
+    </MissileWeapon>
+</root>

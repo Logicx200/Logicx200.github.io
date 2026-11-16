@@ -1,0 +1,332 @@
+{
+ "generatedAt": "2026-09-25T15:13:20.759Z",
+ "title": "我的摄影记录",
+ "subtitle": "",
+ "author": "",
+ "source": "网页导入",
+ "stats": {
+  "photos": 1694,
+  "withGps": 46,
+  "withExifDate": 716,
+  "fromFolderName": 907,
+  "fromMtime": 71,
+  "withLocation": 1501,
+  "lowConfidence": 264,
+  "firstDate": "2024-09-25",
+  "lastDate": "2026-03-25",
+  "bytes": 13493273343
+ },
+ "years": {
+  "2024": 64,
+  "2025": 1572,
+  "2026": 58
+ },
+ "months": [
+  {
+   "key": "2026-03",
+   "count": 22,
+   "cover": "media/thumbs/d34ba6366f75bf21524e.webp"
+  },
+  {
+   "key": "2026-01",
+   "count": 36,
+   "cover": "media/thumbs/9b9e72f197dd54ba753a.webp"
+  },
+  {
+   "key": "2025-12",
+   "count": 766,
+   "cover": "media/thumbs/a31b2525b36dd4557296.webp"
+  },
+  {
+   "key": "2025-11",
+   "count": 36,
+   "cover": "media/thumbs/2a0fc5d25a43a29e85ec.webp"
+  },
+  {
+   "key": "2025-10",
+   "count": 297,
+   "cover": "media/thumbs/694bda6ada938769890d.webp"
+  },
+  {
+   "key": "2025-08",
+   "count": 151,
+   "cover": "media/thumbs/d7c462433d91d6144d29.webp"
+  },
+  {
+   "key": "2025-07",
+   "count": 6,
+   "cover": "media/thumbs/3190a5ac6c5d4129e4b8.webp"
+  },
+  {
+   "key": "2025-06",
+   "count": 10,
+   "cover": "media/thumbs/5bedbab9908fbfb8551c.webp"
+  },
+  {
+   "key": "2025-04",
+   "count": 150,
+   "cover": "media/thumbs/fb3759ebc072dad7e27b.webp"
+  },
+  {
+   "key": "2025-03",
+   "count": 119,
+   "cover": "media/thumbs/daaf7b935d46bd48361e.webp"
+  },
+  {
+   "key": "2025-02",
+   "count": 24,
+   "cover": "media/thumbs/39b830f9f297d0cac4a4.webp"
+  },
+  {
+   "key": "2025-01",
+   "count": 13,
+   "cover": "media/thumbs/c8ebda1afd05aff6d05c.webp"
+  },
+  {
+   "key": "2024-12",
+   "count": 13,
+   "cover": "media/thumbs/55f53cb1eb777d46719e.webp"
+  },
+  {
+   "key": "2024-11",
+   "count": 33,
+   "cover": "media/thumbs/2cb9779ead5329f568a7.webp"
+  },
+  {
+   "key": "2024-10",
+   "count": 14,
+   "cover": "media/thumbs/6022272526e53f7bec5c.webp"
+  },
+  {
+   "key": "2024-09",
+   "count": 4,
+   "cover": "media/thumbs/478debaf92ac4aeba523.webp"
+  }
+ ],
+ "locations": [
+  {
+   "name": "双子座流星雨",
+   "lat": null,
+   "lng": null,
+   "count": 748,
+   "first": "2025-12-13",
+   "last": "2025-12-13",
+   "cover": "media/thumbs/d3d1a8786ceef992db77.webp"
+  },
+  {
+   "name": "神舟二十一号",
+   "lat": null,
+   "lng": null,
+   "count": 297,
+   "first": "2025-10-30",
+   "last": "2025-10-31",
+   "cover": "media/thumbs/694bda6ada938769890d.webp"
+  },
+  {
+   "name": "洗",
+   "lat": null,
+   "lng": null,
+   "count": 208,
+   "first": "2024-09-25",
+   "last": "2025-08-11",
+   "cover": "media/thumbs/f46f503944427a627e95.webp"
+  },
+  {
+   "name": "未识别地点",
+   "lat": null,
+   "lng": null,
+   "count": 193,
+   "first": "2025-02-26",
+   "last": "2026-03-25",
+   "cover": "media/thumbs/90ebea25f5f2a26029b1.webp"
+  },
+  {
+   "name": "暑假",
+   "lat": null,
+   "lng": null,
+   "count": 66,
+   "first": "2025-07-27",
+   "last": "2025-08-24",
+   "cover": "media/thumbs/d7c462433d91d6144d29.webp"
+  },
+  {
+   "name": "漫展",
+   "lat": null,
+   "lng": null,
+   "count": 49,
+   "first": "2025-04-30",
+   "last": "2025-04-30",
+   "cover": "media/thumbs/fb3759ebc072dad7e27b.webp"
+  },
+  {
+   "name": "北京",
+   "lat": 39.9042,
+   "lng": 116.4074,
+   "count": 36,
+   "first": "2026-01-29",
+   "last": "2026-01-29",
+   "cover": "media/thumbs/9b9e72f197dd54ba753a.webp"
+  },
+  {
+   "name": "晋祠",
+   "lat": null,
+   "lng": null,
+   "count": 36,
+   "first": "2025-11-08",
+   "last": "2025-11-08",
+   "cover": "media/thumbs/2a0fc5d25a43a29e85ec.webp"
+  },
+  {
+   "name": "返图",
+   "lat": null,
+   "lng": null,
+   "count": 27,
+   "first": "2025-04-30",
+   "last": "2025-04-30",
+   "cover": "media/thumbs/ae652d39943f0ca2cebe.webp"
+  },
+  {
+   "name": "迎西",
+   "lat": null,
+   "lng": null,
+   "count": 18,
+   "first": "2025-12-26",
+   "last": "2025-12-26",
+   "cover": "media/thumbs/a31b2525b36dd4557296.webp"
+  },
+  {
+   "name": "大同",
+   "lat": 40.095438,
+   "lng": 113.343628,
+   "count": 4,
+   "first": "2025-06-02",
+   "last": "2025-06-02",
+   "cover": "media/thumbs/5bedbab9908fbfb8551c.webp"
+  },
+  {
+   "name": "洗",
+   "lat": 40.095438,
+   "lng": 113.343628,
+   "count": 4,
+   "first": "2025-06-02",
+   "last": "2025-06-02",
+   "cover": "media/thumbs/5bedbab9908fbfb8551c.webp"
+  },
+  {
+   "name": "微信图片",
+   "lat": null,
+   "lng": null,
+   "count": 3,
+   "first": "2025-03-23",
+   "last": "2025-03-26",
+   "cover": "media/thumbs/daaf7b935d46bd48361e.webp"
+  },
+  {
+   "name": "大同",
+   "lat": null,
+   "lng": null,
+   "count": 3,
+   "first": "2025-08-23",
+   "last": "2025-08-23",
+   "cover": "media/thumbs/0d9073af3089a5adacc6.webp"
+  },
+  {
+   "name": "大同",
+   "lat": 40.093223,
+   "lng": 113.343742,
+   "count": 1,
+   "first": "2025-06-02",
+   "last": "2025-06-02",
+   "cover": "media/thumbs/0ec39c5a2b6b857dc4d4.webp"
+  },
+  {
+   "name": "洗",
+   "lat": 40.093223,
+   "lng": 113.343742,
+   "count": 1,
+   "first": "2025-06-02",
+   "last": "2025-06-02",
+   "cover": "media/thumbs/0ec39c5a2b6b857dc4d4.webp"
+  }
+ ],
+ "cameras": [
+  {
+   "name": "SONY ILCE-7M3",
+   "count": 1157
+  },
+  {
+   "name": "NIKON CORPORATION NIKON D3100",
+   "count": 220
+  },
+  {
+   "name": "NIKON CORPORATION NIKON D5100",
+   "count": 82
+  },
+  {
+   "name": "NIKON CORPORATION NIKON Z 6_2",
+   "count": 10
+  },
+  {
+   "name": "Canon EOS 5D Mark IV",
+   "count": 5
+  }
+ ],
+ "lenses": [
+  {
+   "name": "FE 28-70mm F3.5-5.6 OSS",
+   "count": 885
+  },
+  {
+   "name": "18.0-55.0 mm f/3.5-5.6",
+   "count": 263
+  },
+  {
+   "name": "0.0 mm f/0.0",
+   "count": 80
+  },
+  {
+   "name": "NIKKOR Z 24-70mm f/4 S",
+   "count": 10
+  },
+  {
+   "name": "EF24-70mm f/2.8L II USM",
+   "count": 5
+  },
+  {
+   "name": "24.0-70.0 mm f/4.0",
+   "count": 4
+  }
+ ],
+ "editors": [
+  {
+   "name": "Lightroom",
+   "count": 1507
+  },
+  {
+   "name": "Ver.1.01",
+   "count": 18
+  },
+  {
+   "name": "Photoshop",
+   "count": 7
+  },
+  {
+   "name": "PhotoXie Editor (ps.xieniao.com)",
+   "count": 7
+  },
+  {
+   "name": "MediaTek Camera Application",
+   "count": 3
+  }
+ ],
+ "tags": [
+  {
+   "name": "烟花",
+   "count": 6
+  },
+  {
+   "name": "日出",
+   "count": 1
+  }
+ ]
+}

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-pj-site="photo-journal">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>摄影记录</title>
+<meta name="description" content="按拍摄日期、地点与相机参数浏览的照片记录" />
+<link rel="stylesheet" href="assets/style.css" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%93%B7%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+<a class="skip" href="#main">跳到内容</a>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">📷</span>
+    <div>
+      <h1 id="site-title">摄影记录</h1>
+      <p id="site-sub" class="muted"></p>
+    </div>
+  </div>
+
+  <div class="topbar-tools">
+    <button id="sidebar-toggle" class="icon-btn" aria-label="筛选面板" aria-expanded="false">☰</button>
+    <label class="search">
+      <span aria-hidden="true">🔍</span>
+      <input id="search" type="search" placeholder="搜索地点、说明、标签、相机…" autocomplete="off" />
+    </label>
+    <nav class="tabs" role="tablist" aria-label="视图切换">
+      <button class="tab is-active" data-view="home" role="tab" aria-selected="true">首页</button>
+      <button class="tab" data-view="import" role="tab" aria-selected="false">导入</button>
+      <button class="tab" data-view="grid" role="tab" aria-selected="false">相册</button>
+      <button class="tab" data-view="timeline" role="tab" aria-selected="false">时间轴</button>
+      <button class="tab" data-view="map" role="tab" aria-selected="false">地图</button>
+      <button class="tab" data-view="stats" role="tab" aria-selected="false">统计</button>
+      <button class="tab" data-view="dups" role="tab" aria-selected="false">重复 <em id="dups-count"></em></button>
+      <button class="tab" data-view="review" role="tab" aria-selected="false">待确认 <em id="review-count"></em></button>
+    </nav>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="filter-head">
+      <strong>筛选</strong>
+      <button id="reset-filters" class="link">全部清除</button>
+    </div>
+    <div id="filters"></div>
+    <div class="sidebar-foot" id="sidebar-foot">
+      <div id="stats-line" class="muted small"></div>
+      <button id="export-btn" class="link small">导出筛选结果 JSON</button>
+    </div>
+  </aside>
+
+  <main id="main" class="main">
+    <div id="active-filters" class="active-filters"></div>
+
+    <section id="view-grid" class="view">
+      <div class="view-head">
+        <div id="grid-summary" class="muted small"></div>
+        <div class="seg" role="group" aria-label="网格样式">
+          <button class="seg-btn is-active" data-density="full">大图</button>
+          <button class="seg-btn" data-density="compact">紧凑</button>
+        </div>
+      </div>
+      <div id="grid" class="grid"></div>
+      <div id="grid-sentinel" class="sentinel"></div>
+      <p id="grid-empty" class="empty" hidden>没有符合条件的照片。</p>
+    </section>
+
+    <section id="view-timeline" class="view" hidden>
+      <div id="timeline" class="timeline"></div>
+      <p id="timeline-empty" class="empty" hidden>暂无按日期归档的照片。</p>
+    </section>
+
+    <section id="view-map" class="view" hidden>
+      <div class="view-head">
+        <div id="map-summary" class="muted small"></div>
+        <div class="map-actions">
+          <button id="map-fit" class="link small">重置视野</button>
+          <span class="muted small">滚轮缩放，拖拽平移，点击光点查看</span>
+        </div>
+      </div>
+      <div class="map-wrap">
+        <canvas id="map-canvas" width="1400" height="700"></canvas>
+        <div id="map-tip" class="map-tip" hidden></div>
+      </div>
+      <div id="map-legend" class="map-legend"></div>
+    </section>
+
+    <section id="view-home" class="view home-view">
+      <div class="hero">
+        <canvas id="pointcloud" class="hero-canvas"></canvas>
+
+        <div class="hero-overlay">
+          <div class="hero-copy">
+            <p class="hero-kicker" id="home-kicker">随机一张 · 点云预览</p>
+            <h2 class="hero-title" id="home-title">我的摄影记录</h2>
+            <p class="hero-sub" id="home-sub"></p>
+            <div class="hero-actions">
+              <button class="hero-btn hero-btn-primary" id="home-shuffle" type="button">换一张</button>
+              <button class="hero-btn" id="home-enter" type="button">进入相册</button>
+              <button class="hero-btn hero-btn-ghost" id="home-open" type="button">看原图</button>
+            </div>
+            <p class="hero-hint" id="home-hint">拖动旋转 · 滚轮缩放 · 点击画面换一张</p>
+          </div>
+
+          <aside class="hero-meta" id="home-meta" aria-live="polite"></aside>
+        </div>
+
+        <div class="hero-loading" id="home-loading">正在把照片变成点云…</div>
+      </div>
+    </section>
+
+    <section id="view-import" class="view" hidden>
+      <div class="imp-step">
+        <h2 class="imp-title">把照片文件夹拖进来</h2>
+        <p class="muted small">
+          整个文件夹拖到虚线框里即可（会递归扫描子目录）。浏览器当场读取 EXIF 拍摄参数、
+          解析"几月几日何处拍摄"式文件夹名、生成缩略图，全程在本机完成，照片不会被上传到任何地方。
+        </p>
+
+        <div id="drop-zone" class="drop-zone">
+          <div class="drop-icon">📷</div>
+          <div class="drop-main">拖入文件夹 / 照片</div>
+          <div class="muted small">或者</div>
+          <div class="drop-actions">
+            <button id="pick-dir" class="btn btn-primary" type="button">选择文件夹</button>
+            <button id="pick-files" class="btn" type="button">选择照片文件</button>
+          </div>
+          <input id="file-input-dir" type="file" webkitdirectory directory multiple hidden />
+          <input id="file-input-files" type="file" accept="image/*" multiple hidden />
+        </div>
+
+        <div class="imp-options">
+          <label class="opt">
+            <input type="radio" name="imp-mode" value="preview" checked />
+            <span>
+              <b>轻量</b>　只保存缩略图与预览图（约 0.3 MB/张，推荐，可放 GitHub）
+            </span>
+          </label>
+          <label class="opt">
+            <input type="radio" name="imp-mode" value="full" />
+            <span>
+              <b>完整</b>　连原图一起保存（照片库会很大，超过 2GB 请不要提交到 GitHub）
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div id="imp-progress" class="imp-step" hidden>
+        <h3 class="imp-title" id="imp-phase">正在读取…</h3>
+        <div class="progress"><i id="imp-bar"></i></div>
+        <div class="muted small" id="imp-current"></div>
+        <div class="muted small" id="imp-stats"></div>
+      </div>
+
+      <div id="imp-result" class="imp-step" hidden>
+        <div class="imp-summary" id="imp-summary"></div>
+
+        <div class="imp-toolbar">
+          <label class="search small-search">
+            <span aria-hidden="true">🔍</span>
+            <input id="imp-search" type="search" placeholder="在结果里搜索…" />
+          </label>
+          <label class="opt inline">
+            <input type="checkbox" id="imp-only-todo" />
+            <span>只看需要确认的</span>
+          </label>
+          <select id="imp-sort" class="btn">
+            <option value="path">按路径</option>
+            <option value="date">按日期</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table class="imp-table">
+            <thead>
+              <tr>
+                <th class="c-thumb">预览</th>
+                <th>文件夹 / 文件</th>
+                <th class="c-date">拍摄日期</th>
+                <th class="c-loc">地点</th>
+                <th>相机 / 参数</th>
+                <th class="c-edit">修正</th>
+              </tr>
+            </thead>
+            <tbody id="imp-tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="imp-write">
+          <div>
+            <div id="imp-write-hint" class="muted small"></div>
+            <div id="imp-warn" class="muted small"></div>
+            <div id="imp-write-result" class="imp-write-result" hidden></div>
+          </div>
+          <div class="imp-write-actions">
+            <button id="imp-save" class="btn btn-primary" type="button">写入站点目录…</button>
+            <button id="imp-zip" class="btn" type="button">下载 zip</button>
+            <button id="imp-diagnose" class="btn" type="button" title="导入没反应时点这里">诊断</button>
+            <button id="imp-reset" class="link" type="button">清空重来</button>
+          </div>
+        </div>
+        <pre id="imp-log" class="imp-log" hidden></pre>
+      </div>
+    </section>
+
+    <section id="view-stats" class="view" hidden>
+      <div id="stats" class="stats"></div>
+    </section>
+
+    <section id="view-dups" class="view" hidden>
+      <div class="view-head">
+        <div class="muted small" id="dups-intro">
+          用感知哈希比对，找出<b>内容相同或视觉上几乎一样</b>的照片（重复导出、改过尺寸、修图前后、连拍）。
+          被标为"保留"的那张是建议留下的（像素最多 / 星级最高 / 文件最大）。
+        </div>
+        <div class="map-actions dups-threshold">
+          <label title="结构相似度：越小越严格">结构 ≤ <b id="dups-t1-val">5</b>
+            <input id="dups-threshold" type="range" min="0" max="12" value="5" step="1" />
+          </label>
+          <label title="颜色分布：用来排除结构撞车的误报">颜色 ≤ <b id="dups-t2-val">7</b>
+            <input id="dups-color" type="range" min="0" max="24" value="7" step="1" />
+          </label>
+          <button id="dups-clear-ignored" class="link small" type="button">清除忽略记录</button>
+        </div>
+      </div>
+      <div id="dups-summary" class="imp-summary"></div>
+      <div id="dups-list" class="dups-list"></div>
+      <p id="dups-empty" class="empty" hidden>没有发现重复照片 👍</p>
+    </section>
+
+    <section id="view-review" class="view" hidden>
+      <div class="view-head">
+        <div class="muted small">
+          这些照片的拍摄日期或地点没能自动确认（置信度低），可在
+          <code>photojournal.config.json</code> 里用 <code>overrides</code> 手动指定后重新导入。
+        </div>
+      </div>
+      <div id="review-list" class="review-list"></div>
+      <p id="review-empty" class="empty" hidden>全部照片都已识别出日期与地点 👍</p>
+    </section>
+  </main>
+</div>
+
+<div id="lightbox" class="lightbox" hidden>
+  <div class="lb-stage">
+    <button class="lb-btn lb-close" data-act="close" aria-label="关闭">✕</button>
+    <button class="lb-btn lb-prev" data-act="prev" aria-label="上一张">‹</button>
+    <button class="lb-btn lb-next" data-act="next" aria-label="下一张">›</button>
+    <figure class="lb-figure">
+      <div id="lb-canvas" class="lb-canvas"><div class="spinner" id="lb-spinner"></div></div>
+      <figcaption id="lb-caption" class="lb-caption"></figcaption>
+    </figure>
+  </div>
+  <aside class="lb-info" id="lb-info"></aside>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<div id="global-banner" class="global-banner" hidden>
+  <span id="global-banner-text"></span>
+  <button id="global-banner-close" type="button" aria-label="关闭">✕</button>
+</div>
+
+<div id="drop-overlay" class="drop-overlay" hidden>
+  <div class="drop-overlay-inner">
+    <div class="drop-icon">📥</div>
+    <div class="drop-main">松手即可导入</div>
+    <div class="muted small">会自动读取拍摄参数、识别文件夹名里的日期与地点</div>
+  </div>
+</div>
+
+<div id="boot-error" class="boot-error" hidden>
+  <h2>页面脚本没能启动</h2>
+  <p id="boot-error-msg" class="muted small"></p>
+  <p class="small">常见原因与处理：</p>
+  <ul class="small">
+    <li>没通过本地服务器打开（要用 <code>npm run serve</code>，不能用双击文件的方式）</li>
+    <li>浏览器缓存了旧版本脚本：按 <code>Ctrl+Shift+R</code> 强制刷新</li>
+    <li>浏览器太旧：请用 Chrome / Edge 最新版</li>
+    <li>确实缺少文件：在项目目录执行 <code>npm run build</code> 后刷新</li>
+  </ul>
+</div>
+
+<script>
+  // 看门狗：app.js 启动成功会删掉这个标记；否则说明模块加载失败（页面会显得"点了没反应"）
+  window.__pjBooting = true;
+  window.setTimeout(function () {
+    if (!window.__pjBooting) return;
+    var box = document.getElementById('boot-error');
+    var msg = document.getElementById('boot-error-msg');
+    if (!box) return;
+    box.hidden = false;
+    var detail = [];
+    detail.push('页面地址：' + location.href);
+    detail.push('是否本地服务器：' + (/^https?:$/.test(location.protocol) ? '是' : '否（file:// 打开会失败）'));
+    msg.textContent = detail.join('｜');
+  }, 2500);
+  window.addEventListener('error', function (e) {
+    var msg = document.getElementById('boot-error-msg');
+    if (msg && msg.textContent.indexOf(e.message) < 0) {
+      msg.textContent = (msg.textContent ? msg.textContent + '｜' : '') + '错误：' + e.message;
+    }
+    if (window.__pjBooting) {
+      var box = document.getElementById('boot-error');
+      if (box) box.hidden = false;
+    }
+  });
+</script>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>中国沿海禁航区 + 航空禁区 · 2026年11月</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="leaflet/leaflet.css">
+<style>
+  #panel .tabs .tab{font-size:10.5px;padding:5px 2px;letter-spacing:0}
+  :root{
+    --bg:#08161f; --panel:rgba(8,24,34,.92); --line:rgba(120,190,220,.22);
+    --txt:#e8f2f7; --dim:#9db4c0;
+    --active:#ff4d4f; --upcoming:#ffa726; --expired:#7f97a3;
+    --air:#c77dff; --airx:#8a8f98; --pad:#4dd0e1; --notam:#ffb74d;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",system-ui,sans-serif;color:var(--txt);background:var(--bg);overflow:hidden}
+  #map{position:absolute;inset:0;background:#bcd7e6}
+  .leaflet-container{background:#bcd7e6;font-family:inherit}
+
+  #panel{
+    position:absolute;z-index:1100;top:14px;left:14px;width:352px;
+    max-height:calc(100% - 150px);display:flex;flex-direction:column;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    box-shadow:0 18px 50px rgba(0,0,0,.55);backdrop-filter:blur(8px);
+  }
+  #panel .head{padding:13px 15px 9px;border-bottom:1px solid var(--line)}
+  #panel h1{margin:0 0 4px;font-size:16.5px;font-weight:700;letter-spacing:.4px}
+  #panel .sub{font-size:11.5px;line-height:1.55;color:var(--dim)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .chip{font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
+  .chip b{font-size:12.5px}
+  .chip.a{color:var(--active);border-color:rgba(255,77,79,.45);background:rgba(255,77,79,.10)}
+  .chip.u{color:var(--upcoming);border-color:rgba(255,167,38,.45);background:rgba(255,167,38,.10)}
+  .chip.e{color:var(--expired);border-color:rgba(127,151,163,.4);background:rgba(127,151,163,.10)}
+  .chip.v{color:var(--air);border-color:rgba(199,125,255,.45);background:rgba(199,125,255,.10)}
+
+  .tabs{display:flex;gap:6px;padding:9px 11px 3px}
+  .tab{flex:1;text-align:center;padding:6px 4px;border-radius:8px;font-size:12px;cursor:pointer;
+       background:rgba(255,255,255,.04);border:1px solid transparent;color:#a9c0cc;transition:.15s}
+  .tab:hover{background:rgba(255,255,255,.08)}
+  .tab.on{background:rgba(120,190,220,.16);border-color:rgba(120,190,220,.45);color:#eaf6fb;font-weight:600}
+
+  #list{flex:1 1 auto;min-height:0;overflow:auto;padding:6px 9px 12px}
+  #list::-webkit-scrollbar{width:8px}
+  #list::-webkit-scrollbar-thumb{background:rgba(120,190,220,.25);border-radius:8px}
+  .item{display:flex;gap:9px;padding:8px;border-radius:9px;cursor:pointer;border:1px solid transparent;transition:background .15s,border-color .15s}
+  .item:hover{background:rgba(120,190,220,.10);border-color:rgba(120,190,220,.25)}
+  .item.sel{background:rgba(120,190,220,.16);border-color:rgba(120,190,220,.45)}
+  .bullet{flex:0 0 auto;min-width:21px;height:21px;padding:0 4px;border-radius:11px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#08161f;margin-top:1px}
+  .b-a{background:var(--active);color:#fff}
+  .b-u{background:var(--upcoming)}
+  .b-e{background:var(--expired);color:#fff}
+  .b-v{background:var(--air);color:#1a0b2e}
+  .b-x{background:var(--airx);color:#fff}
+  .b-p{background:var(--pad);color:#062a30}
+  .b-n{background:var(--notam);color:#2a1a00}
+  .chip.n{color:var(--notam);border-color:rgba(255,183,77,.45);background:rgba(255,183,77,.10)}
+  .nbadge span{display:flex;align-items:center;justify-content:center;min-width:28px;height:18px;padding:0 4px;border-radius:4px;background:var(--notam);color:#2a1a00;font-size:10px;font-weight:800;box-shadow:0 1px 6px rgba(0,0,0,.65),0 0 0 1.5px rgba(255,255,255,.85)}
+  .nbadge.x span{background:#cfd6db;color:#43525c}
+  .nbadge.u span{background:var(--upcoming);color:#1a1200}
+  .nbadge.w span{background:#ff8a65;color:#2a1a00}
+  #v3d{position:absolute;z-index:1200;left:380px;bottom:14px;width:560px;height:440px;min-width:320px;min-height:260px;
+       resize:both;overflow:hidden;display:flex;flex-direction:column;background:var(--panel);
+       border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.55)}
+  #v3d .v3d-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 10px;
+       font-size:11px;color:#9fc6da;border-bottom:1px solid var(--line);cursor:move;user-select:none;flex:0 0 auto}
+  #v3d .v3d-head em{font-style:normal;color:#6f8794;font-size:10px;margin-left:6px}
+  #v3d .v3d-btns{display:flex;gap:4px}
+  #v3d .v3d-btns button{background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cfe0e8;
+       border-radius:6px;width:24px;height:20px;cursor:pointer;font-size:11px;line-height:1}
+  #v3d .v3d-btns button:hover{background:rgba(120,190,220,.2)}
+  #v3d .v3d-body{flex:1 1 auto;min-height:0;position:relative}
+  #v3d canvas{display:block;width:100%;height:100%;cursor:grab}
+  #v3d canvas:active{cursor:grabbing}
+  .evt span{display:flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#ffd54f;color:#2a1a00;font-size:10px;font-weight:800;box-shadow:0 1px 5px rgba(0,0,0,.7),0 0 0 1.5px #fff}
+  .trajlab span{display:inline-block;padding:3px 8px;border-radius:6px;background:rgba(13,37,50,.92);border:1px solid #ff7043;color:#ffd2c2;font-size:10.5px;line-height:1.35;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+  .chip.p{color:var(--pad);border-color:rgba(77,208,225,.45);background:rgba(77,208,225,.10)}
+  .itxt{min-width:0}
+  .itxt .t1{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .itxt .t2{font-size:11px;color:var(--dim);margin-top:2px;line-height:1.45}
+  .itxt .t3{font-size:10.5px;color:#7d95a2;margin-top:2px}
+  .foot{padding:8px 14px 11px;border-top:1px solid var(--line);font-size:10.3px;line-height:1.55;color:#7d95a2}
+
+  #legend{
+    position:absolute;z-index:1000;right:14px;bottom:76px;background:var(--panel);
+    border:1px solid var(--line);border-radius:12px;padding:9px 13px 10px;font-size:11px;
+    box-shadow:0 10px 30px rgba(0,0,0,.45);backdrop-filter:blur(8px)
+  }
+  #legend .lt{font-size:10px;letter-spacing:1px;color:#6f8794;margin:2px 0 3px}
+  #legend .row{display:flex;align-items:center;gap:8px;margin:4px 0;color:#cfe0e8}
+  #legend .sw{width:26px;height:0;border-top:3px solid;border-radius:2px}
+  #legend .fill{width:26px;height:10px;border-radius:3px;opacity:.6}
+
+  .num{background:transparent;border:0}
+  .num span{
+    display:flex;align-items:center;justify-content:center;width:21px;height:21px;border-radius:50%;
+    background:#fff;color:#0b1a24;font-size:11.5px;font-weight:800;
+    box-shadow:0 1px 6px rgba(0,0,0,.6),0 0 0 2px rgba(0,0,0,.28);border:1.5px solid #0b1a24
+  }
+  .num.a span{background:var(--active);color:#fff;border-color:#fff}
+  .num.u span{background:var(--upcoming);color:#1a1200;border-color:#fff}
+  .num.e span{background:#dfe9ee;color:#4a5f6b;border-color:#7f97a3}
+  .anum span{
+    display:flex;align-items:center;justify-content:center;min-width:27px;height:17px;padding:0 4px;border-radius:4px;
+    background:var(--air);color:#1a0b2e;font-size:10.5px;font-weight:800;letter-spacing:.3px;
+    box-shadow:0 1px 6px rgba(0,0,0,.65),0 0 0 1.5px rgba(255,255,255,.85)
+  }
+  .anum.x span{background:#cfd6db;color:#43525c;box-shadow:0 1px 6px rgba(0,0,0,.5),0 0 0 1.5px rgba(255,255,255,.6)}
+  .rocket span{
+    display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;
+    background:#0b2a36;border:2px solid var(--pad);font-size:12px;line-height:1;
+    box-shadow:0 0 0 2px rgba(0,0,0,.45),0 2px 8px rgba(0,0,0,.6)
+  }
+  .tab{font-size:11.5px}
+
+  .leaflet-popup-content-wrapper{background:#0d2532;color:var(--txt);border:1px solid rgba(120,190,220,.35);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+  .leaflet-popup-tip{background:#0d2532;border:1px solid rgba(120,190,220,.35)}
+  .leaflet-popup-content{margin:12px 14px;font-size:12px;line-height:1.62}
+  .leaflet-popup-content h3{margin:0 0 3px;font-size:13.5px}
+  .pop-tag{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:20px;margin-bottom:6px}
+  .pop-a{background:rgba(255,77,79,.18);color:#ff9b9c;border:1px solid rgba(255,77,79,.5)}
+  .pop-u{background:rgba(255,167,38,.18);color:#ffc46b;border:1px solid rgba(255,167,38,.5)}
+  .pop-e{background:rgba(127,151,163,.18);color:#b7c8d0;border:1px solid rgba(127,151,163,.5)}
+  .pop-v{background:rgba(199,125,255,.16);color:#dcb3ff;border:1px solid rgba(199,125,255,.55)}
+  .pop-row{color:#c7d9e2}
+  .pop-row b{color:#8fa9b6;font-weight:400;display:inline-block;min-width:44px}
+  .pop-note{margin-top:7px;padding:6px 8px;border-radius:6px;background:rgba(255,167,38,.10);border:1px solid rgba(255,167,38,.28);font-size:10.8px;line-height:1.5;color:#ffd79a}
+  .pop-coords{margin-top:7px;padding-top:7px;border-top:1px dashed rgba(120,190,220,.25);font-family:Consolas,monospace;font-size:10.5px;color:#9fb8c4;line-height:1.55;max-height:110px;overflow:auto}
+  .pop-src{display:inline-block;margin-top:7px;font-size:11px;color:#7fc4e8;text-decoration:none}
+  .pop-src:hover{text-decoration:underline}
+  .leaflet-control-layers{background:rgba(8,24,34,.92)!important;color:var(--txt)!important;border:1px solid var(--line)!important;border-radius:10px!important}
+  .leaflet-control-layers-separator{border-top-color:rgba(120,190,220,.25)!important}
+  .leaflet-control-scale-line{background:rgba(8,24,34,.75);color:#dfeef5;border-color:rgba(120,190,220,.5)}
+  .leaflet-control-attribution{background:rgba(8,24,34,.7)!important;color:#8fa9b6!important}
+  .leaflet-control-attribution a{color:#9fd3ee!important}
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div id="panel">
+  <div class="head">
+    <h1>中国沿海禁航区 · 航空禁区 · 发射场</h1>
+    <div class="sub">海上：11月6日—13日（含仍在生效的长时段任务）<br>空域：APEC/进博会等公开通告，截至 11-12 12:00<br>发射场：5 处（酒泉/太原/西昌/文昌/海阳）</div>
+    <div class="chips" id="chips"></div>
+  </div>
+  <div class="tabs">
+    <div class="tab on" data-tab="sea" id="tab-sea">⚓ 海上 10</div>
+    <div class="tab" data-tab="air" id="tab-air">✈ 空域 3</div>
+    <div class="tab" data-tab="launch" id="tab-launch">🚀 发射场 5</div>
+    <div class="tab" data-tab="notam" id="tab-notam">📡 NOTAM</div>
+  </div>
+  <div id="list"></div>
+  <div class="foot">数据来源：中国海事局航行警告；地方政府无人机管控通告；OPSGROUP 公开报道；<b>民航局空管局情报中心 eAIP China 公开的年度/月度 NOTAM Summary（免费下载，无需登录）</b>。NOTAM 层为 2026-11-02 快照，实时 NOTAM 需 eAIP 账号；发射场坐标为公开近似位置。</div>
+</div>
+
+<div id="v3d">
+  <div class="v3d-head" id="v3d-drag">
+    <span>🛰 3D 轨道视图<em>拖动旋转 · 滚轮缩放 · 右下角调整大小</em></span>
+    <span class="v3d-btns"><button id="v3d-focus" title="地图定位到弹道">🎯</button><button id="v3d-mode" title="局部/全球切换">全球</button><button id="v3d-reset" title="复位视角">⟲</button><button id="v3d-min" title="收起">－</button></span>
+  </div>
+  <div class="v3d-body" id="v3d-body"><canvas id="v3d-canvas"></canvas></div>
+</div>
+
+<div id="legend">
+  <div class="lt">图 例</div>
+  <div class="row"><span class="fill" style="background:var(--active)"></span><span class="sw" style="border-top-style:solid;border-color:var(--active)"></span>海上 · 生效中 / 今晚生效</div>
+  <div class="row"><span class="fill" style="background:var(--expired)"></span><span class="sw" style="border-top-style:dashed;border-color:var(--expired)"></span>海上 · 已结束</div>
+  <div class="row"><span class="fill" style="background:var(--air)"></span><span class="sw" style="border-top-style:dashed;border-color:var(--air)"></span>空域 · 生效中（含常设）</div>
+  <div class="row"><span class="fill" style="background:var(--airx)"></span><span class="sw" style="border-top-style:dotted;border-color:var(--airx)"></span>空域 · 已结束</div>
+  <div class="row"><span class="fill" style="background:var(--pad)"></span><span class="sw" style="border-top-style:solid;border-color:var(--pad)"></span>🚀 航天发射场（近似工位）</div>
+  <div class="row"><span class="fill" style="background:var(--notam)"></span><span class="sw" style="border-top-style:solid;border-color:var(--notam)"></span>📡 NOTAM 区域（CAAC 汇总）</div>
+  <div class="row"><span style="width:64px;height:10px;border-radius:3px;border:1px solid #2c6b8a;background:linear-gradient(90deg,#0d1b2a,#26c6da,#ffd54f,#ff9800,#f4511e,#c62828)"></span>🌅 火箭云观测质量 Q（低→高）</div>
+  <div class="row"><span class="sw" style="border-top-style:solid;border-color:#ffb74d"></span>🛰 上升段（3DOF 积分）</div>
+  <div class="row"><span class="sw" style="border-top-style:dashed;border-color:#00e5ff"></span>🛰 滑行段（至远地点）</div>
+  <div class="row"><span class="sw" style="border-top-style:dashed;border-color:#c77dff"></span>🛰 入轨后一轨</div>
+</div>
+
+<script>
+window.addEventListener('error', e => {
+  const d = document.createElement('pre');
+  d.style.cssText = 'position:absolute;z-index:9999;left:0;right:0;bottom:0;margin:0;padding:10px;background:#3a0d0d;color:#ffd7d7;font:12px Consolas,monospace;white-space:pre-wrap';
+  d.textContent = 'JS ERROR: ' + e.message + ' @' + e.lineno + ':' + e.colno;
+  document.body.appendChild(d);
+});
+</script>
+<script src="leaflet/leaflet.js"></script>
+<script src="notams.js"></script>
+<script src="trajectory.js"></script>
+<script src="traj3d.js"></script>
+<script src="rocketcloud.js"></script>
+<script>
+try{
+
+/* ============================ 数据 ============================ */
+/* --- 海上：禁止驶入类（海事局航行警告） --- */
+const SEA_AREAS = [
+  { no:"辽航警450/26", type:"军事任务", sea:"渤海海峡—黄海北部（大连老铁山以南）",
+    status:"active", win:"11月1日16:00 — 11月15日16:00",
+    url:"https://www.msa.gov.cn/html/cnmsa/hxaq/article/2026/304c27c9751745619fdd1852191c5332.html",
+    polys:[[["38-51.7N","121-38.2E"],["38-34.2N","121-38.2E"],["38-33.9N","121-07.9E"],["38-48.2N","121-14.1E"]]] },
+  { no:"云航警177/26", type:"军事活动（每日）", sea:"黄海南部（连云港以东，灌河口外）",
+    status:"active", win:"11月2日 — 12月12日，每日05:00—18:30",
+    url:"https://www.msa.gov.cn/html/cnmsa/hxaq/article/2026/8e756b9ca09b44949dc894d8417ce077.html",
+    polys:[
+      [["34-55.500N","119-14.900E"],["34-55.500N","119-17.100E"],["34-52.800N","119-17.100E"],["34-52.800N","119-14.900E"]],
+      [["34-56.696N","119-26.684E"],["34-56.404N","119-32.558E"],["34-54.583N","119-32.636E"],["34-53.606N","119-26.936E"]] ] },
+  { no:"琼航警229/26", type:"军事训练", sea:"南海（海南岛东南，清澜以东）",
+    status:"active", win:"11月5日12:00 — 11月16日18:00",
+    url:"https://www.msa.gov.cn/html/cnmsa/hxaq/article/2026/b31d51d79cd148569e52949e376ba60a.html",
+    polys:[[["19-13.00N","111-10.00E"],["18-39.00N","110-35.00E"],["18-15.00N","111-00.00E"],["18-49.00N","111-35.00E"]]] },
+  { no:"鲁航警993/26", type:"火箭残骸落区", sea:"黄海（青岛以东，海阳—青岛外海）",
+    status:"upcoming", win:"11月12日22:00 — 11月13日05:00",
+    url:"https://www.msa.gov.cn/html/cnmsa/hxaq/article/2026/348ed16af1fe4e8891c850d28a630973.html",
+    polys:[[["35-58.38N","122-45.54E"],["36-18.24N","122-56.10E"],["36-43.08N","121-44.94E"],["36-22.86N","121-34.20E"]]] },
+  { no:"辽航警456/26", type:"军事任务（6块水域）", sea:"渤海—黄海（大连以南至成山头以东）",
+    status:"expired", win:"11月4日12:00 — 11月7日12:00",
+    url:"https://www.msa.gov.cn/html/cnmsa/hxaq/article/2026/82e827c9b6bf4cde9d295a76a7de9ab0.html",
+    polys:[
+      [["39-59.5N","119-58.0E"],["39-51.5N","120-29.5E"],["39-08.0N","120-11.0E"],["39-15.5N","119-40.0E"]],
+      [["38-49.5N","119-23.0E"],["38-49.5N","120-27.5E"],["38-27.5N","120-27.5E"],["38-27.5N","119-23.0E"]],
+      [["38-21.0N","122-22.5E"],["38-14.5N","122-50.5E"],["38-00.0N","122-46.0E"],["38-04.0N","122-17.5E"]],
+      [["37-55.0N","122-12.0E"],["37-43.5N","122-38.0E"],["37-30.5N","122-29.5E"],["37-40.0N","122-03.0E"]],
+      [["38-32.0N","122-08.0E"],["38-32.0N","122-14.5E"],["38-26.0N","122-14.5E"],["38-26.0N","122-08.0E"]],
+      [["37-59.0N","123-10.5E"],["37-59.0N","123-17.5E"],["38-05.0N","123-17.5E"],["38-05.0N","123-10.5E"]] ] },
+  { no:"浙航警1004/26", type:"实弹射击训练", sea:"东海（宁波以东，韭山列岛以东）",
+    status:"expired", win:"11月6日06:00 — 12:00",
+    url:"https://www.msa.gov.cn/html/cnmsa/hxaq/article/2026/9b13e44c55a945dc862359a75267422c.html",
+    polys:[[["29-36.92N","122-06.55E"],["29-36.92N","122-25.10E"],["29-17.97N","122-25.10E"],["29-17.97N","122-06.55E"]]] },
+  { no:"辽航警457/26", type:"军事任务", sea:"黄海（大连东南外海）",
+    status:"expired", win:"11月6日16:30 — 22:30",
+    url:"https://www.msa.gov.cn/html/cnmsa/hxaq/article/2026/64cd58013a6f459db0842e0fffb3ebf6.html",
+    polys:[[["37-30N","122-53E"],["37-30N","123-00E"],["37-24N","123-00E"],["37-24N","122-53E"]]] },
+  { no:"粤航警812/26", type:"军事训练", sea:"南海（湛江以东，雷州半岛东侧）",
+    status:"expired", win:"11月10日12:00 — 11月11日15:00",
+    url:"https://www.msa.gov.cn/html/cnmsa/hxaq/article/2026/02499ffcb4e54a44af7b171029a59476.html",
+    polys:[[["21-12.33N","110-38.17E"],["21-15.00N","111-05.00E"],["21-00.00N","111-05.00E"],["21-05.37N","110-34.00E"]]] },
+  { no:"辽航警465/26", type:"军事演习", sea:"渤海（葫芦岛港外）",
+    status:"expired", win:"11月11日01:00 — 08:00",
+    url:"https://www.msa.gov.cn/html/cnmsa/hxaq/article/2026/6c388c4b075b47c8b53a2a832e819494.html",
+    polys:[[["40-21.42N","120-35.15E"],["40-19.52N","120-35.03E"],["40-19.75N","120-38.57E"],["40-22.08N","120-38.29E"],["40-21.92N","120-36.02E"]]] },
+  { no:"浙航警1024/26", type:"军事训练（2块水域）", sea:"东海（宁波以东，渔山列岛东北）",
+    status:"expired", win:"11月11日06:30 — 18:30",
+    url:"https://www.msa.gov.cn/html/cnmsa/hxaq/article/2026/40ac58d92ce0427da8025a0471639507.html",
+    polys:[
+      [["29-25.40N","122-15.42E"],["29-24.47N","122-14.78E"],["29-26.35N","122-11.03E"],["29-27.28N","122-11.67E"]],
+      [["29-28.98N","122-11.80E"],["29-28.98N","122-13.03E"],["29-25.20N","122-13.03E"],["29-25.20N","122-11.80E"]] ] }
+];
+
+/* --- 空域：公开通告/公开报道 --- */
+const AIR_AREAS = [
+  { id:"A1", no:"ZGZU A5871/26", name:"深圳 APEC 空域限制区", type:"空域限制（非参会通用航空需预先批准）",
+    status:"active", win:"11月11日 — 11月22日（APEC 会议 11/18–19）",
+    scope:"以深圳为中心约 200 km 范围；ZGSZ 深圳、ZGGG 广州、ZGSD 珠海、ZGHZ 惠州、VMMC 澳门机场的非参会公务机受限",
+    note:"原文为“深圳周边 200 公里限制区”，此处按圆形绘制示意，实际边界参见 NOTAM 与 AIP。",
+    url:"https://ops.group/blog/apec-2026-business-aviation-restrictions-around-shenzhen/",
+    zones:[{shape:"circle", center:[22.543,114.058], radius:200000}] },
+
+  { id:"A2", no:"粤府通告（5市）", name:"珠三角低空临时管控", type:"无人机等“低慢小”禁飞（行政区域全域）",
+    status:"active", win:"11月7日 — 11月21日（各市起止略有差异）",
+    scope:"深圳全市（12日起，不含深汕）、广州南沙万顷沙/龙穴、珠海香洲+高新+万山、惠州惠阳+大亚湾、东莞长安等七镇",
+    note:"管控范围为行政区域全域，此处以点标注城市位置，未绘制行政边界；含无人机、模型、滑翔伞、热气球、风筝、孔明灯等。",
+    url:"https://finance.sina.com.cn/wm/2026-11-05/doc-inixsmka6096282.shtml",
+    badgeAt:[22.16,113.62],
+    zones:[
+      {shape:"point", ll:[22.543,114.058], label:"深圳", detail:"11/11–11/21 全市（不含深汕特别合作区）；11/7–11/10 福田、南山两区"},
+      {shape:"point", ll:[22.680,113.600], label:"广州·南沙", detail:"11/11–11/21 万顷沙镇、龙穴街道"},
+      {shape:"point", ll:[22.300,113.560], label:"珠海·香洲/高新", detail:"11/11–11/21 香洲区、高新区（唐家湾、金鼎一带）"},
+      {shape:"point", ll:[22.150,113.850], label:"珠海·万山", detail:"11/11–11/21 万山区（桂山、东澳、外伶仃等海岛）"},
+      {shape:"point", ll:[22.790,114.530], label:"惠州", detail:"11/11–11/21 惠阳区、大亚湾经济技术开发区"},
+      {shape:"point", ll:[22.800,113.850], label:"东莞", detail:"11/11–11/21 长安、大岭山、大朗、黄江、塘厦、凤岗、清溪全域及沙田立沙岛"}
+    ] },
+
+  { id:"A4", no:"沪府规〔2026〕10号", name:"上海进博会临时管制空域", type:"无人机临时管制空域（已结束）",
+    status:"expired", win:"11月3日00:00 — 11月10日24:00",
+    scope:"国家会展中心（虹桥）半径 5 km；世界会客厅半径 10 km（仅 11/3–11/5）",
+    note:"已结束，保留作对照。",
+    url:"https://www.shanghai.gov.cn/gwk/search/content/0187529b2e0440b7a99ed9e05cae5ac4",
+    zones:[
+      {shape:"circle", center:[31.190,121.300], radius:5000, label:"国家会展中心 5 km（11/3–11/10）"},
+      {shape:"circle", center:[31.253,121.500], radius:10000, label:"世界会客厅 10 km（11/3–11/5）"}
+    ] }
+];
+
+/* --- 航天发射场（发射工位近似位置） --- */
+const LAUNCH = [
+  { id:"L1", name:"酒泉卫星发射中心", short:"酒泉", ll:[40.960,100.298], loc:"内蒙古额济纳旗·戈壁（甘肃酒泉以北）",
+    type:"内陆发射场", note:"中国最早、任务最密的发射场：载人航天（神舟/天宫）、部分长征二号F/四号与商业任务。射向多为西北、正南。",
+    url:"https://zh.wikipedia.org/wiki/酒泉卫星发射中心" },
+  { id:"L2", name:"太原卫星发射中心", short:"太原", ll:[38.849,111.608], loc:"山西忻州岢岚",
+    type:"内陆发射场", note:"主要发射太阳同步轨道与极轨卫星（长征二号丙/四号、长征六号），残骸与航警常落在黄海、东海方向。",
+    url:"https://zh.wikipedia.org/wiki/太原卫星发射中心" },
+  { id:"L3", name:"西昌卫星发射中心", short:"西昌", ll:[28.246,102.027], loc:"四川凉山冕宁",
+    type:"内陆发射场", note:"高轨主力（长征三号乙、长征二号丙等），北斗/GTO 卫星常用；射向东南，一级残骸落在黔桂山区。",
+    url:"https://zh.wikipedia.org/wiki/西昌卫星发射中心" },
+  { id:"L4", name:"文昌航天发射场（含海南商业航天发射场）", short:"文昌", ll:[19.614,110.951], loc:"海南文昌龙楼镇",
+    type:"滨海发射场", note:"长征五号/七号/八号母港；海南商业航天发射场（一号/二号工位）在两公里外的东郊，主要打商业液体火箭。射向南海/太平洋，海上落区即对应琼航警发布的火箭残骸区。",
+    url:"https://zh.wikipedia.org/wiki/文昌航天发射场", related:"琼航警228/26（11/9 火箭发射）、琼航警225/26（11/5–6 残骸）" },
+  { id:"L5", name:"海阳东方航天港", short:"海阳", ll:[36.688,121.163], loc:"山东烟台海阳港",
+    type:"海上发射母港", note:"固体运载火箭总装测试与出海发射母港，长征十一号等海上发射由此出海；黄海海域的禁航/残骸区常与这里的发射相关。",
+    url:"https://zh.wikipedia.org/wiki/东方航天港", related:"鲁航警993/26（11/12 22:00–11/13 05:00 黄海火箭残骸区）" }
+];
+
+/* ============================ 工具 ============================ */
+function dms(s){
+  const m = /^\s*(\d+)\s*[-°]\s*([0-9.]+)\s*([NSEW])\s*$/i.exec(String(s));
+  if(!m) throw new Error("bad coord: "+s);
+  let v = parseInt(m[1],10) + parseFloat(m[2])/60;
+  if(/[SW]/i.test(m[3])) v = -v;
+  return v;
+}
+const pt = c => [dms(c[0]), dms(c[1])];
+
+function areaKm2(ring){
+  const R = 6371.0088, rad = Math.PI/180;
+  let sum = 0;
+  for(let i=0;i<ring.length;i++){
+    const p1 = ring[i], p2 = ring[(i+1)%ring.length];
+    sum += (p2[1]-p1[1])*rad * (2 + Math.sin(p1[0]*rad) + Math.sin(p2[0]*rad));
+  }
+  return Math.abs(sum*R*R/2);
+}
+
+function circleBounds(center, radiusM){
+  const lat = center[0], lng = center[1];
+  const dLat = radiusM/111320;
+  const dLng = radiusM/(111320*Math.cos(lat*Math.PI/180));
+  return L.latLngBounds([lat-dLat, lng-dLng],[lat+dLat, lng+dLng]);
+}
+
+const SEA_ST = {
+  active:  {label:"当前生效", color:"#ff4d4f", fill:.24, dash:null},
+  upcoming:{label:"即将生效", color:"#ffa726", fill:.24, dash:null},
+  expired: {label:"已结束",   color:"#7f97a3", fill:.14, dash:"6 5"}
+};
+const seaStyle = st => { const s=SEA_ST[st]; return {color:s.color, weight: st==="expired"?1.6:2.4, opacity:.95,
+  fillColor:s.color, fillOpacity:s.fill, dashArray:s.dash}; };
+
+/* ============================ 地图 ============================ */
+const map = L.map('map', {minZoom:2, maxZoom:12, worldCopyJump:true});
+map.setView([26.5,118],5);
+
+const esriOcean = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
+  {maxZoom:12, attribution:'底图 © Esri · GEBCO · NOAA'});
+const esriRef = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}', {maxZoom:12});
+const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {maxZoom:12, attribution:'影像 © Esri · Maxar · Earthstar Geographics'});
+
+const grat = [];
+for(let lon=100; lon<=132; lon+=2){ const l=[]; for(let lat=0; lat<=45; lat+=1) l.push([lat,lon]); grat.push(L.polyline(l,{color:"#2c4d5e",weight:.6,opacity:.7,interactive:false})); }
+for(let lat=5; lat<=42; lat+=2){ const l=[]; for(let lon=100; lon<=132; lon+=1) l.push([lat,lon]); grat.push(L.polyline(l,{color:"#2c4d5e",weight:.6,opacity:.7,interactive:false})); }
+const gridLayer = L.layerGroup(grat);
+
+const baseMaps = {
+  "<span>海洋底图</span>": L.layerGroup([esriOcean, esriRef]),
+  "<span>卫星影像</span>": esriSat,
+  "<span>纯经纬网</span>": gridLayer
+};
+
+const G = {
+  seaA:L.layerGroup(), seaU:L.layerGroup(), seaE:L.layerGroup(),
+  airA:L.layerGroup(), airE:L.layerGroup(), launch:L.layerGroup(), notam:L.layerGroup(),
+  cloud:L.layerGroup(), traj:L.layerGroup(), traj3d:L.layerGroup()
+};
+
+/* ============================ 绘制：海上 ============================ */
+const allBounds = L.latLngBounds([]);
+const seaItems = [];
+
+SEA_AREAS.forEach((a, ai) => {
+  const idx = ai + 1;
+  const st = SEA_ST[a.status];
+  const bounds = L.latLngBounds([]);
+  let area = 0;
+
+  a.polys.forEach(poly => {
+    const ring = poly.map(pt);
+    const ll = ring.map(p => L.latLng(p[0], p[1]));
+    area += areaKm2(ring);
+    ll.forEach(x => { bounds.extend(x); allBounds.extend(x); });
+
+    const pg = L.polygon(ll, seaStyle(a.status));
+    pg.bindTooltip(`${a.no} · ${a.type}`, {sticky:true, direction:'top', opacity:.95});
+    pg.bindPopup(seaPopup(a, idx, area), {maxWidth:340});
+    pg.on('mouseover', () => pg.setStyle({weight: a.status==="expired"?2.6:4, fillOpacity: a.status==="expired"?.22:.34}));
+    pg.on('mouseout',  () => pg.setStyle(seaStyle(a.status)));
+    pg.addTo(G[a.status==="active"?"seaA":a.status==="upcoming"?"seaU":"seaE"]);
+    if(!window.__sea) window.__sea = {};
+    if(!window.__sea[idx]) window.__sea[idx] = pg;
+
+    const c = L.polygon(ll).getBounds().getCenter();
+    L.marker(c, {icon:L.divIcon({className:`num ${a.status==="active"?"a":a.status==="upcoming"?"u":"e"}`,
+      html:`<span>${idx}</span>`, iconSize:[21,21], iconAnchor:[10.5,10.5]}), interactive:false, keyboard:false})
+      .addTo(G[a.status==="active"?"seaA":a.status==="upcoming"?"seaU":"seaE"]);
+  });
+
+  seaItems.push({idx, a, bounds, area});
+});
+
+function seaPopup(a, idx, area){
+  const st = SEA_ST[a.status];
+  const coords = a.polys.map((p,i)=>
+    (a.polys.length>1 ? `<div style="color:#7fc4e8;margin-top:3px">水域 ${i+1}</div>` : '') +
+    p.map((c,j)=>`${j+1}. ${c[0]} ${c[1]}`).join('<br>')).join('');
+  return `<h3>${idx}. ${a.no}</h3><span class="pop-tag pop-${a.status==="active"?"a":a.status==="upcoming"?"u":"e"}">${st.label}</span>
+    <div class="pop-row"><b>类型</b>${a.type}</div>
+    <div class="pop-row"><b>海域</b>${a.sea}</div>
+    <div class="pop-row"><b>时间</b>${a.win}</div>
+    <div class="pop-row"><b>面积</b>约 ${Math.round(area).toLocaleString()} km²（共 ${a.polys.length} 块水域）</div>
+    <div class="pop-coords">${coords}</div>
+    <a class="pop-src" href="${a.url}" target="_blank" rel="noopener">查看海事局原警告 ↗</a>`;
+}
+
+/* ============================ 绘制：空域 ============================ */
+const airItems = [];
+
+AIR_AREAS.forEach(a => {
+  const st = a.status;
+  const active = st === "active";
+  const color = active ? "#c77dff" : "#8a8f98";
+  const bounds = L.latLngBounds([]);
+  const style = {color, weight: active?2.2:1.6, opacity:.95, dashArray: active ? "7 5" : "3 4",
+                 fillColor:color, fillOpacity: active?.07:.035};
+
+  a.zones.forEach(z => {
+    if(z.shape === "circle"){
+      const c = L.circle(z.center, Object.assign({radius:z.radius}, style));
+      c.bindTooltip(`${a.id} · ${z.label || a.name}`, {sticky:true, direction:'top'});
+      c.bindPopup(airPopup(a, z), {maxWidth:340});
+      if(!window.__air) window.__air = {};
+      if(!window.__air[a.id]) window.__air[a.id] = c;
+      c.on('mouseover', ()=>c.setStyle({fillOpacity: active?.16:.08, weight:3}));
+      c.on('mouseout',  ()=>c.setStyle(style));
+      c.addTo(active ? G.airA : G.airE);
+      const cb = circleBounds(z.center, z.radius);
+      bounds.extend(cb); allBounds.extend(cb);
+      if(z === a.zones[0]) L.marker([z.center[0], z.center[1]], {icon: L.divIcon({className:`anum ${active?'':'x'}`, html:`<span>${a.id}</span>`, iconSize:[30,18], iconAnchor:[15,9]}), interactive:false, keyboard:false})
+        .addTo(active ? G.airA : G.airE);
+    } else {
+      const c = L.circleMarker(z.ll, {radius:9, color, weight:2, fillColor:color, fillOpacity: active?.55:.3, dashArray: active?"2 2":null});
+      c.bindTooltip(`${a.id} · ${z.label}`, {sticky:true, direction:'top'});
+      c.bindPopup(airPopup(a, z), {maxWidth:340});
+      if(!window.__air) window.__air = {};
+      if(!window.__air[a.id]) window.__air[a.id] = c;
+      c.addTo(active ? G.airA : G.airE);
+      if(z === a.zones[0]) L.marker(a.badgeAt || z.ll, {icon: L.divIcon({className:`anum ${active?'':'x'}`, html:`<span>${a.id}</span>`, iconSize:[30,18], iconAnchor:[15,9]}), interactive:false, keyboard:false})
+        .addTo(active ? G.airA : G.airE);
+      bounds.extend(z.ll); allBounds.extend(z.ll);
+    }
+  });
+
+  airItems.push({a, bounds, active});
+});
+
+function airPopup(a, z){
+  const zoneLine = z.label ? `<div class="pop-row"><b>范围</b>${z.label}</div>` : '';
+  const detail   = z.detail ? `<div class="pop-row"><b>说明</b>${z.detail}</div>` : '';
+  return `<h3>${a.id} · ${a.name}</h3><span class="pop-tag pop-${a.status==="active"?"v":"e"}">${a.status==="active"?"空域限制生效中":"已结束"}</span>
+    <div class="pop-row"><b>类型</b>${a.type}</div>
+    ${zoneLine}
+    <div class="pop-row"><b>时间</b>${a.win}</div>
+    ${detail}
+    <div class="pop-row" style="margin-top:5px"><b>覆盖</b>${a.scope}</div>
+    ${z.shape==="circle" ? `<div class="pop-row"><b>圆心</b>${z.center[0].toFixed(3)}N ${z.center[1].toFixed(3)}E · 半径 ${(z.radius/1000).toFixed(0)} km</div>` : ''}
+    <div class="pop-note">${a.note}</div>
+    <a class="pop-src" href="${a.url}" target="_blank" rel="noopener">查看通告 / 报道来源 ↗</a>`;
+}
+
+/* ============================ 绘制：发射场 ============================ */
+const launchItems = [];
+
+LAUNCH.forEach(l => {
+  const m = L.marker(l.ll, {
+    icon: L.divIcon({className:'rocket', html:'<span>🚀</span>', iconSize:[24,24], iconAnchor:[12,12]}),
+    zIndexOffset: 900, keyboard:false
+  });
+  m.bindTooltip(`${l.id} · ${l.short}`, {direction:'top', offset:[0,-12]});
+  m.bindPopup(launchPopup(l), {maxWidth:330});
+  m.addTo(G.launch);
+  allBounds.extend(l.ll);
+  launchItems.push({ l, bounds: L.latLngBounds([l.ll]) });
+});
+
+function launchPopup(l){
+  return `<h3>🚀 ${l.name}</h3><span class="pop-tag pop-v">航天发射场</span>
+    <div class="pop-row"><b>类型</b>${l.type}</div>
+    <div class="pop-row"><b>位置</b>${l.loc}</div>
+    <div class="pop-row"><b>坐标</b>${l.ll[0].toFixed(3)}N ${l.ll[1].toFixed(3)}E（发射工位近似）</div>
+    <div class="pop-row" style="margin-top:5px"><b>说明</b>${l.note}</div>
+    ${l.related ? `<div class="pop-note">近期相关航警：${l.related}</div>` : ''}
+    <a class="pop-src" href="${l.url}" target="_blank" rel="noopener">查看发射场介绍 ↗</a>`;
+}
+/* ============================ 绘制：NOTAM（CAAC eAIP 月度汇总） ============================ */
+const NOTAM_DATA = window.NOTAM_DATA || { notams: [] };
+const NOTAM_ST = {
+  active:  {c:'#ffb74d', dash:null,  tag:'pop-u', label:'NOTAM 生效中', badge:'',  b:'n'},
+  upcoming:{c:'#ffd54f', dash:'6 4', tag:'pop-u', label:'即将生效',     badge:'u', b:'u'},
+  unknown: {c:'#ff8a65', dash:'2 3', tag:'pop-u', label:'时间未提供',   badge:'w', b:'u'},
+  ended:   {c:'#8b8f93', dash:'3 4', tag:'pop-e', label:'已结束',       badge:'x', b:'x'}
+};
+const notamItems = [];
+
+function esc(s){ return String(s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function tz(s){ return s ? s.replace('T',' ').slice(0,16) + 'Z' : '—'; }
+
+function notamPopup(n){
+  const g = n.geom, st = NOTAM_ST[n.status] || NOTAM_ST.ended;
+  const rangeTxt = g.kind === 'circle'
+    ? `圆形 · 半径 ${(g.radius_m/1000).toFixed(0)} km`
+    : `${g.coords.length} 点多边形`;
+  const coords = g.kind === 'circle'
+    ? `圆心 ${g.center[0].toFixed(5)}, ${g.center[1].toFixed(5)}`
+    : g.coords.map((q,i)=>`${i+1}. ${q[0].toFixed(4)}, ${q[1].toFixed(4)}`).join('<br>');
+  return `<h3>📡 ${n.id}</h3><span class="pop-tag ${st.tag}">${st.label}</span>
+    <div class="pop-row"><b>类型</b>${n.kind}</div>
+    <div class="pop-row"><b>FIR</b>${n.fir}</div>
+    <div class="pop-row"><b>时间</b>${n.begin_utc ? tz(n.begin_utc) : '未提供'} — ${n.end_utc==='PERM'?'PERM':(n.end_utc ? tz(n.end_utc) : '未提供')}（UTC）</div>
+    <div class="pop-row"><b>范围</b>${rangeTxt}</div>
+    <div class="pop-coords">${coords}</div>
+    ${n.qline ? `<div class="pop-row"><b>Q行</b><span style="font-family:Consolas,monospace;font-size:10.5px">${esc(n.qline)}</span></div>` : ''}
+    <div class="pop-note" style="max-height:130px;overflow:auto">${esc(n.e).slice(0,420)}${n.e && n.e.length>420?'…':''}</div>
+    ${n.source ? `<div class="pop-note" style="background:rgba(255,183,77,.10);border-color:rgba(255,183,77,.35)">${esc(n.source)}</div>` : `<a class="pop-src" href="https://www.eaipchina.cn/" target="_blank" rel="noopener">来源：CAAC AIS eAIP · NOTAM Summary ↗</a>`}`;
+}
+
+document.getElementById('tab-notam').textContent = '📡 NOTAM ' + NOTAM_DATA.notams.length;
+NOTAM_DATA.notams.forEach((n, i) => {
+  const g = n.geom, st = NOTAM_ST[n.status] || NOTAM_ST.ended;
+  const active = n.status === 'active';
+  const upcoming = n.status === 'upcoming';
+  const color = st.c;
+  const style = {color, weight: active?2.4:1.8, opacity:.95, dashArray: st.dash,
+                 fillColor:color, fillOpacity: active?.10:(upcoming?.08:.05)};
+  let layer, bnd;
+  if(g.kind === 'circle'){
+    layer = L.circle(g.center, Object.assign({radius:g.radius_m}, style));
+    bnd = circleBounds(g.center, g.radius_m);
+  }else{
+    layer = L.polygon(g.coords, style);
+    bnd = L.latLngBounds(g.coords);
+  }
+  layer.bindTooltip(`${n.id} · ${n.kind}`, {sticky:true, direction:'top'});
+  layer.bindPopup(notamPopup(n), {maxWidth:340});
+  layer.on('mouseover', ()=>layer.setStyle({weight:3, fillOpacity: active?.20:.10}));
+  layer.on('mouseout',  ()=>layer.setStyle(style));
+  layer.addTo(G.notam);
+  if(!window.__notam) window.__notam = {};
+  window.__notam[n.id] = layer;
+  allBounds.extend(bnd.getNorthWest()); allBounds.extend(bnd.getSouthEast());
+  const c = bnd.getCenter();
+  L.marker(c, {icon:L.divIcon({className:`nbadge ${st.badge}`, html:`<span>N${i+1}</span>`, iconSize:[30,18], iconAnchor:[15,9]}), interactive:false, keyboard:false})
+    .addTo(G.notam);
+  notamItems.push({n, bnd, active});
+});
+
+
+
+/* ============================ 绘制：推测弹道轴（launch_window.py） ============================ */
+if(window.TRAJ){
+  const T = window.TRAJ;
+  const line = L.polyline(T.path, {color:'#ff7043', weight:2.5, dashArray:'10 6', opacity:.9});
+  const t0 = T.t0_estimate_utc.replace('T',' ').slice(0,16) + 'Z';
+  line.bindPopup(`<h3>🛰 推测弹道轴</h3>
+    <div class="pop-row"><b>推测</b>${T.event_guess}</div>
+    <div class="pop-row"><b>射向</b>${T.bearing_deg}°（共线最大偏差 ${T.collinearity_max_dev_deg}°）</div>
+    <div class="pop-row"><b>落区</b>${T.areas.map(a=>a.id.replace('A ','')+' 距 '+a.distance_km+' km').join('；')}</div>
+    <div class="pop-row"><b>T0 估算</b>${t0}（北京时间 ${shiftCST(t0)}）</div>
+    <div class="pop-row"><b>T0 范围</b>${T.t0_bound_utc[0].slice(11,16)}Z — ${T.t0_bound_utc[1].slice(11,16)}Z</div>
+    <div class="pop-note">${T.note}</div>`, {maxWidth:340});
+  line.addTo(G.traj);
+  window.__traj = line;
+  const mid = T.path[1];
+  L.marker(mid, {icon:L.divIcon({className:'trajlab', html:`<span>推测射向 ${T.bearing_deg}°<br><b>T0≈${t0}</b></span>`, iconSize:[150,34], iconAnchor:[75,17]}), interactive:false, keyboard:false})
+    .addTo(G.traj);
+}
+
+function shiftCST(iso){
+  const d = new Date(iso);
+  if(isNaN(d)) return '—';
+  return new Date(d.getTime()+8*3600*1000).toISOString().slice(5,16).replace('T',' ');
+}
+
+
+/* ============================ 绘制：3D 弹道/轨道（traj3d.js） ============================ */
+if(window.TRAJ3D){
+  const D = window.TRAJ3D;
+  const altColor = a => a < 80 ? '#4dd0e1' : a < 250 ? '#ffd54f' : a < 450 ? '#ffb74d' : '#ff5252';
+  const asc = D.ascent;
+  // 先铺一层深色描边，使弹道在地形/海面上都能看清
+  for(let i=1;i<asc.length;i++){
+    const p1 = asc[i-1], p2 = asc[i];
+    L.polyline([[p1[0],p1[1]],[p2[0],p2[1]]], {color:'#06121b', weight:6.5, opacity:.55, interactive:false}).addTo(G.traj3d);
+  }
+  for(let i=1;i<asc.length;i++){
+    const p1 = asc[i-1], p2 = asc[i];
+    L.polyline([[p1[0],p1[1]],[p2[0],p2[1]]], {color: altColor(p2[2]), weight: 3.6, opacity:.98})
+      .bindTooltip(`上升段 · ${p2[2]} km`, {sticky:true}).addTo(G.traj3d);
+  }
+  // 滑行段（二级一次关机 → 远地点二次点火），实际积分，虚线
+  if(D.coast && D.coast.length){
+    const coa = [[asc[asc.length-1][0], asc[asc.length-1][1]]].concat(D.coast.map(p=>[p[0],p[1]]));
+    L.polyline(coa, {color:'#06121b', weight:6, opacity:.55, interactive:false}).addTo(G.traj3d);
+    L.polyline(coa, {color:'#00e5ff', weight:2.8, dashArray:'8 6', opacity:.95})
+      .bindTooltip('滑行段（实际积分 · 滑行至远地点）', {sticky:true}).addTo(G.traj3d);
+  }
+  // 入轨后地面轨迹（处理跨 180° 经线）
+  let seg = [[D.orbit[0][0], D.orbit[0][1]]];
+  const orbitGroups = [];
+  for(let i=1;i<D.orbit.length;i++){
+    const a = D.orbit[i-1], b = D.orbit[i];
+    if(Math.abs(b[1]-a[1]) > 180){
+      if(seg.length>1) orbitGroups.push(seg);
+      seg = [];
+    }
+    seg.push([b[0], b[1]]);
+  }
+  if(seg.length>1) orbitGroups.push(seg);
+  orbitGroups.forEach(g => L.polyline(g, {color:'#06121b', weight:5, opacity:.5, interactive:false}).addTo(G.traj3d));
+  orbitGroups.forEach(g => L.polyline(g, {color:'#c77dff', weight:2.2, dashArray:'6 5', opacity:.92}).addTo(G.traj3d));
+  // 事件点
+  const evColor = k => k==='impact' ? '#ff5252' : k==='insert' ? '#7cf2c0' : '#ffd54f';
+  D.events.forEach((e, i) => {
+    const m = L.marker([e.lat, e.lon], {icon:L.divIcon({className:'evt', html:`<span style="background:${evColor(e.kind)}">${i+1}</span>`, iconSize:[18,18], iconAnchor:[9,9]}), zIndexOffset:750});
+    m.bindTooltip(`${e.name} · ${e.alt} km`, {direction:'top'});
+    m.bindPopup(`<h3>🛰 ${e.name}</h3>
+      <div class="pop-row"><b>位置</b>${e.lat.toFixed(3)}, ${e.lon.toFixed(3)}</div>
+      <div class="pop-row"><b>高度</b>${e.alt} km</div>
+      <div class="pop-row"><b>航程</b>${e.dist_km} km</div>
+      <div class="pop-note">${D.note}</div>`, {maxWidth:300});
+    m.addTo(G.traj3d);
+  });
+
+/* ============================ 绘制：火箭云观测质量场（rocketcloud.js） ============================ */
+if(window.ROCKET_CLOUD){
+  const C = window.ROCKET_CLOUD;
+  const qcol = q => q >= 0.6 ? '#d50000' : q >= 0.3 ? '#ff6d00' : q >= 0.1 ? '#ffd54f' : '#90a4ae';
+  const qStats = C.q_stats || {};
+  const popHtml = `<h3>🌅 火箭云观测质量 Q</h3>
+    <div class="pop-row"><b>T0</b>${C.t0_cst} CST（${C.t0_utc}）</div>
+    <div class="pop-row"><b>Q</b>0–1 相对质量（最高点归一为 1），不是标定概率</div>
+    <div class="pop-row"><b>构成</b>天空暗度 × 尾迹照亮 × 仰角 × 背向太阳</div>
+    <div class="pop-row"><b>统计</b>Q&gt;0.3 约 ${qStats.gt03 != null ? qStats.gt03 : '—'} 万 km²；Q&gt;0.6 约 ${qStats.gt06 != null ? qStats.gt06 : '—'} 万 km²</div>
+    <div class="pop-note">${C.note}</div>`;
+  if(C.quality){
+    L.imageOverlay(C.quality.image, C.quality.bounds, {opacity:.82, interactive:false}).addTo(G.cloud);
+  }
+  if(C.q_peak){
+    L.circleMarker([C.q_peak.lat, C.q_peak.lon], {radius:6, color:'#ffffff', weight:1.2,
+      fillColor:'#d50000', fillOpacity:.9})
+      .bindTooltip('Q 最高点 · ' + Math.round(C.q_peak.q*100) + '%', {direction:'top'})
+      .bindPopup(popHtml, {maxWidth:330}).addTo(G.cloud);
+  }
+  const tcol = {'-18':'#4dd0e1','-12':'#29b6f6','-6':'#80deea','0':'#eceff1'};
+  (C.terminators||[]).forEach(t=>{
+    if(!t.pts || t.pts.length < 2) return;
+    L.polyline(t.pts, {color: tcol[String(t.level)] || '#90a4ae', weight:1.4,
+                       dashArray:'7 6', opacity:.85})
+      .bindTooltip('晨昏线 '+t.level+'°（太阳高度）', {sticky:true}).addTo(G.cloud);
+  });
+  (C.cities||[]).forEach(c=>{
+    const col = qcol(c.q);
+    const look = (c.elev != null && c.elev > 0)
+      ? `<div class="pop-row"><b>尾迹仰角 / 方位</b>${c.elev}° / ${c.az}°</div>`
+      : '<div class="pop-row"><b>尾迹仰角</b>低于地平线</div>';
+    L.circleMarker([c.lat, c.lon], {radius: c.q >= 0.3 ? 4.6 : 3.2, color:'#04121a', weight:.8,
+                                    fillColor: col, fillOpacity:.92})
+      .bindTooltip(`${c.name} · Q ${Math.round(c.q*100)}%`, {direction:'top'})
+      .bindPopup(`<h3>🌅 ${c.name}</h3>
+        <div class="pop-row"><b>观测质量 Q</b>${Math.round(c.q*100)}%</div>
+        ${look}
+        <div class="pop-row"><b>观测时太阳高度</b>${c.sun}°</div>
+        <div class="pop-note">${C.note}</div>`, {maxWidth:280})
+      .addTo(G.cloud);
+  });
+}
+
+/* ============================ 3D 悬浮窗（Canvas 软件渲染） ============================ */
+(function(){
+  const D = window.TRAJ3D;
+  const box = document.getElementById('v3d');
+  const cvs = document.getElementById('v3d-canvas');
+  if(!D || !box || !cvs) return;
+  const ctx = cvs.getContext('2d');
+  const R = 6371;
+  let local = false;                      // true=局部视图，false=全球视图（默认：长滑行/近极轨道）
+  const altK = () => local ? 1.2 : 4;     // 高度放大：局部小、全球大
+  const K_LOCAL = 11;                     // 局部视图放大倍数
+  const siteVec = (() => {
+    const la = D.site[0]*Math.PI/180, lo = D.site[1]*Math.PI/180;
+    return [Math.cos(la)*Math.cos(lo), Math.cos(la)*Math.sin(lo), Math.sin(la)];
+  })();
+  let yaw = -1.0, pitch = 0.5, dist = 3.2, dragging = false, lx = 0, ly = 0;
+
+  const xyz = (lat, lon, alt) => {
+    const la = lat*Math.PI/180, lo = lon*Math.PI/180;
+    const r = (R + (alt||0)*altK()) / R;
+    return [r*Math.cos(la)*Math.cos(lo), r*Math.cos(la)*Math.sin(lo), r*Math.sin(la)];
+  };
+  function toScene(p){
+    if(!local) return p;
+    return [(p[0]-siteVec[0])*K_LOCAL, (p[1]-siteVec[1])*K_LOCAL, (p[2]-siteVec[2])*K_LOCAL];
+  }
+  function proj(p){
+    p = toScene(p);
+    const cy = Math.cos(yaw), sy = Math.sin(yaw);
+    let x = p[0]*cy - p[1]*sy, y = p[0]*sy + p[1]*cy, z = p[2];
+    const cp = Math.cos(pitch), sp = Math.sin(pitch);
+    const y2 = y*cp - z*sp, z2 = y*sp + z*cp;
+    const d = dist - z2;
+    if(d <= 0.2) return null;
+    const w = cvs.clientWidth || 1, h = cvs.clientHeight || 1;
+    const f = Math.min(w, h) * 0.95;
+    return [w/2 + f*x/d, h/2 - f*y2/d, z2];
+  }
+  const path = (pts, color, width, alpha) => {
+    ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = width; ctx.beginPath();
+    let started = false;
+    pts.forEach(p => { if(!p){ started = false; return; }
+      if(!started){ ctx.moveTo(p[0], p[1]); started = true; } else ctx.lineTo(p[0], p[1]); });
+    ctx.stroke(); ctx.restore();
+  };
+  function draw(){
+    const w = cvs.clientWidth, h = cvs.clientHeight;
+    if(!w || !h) return;
+    const dpr = window.devicePixelRatio || 1;
+    if(cvs.width !== Math.round(w*dpr) || cvs.height !== Math.round(h*dpr)){
+      cvs.width = Math.round(w*dpr); cvs.height = Math.round(h*dpr);
+    }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle = '#07131c'; ctx.fillRect(0,0,w,h);
+
+    if(local){
+      // 局部经纬网（太原周边 ±12°/±15°）
+      for(let dlat=-12; dlat<=12; dlat+=2){
+        const pts=[]; for(let dlon=-15; dlon<=15; dlon+=1.5) pts.push(proj(xyz(D.site[0]+dlat, D.site[1]+dlon, 0)));
+        path(pts, '#1d4459', 0.7, 0.6);
+      }
+      for(let dlon=-15; dlon<=15; dlon+=3){
+        const pts=[]; for(let dlat=-12; dlat<=12; dlat+=1.5) pts.push(proj(xyz(D.site[0]+dlat, D.site[1]+dlon, 0)));
+        path(pts, '#1d4459', 0.7, 0.6);
+      }
+    }else{
+      const back = [], front = [];
+      for(let lat=-60; lat<=60; lat+=30){
+        for(let lon=-180; lon<=180; lon+=5){
+          const p = proj(xyz(lat, lon, 0));
+          if(p){ (p[2] > 0 ? front : back).push(p); }
+        }
+      }
+      for(let lon=-180; lon<180; lon+=30){
+        for(let lat=-90; lat<=90; lat+=5){
+          const p = proj(xyz(lat, lon, 0));
+          if(p){ (p[2] > 0 ? front : back).push(p); }
+        }
+      }
+      path(back, '#1d4459', 0.7, 0.5);
+      const c0 = proj([0,0,0]), r0 = proj([1,0,0]);
+      if(c0 && r0){
+        ctx.beginPath(); ctx.arc(c0[0], c0[1], Math.hypot(r0[0]-c0[0], r0[1]-c0[1]), 0, Math.PI*2);
+        ctx.fillStyle = '#123c50'; ctx.fill();
+        ctx.strokeStyle = '#2c6b8a'; ctx.lineWidth = 1; ctx.stroke();
+      }
+      path(front, '#2c6b8a', 0.7, 0.55);
+    }
+
+    // 轨道环
+    if(D.orbit3d){
+      const ring = D.orbit3d.map(p => proj([p[0]/R, p[1]/R, p[2]/R]));
+      path(ring, '#c77dff', 1.8, 0.95);
+    }
+    // 上升段（颜色=高度）
+    const asc = D.ascent;
+    let prev = null;
+    for(let i=0;i<asc.length;i++){
+      const p = proj(xyz(asc[i][0], asc[i][1], asc[i][2]));
+      if(prev && p){
+        const a = asc[i][2];
+        ctx.strokeStyle = a<80 ? '#4dd0e1' : a<250 ? '#ffd54f' : a<450 ? '#ffb74d' : '#ff5252';
+        ctx.lineWidth = 2.6; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p[0], p[1]); ctx.stroke();
+      }
+      prev = p;
+    }
+    // 地面投影（点线），用来核对轨迹与落区是否对得上
+    {
+      const tail = (D.events||[]).filter(e => e.kind==='impact' || e.kind==='insert')
+        .slice().sort((a,b)=> b.lat - a.lat);
+      const line = asc.map(q => [q[0], q[1]])
+        .concat((D.coast||[]).map(q => [q[0], q[1]]))
+        .concat(tail.map(e=>[e.lat, e.lon]));
+      const gp = line.map(q => proj(xyz(q[0], q[1], 0)));
+      ctx.save(); ctx.setLineDash([2,5]); ctx.strokeStyle = '#6f8794'; ctx.lineWidth = 1.2; ctx.globalAlpha = .9;
+      ctx.beginPath(); let st = false;
+      gp.forEach(p => { if(!p) { st=false; return; } if(!st){ ctx.moveTo(p[0],p[1]); st=true; } else ctx.lineTo(p[0],p[1]); });
+      ctx.stroke(); ctx.restore();
+    }
+    // 滑行段（实际积分，虚线）
+    if(D.coast && D.coast.length){
+      const lastAsc = asc[asc.length-1];
+      const chain = [[lastAsc[0], lastAsc[1], lastAsc[2]]].concat(D.coast.map(p=>[p[0],p[1],p[2]]));
+      ctx.save(); ctx.setLineDash([4,4]); ctx.strokeStyle='#4dd0e1'; ctx.lineWidth=1.8; ctx.beginPath();
+      chain.forEach((q, k) => { const p = proj(xyz(q[0],q[1],q[2])); if(!p) return; if(k===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]); });
+      ctx.stroke(); ctx.restore();
+    }
+    // 事件点
+    (D.events||[]).forEach((e, i) => {
+      const p = proj(xyz(e.lat, e.lon, e.alt));
+      if(!p) return;
+      ctx.beginPath(); ctx.arc(p[0], p[1], 5, 0, Math.PI*2);
+      ctx.fillStyle = e.kind==='impact' ? '#ff5252' : e.kind==='insert' ? '#7cf2c0' : '#ffd54f'; ctx.fill();
+      ctx.fillStyle = '#08161f'; ctx.font = 'bold 7px Consolas'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(i+1), p[0], p[1] + 0.5);
+    });
+    // 太原
+    const lz = proj(xyz(D.site[0], D.site[1], 0));
+    if(lz){
+      ctx.beginPath(); ctx.arc(lz[0], lz[1], 5.5, 0, Math.PI*2); ctx.fillStyle = '#4dd0e1'; ctx.fill();
+      ctx.fillStyle = '#4dd0e1'; ctx.font = '10px system-ui'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+      ctx.fillText('太原', lz[0] + 7, lz[1] - 4);
+    }
+    // HUD
+    ctx.fillStyle = '#9fc6da'; ctx.font = '10px system-ui'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(`i=${D.elements.inc_deg}°  h=${D.elements.alt_km} km  T=${D.elements.period_min} min`, 8, 6);
+    ctx.fillStyle = '#6f8794';
+    ctx.fillText(`${local?'局部':'全球'}视图 · 高度×${local?1.2:4} · 拖动旋转 · 滚轮缩放`, 8, h - 16);
+  }
+
+  // 旋转 / 缩放
+  cvs.addEventListener('pointerdown', e => { dragging = true; lx = e.clientX; ly = e.clientY; cvs.setPointerCapture(e.pointerId); });
+  window.addEventListener('pointermove', e => {
+    if(!dragging) return;
+    yaw += (e.clientX - lx) * 0.008;
+    pitch = Math.max(-1.45, Math.min(1.45, pitch + (e.clientY - ly) * 0.008));
+    lx = e.clientX; ly = e.clientY; draw();
+  });
+  window.addEventListener('pointerup', () => dragging = false);
+  cvs.addEventListener('wheel', e => {
+    e.preventDefault();
+    dist = Math.max(1.7, Math.min(7.5, dist * (1 + Math.sign(e.deltaY) * 0.08)));
+    draw();
+  }, {passive:false});
+
+  // 拖动窗口
+  const head = document.getElementById('v3d-drag');
+  head.addEventListener('pointerdown', e => {
+    if(e.target.tagName === 'BUTTON') return;
+    const r = box.getBoundingClientRect();
+    const ox = e.clientX - r.left, oy = e.clientY - r.top;
+    box.style.left = r.left + 'px'; box.style.top = r.top + 'px'; box.style.bottom = 'auto';
+    const mv = ev => { box.style.left = (ev.clientX - ox) + 'px'; box.style.top = (ev.clientY - oy) + 'px'; };
+    const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); };
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
+  });
+  document.getElementById('v3d-reset').onclick = () => { yaw = -1.0; pitch = 0.5; dist = 3.2; draw(); };
+  document.getElementById('v3d-focus').onclick = () => {
+    if(!D || !D.ascent) return;
+    const b = L.latLngBounds([[D.site[0], D.site[1]]]);
+    D.ascent.forEach(p => b.extend([p[0], p[1]]));
+    (D.coast || []).slice(0, Math.min(10, (D.coast || []).length)).forEach(p => b.extend([p[0], p[1]]));
+    (D.events || []).filter(e => e.kind === 'impact').forEach(e => b.extend([e.lat, e.lon]));
+    map.fitBounds(b, {padding: [90, 90], maxZoom: 7, animate: false});
+  };
+  document.getElementById('v3d-mode').onclick = (e) => {
+    local = !local;
+    e.target.textContent = local ? '局部' : '全球';
+    yaw = -1.0; pitch = 0.5; dist = 3.2;
+    draw();
+  };
+  document.getElementById('v3d-min').onclick = () => {
+    const body = document.getElementById('v3d-body');
+    const hidden = body.style.display === 'none';
+    body.style.display = hidden ? 'block' : 'none';
+    box.style.height = hidden ? '440px' : 'auto';
+    setTimeout(draw, 30);
+  };
+
+  // 大小变化重绘
+  new ResizeObserver(() => draw()).observe(document.getElementById('v3d-body'));
+  setTimeout(draw, 200);
+})();
+}
+
+/* ============================ 图层控制 ============================ */
+const overlays = {
+  "<span style='color:#ff4d4f'>▲ 海上 · 生效中（3）</span>": G.seaA,
+  "<span style='color:#ffa726'>▲ 海上 · 今晚生效（1）</span>": G.seaU,
+  "<span style='color:#7f97a3'>▲ 海上 · 已结束（6）</span>": G.seaE,
+  "<span style='color:#c77dff'>◆ 空域 · 生效中（2）</span>": G.airA,
+  "<span style='color:#8a8f98'>◆ 空域 · 已结束（1）</span>": G.airE,
+  "<span style='color:#4dd0e1'>🚀 航天发射场（5）</span>": G.launch,
+  ["<span style='color:#ffb74d'>📡 NOTAM 区域（" + NOTAM_DATA.notams.length + "）</span>"]: G.notam,
+  "<span style='color:#ffb74d'>🌅 火箭云观测质量</span>": G.cloud,
+  "<span style='color:#ff7043'>🛰 推测弹道轴</span>": G.traj,
+  "<span style='color:#ffd54f'>🛰 3D 弹道/轨道</span>": G.traj3d
+};
+L.control.layers(baseMaps, overlays, {position:'topright', collapsed:false}).addTo(map);
+baseMaps["<span>海洋底图</span>"].addTo(map);
+Object.entries(G).forEach(([k, g]) => { if(k !== 'traj') g.addTo(map); });  // 默认不勾选旧版“推测弹道轴”，避免与修正后弹道混淆
+L.control.scale({position:'bottomright', imperial:false, maxWidth:180}).addTo(map);
+
+/* ============================ 侧栏 ============================ */
+const chips = document.getElementById('chips');
+const seaN = {active:0, upcoming:0, expired:0};
+SEA_AREAS.forEach(a => seaN[a.status]++);
+const airN = {active:0, expired:0};
+AIR_AREAS.forEach(a => airN[a.status]++);
+chips.innerHTML =
+  `<span class="chip a">海上生效 <b>${seaN.active}</b></span>` +
+  `<span class="chip u">今晚生效 <b>${seaN.upcoming}</b></span>` +
+  `<span class="chip e">海上结束 <b>${seaN.expired}</b></span>` +
+  `<span class="chip n">NOTAM <b>${NOTAM_DATA.notams.length}</b></span>`;
+
+const list = document.getElementById('list');
+const tabSea = document.getElementById('tab-sea');
+const tabAir = document.getElementById('tab-air');
+const tabLaunch = document.getElementById('tab-launch');
+const tabNotam = document.getElementById('tab-notam');
+
+function renderSea(){
+  list.innerHTML = '';
+  seaItems.forEach(it => {
+    const a = it.a;
+    const cls = a.status==="active"?"a":a.status==="upcoming"?"u":"e";
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = `<div class="bullet b-${cls}">${it.idx}</div><div class="itxt">
+      <div class="t1">${a.no} · ${a.type}</div>
+      <div class="t2">${a.sea}</div>
+      <div class="t3">${a.win} · ${a.polys.length>1 ? a.polys.length+" 块水域" : "约 "+Math.round(it.area).toLocaleString()+" km²"}</div></div>`;
+    el.onclick = () => { select(el); map.fitBounds(it.bounds, {padding:[70,70], maxZoom:9, animate:false}); };
+    list.appendChild(el);
+  });
+}
+
+function renderAir(){
+  list.innerHTML = '';
+  airItems.forEach(it => {
+    const a = it.a;
+    const cls = a.status==="active" ? "v" : "x";
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = `<div class="bullet b-${cls}">${a.id}</div><div class="itxt">
+      <div class="t1">${a.name}</div>
+      <div class="t2">${a.no} · ${a.type}</div>
+      <div class="t3">${a.win} · ${a.zones.length>1 ? a.zones.length+" 处" : (a.zones[0].shape==="circle" ? "半径 "+(a.zones[0].radius/1000)+" km" : "点标记")}</div></div>`;
+    el.onclick = () => { select(el); map.fitBounds(it.bounds.pad(.25), {maxZoom:9, animate:false}); };
+    list.appendChild(el);
+  });
+}
+
+function renderLaunch(){
+  list.innerHTML = '';
+  launchItems.forEach(it => {
+    const l = it.l;
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = `<div class="bullet b-p">${l.id}</div><div class="itxt">
+      <div class="t1">${l.name}</div>
+      <div class="t2">${l.loc} · ${l.type}</div>
+      <div class="t3">${l.ll[0].toFixed(3)}N ${l.ll[1].toFixed(3)}E（发射工位近似）</div></div>`;
+    el.onclick = () => { select(el); map.setView(l.ll, 6, {animate:false}); };
+    list.appendChild(el);
+  });
+}
+
+function renderNotam(){
+  list.innerHTML = '';
+  if(!notamItems.length){
+    list.innerHTML = '<div style="padding:10px;font-size:11.5px;line-height:1.6;color:#9db4c0">未加载到 notams.js。运行 <code>tools/parse_notam_summary.py</code> 生成后再打开本页。</div>';
+    return;
+  }
+  notamItems.forEach((it, i) => {
+    const n = it.n, active = it.active, g = n.geom;
+    const st = NOTAM_ST[n.status] || NOTAM_ST.ended;
+    const range = g.kind === 'circle' ? '半径 ' + (g.radius_m/1000).toFixed(0) + ' km' : g.coords.length + ' 点面';
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = `<div class="bullet b-${st.b}">N${i+1}</div><div class="itxt">
+      <div class="t1">${n.id} · ${n.kind}</div>
+      <div class="t2">${n.fir} · ${range}</div>
+      <div class="t3">${n.begin_utc ? tz(n.begin_utc) : '时间未提供'} — ${n.end_utc==='PERM'?'PERM':(n.end_utc ? tz(n.end_utc) : '')}（UTC）</div></div>`;
+    el.onclick = () => { select(el); map.fitBounds(it.bnd.pad(.2), {maxZoom:9, animate:false}); };
+    list.appendChild(el);
+  });
+}
+function select(el){ document.querySelectorAll('.item').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); }
+
+function setTab(t){
+  tabSea.classList.toggle('on', t==='sea');
+  tabAir.classList.toggle('on', t==='air');
+  tabLaunch.classList.toggle('on', t==='launch');
+  tabNotam.classList.toggle('on', t==='notam');
+  if(t==='sea') renderSea(); else if(t==='air') renderAir(); else if(t==='launch') renderLaunch(); else renderNotam();
+}
+tabSea.onclick = ()=>setTab('sea');
+tabAir.onclick = ()=>setTab('air');
+tabLaunch.onclick = ()=>setTab('launch');
+tabNotam.onclick = ()=>setTab('notam');
+const qtab = new URLSearchParams(location.search).get('tab');
+setTab(qtab === 'air' ? 'air' : qtab === 'launch' ? 'launch' : qtab === 'notam' ? 'notam' : 'sea');
+
+/* ============================ 初始视野 ============================ */
+const params = new URLSearchParams(location.search);
+if(params.get('center') && params.get('zoom')){
+  map.setView(params.get('center').split(',').map(Number), Number(params.get('zoom')));
+}else if(params.get('air')){
+  const ab = L.latLngBounds([]);
+  AIR_AREAS.filter(x=>x.status==='active').forEach(x=>x.zones.forEach(z=>{
+    if(z.shape==='circle') ab.extend(circleBounds(z.center, z.radius));
+    else ab.extend(z.ll);
+  }));
+  map.fitBounds(ab, {animate:false});
+}else{
+  map.fitBounds(allBounds, {paddingTopLeft:[400,60], paddingBottomRight:[60,70], animate:false});
+}
+
+if(params.get('open')){
+  const key = params.get('open');
+  setTimeout(()=>{
+    const layer = (window.__sea||{})[Number(key)] || (window.__air||{})[key] || (window.__notam||{})[key] || (key==='traj' ? window.__traj : null);
+    if(layer) layer.openPopup();
+  }, 450);
+}
+
+new ResizeObserver(()=>map.invalidateSize()).observe(document.getElementById('map'));
+
+}catch(e){
+  const d=document.createElement('pre');
+  d.style.cssText='position:absolute;z-index:9999;left:0;right:0;bottom:0;margin:0;padding:10px;background:#3a0d0d;color:#ffd7d7;font:11px Consolas,monospace;white-space:pre-wrap;max-height:45%;overflow:auto';
+  d.textContent='SYNC ERROR:\n'+(e&&e.stack||e);
+  document.body.appendChild(d);
+}
+</script>
+</body>
+</html>
+
+
+
+

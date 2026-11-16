@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>鸟群模拟 · Boids</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #070b12; }
+  body { font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; }
+  #c { display: block; width: 100%; height: 100%; }
+  #panel {
+    position: fixed; top: 16px; right: 16px; z-index: 10;
+    background: rgba(10, 16, 28, 0.78);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(120, 180, 255, 0.18);
+    border-radius: 12px; padding: 14px 16px;
+    color: #dbe6f5; width: 264px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  }
+  #panel h1 { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: #eaf3ff; letter-spacing: .5px; }
+  .row { margin: 8px 0; }
+  .row label { display: flex; justify-content: space-between; font-size: 12.5px; color: #a9bdd6; margin-bottom: 4px; }
+  .row label b { color: #4fd8ff; font-weight: 600; }
+  input[type=range] { width: 100%; accent-color: #4fd8ff; cursor: pointer; }
+  .btns { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  button {
+    flex: 1; min-width: 70px;
+    background: rgba(79, 216, 255, 0.12);
+    border: 1px solid rgba(79, 216, 255, 0.35);
+    color: #cdeaf7; border-radius: 8px; padding: 6px 8px;
+    font-size: 12px; cursor: pointer; transition: background .15s;
+  }
+  button:hover { background: rgba(79, 216, 255, 0.24); }
+  button.active { background: rgba(79, 216, 255, 0.32); }
+  #stats { margin-top: 10px; font-size: 11.5px; color: #8fa6bf; line-height: 1.7; border-top: 1px solid rgba(120,180,255,0.14); padding-top: 8px; }
+  #stats span { color: #cfe6ff; }
+  #overlay {
+    position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+    background: rgba(7, 11, 18, 0.94); color: #cfe6ff; font-size: 16px; letter-spacing: 1px;
+  }
+  .hint { position: fixed; left: 16px; bottom: 14px; z-index: 9; color: #5f7a96; font-size: 12px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="panel">
+  <h1>🐦 鸟群模拟 · Boids</h1>
+  <div class="row">
+    <label>鸟群数量 <b id="countLabel">0</b></label>
+    <input type="range" id="slider" min="0" max="5000" step="1" value="0" disabled />
+  </div>
+  <div class="btns">
+    <button id="btnPause">暂停</button>
+    <button id="btnMouse" class="active">鼠标吸引</button>
+    <button id="btnCal">重新校准</button>
+  </div>
+  <div id="stats">
+    FPS: <span id="fps">--</span><br/>
+    当前: <span id="cur">0</span> 只<br/>
+    安全上限: <span id="maxInfo">校准中…</span>
+  </div>
+</div>
+<div class="hint">射线方向 = 飞行方向，射线长度 = 飞行速度；鼠标在画面内吸引鸟群</div>
+<div id="overlay">🛰️ 正在检测性能并校准安全上限…</div>
+
+<script>
+'use strict';
+// ==================== 基础 ====================
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W = 0, H = 0;
+
+function resizeCanvas(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.lineCap = 'round';
+  buildGrid();
+}
+window.addEventListener('resize', resizeCanvas);
+
+// ==================== 参数 ====================
+const P = {
+  perception: 48,      // 感知半径（像素）
+  separation: 20,      // 分离半径
+  minSpeed: 2.2,       // 最小速度（px/帧 @60fps）
+  maxSpeed: 6.0,       // 最大速度
+  alignWeight: 0.055,  // 对齐权重
+  cohesionWeight: 0.006, // 聚合权重
+  separationWeight: 0.16, // 分离权重
+  edgeMargin: 55,      // 边界软约束距离
+  edgeWeight: 0.12,
+  rayFactor: 4.6,      // 射线长度 = 速度 × rayFactor
+  dotSize: 4,          // 鸟的像素点大小
+  mouseAttractWeight: 0.12,
+  mouseAttractRadius: 240
+};
+
+// ==================== 状态（类型化数组，利于大群体） ====================
+let capacity = 0, count = 0;
+let posX, posY, velX, velY;
+let cellHead, nextIdx;   // 空间哈希（网格）用链表
+let gridW = 0, gridH = 0;
+
+function ensureCapacity(n){
+  if (n <= capacity) return;
+  let nc = Math.max(n, Math.ceil(capacity * 1.6), 4096);
+  const nx = new Float32Array(nc), ny = new Float32Array(nc);
+  const nvx = new Float32Array(nc), nvy = new Float32Array(nc);
+  if (count > 0){
+    nx.set(posX.subarray(0, count), 0);
+    ny.set(posY.subarray(0, count), 0);
+    nvx.set(velX.subarray(0, count), 0);
+    nvy.set(velY.subarray(0, count), 0);
+  }
+  posX = nx; posY = ny; velX = nvx; velY = nvy;
+  capacity = nc;
+  nextIdx = new Int32Array(nc);
+  buildGrid();
+}
+
+function buildGrid(){
+  const cs = P.perception;
+  gridW = Math.max(1, Math.ceil(W / cs));
+  gridH = Math.max(1, Math.ceil(H / cs));
+  cellHead = new Int32Array(gridW * gridH);
+}
+
+function addBird(i){
+  const a = Math.random() * Math.PI * 2;
+  const s = P.minSpeed + Math.random() * (P.maxSpeed - P.minSpeed);
+  posX[i] = Math.random() * W;
+  posY[i] = Math.random() * H;
+  velX[i] = Math.cos(a) * s;
+  velY[i] = Math.sin(a) * s;
+}
+
+let MAX_COUNT = 200000; // 绝对硬上限（校准会把安全上限压到更低）
+
+function setCount(n){
+  n = Math.max(0, Math.min(n, MAX_COUNT));
+  if (n === count) return;
+  if (n > count){
+    ensureCapacity(n);
+    for (let i = count; i < n; i++) addBird(i);
+  }
+  count = n;
+}
+
+// ==================== 更新（Boids 三条规则） ====================
+function update(dtScale){
+  if (count === 0) return;
+  const r = P.perception, r2 = r * r;
+  const sepR = P.separation, sepR2 = sepR * sepR;
+  const gw = gridW, gh = gridH, cs = P.perception;
+
+  // 重建空间哈希网格
+  cellHead.fill(-1);
+  for (let i = 0; i < count; i++){
+    let cx = (posX[i] / cs) | 0, cy = (posY[i] / cs) | 0;
+    if (cx < 0) cx = 0; else if (cx >= gw) cx = gw - 1;
+    if (cy < 0) cy = 0; else if (cy >= gh) cy = gh - 1;
+    const cell = cy * gw + cx;
+    nextIdx[i] = cellHead[cell];
+    cellHead[cell] = i;
+  }
+
+  for (let i = 0; i < count; i++){
+    const px = posX[i], py = posY[i];
+    let sx = 0, sy = 0, ax = 0, ay = 0, cx2 = 0, cy2 = 0, nc = 0;
+    const cx = (px / cs) | 0, cy = (py / cs) | 0;
+    const x0 = Math.max(0, cx - 1), x1 = Math.min(gw - 1, cx + 1);
+    const y0 = Math.max(0, cy - 1), y1 = Math.min(gh - 1, cy + 1);
+
+    for (let gy = y0; gy <= y1; gy++){
+      for (let gx = x0; gx <= x1; gx++){
+        let idx = cellHead[gy * gw + gx];
+        while (idx !== -1){
+          if (idx !== i){
+            const dx = px - posX[idx], dy = py - posY[idx];
+            const d2 = dx * dx + dy * dy;
+            if (d2 < r2 && d2 > 1e-6){
+              nc++;
+              ax += velX[idx]; ay += velY[idx];
+              cx2 += posX[idx]; cy2 += posY[idx];
+              if (d2 < sepR2){
+                const d = Math.sqrt(d2);
+                const f = (sepR - d) / sepR;
+                sx += (dx / d) * f;
+                sy += (dy / d) * f;
+              }
+            }
+          }
+          idx = nextIdx[idx];
+        }
+      }
+    }
+
+    let vx = velX[i], vy = velY[i];
+    if (nc > 0){
+      const inv = 1 / nc;
+      // 对齐：朝邻居平均速度方向
+      vx += (ax * inv - vx) * P.alignWeight * dtScale;
+      vy += (ay * inv - vy) * P.alignWeight * dtScale;
+      // 聚合：朝邻居平均位置
+      const cohx = cx2 * inv - px, cohy = cy2 * inv - py;
+      const cl = Math.hypot(cohx, cohy) || 1;
+      vx += (cohx / cl) * P.cohesionWeight * dtScale;
+      vy += (cohy / cl) * P.cohesionWeight * dtScale;
+      // 分离：避免拥挤
+      vx += sx * P.separationWeight * dtScale;
+      vy += sy * P.separationWeight * dtScale;
+    }
+
+    // 边界软约束（把鸟留在视野内）
+    if (px < P.edgeMargin) vx += P.edgeWeight * dtScale * ((P.edgeMargin - px) / P.edgeMargin);
+    if (px > W - P.edgeMargin) vx -= P.edgeWeight * dtScale * ((px - (W - P.edgeMargin)) / P.edgeMargin);
+    if (py < P.edgeMargin) vy += P.edgeWeight * dtScale * ((P.edgeMargin - py) / P.edgeMargin);
+    if (py > H - P.edgeMargin) vy -= P.edgeWeight * dtScale * ((py - (H - P.edgeMargin)) / P.edgeMargin);
+
+    // 鼠标吸引
+    if (mouseActive && mouseInside){
+      const mdx = mouseX - px, mdy = mouseY - py;
+      const md2 = mdx * mdx + mdy * mdy;
+      const mr2 = P.mouseAttractRadius * P.mouseAttractRadius;
+      if (md2 > 4 && md2 < mr2){
+        const md = Math.sqrt(md2);
+        vx += (mdx / md) * P.mouseAttractWeight * dtScale;
+        vy += (mdy / md) * P.mouseAttractWeight * dtScale;
+      }
+    }
+
+    // 限速
+    const sp = Math.hypot(vx, vy);
+    let ns;
+    if (sp < P.minSpeed) ns = P.minSpeed;
+    else if (sp > P.maxSpeed) ns = P.maxSpeed;
+    else ns = sp;
+    if (sp < 1e-5){
+      const a = Math.random() * Math.PI * 2;
+      velX[i] = Math.cos(a) * ns; velY[i] = Math.sin(a) * ns;
+    } else {
+      const k = ns / sp;
+      velX[i] = vx * k; velY[i] = vy * k;
+    }
+
+    posX[i] += velX[i] * dtScale;
+    posY[i] += velY[i] * dtScale;
+    // 越界兜底（配合边界软约束，一般不会触发）
+    if (posX[i] < -30) posX[i] = W + 30; else if (posX[i] > W + 30) posX[i] = -30;
+    if (posY[i] < -30) posY[i] = H + 30; else if (posY[i] > H + 30) posY[i] = -30;
+  }
+}
+
+// ==================== 渲染（射线 + 像素点，各批量成一条 path） ====================
+const DOT_COLOR = 'rgba(90, 210, 255, 0.95)';
+const RAY_COLOR = 'rgba(130, 190, 255, 0.30)';
+
+function render(){
+  ctx.clearRect(0, 0, W, H);
+  if (count === 0) return;
+
+  // 射线：从鸟点出发，方向 = 速度方向，长度 = 速度 × rayFactor
+  ctx.beginPath();
+  for (let i = 0; i < count; i++){
+    ctx.moveTo(posX[i], posY[i]);
+    ctx.lineTo(posX[i] + velX[i] * P.rayFactor, posY[i] + velY[i] * P.rayFactor);
+  }
+  ctx.strokeStyle = RAY_COLOR;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // 鸟点：稍大的像素方块
+  const half = P.dotSize / 2;
+  ctx.beginPath();
+  for (let i = 0; i < count; i++){
+    ctx.rect(posX[i] - half, posY[i] - half, P.dotSize, P.dotSize);
+  }
+  ctx.fillStyle = DOT_COLOR;
+  ctx.fill();
+}
+
+// ==================== 性能校准（实测机器） ====================
+let calibrated = false;
+
+function measure(frames){
+  const t0 = performance.now();
+  for (let i = 0; i < frames; i++){ update(1); render(); }
+  return (performance.now() - t0) / frames; // 平均 ms/帧
+}
+
+async function calibrate(){
+  calibrated = false;
+  const slider = document.getElementById('slider');
+  const overlay = document.getElementById('overlay');
+  slider.disabled = true;
+  overlay.style.display = 'flex';
+  overlay.textContent = '🛰️ 正在检测性能并校准安全上限…';
+  await new Promise(r => requestAnimationFrame(r));
+
+  // 实测不同规模，取“能流畅跑”的最大规模的吞吐量
+  const tests = [1000, 3000, 9000, 27000];
+  let throughput = 0;
+  for (const n of tests){
+    setCount(n);
+    measure(4);            // 预热
+    const ms = measure(12);
+    if (ms < 30){          // 只采纳能在 30ms/帧内跑完的规模
+      throughput = n / ms; // 鸟数 / ms
+    } else {
+      break;
+    }
+  }
+
+  // 目标：上限规模时每帧约 12ms（60fps 下留出约 4.6ms 余量）
+  let max = throughput > 0 ? Math.floor(throughput * 12) : 500;
+
+  // 依据逻辑处理器数做软上限，避免把浏览器逼到极限
+  const cores = navigator.hardwareConcurrency || 4;
+  const coreCap = 30000 + cores * 14000;
+  max = Math.min(max, coreCap, 200000);
+  max = Math.max(max, 800);
+
+  MAX_COUNT = max;
+  slider.max = max;
+  slider.disabled = false;
+
+  const defaultCount = Math.min(Math.max(2000, Math.floor(max * 0.05)), max);
+  slider.value = defaultCount;
+  setCount(defaultCount);
+  updateCountLabel();
+
+  calibrated = true;
+  overlay.style.display = 'none';
+  document.getElementById('maxInfo').textContent = max.toLocaleString() + ' 只';
+}
+
+// ==================== 主循环 ====================
+let last = performance.now();
+let lastHud = 0;
+let fps = 60;
+let running = true;
+let mouseActive = true;
+let mouseX = -9999, mouseY = -9999, mouseInside = false;
+
+function frame(now){
+  requestAnimationFrame(frame);
+  let dt = now - last; last = now;
+  if (dt > 100) dt = 100;
+  if (dt > 0) fps = fps * 0.92 + (1000 / dt) * 0.08;
+  if (running && calibrated){
+    const dtScale = Math.min(dt / 16.6667, 3);
+    update(dtScale);
+    render();
+  }
+  if (now - lastHud > 200){
+    lastHud = now;
+    document.getElementById('fps').textContent = fps.toFixed(0);
+  }
+}
+
+// ==================== UI ====================
+const slider = document.getElementById('slider');
+slider.addEventListener('input', function(){
+  setCount(parseInt(slider.value, 10) || 0);
+  updateCountLabel();
+});
+
+function updateCountLabel(){
+  document.getElementById('countLabel').textContent = slider.value;
+  document.getElementById('cur').textContent = count.toLocaleString();
+}
+
+document.getElementById('btnPause').addEventListener('click', function(){
+  running = !running;
+  this.textContent = running ? '暂停' : '继续';
+});
+
+document.getElementById('btnMouse').addEventListener('click', function(){
+  mouseActive = !mouseActive;
+  this.classList.toggle('active', mouseActive);
+});
+
+document.getElementById('btnCal').addEventListener('click', calibrate);
+
+canvas.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; mouseInside = true; });
+canvas.addEventListener('mousedown', e => { mouseX = e.clientX; mouseY = e.clientY; mouseInside = true; });
+canvas.addEventListener('mouseleave', () => { mouseInside = false; });
+
+// ==================== 启动 ====================
+resizeCanvas();
+requestAnimationFrame(frame);
+calibrate();
+</script>
+</body>
+</html>

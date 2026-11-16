@@ -1,0 +1,25 @@
+{
+  "title": "我的摄影记录",
+  "subtitle": "按拍摄日期、地点与相机参数归档",
+  "author": "",
+
+  "source": "D:\\照片归档",
+  "sourceLabel": "本地归档",
+
+  "copy": false,
+  "previews": true,
+  "concurrency": 4,
+
+  "ignoreFolders": ["@eaDir", ".stfolder", "待删除"],
+
+  "overrides": {
+    "2023/精选 原片 归档": {
+      "date": "2023-08-12",
+      "location": "杭州",
+      "tags": ["夜景"]
+    },
+    "/扫街\\/.*2022/": {
+      "location": "杭州 湖滨"
+    }
+  }
+}

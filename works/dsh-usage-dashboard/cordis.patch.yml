@@ -1,0 +1,14 @@
+# The dsh-usage-dashboard bundle patch: the one loader row this package
+# contributes to a profile that names it in `dsh.profile.bundles`.
+#
+# The row's `name` is the package specifier the loader imports; this package's
+# root export is the host half (session-log sweep, pricing, `/api` route) while
+# `exports["./client"]` is the browser half discovered through `dsh.client`.
+
+- insert:
+    - id: usage-dashboard
+      name: dsh-usage-dashboard
+      config:
+        # How long one full sweep of the session logs stays fresh. Every open
+        # dashboard polls, and one sweep costs about a second of decoding.
+        ttlMs: 15000

@@ -1,0 +1,17 @@
+# The dsh-usage-bridge bundle patch: the single loader row this package
+# contributes to a profile that names it in `dsh.profile.bundles`.
+#
+# The row is host-only. This package declares no `dsh.client` field and ships no
+# browser bundle, so the row below contributes nothing to the interface — it
+# only mirrors the background-job registry into one JSON file.
+
+- insert:
+    - id: usage-bridge
+      name: dsh-usage-bridge
+      config:
+        # Where the widget reads its state. Empty string means the default:
+        # `$DSH_HOME/usage-widget/jobs.json`. Set an absolute path to override.
+        statePath: ""
+        # Poll/refresh period in milliseconds: how often live job rings are
+        # read and how often (at most) the file is rewritten.
+        intervalMs: 1000

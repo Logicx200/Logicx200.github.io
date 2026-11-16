@@ -1,0 +1,14 @@
+﻿[2026-09-30 00:48:56] bridge-verify: begin  session=1  delay=0s
+[2026-09-30 00:48:56] stopping 5 application process(es)
+[2026-09-30 00:48:57] starting D:\DeepSeek Harness\DeepSeek Harness.exe
+[2026-09-30 00:49:04] GUI is up on 19387; waiting 25s for plugins and the first bridge tick
+[2026-09-30 00:49:29] 
+[2026-09-30 00:49:29] --- bridge state file: C:\Users\x1503\.dsh\usage-widget\jobs.json
+[2026-09-30 00:49:29] EXISTS  31 bytes  written 00:49:28
+[2026-09-30 00:49:29] parsed  at=1790700568448  jobs=0
+[2026-09-30 00:49:29] VERDICT: the bridge is ALIVE (it wrote its beacon)
+[2026-09-30 00:49:29] 
+[2026-09-30 00:49:29] widget capture: F:\DeepSeek工作区\dsh-usage-bridge\bridge-after-restart.png
+[2026-09-30 00:49:29] widget instances running: 0
+[2026-09-30 00:49:29] bridge-verify: done
+[2026-09-30 00:49:30] removed the one-shot task DshBridgeVerify

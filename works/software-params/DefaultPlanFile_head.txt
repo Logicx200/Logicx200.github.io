@@ -1,0 +1,117 @@
+FILE: D:\XGGDCOSSim2\Data\SystemBaseFile\DefaultPlanFile.xml
+ENCODING: gb18030
+SIZE: 82096
+
+<?xml version="1.0" encoding="GB2312" ?>
+<root>
+    <LinkFile remark="关联需拷贝的文件名称">
+        <TargetTrackFile remark="目标运动文件名称" type="char[512]">
+            <Item TargetID="301">导弹型号.csv</Item>
+        </TargetTrackFile>
+        <JamPlatTrackFile remark="干扰发射平台运动文件名称" type="char[512]">
+            <Item JamPlatID="401">导弹型号.csv</Item>
+        </JamPlatTrackFile>
+        <JammerMotionFile remark="干扰运动文件名称" type="char[512]">
+            <Item JamID="501">导弹型号.csv</Item>
+        </JammerMotionFile>
+        <MissPlatMovFile remark="导弹发射平台运动文件名称" type="char[512]">
+            <Item MissPlatID="1">导弹型号.csv</Item>
+        </MissPlatMovFile>
+        <GrndWindFile remark="地面风场文件名称" type="char[256]">导弹型号.xml</GrndWindFile>
+        <MissPlanFile remark="导弹类文件名称">
+            <Item MissID="1">
+                <MissEnvWindFile remark="导弹风场文件名称" type="char[256]">导弹型号.xml</MissEnvWindFile>
+                <MissPlanFile remark="导弹规划与制导设备仿真参数文件名称" type="char[512]">导弹型号.xml</MissPlanFile>
+                <OptImagGuidMod remark="光学成像制导模块序号" GuidModNo="1">
+                    <OptImagPSFFile remark="导引头成像单元点扩散函数文件名称" type="char[512]">导弹型号.dat</OptImagPSFFile>
+                    <OptImagHeterogFile remark="导引头成像单元非均匀性特性数据文件名称" type="char[512]">导弹型号.dat</OptImagHeterogFile>
+                    <AerHeatEffFile remark="导引头气动热效应文件名称" type="char[512]">导弹型号.dat</AerHeatEffFile>
+                    <MovVibEffFile remark="运动抖动模糊效应点扩散函数文件名称" type="char[512]">导弹型号.dat</MovVibEffFile>
+                </OptImagGuidMod>
+            </Item>
+        </MissPlanFile>
+        <TargetJamFile remark="目标平台干扰类动态战情文件名称" type="char[512]">导弹型号.csv</TargetJamFile>
+        <DeceptionLaserPulseTimingFile remark="欺骗激光脉冲时序文件名称" type="char[256]">
+            <Item JamID="501">导弹型号.dat</Item>
+        </DeceptionLaserPulseTimingFile>
+        <HighPlusSeqFile remark="高重频序列脉冲字文件名称" type="char[256]">
+            <Item JamID="501">导弹型号.dat</Item>
+        </HighPlusSeqFile>
+        <MisDynSceFile remark="导弹类动态战情文件名称" type="char[512]" MissID="1">导弹型号.csv</MisDynSceFile>
+    </LinkFile>
+    <MaterialParam remark="材质特性参数">
+        <OpticsMaterial remark="光学特性材质">
+            <MaterialDataFile remark="材质数据文件路径" type="char[256]" value="" />
+        </OpticsMaterial>
+    </MaterialParam>
+    <SpaceParam remark="时空参数">
+        <ScenarioCode remark="战情想定编号" type="char[128]" value="编号2" />
+        <ZeroTime remark="作战零点时间">
+            <year remark="年" type="unsigned short" min="1970" max="2099" value="2025" />
+            <month remark="月" type="unsigned char" min="1" max="12" value="10" />
+            <day remark="日" type="unsigned char" min="1" max="31" value="20" />
+            <hour remark="时" type="unsigned char" min="0" max="23" value="10" />
+            <minute remark="分" type="unsigned char" min="0" max="59" value="00" />
+            <second remark="秒" type="unsigned char" min="0" max="59" value="00" />
+        </ZeroTime>
+        <ZeroPos remark="地面坐标系原点位置">
+            <ZeroPosLon remark="经度" type="double" unit="°" min="-180" max="180" decimal="7" value="126.1234567" />
+            <ZeroPosLat remark="纬度" type="double" unit="°" min="-90" max="90" decimal="7" value="45.1234567" />
+            <ZeroPosAlt remark="海拔高度" type="double" unit="m" min="-10000" max="10000000" value="123.45" />
+        </ZeroPos>
+    </SpaceParam>
+    <WeatherParam remark="气象环境参数">
+        <WeatherType remark="天气类型" type="unsigned char" value="0">
+            <tips>0：晴天 1：多云 2：阴天 3：小雨 4：中雨 5：大雨 6：雷雨 7：小雪 8：中雪 9：大雪 10：雾 11：霾</tips>
+        </WeatherType>
+        <ImagBand remark="波段定义">
+            <LaserBandClass remark="激光波长类型" type="unsigned char" value="0">
+                <tips>0：无 1：可见光波段激光 2：1.064微米激光 3：中波红外激光 4：长波红外激光</tips>
+            </LaserBandClass>
+            <ImagBand1Class remark="波段1类型" type="unsigned char" value="1" read="1">
+                <tips>0：无 1：可见光成像 2：近红外成像 3：短波红外成像 4：中波红外成像 5：长波红外成像 6：可见光成像(彩色)</tips>
+            </ImagBand1Class>
+            <ImagBand2Class remark="波段2类型" type="unsigned char" value="0" read="1">
+                <tips>0：无 1：可见光成像 2：近红外成像 3：短波红外成像 4：中波红外成像 5：长波红外成像 6：可见光成像(彩色)</tips>
+            </ImagBand2Class>
+        </ImagBand>
+        <WeatherBase remark="基本气象参数">
+            <AtmTemperature remark="大气温度" type="double" unit="℃" min="-100" max="100" value="15" read="1"/>
+            <AtmHumidity remark="大气湿度" type="double" unit="%" min="0" max="100" value="50" read="1"/>
+            <AtmPressure remark="大气压强" type="double" unit="hPa" min="300" max="1100" value="1013" read="1"/>
+            <AtmVisibility remark="大气能见度" type="double" unit="m" min="0" max="100000" value="10000" read="1"/>
+            <AtmAerosol remark="气溶胶模式（覆盖modtran5所有模式）" type="unsigned char" value="0" read="1">
+                <tips>0：干净大陆 1：城市型(OPAC) 2：海洋型(OPAC) 3：沙漠型(OPAC) 4：乡村型 5：城市型 6：对流层模式 7：水平对流雾 8：发散型雾 9：无气溶胶</tips>
+            </AtmAerosol>
+            <AtmMode remark="大气模式" type="unsigned char" value="0" read="1">
+                <tips>0：美国标准大气 1：AFGL热带 2：AFGL中纬度夏季 3：AFGL中纬度冬季 4：AFGL亚北极冬季 5：AFGL亚北极夏季 6：自定义大气数据</tips>
+            </AtmMode>
+            <LauAtmTemperature remark="导弹发射点大气温度" type="double" unit="℃" min="-100" max="100" value="15" decimal="3"/>
+            <TranRadAtmModelFile remark="辐射传输计算大气卡片文件路径" type="char[256]" value="" />
+            <LaserAtmModelFile remark="激光透过率计算大气卡片文件路径" type="char[256]" value="" />
+            <BandAtmTranRadFile remark="波段1大气辐射传输数据文件路径" type="char[256]" value="" />
+            <Band2AtmTranRadFile remark="波段2大气辐射传输数据文件路径" type="char[256]" value="" />
+            <LaserAtmTranFile remark="激光大气透过率文件路径" type="char[256]" value="" read="10" />
+        </WeatherBase>
+        <TurWeather remark="湍流气象">
+            <TurModelFile remark="湍流气象模型文件路径" type="char[256]" value="" />
+            <TurImagSimFlag remark="成像大气湍流效应仿真" type="unsigned char" value="0">
+                <tips>0：不考虑 1：考虑</tips>
+            </TurImagSimFlag>
+            <AtmCn2 remark="地面大气折射率结构常数" type="double" unit="米的负3分之2幂" min="1.0e-20" max="1.0e-8" value="0" />
+            <LaserTurDataFile remark="激光大气湍流数据文件路径" type="char[256]" value="" />
+        </TurWeather>
+        <WindWeather remark="风场气象">
+            <GrndWindType remark="地面风类型" type="unsigned char" value="0">
+                <tips>0：固定风 1：随机风</tips>
+            </GrndWindType>
+            <MissEnvWindType remark="导弹环境风类型" type="unsigned char" value="0">
+                <tips>0：固定风 1：随机风</tips>
+            </MissEnvWindType>
+            <GrndWindX remark="地面风速X" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <GrndWindY remark="地面风速Y" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <GrndWindZ remark="地面风速Z" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <MissEnvWindX remark="导弹风速X" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <MissEnvWindY remark="导弹风速Y" type="double" unit="m/s" min="-100" max="100" value="0" />
+            <MissEnvWindZ remark="导弹风速Z" type="double" unit="m/s" min="-100" max="100" value="0" />
+ 
