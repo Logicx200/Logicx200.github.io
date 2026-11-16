@@ -194,10 +194,38 @@
     border: 1px solid var(--accent-underline); padding: 1px 7px; border-radius: 2px;
     font-family: var(--font-mono);
   }
-  .rm-stage {
-    position: relative; padding: 14px; min-height: 320px;
-    display: flex; align-items: center; justify-content: center;
+  .rm-mapbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+    padding: 7px 10px; border-bottom: 1px solid var(--rule);
     background: var(--paper-2);
+  }
+  .rm-mapbar-group { display: flex; align-items: center; gap: 4px; }
+  .rm-mapbar-labels { margin-left: auto; gap: 12px; }
+  .rm-mbtn {
+    font: inherit; font-size: 11.5px; letter-spacing: .03em;
+    padding: 3px 9px; border: 1px solid var(--rule-strong); border-radius: 2px;
+    background: transparent; color: var(--ink-2); cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .rm-mbtn:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+  .rm-mbtn.active { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  .rm-mbtn:disabled { opacity: .45; cursor: not-allowed; }
+  .rm-zoomval {
+    min-width: 42px; text-align: center;
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .rm-label-toggle {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11.5px; color: var(--ink-2); cursor: pointer; white-space: nowrap;
+  }
+  .rm-label-toggle input { margin: 0; accent-color: var(--accent); }
+  .rm-label-toggle:has(input:disabled) { opacity: .45; cursor: not-allowed; }
+
+  .rm-stage {
+    position: relative; padding: 0; min-height: 0;
+    height: clamp(380px, 60vh, 660px);
+    background: var(--paper-2); overflow: hidden;
   }
   .rm-stage.stage-light { background: #f7f4ec; }
   .rm-stage.stage-dark { background: #12141a; }
@@ -209,14 +237,28 @@
     background-size: 18px 18px;
     background-position: 0 0, 9px 9px;
   }
-  .rm-stage.actual { overflow: auto; align-items: flex-start; justify-content: flex-start; max-height: 72vh; }
-  #svgHost { width: 100%; display: flex; justify-content: center; }
-  #svgHost svg {
-    display: block; width: auto; height: auto;
-    max-width: 100%; max-height: 66vh;
-    image-rendering: auto;
+  .rm-mapview { position: absolute; inset: 0; touch-action: none; }
+  .rm-mapview.mode-pointer { cursor: grab; }
+  .rm-mapview.mode-pointer.dragging { cursor: grabbing; }
+  .rm-mapview.mode-marker { cursor: crosshair; }
+  .rm-mapview.hover-marker.mode-marker { cursor: pointer; }
+  #mapSvg { display: block; width: 100%; height: 100%; user-select: none; }
+  #mapSvg .marker { cursor: pointer; }
+  #mapSvg text { user-select: none; }
+  .rm-marker-list { display: flex; flex-direction: column; gap: 4px; max-height: 190px; overflow: auto; }
+  .rm-marker-empty { font-size: 11.5px; color: var(--ink-3); padding: 3px 1px; }
+  .rm-marker-row {
+    display: flex; align-items: center; gap: 7px;
+    border: 1px solid var(--rule); background: var(--paper-2);
+    padding: 3px 7px; font-size: 11px;
   }
-  .rm-stage.actual #svgHost svg { max-width: none; max-height: none; }
+  .rm-marker-row .idx { font-family: var(--font-mono); color: var(--ink); min-width: 2.2em; }
+  .rm-marker-row .ll { flex: 1; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-2); white-space: nowrap; }
+  .rm-marker-row button {
+    font: inherit; font-size: 10px; padding: 1px 6px; border-radius: 2px;
+    border: 1px solid var(--rule-strong); background: transparent; color: var(--ink-3); cursor: pointer;
+  }
+  .rm-marker-row button:hover { color: var(--accent); border-color: var(--accent); }
   .rm-badge {
     position: absolute; left: 18px; top: 18px;
     font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em;
@@ -288,7 +330,7 @@
     <header class="rm-head page-head">
       <p class="page-eyebrow">TOOL · OPENSTREETMAP → SVG</p>
       <h1 class="page-title">城市路网 SVG 底图生成器</h1>
-      <p class="page-desc">选一座城市、搜一个地名，或者直接输入任意经纬度范围，得到一张<b>不含任何文字标注</b>的矢量路网底图。预置城市读取随站点分发的内置离线数据（秒开）；其它区域按尺寸自动选 zoom，用矢量瓦片并发抓取；极端情况下自动回退 Overpass。支持浅色、深色、透明三种配色，SVG 与 PNG 一键下载，适合做海报底纹、示意图背景或数据可视化底图。</p>
+      <p class="page-desc">选一座城市、搜一个地名，或者直接输入任意经纬度范围，得到一张<b>不含任何文字标注</b>的矢量路网底图。预置城市读取随站点分发的内置离线数据（秒开）；其它区域按尺寸自动选 zoom，用矢量瓦片并发抓取；极端情况下自动回退 Overpass。支持浅色、深色、透明三种配色；预览可缩放平移、可点标记、可开关道路/地标名称，SVG 与 PNG 一键导出当前视图，适合做海报底纹、示意图背景或数据可视化底图。</p>
       <div class="rm-meta-row">
         <span><i class="dot"></i>纯静态 · 零依赖 · 无需登录</span>
         <span>预置城市离线数据 + 任意地名搜索 + 自定义 bbox</span>
@@ -371,7 +413,18 @@
         </section>
 
         <section class="rm-card">
-          <h2>③ 配色与导出</h2>
+          <h2>③ 标记点 <span class="step" id="markerCount">0 个</span></h2>
+          <div class="rm-card-body">
+            <p class="rm-hint">切到「标记」模式后点击地图添加；点击已有标记即可删除。标记随缩放/平移变换，并会包含在导出的 SVG / PNG 中。</p>
+            <div class="rm-marker-list" id="markerList"></div>
+            <div class="rm-row">
+              <button class="rm-btn small" type="button" id="btnClearMarkers" disabled>清空全部</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="rm-card">
+          <h2>④ 配色与导出</h2>
           <div class="rm-card-body">
             <div class="rm-palettes" role="radiogroup" aria-label="配色">
               <button class="rm-palette" type="button" data-palette="light"><i style="background:#f7f4ec"></i>浅色</button>
@@ -393,6 +446,12 @@
                 </select>
               </label>
             </div>
+            <label class="rm-field">导出范围
+              <select id="optExportScope">
+                <option value="view" selected>当前视图（缩放/平移后的可见范围）</option>
+                <option value="full">全图（适应视图）</option>
+              </select>
+            </label>
             <div class="rm-row">
               <button class="rm-btn primary grow" type="button" id="btnSvg">下载 SVG</button>
               <button class="rm-btn grow" type="button" id="btnPng">下载 PNG</button>
@@ -401,7 +460,7 @@
               <button class="rm-btn small" type="button" id="btnCopy">复制 SVG 源码</button>
               <button class="rm-btn small" type="button" id="btnSample">下载内置示例</button>
             </div>
-            <p class="rm-hint">导出文件请保留署名：<b>数据 © OpenStreetMap contributors，ODbL 1.0</b>。</p>
+            <p class="rm-hint">导出会包含当前视图内的标记与已打开的名称；请保留署名：<b>数据 © OpenStreetMap contributors，ODbL 1.0</b>。</p>
           </div>
         </section>
 
@@ -416,11 +475,26 @@
           </div>
           <div class="rm-preview-tools">
             <span class="rm-chip" id="paletteChip">深色</span>
-            <button class="rm-btn small" type="button" id="btnFit">实际大小 / 适应</button>
           </div>
         </header>
+        <div class="rm-mapbar" role="toolbar" aria-label="地图视图工具">
+          <div class="rm-mapbar-group" role="group" aria-label="指针/标记模式">
+            <button class="rm-mbtn active" type="button" id="modePointer" title="指针模式：拖拽平移">指针</button>
+            <button class="rm-mbtn" type="button" id="modeMarker" title="标记模式：点击添加/删除标记">标记</button>
+          </div>
+          <div class="rm-mapbar-group" role="group" aria-label="缩放">
+            <button class="rm-mbtn" type="button" id="btnZoomOut" title="缩小">−</button>
+            <span class="rm-zoomval" id="zoomLevel">1.0×</span>
+            <button class="rm-mbtn" type="button" id="btnZoomIn" title="放大">+</button>
+            <button class="rm-mbtn" type="button" id="btnZoomFit" title="适应全图">适应</button>
+          </div>
+          <div class="rm-mapbar-group rm-mapbar-labels">
+            <label class="rm-label-toggle" title="沿道路排版显示道路名称"><input type="checkbox" id="optRoadNames" disabled> 道路名称</label>
+            <label class="rm-label-toggle" title="显示区域/站点/水系等名称"><input type="checkbox" id="optPlaceNames" disabled> 地标名称</label>
+          </div>
+        </div>
         <div class="rm-stage" id="previewStage">
-          <div id="svgHost"></div>
+          <div class="rm-mapview mode-pointer" id="mapView"></div>
           <span class="rm-badge" id="previewBadge">内置示例</span>
           <div class="rm-loading" id="loading" hidden>
             <span id="loadingText">正在抓取道路数据…</span>
@@ -428,7 +502,7 @@
           </div>
         </div>
         <footer class="rm-preview-foot">
-          <span>数据 © OpenStreetMap contributors · ODbL 1.0 · 无文字标注</span>
+          <span>数据 © OpenStreetMap contributors · ODbL 1.0 · 缩放 / 标记 / 名称可选</span>
           <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">许可说明</a>
         </footer>
         </section>
@@ -454,7 +528,7 @@
     <div class="rm-about">
       <section>
         <h3>三档数据源</h3>
-        <p><b>① 内置离线</b>：预置城市的路网随站点分发，选城市即秒开（<code>file://</code> 也能用）。<b>② 矢量瓦片</b>：自定义 bbox / 地名搜索按范围自动选 zoom，并发抓取 <a href="https://tiles.versatiles.org" target="_blank" rel="noopener noreferrer">VersaTiles</a>（Shortbread）与 <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>（OpenMapTiles）的 MVT 瓦片，在浏览器里自研解码，15 km 城区约 4–6 秒。<b>③ Overpass 兜底</b>：两档都不可用时才逐块查 Overpass。三种来源最终都用 Web Mercator 投影、按 6 级分组、以不同线宽和颜色画成 <code>&lt;path&gt;</code>，只画线、不写任何路名或地名——这正是原项目的核心卖点。</p>
+        <p><b>① 内置离线</b>：预置城市的路网随站点分发，选城市即秒开（<code>file://</code> 也能用）。<b>② 矢量瓦片</b>：自定义 bbox / 地名搜索按范围自动选 zoom，并发抓取 <a href="https://tiles.versatiles.org" target="_blank" rel="noopener noreferrer">VersaTiles</a>（Shortbread）与 <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>（OpenMapTiles）的 MVT 瓦片，在浏览器里自研解码，15 km 城区约 4–6 秒。<b>③ Overpass 兜底</b>：两档都不可用时才逐块查 Overpass。三种来源最终都用 Web Mercator 投影、按 6 级分组、以不同线宽和颜色画成 <code>&lt;path&gt;</code>。默认只画线、不写任何路名或地名（原项目的核心卖点）；需要时可用「道路名称 / 地标名称」两个开关，按贪心避让叠加名称。</p>
       </section>
       <section>
         <h3>数据来源与许可</h3>
@@ -462,14 +536,14 @@
       </section>
       <section>
         <h3>使用提示</h3>
-        <p>页面本身零依赖：<b>预置城市的内置数据在 <code>file://</code> 下也能直接用</b>；但矢量瓦片 / Overpass 抓取需要联网且会被 CORS 限制，建议在站点根目录执行 <code>python -m http.server 8000</code> 后访问 <code>http://localhost:8000/works/roadmap-svg/</code>。抓取大范围时请耐心等待，或点「取消」保留已取得的部分。</p>
+        <p>页面本身零依赖：<b>预置城市的内置数据在 <code>file://</code> 下也能直接用</b>；但矢量瓦片 / Overpass 抓取需要联网且会被 CORS 限制，建议在站点根目录执行 <code>python -m http.server 8000</code> 后访问 <code>http://localhost:8000/works/roadmap-svg/</code>。预览支持滚轮缩放、拖拽平移、双击放大与「适应」；切到「标记」模式点图添加/删除标记；导出默认导出当前视图（可切换全图）。</p>
       </section>
     </div>
 
     <details class="rm-details">
       <summary>与原版 Python 工具的差异 &amp; 已知限制</summary>
       <p>原版是本地 Python 脚本（<code>roadmap_svg.py</code>）：固定城市字典、分块请求 Overpass、落盘缓存、只输出深色/浅色两种全图 SVG，城市范围写死在代码里，加一座城市要改源码。网页版保留投影/分级/无标注的渲染思路，但把数据获取升级为三档：预置城市读随站点分发的离线数据（坐标量化 q=100000，秒开）、自定义区域用矢量瓦片（浏览器内自研 MVT 解码器，兼容 Shortbread 的 <code>streets</code> 与 OpenMapTiles 的 <code>transportation</code> 两种 schema）、Overpass 只在最后兜底。区域来源扩展为预置城市 / Nominatim 搜索 / 自定义四至坐标或中心点+宽高；配色扩展为浅色/深色/透明；导出支持 SVG（含 viewBox、<code>shape-rendering="geometricPrecision"</code>）、PNG（2×/3× canvas）与复制源码。</p>
-      <p>限制：① 矢量瓦片服务与 Nominatim 都是公共免费服务，可能限流或临时不可用，页面会自动切换/重试并给出原因；② 自定义范围超过约 50 km 时矢量瓦片会降到较低 zoom（更概略），Overpass 兜底则可能很慢；③ 浏览器端不落盘缓存，在线数据每次都会重新请求；④ 只取道路中心线，不含建筑、水系、绿地等其它要素；⑤ PNG 导出受浏览器 canvas 尺寸限制，超长图会自动限制倍率。</p>
+      <p>限制：① 矢量瓦片服务与 Nominatim 都是公共免费服务，可能限流或临时不可用，页面会自动切换/重试并给出原因；② 自定义范围超过约 50 km 时矢量瓦片会降到较低 zoom（更概略），Overpass 兜底则可能很慢；③ 浏览器端不落盘缓存，在线数据每次都会重新请求；④ 只取道路中心线，不含建筑、水系、绿地等其它要素；⑤ PNG 导出受浏览器 canvas 尺寸限制，超长图会自动限制倍率；⑥ 名称一次性最多显示约 260 条（贪心避让 + 分级优先），放大后会自动重新排版、显示更多；⑦ 标记点按城市或 bbox 分别保存在浏览器 localStorage 中，清空浏览器数据会丢失。</p>
     </details>
 
     <footer class="site-footer">

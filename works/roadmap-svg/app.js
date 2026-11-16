@@ -35,6 +35,17 @@
   var VECTOR_SOURCE_NAMES = { versatiles: 'VersaTiles', openfreemap: 'OpenFreeMap' };
   var GROUP_SERVICE = 5;
 
+  /* ---------- 视图 / 标记 / 名称 ---------- */
+  var ZOOM_MIN = 1, ZOOM_MAX = 16;
+  var LABEL_REF = 900;                 // 文字/标记尺寸的屏幕参考宽度（900px 时按 1:1 像素设计）
+  var MAX_LABELS = 260;                // 单次渲染标签上限（避免全画糊成一团）
+  var DRAG_THRESHOLD = 3;              // 拖拽阈值（px）
+  var LABEL_FONT = '"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", system-ui, sans-serif';
+  var ROAD_LABEL_FONT = [13, 12.5, 12, 11.5, 11, 11];   // 6 级道路名称字号（屏幕 px）
+  var STORE_MARKERS = 'xz-roadmap-markers:';
+  var PLACE_KINDS = { city: 1, town: 1, village: 1, suburb: 1, quarter: 1, neighbourhood: 1, hamlet: 1 };
+  var POI_KINDS = { station: 1, bus_station: 1, halt: 1, helipad: 1, airport: 1, attraction: 1, museum: 1, monument: 1, park: 1, zoo: 1, university: 1, hospital: 1 };
+
   /* ---------- 道路分组（6 组，线宽为 2400px 画布下的像素） ---------- */
   var GROUPS = [
     { key: 'arterial', name: '快速路 / 高速', width: 3.8, match: ['motorway', 'motorway_link', 'trunk', 'trunk_link'] },
@@ -113,6 +124,18 @@
     pngScale: 2,
 
     sample: null,
+    /* 预览视图：z 为相对“适应全图”的倍数，cx/cy 为地图坐标中心 */
+    view: { z: 1, cx: 0, cy: 0 },
+    viewKey: '',
+    domSig: '',
+    projCache: null,
+    labelGeomCache: null,
+    labelId: 0,
+    markers: [],
+    markerMode: false,
+    labelsRoad: false,
+    labelsPlace: false,
+    exportScope: 'view',
     cityIndex: null,          // cities/index.js 的内容（含离线数据的城市列表）
     offlineLoading: {},       // slug -> Promise（避免重复注入脚本）
     geom: { key: '', data: null },
@@ -367,12 +390,33 @@
     return tags;
   }
   /* 解码一个瓦片里的道路折线；bbox 外的整段丢弃，跨瓦片重复几何去重 */
-  function extractTileWays(bytes, tile, bbox, seen, includeService) {
+  var LABEL_LAYERS = {
+    street_labels: { role: 'road', kindTag: 'kind' },
+    place_labels: { role: 'place', kindTag: 'kind' },
+    public_transport: { role: 'poi', kindTag: 'kind' },
+    water_lines_labels: { role: 'waterline' },
+    water_polygons_labels: { role: 'water' },
+    transportation_name: { role: 'road', kindTag: 'class' },
+    place: { role: 'place', kindTag: 'class' },
+    poi: { role: 'poi', kindTag: 'class' },
+    waterway: { role: 'waterline' }
+  };
+  var POI_TILE_CLASSES = {
+    station: 1, bus_station: 1, halt: 1, helipad: 1, airport: 1,
+    attraction: 1, museum: 1, monument: 1, park: 1, zoo: 1, university: 1, hospital: 1
+  };
+  /* 在同一个瓦片里同时解出道路（ways）与名称（labels） */
+  function extractTileData(bytes, tile, bbox, seen, includeService, labelAcc, labelSeen) {
     var buf = new Uint8Array(bytes);
     var layers = decodeMvt(buf);
     var out = [];
     for (var li = 0; li < layers.length; li++) {
       var layer = layers[li];
+      var spec = LABEL_LAYERS[layer.name];
+      if (spec) {
+        extractLayerLabels(layer, spec, tile, bbox, labelAcc, labelSeen);
+        continue;
+      }
       if (layer.name !== 'streets' && layer.name !== 'transportation') continue;
       var extent = layer.extent || 4096;
       for (var fi = 0; fi < layer.features.length; fi++) {
@@ -404,6 +448,75 @@
       }
     }
     return out;
+  }
+  function extractLayerLabels(layer, spec, tile, bbox, labelAcc, labelSeen) {
+    if (!labelAcc) return;
+    var extent = layer.extent || 4096;
+    var pad = 0.002;
+    for (var fi = 0; fi < layer.features.length; fi++) {
+      var f = layer.features[fi];
+      if (!f.geomRaw || !f.geomRaw.length) continue;
+      var tags = resolveMvtTags(layer, f);
+      var name = tags.name;
+      if (typeof name !== 'string') continue;
+      name = name.trim();
+      if (!name) continue;
+      var kind = spec.kindTag ? tags[spec.kindTag] : (tags.kind || tags.class);
+      var role = spec.role;
+      var rank = -1, tier = 1;
+      if (role === 'road') {
+        rank = roadKindRank(kind);
+        if (rank < 0) continue;
+      } else if (role === 'place') {
+        if (!PLACE_KINDS[String(kind || '')]) continue;
+        tier = placeTier(kind);
+      } else if (role === 'poi') {
+        var kstr = String(kind || '');
+        if (layer.name === 'poi') {
+          if (!POI_TILE_CLASSES[kstr]) continue;
+        } else if (layer.name === 'public_transport') {
+          if (!/station|halt|stop|platform|airport/i.test(kstr)) continue;
+        }
+        tier = poiTier(kstr);
+      } else if (role === 'water') {
+        tier = 0;
+      }
+      var parts = decodeMvtGeometry(f.geomRaw);
+      if (!parts.length) continue;
+      if (role === 'road' || role === 'waterline') {
+        for (var pi = 0; pi < parts.length; pi++) {
+          var ring = parts[pi];
+          if (ring.length < 4) continue;
+          var pts = [];
+          var inBox = false;
+          for (var k = 0; k + 1 < ring.length; k += 2) {
+            var ll = tilePointToLonLat(tile.z, tile.x, tile.y, ring[k], ring[k + 1], extent);
+            pts.push([ll[0], ll[1]]);
+            if (!inBox && ll[0] >= bbox[1] - pad && ll[0] <= bbox[3] + pad && ll[1] >= bbox[0] - pad && ll[1] <= bbox[2] + pad) inBox = true;
+          }
+          if (!inBox || pts.length < 2) continue;
+          var key = role + '|' + name + '|' + pts[0][0].toFixed(5) + ',' + pts[0][1].toFixed(5);
+          if (labelSeen.has(key)) continue;
+          labelSeen.add(key);
+          var bucket = role === 'road' ? labelAcc.roads : labelAcc.waters;
+          if (bucket.length > 6000) continue;
+          bucket.push(role === 'road'
+            ? { name: name, rank: rank, pts: pts }
+            : { name: name, tier: 0, pts: pts });
+        }
+      } else {
+        var ring0 = parts[0];
+        if (!ring0 || ring0.length < 2) continue;
+        var ll0 = tilePointToLonLat(tile.z, tile.x, tile.y, ring0[0], ring0[1], extent);
+        if (ll0[0] < bbox[1] - pad || ll0[0] > bbox[3] + pad || ll0[1] < bbox[0] - pad || ll0[1] > bbox[2] + pad) continue;
+        var key2 = role + '|' + name + '|' + ll0[0].toFixed(5) + ',' + ll0[1].toFixed(5);
+        if (labelSeen.has(key2)) continue;
+        labelSeen.add(key2);
+        var bucket2 = role === 'place' ? labelAcc.places : (role === 'poi' ? labelAcc.pois : labelAcc.waters);
+        if (bucket2.length > 3000) continue;
+        bucket2.push({ name: name, tier: tier, lon: ll0[0], lat: ll0[1] });
+      }
+    }
   }
 
   /* ---------- 矢量瓦片：zoom / 瓦片范围 / 抓取 ---------- */
@@ -517,13 +630,15 @@
       var ways = [];
       var seen = new Set();
       var failed = [];
+      var labels = { roads: [], places: [], pois: [], waters: [] };
+      var labelSeen = new Set();
       var sources = { versatiles: 0, openfreemap: 0 };
       var next = 0, active = 0, done = 0, stopped = false;
       function finish() {
         if (stopped) return;
         stopped = true;
         resolve({
-          ways: ways, failed: failed, sources: sources,
+          ways: ways, failed: failed, sources: sources, labels: labels,
           aborted: !!(state.abort && state.abort.aborted),
           total: tiles.length
         });
@@ -540,7 +655,7 @@
           var added = 0;
           if (got && got.bytes) {
             sources[got.source]++;
-            var newWays = extractTileWays(got.bytes, tile, bbox, seen, includeService);
+            var newWays = extractTileData(got.bytes, tile, bbox, seen, includeService, labels, labelSeen);
             for (var i = 0; i < newWays.length; i++) ways.push(newWays[i]);
             added = newWays.length;
           }
@@ -675,9 +790,12 @@
         fetchMs: performance.now() - t0,
         tiles: 0,
         zoom: entry.zoom || 0,
+        labels: parseOfflineLabels(data),
         version: state.ready.version + 1
       };
       state.geom = { key: '', data: null };
+      state.projCache = null;
+      state.labelGeomCache = null;
       renderPreview();
       setProgress(1);
       setStatusHtml('已加载内置城市数据：<b>' + fmtInt(ways.length) + '</b> 条道路 · ' +
@@ -850,6 +968,776 @@
     return data;
   }
 
+  /* ============================================================
+     视图（缩放 / 平移）
+     ============================================================ */
+  function paletteInk() {
+    if (state.palette === 'light') return { ink: '#23221e', halo: '#f7f4ec' };
+    if (state.palette === 'dark') { return { ink: '#f4f1e8', halo: '#12141a' }; }
+    return { ink: '#1c1c1a', halo: '#ffffff' };
+  }
+  function stageSize() {
+    var v = $('mapView');
+    return { w: v ? Math.max(1, v.clientWidth) : 1, h: v ? Math.max(1, v.clientHeight) : 1 };
+  }
+  function fitMetrics(geom) {
+    var st = stageSize();
+    var aspect = st.w / st.h;
+    var mapW = geom.width, mapH = geom.height;
+    var fitW, fitH;
+    if (mapW / mapH >= aspect) { fitW = mapW; fitH = mapW / aspect; }
+    else { fitH = mapH; fitW = mapH * aspect; }
+    return { fitW: fitW, fitH: fitH, aspect: aspect, mapW: mapW, mapH: mapH };
+  }
+  function viewRect() {
+    if (!state.ready.ways.length || !state.ready.bbox) return null;
+    var geom = ensureGeom();
+    var f = fitMetrics(geom);
+    var z = clamp(state.view.z || 1, ZOOM_MIN, ZOOM_MAX);
+    var vw = f.fitW / z, vh = f.fitH / z;
+    var cx = state.view.cx, cy = state.view.cy;
+    if (!isFinite(cx)) cx = geom.width / 2;
+    if (!isFinite(cy)) cy = geom.height / 2;
+    if (vw >= geom.width) cx = geom.width / 2;
+    else cx = clamp(cx, vw / 2, geom.width - vw / 2);
+    if (vh >= geom.height) cy = geom.height / 2;
+    else cy = clamp(cy, vh / 2, geom.height - vh / 2);
+    state.view.cx = cx;
+    state.view.cy = cy;
+    var st = stageSize();
+    return { x: cx - vw / 2, y: cy - vh / 2, w: vw, h: vh, z: z, dispW: st.w, dispH: st.h, mapW: geom.width, mapH: geom.height };
+  }
+  function resetView() {
+    var geom = ensureGeom();
+    state.view = { z: 1, cx: geom.width / 2, cy: geom.height / 2 };
+  }
+  function zoomAt(factor, sx, sy) {
+    var r = viewRect();
+    if (!r) return;
+    var geom = ensureGeom();
+    var f = fitMetrics(geom);
+    var mapX = r.x + sx / r.dispW * r.w;
+    var mapY = r.y + sy / r.dispH * r.h;
+    var nz = clamp(state.view.z * factor, ZOOM_MIN, ZOOM_MAX);
+    if (Math.abs(nz - state.view.z) < 1e-6) return;
+    var nvw = f.fitW / nz, nvh = f.fitH / nz;
+    state.view.z = nz;
+    state.view.cx = mapX - (sx / r.dispW - 0.5) * nvw;
+    state.view.cy = mapY - (sy / r.dispH - 0.5) * nvh;
+    applyView(false);
+  }
+  function zoomCenter(factor) {
+    var st = stageSize();
+    zoomAt(factor, st.w / 2, st.h / 2);
+  }
+  function panByPx(dx, dy) {
+    var r = viewRect();
+    if (!r) return;
+    state.view.cx -= dx / r.dispW * r.w;
+    state.view.cy -= dy / r.dispH * r.h;
+    applyView(false);
+  }
+  function applyView(labelsNow) {
+    var svg = $('mapSvg');
+    if (!svg) return;
+    var r = viewRect();
+    if (!r) return;
+    svg.setAttribute('viewBox', r.x.toFixed(2) + ' ' + r.y.toFixed(2) + ' ' + r.w.toFixed(2) + ' ' + r.h.toFixed(2));
+    var bg = $('bgRect');
+    if (bg) {
+      bg.setAttribute('x', r.x.toFixed(2));
+      bg.setAttribute('y', r.y.toFixed(2));
+      bg.setAttribute('width', r.w.toFixed(2));
+      bg.setAttribute('height', r.h.toFixed(2));
+    }
+    var ml = $('markersLayer');
+    if (ml) ml.innerHTML = markersSvg(r);
+    var zv = $('zoomLevel');
+    if (zv) zv.textContent = r.z.toFixed(1) + '×';
+    var zin = $('btnZoomIn'), zout = $('btnZoomOut');
+    if (zin) zin.disabled = r.z >= ZOOM_MAX - 1e-6;
+    if (zout) zout.disabled = r.z <= ZOOM_MIN + 1e-6;
+    if (labelsNow) updateLabelsNow(r); else scheduleLabels();
+  }
+  var _labelTimer = 0;
+  function scheduleLabels() {
+    clearTimeout(_labelTimer);
+    _labelTimer = setTimeout(function () { updateLabelsNow(viewRect()); }, 130);
+  }
+  function updateLabelsNow(r) {
+    var el = $('labelsLayer');
+    if (!el) return;
+    el.innerHTML = buildLabelsSvg(r);
+    if (state.ready.ways.length && r) {
+      try { updatePreviewMeta(ensureGeom(), bboxKm(state.ready.bbox)); } catch (e) { }
+    }
+  }
+
+  /* ============================================================
+     投影 / 当前数据坐标
+     ============================================================ */
+  function mapProjectorCached() {
+    var geom = ensureGeom();
+    var key = state.ready.version + '|' + state.width;
+    if (state.projCache && state.projCache.key === key) return state.projCache;
+    var bbox = state.ready.bbox;
+    var xmin = bbox[1] * RAD, xmax = bbox[3] * RAD;
+    var ymin = mercY(bbox[0]), ymax = mercY(bbox[2]);
+    var spanX = Math.max(1e-12, xmax - xmin);
+    var spanY = Math.max(1e-12, ymax - ymin);
+    var W = geom.width, H = geom.height;
+    var project = function (lon, lat) {
+      return [(lon * RAD - xmin) / spanX * W, (ymax - mercY(lat)) / spanY * H];
+    };
+    var unproject = function (x, y) {
+      var lon = (x / W * spanX + xmin) / RAD;
+      var my = ymax - (y / H) * spanY;
+      var lat = Math.atan(Math.sinh(my)) / RAD;
+      return [lon, lat];
+    };
+    state.projCache = { key: key, project: project, unproject: unproject };
+    return state.projCache;
+  }
+
+  /* ============================================================
+     标记点
+     ============================================================ */
+  function markerAreaKey() {
+    var r = state.ready;
+    if (!r || !r.bbox) return '';
+    if (r.source === 'offline') return 'city:' + (r.slug || 'unknown');
+    return 'bbox:' + r.bbox.map(function (v) { return v.toFixed(4); }).join(',');
+  }
+  function loadMarkersForArea() {
+    var key = markerAreaKey();
+    state.markers = [];
+    if (key) {
+      try {
+        var raw = localStorage.getItem(STORE_MARKERS + key);
+        if (raw) {
+          var arr = JSON.parse(raw);
+          if (Array.isArray(arr)) {
+            state.markers = arr.filter(function (m) {
+              return m && isFinite(m.lon) && isFinite(m.lat);
+            }).map(function (m) { return { lon: +m.lon, lat: +m.lat }; });
+          }
+        }
+      } catch (e) { state.markers = []; }
+    }
+    updateMarkerPanel();
+  }
+  function saveMarkers() {
+    var key = markerAreaKey();
+    if (!key) return;
+    try { localStorage.setItem(STORE_MARKERS + key, JSON.stringify(state.markers)); } catch (e) { }
+  }
+  function markerScreenPos(m, r) {
+    var p = mapProjectorCached().project(m.lon, m.lat);
+    return { x: (p[0] - r.x) / r.w * r.dispW, y: (p[1] - r.y) / r.h * r.dispH, map: p };
+  }
+  function markersSvg(r) {
+    if (!state.markers.length) return '';
+    var ink = paletteInk().ink;
+    var unit = r.w / (r.dispW || LABEL_REF);
+    var rr = 6 * unit, tick0 = 7.6 * unit, tick1 = 9.6 * unit, sw = 1.15 * unit, dot = 1.35 * unit;
+    var parts = ['<g class="markers">'];
+    for (var i = 0; i < state.markers.length; i++) {
+      var p = mapProjectorCached().project(state.markers[i].lon, state.markers[i].lat);
+      var x = p[0], y = p[1];
+      parts.push('<g class="marker" data-idx="' + i + '"><title>标记 ' + (i + 1) + '（点击删除）</title>' +
+        '<circle cx="' + x.toFixed(2) + '" cy="' + y.toFixed(2) + '" r="' + rr.toFixed(2) + '" fill="none" stroke="' + ink + '" stroke-width="' + sw.toFixed(2) + '"/>' +
+        '<circle cx="' + x.toFixed(2) + '" cy="' + y.toFixed(2) + '" r="' + dot.toFixed(2) + '" fill="' + ink + '"/>' +
+        '<path d="M' + (x - tick1).toFixed(2) + ' ' + y.toFixed(2) + 'H' + (x - tick0).toFixed(2) +
+        'M' + (x + tick0).toFixed(2) + ' ' + y.toFixed(2) + 'H' + (x + tick1).toFixed(2) +
+        'M' + x.toFixed(2) + ' ' + (y - tick1).toFixed(2) + 'V' + (y - tick0).toFixed(2) +
+        'M' + x.toFixed(2) + ' ' + (y + tick0).toFixed(2) + 'V' + (y + tick1).toFixed(2) +
+        '" fill="none" stroke="' + ink + '" stroke-width="' + (1.05 * unit).toFixed(2) + '" stroke-linecap="square"/>' +
+        '</g>');
+    }
+    parts.push('</g>');
+    return parts.join('');
+  }
+  function markersHit(sx, sy, r) {
+    var best = -1, bestD = 12 * 12;
+    for (var i = 0; i < state.markers.length; i++) {
+      var pos = markerScreenPos(state.markers[i], r);
+      var dx = pos.x - sx, dy = pos.y - sy, d = dx * dx + dy * dy;
+      if (d <= bestD) { bestD = d; best = i; }
+    }
+    return best;
+  }
+  function addMarkerAtMap(x, y) {
+    var geom = ensureGeom();
+    if (x < 0 || y < 0 || x > geom.width || y > geom.height) {
+      toast('点在地图范围外，未添加标记');
+      return false;
+    }
+    var ll = mapProjectorCached().unproject(x, y);
+    state.markers.push({ lon: ll[0], lat: ll[1] });
+    saveMarkers();
+    updateMarkerPanel();
+    applyView(false);
+    return true;
+  }
+  function deleteMarker(idx) {
+    if (idx < 0 || idx >= state.markers.length) return;
+    state.markers.splice(idx, 1);
+    saveMarkers();
+    updateMarkerPanel();
+    applyView(false);
+  }
+  function clearMarkers() {
+    if (!state.markers.length) return;
+    state.markers = [];
+    saveMarkers();
+    updateMarkerPanel();
+    applyView(false);
+    toast('已清空全部标记点');
+  }
+  function updateMarkerPanel() {
+    var list = $('markerList');
+    var cnt = $('markerCount');
+    if (cnt) cnt.textContent = state.markers.length + ' 个';
+    var clearBtn = $('btnClearMarkers');
+    if (clearBtn) clearBtn.disabled = !state.markers.length;
+    if (!list) return;
+    if (!state.markers.length) {
+      list.innerHTML = '<div class="rm-marker-empty">暂无标记点。切到「标记」模式后点击地图添加。</div>';
+      return;
+    }
+    var html = [];
+    for (var i = 0; i < state.markers.length; i++) {
+      var m = state.markers[i];
+      var ll = m.lat.toFixed(6) + ', ' + m.lon.toFixed(6);
+      html.push('<div class="rm-marker-row" data-idx="' + i + '">' +
+        '<span class="idx">' + (i + 1) + '</span>' +
+        '<span class="ll" title="' + ll + '">' + ll + '</span>' +
+        '<button type="button" data-act="copy" data-idx="' + i + '">复制</button>' +
+        '<button type="button" data-act="del" data-idx="' + i + '">删除</button>' +
+        '</div>');
+    }
+    list.innerHTML = html.join('');
+    if (state.ready.ways.length) {
+      try { updatePreviewMeta(ensureGeom(), bboxKm(state.ready.bbox)); } catch (e) { }
+    }
+  }
+  function copyText(text, okMsg) {
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      toast(ok ? (okMsg || '已复制') : '复制失败（浏览器限制了剪贴板）');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { toast(okMsg || '已复制'); }, fallback);
+    } else fallback();
+  }
+  function setMarkerMode(on) {
+    state.markerMode = !!on;
+    var p = $('modePointer'), m = $('modeMarker'), v = $('mapView');
+    if (p) p.classList.toggle('active', !state.markerMode);
+    if (m) m.classList.toggle('active', state.markerMode);
+    if (v) {
+      v.classList.toggle('mode-marker', state.markerMode);
+      v.classList.toggle('mode-pointer', !state.markerMode);
+      if (!state.markerMode) v.classList.remove('hover-marker');
+    }
+    savePrefs();
+  }
+
+  /* ============================================================
+     名称（道路名称 / 地标名称）
+     ============================================================ */
+  function labelsAvailable() {
+    var L = state.ready.labels;
+    return {
+      roads: !!(L && L.roads && L.roads.length),
+      places: !!(L && ((L.places && L.places.length) || (L.pois && L.pois.length) || (L.waters && L.waters.length)))
+    };
+  }
+  function normRoadKind(k) {
+    if (k == null) return '';
+    var s = String(k);
+    var i = s.indexOf('_link');
+    if (i >= 0) s = s.slice(0, i);
+    return s;
+  }
+  function roadKindRank(k) {
+    var s = normRoadKind(k);
+    if (!s || IGNORED_KINDS[s]) return -1;
+    if (s === 'minor') return 4;
+    return GROUP_INDEX[s] === undefined ? -1 : GROUP_INDEX[s];
+  }
+  function placeTier(k) {
+    var s = String(k || '');
+    if (s === 'city' || s === 'town') return 0;
+    return 1;
+  }
+  function poiTier(k) {
+    var s = String(k || '');
+    return /^(station|bus_station|halt|helipad|airport)$/.test(s) ? 0 : 1;
+  }
+  function waterTier(k) { return 0; }
+  function parseOfflineLabels(data) {
+    if (!data || !data.labels) return null;
+    var q = data.q || 25000, w = data.bbox[1], s = data.bbox[0];
+    var L = data.labels;
+    var out = { roads: [], places: [], pois: [], waters: [] };
+    var i;
+    var roads = L.roads || [];
+    for (i = 0; i < roads.length; i++) {
+      var r = roads[i];
+      if (!r || !r.n || !r.l || r.l.length < 4) continue;
+      var rank = roadKindRank(r.k);
+      if (rank < 0) continue;
+      var pts = [];
+      for (var k = 0; k + 1 < r.l.length; k += 2) pts.push([w + r.l[k] / q, s + r.l[k + 1] / q]);
+      if (pts.length >= 2) out.roads.push({ name: String(r.n), rank: rank, pts: pts });
+    }
+    function points(arr, tierFn, isLine) {
+      var res = [];
+      arr = arr || [];
+      for (var j = 0; j < arr.length; j++) {
+        var p = arr[j];
+        if (!p || !p.n) continue;
+        if (isLine && p.l && p.l.length >= 4) {
+          var pp = [];
+          for (var t = 0; t + 1 < p.l.length; t += 2) pp.push([w + p.l[t] / q, s + p.l[t + 1] / q]);
+          if (pp.length >= 2) res.push({ name: String(p.n), tier: tierFn(p.k), pts: pp });
+        } else if (p.p && p.p.length >= 2) {
+          res.push({ name: String(p.n), tier: tierFn(p.k), lon: w + p.p[0] / q, lat: s + p.p[1] / q });
+        }
+      }
+      return res;
+    }
+    out.places = points(L.places, placeTier, false);
+    out.pois = points(L.pois, poiTier, false);
+    out.waters = points(L.waters, waterTier, true);
+    if (!out.roads.length && !out.places.length && !out.pois.length && !out.waters.length) return null;
+    return out;
+  }
+  function updateLabelToggles() {
+    var av = labelsAvailable();
+    var road = $('optRoadNames'), place = $('optPlaceNames');
+    if (road) {
+      road.disabled = !av.roads;
+      road.checked = !!(av.roads && state.labelsRoad);
+      road.title = av.roads ? '沿道路排版显示道路名称' : '该区域暂无道路名称数据';
+    }
+    if (place) {
+      place.disabled = !av.places;
+      place.checked = !!(av.places && state.labelsPlace);
+      place.title = av.places ? '显示区域/站点/水系等名称' : '该区域暂无地标名称数据';
+    }
+  }
+  function labelGeom() {
+    var L = state.ready.labels;
+    if (!L) return null;
+    var key = state.ready.version + '|' + state.width;
+    if (state.labelGeomCache && state.labelGeomCache.key === key) return state.labelGeomCache.data;
+    var proj = mapProjectorCached().project;
+    var out = { roads: [], places: [], pois: [], waters: [] };
+    var i;
+    for (i = 0; i < (L.roads || []).length; i++) {
+      var r = L.roads[i];
+      if (!r.pts || r.pts.length < 2) continue;
+      var pts = [];
+      var bx0 = Infinity, by0 = Infinity, bx1 = -Infinity, by1 = -Infinity;
+      for (var j = 0; j < r.pts.length; j++) {
+        var p = proj(r.pts[j][0], r.pts[j][1]);
+        pts.push(p);
+        if (p[0] < bx0) bx0 = p[0];
+        if (p[0] > bx1) bx1 = p[0];
+        if (p[1] < by0) by0 = p[1];
+        if (p[1] > by1) by1 = p[1];
+      }
+      out.roads.push({ name: r.name, rank: r.rank, pts: pts, bx: [bx0, by0, bx1, by1] });
+    }
+    function pointList(arr) {
+      var res = [];
+      for (var q = 0; q < (arr || []).length; q++) {
+        var it = arr[q];
+        if (!isFinite(it.lon) || !isFinite(it.lat)) continue;
+        var pp = proj(it.lon, it.lat);
+        res.push({ name: it.name, tier: it.tier, x: pp[0], y: pp[1] });
+      }
+      return res;
+    }
+    out.places = pointList(L.places);
+    out.pois = pointList(L.pois);
+    for (i = 0; i < (L.waters || []).length; i++) {
+      var w = L.waters[i];
+      if (w.pts && w.pts.length >= 2) {
+        var wp = [];
+        for (var t = 0; t < w.pts.length; t++) wp.push(proj(w.pts[t][0], w.pts[t][1]));
+        out.waters.push({ name: w.name, tier: 0, pts: wp });
+      } else if (isFinite(w.lon) && isFinite(w.lat)) {
+        var wpp = proj(w.lon, w.lat);
+        out.waters.push({ name: w.name, tier: 0, x: wpp[0], y: wpp[1] });
+      }
+    }
+    state.labelGeomCache = { key: key, data: out };
+    return out;
+  }
+  function textWidthMap(name, fontPx) {
+    var w = 0;
+    for (var i = 0; i < name.length; i++) {
+      var code = name.charCodeAt(i);
+      w += (code < 128) ? 0.55 : 1.0;
+    }
+    return w * fontPx * 1.02;
+  }
+  function clipSegmentRect(x0, y0, x1, y1, rx0, ry0, rx1, ry1) {
+    var dx = x1 - x0, dy = y1 - y0;
+    var t0 = 0, t1 = 1;
+    var p = [-dx, dx, -dy, dy];
+    var q = [x0 - rx0, rx1 - x0, y0 - ry0, ry1 - y0];
+    for (var i = 0; i < 4; i++) {
+      if (Math.abs(p[i]) < 1e-12) { if (q[i] < 0) return null; }
+      else {
+        var t = q[i] / p[i];
+        if (p[i] < 0) { if (t > t1) return null; if (t > t0) t0 = t; }
+        else { if (t < t0) return null; if (t < t1) t1 = t; }
+      }
+    }
+    return [[x0 + t0 * dx, y0 + t0 * dy], [x0 + t1 * dx, y0 + t1 * dy]];
+  }
+  function clipPolylineRect(pts, rx0, ry0, rx1, ry1) {
+    var pieces = [];
+    var cur = null;
+    for (var i = 0; i + 1 < pts.length; i++) {
+      var seg = clipSegmentRect(pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1], rx0, ry0, rx1, ry1);
+      if (!seg) { cur = null; continue; }
+      var a = seg[0], b = seg[1];
+      if (cur && Math.abs(cur[cur.length - 1][0] - a[0]) < 1e-6 && Math.abs(cur[cur.length - 1][1] - a[1]) < 1e-6) {
+        cur.push(b);
+      } else {
+        cur = [a, b];
+        pieces.push(cur);
+      }
+    }
+    return pieces;
+  }
+  function polylineLen(pts) {
+    var len = 0;
+    for (var i = 1; i < pts.length; i++) {
+      var dx = pts[i][0] - pts[i - 1][0], dy = pts[i][1] - pts[i - 1][1];
+      len += Math.sqrt(dx * dx + dy * dy);
+    }
+    return len;
+  }
+  function polylineAt(pts, target) {
+    var acc = 0;
+    for (var i = 1; i < pts.length; i++) {
+      var dx = pts[i][0] - pts[i - 1][0], dy = pts[i][1] - pts[i - 1][1];
+      var seg = Math.sqrt(dx * dx + dy * dy);
+      if (acc + seg >= target || i === pts.length - 1) {
+        var f = seg > 1e-9 ? (target - acc) / seg : 0;
+        f = clamp(f, 0, 1);
+        return { x: pts[i - 1][0] + dx * f, y: pts[i - 1][1] + dy * f, dx: dx, dy: dy };
+      }
+      acc += seg;
+    }
+    return { x: pts[0][0], y: pts[0][1], dx: 0, dy: 0 };
+  }
+  function polylineIntersects(pts, rx0, ry0, rx1, ry1) {
+    for (var i = 0; i < pts.length; i++) {
+      if (pts[i][0] >= rx0 && pts[i][0] <= rx1 && pts[i][1] >= ry0 && pts[i][1] <= ry1) return true;
+    }
+    return false;
+  }
+  function polylineD(pts) {
+    var parts = [];
+    for (var i = 0; i < pts.length; i++) {
+      parts.push((i === 0 ? 'M' : 'L') + pts[i][0].toFixed(1) + ' ' + pts[i][1].toFixed(1));
+    }
+    return parts.join('');
+  }
+  function buildLabelsSvg(r) {
+    var LG = labelGeom();
+    if (!LG) return '';
+    var showRoads = !!state.labelsRoad;
+    var showPlaces = !!state.labelsPlace;
+    if (!showRoads && !showPlaces) return '';
+    var inkC = paletteInk();
+    var unit = r.w / (r.dispW || LABEL_REF);
+    var rx0 = r.x - 8 * unit, ry0 = r.y - 8 * unit, rx1 = r.x + r.w + 8 * unit, ry1 = r.y + r.h + 8 * unit;
+    var placed = [];
+    var placedNames = [];
+    var out = [];
+    var count = 0;
+    function sameNameNear(name, x, y, minD) {
+      for (var i = 0; i < placedNames.length; i++) {
+        var q = placedNames[i];
+        if (q.name !== name) continue;
+        var dx = q.x - x, dy = q.y - y;
+        if (dx * dx + dy * dy < minD * minD) return true;
+      }
+      return false;
+    }
+    function overlapBox(b) {
+      for (var i = 0; i < placed.length; i++) {
+        var p = placed[i];
+        if (b.x0 < p.x1 && b.x1 > p.x0 && b.y0 < p.y1 && b.y1 > p.y0) return true;
+      }
+      return false;
+    }
+    function inside(b) {
+      return b.x1 > rx0 && b.x0 < rx1 && b.y1 > ry0 && b.y0 < ry1;
+    }
+    function textSvg(x, y, name, fontPx, extra) {
+      return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" text-anchor="middle" dominant-baseline="central" ' +
+        'font-family=\'' + LABEL_FONT + '\' font-size="' + fontPx.toFixed(2) + '" fill="' + inkC.ink + '" ' +
+        'stroke="' + inkC.halo + '" stroke-width="' + (2.6 * unit).toFixed(2) + '" paint-order="stroke" stroke-linejoin="round"' +
+        (extra || '') + '>' + escapeHtml(name) + '</text>';
+    }
+    function layoutLine(c) {
+      var pieces = clipPolylineRect(c.pts, rx0, ry0, rx1, ry1);
+      if (!pieces.length) return;
+      var best = null, bestLen = 0;
+      for (var i = 0; i < pieces.length; i++) {
+        var len = polylineLen(pieces[i]);
+        if (len > bestLen) { bestLen = len; best = pieces[i]; }
+      }
+      if (!best || bestLen < 30 * unit) return;
+      // 让文字方向保持“可读”：路径整体若朝左下/向下则反转
+      var endX = best[best.length - 1][0] - best[0][0];
+      var endY = best[best.length - 1][1] - best[0][1];
+      if (endX < 0 || (Math.abs(endX) <= Math.abs(endY) && endY > 0)) {
+        best = best.slice().reverse();
+      }
+      var fontBase = (c.kind === 'road') ? ROAD_LABEL_FONT[c.rank] : 11;
+      var fontPx = fontBase * unit;
+      var tw = textWidthMap(c.name, fontPx);
+      if (bestLen < tw * 1.18) return;
+      var mid = polylineAt(best, bestLen / 2);
+      var ang = Math.atan2(mid.dy, mid.dx);
+      if (Math.abs(ang) > Math.PI / 2) { ang += (ang > 0 ? -Math.PI : Math.PI); }
+      var aabbW = Math.abs(Math.cos(ang)) * tw + Math.abs(Math.sin(ang)) * fontPx * 1.25;
+      var aabbH = Math.abs(Math.sin(ang)) * tw + Math.abs(Math.cos(ang)) * fontPx * 1.25;
+      var b = { x0: mid.x - aabbW / 2, x1: mid.x + aabbW / 2, y0: mid.y - aabbH / 2, y1: mid.y + aabbH / 2 };
+      if (!inside(b) || overlapBox(b)) return;
+      if (sameNameNear(c.name, mid.x, mid.y, tw * 1.8)) return;
+      placed.push(b);
+      placedNames.push({ name: c.name, x: mid.x, y: mid.y });
+      var id = 'rl' + (++state.labelId);
+      out.push('<path id="' + id + '" d="' + polylineD(best) + '" fill="none" stroke="none"/>');
+      out.push('<text font-family=\'' + LABEL_FONT + '\' font-size="' + fontPx.toFixed(2) + '" fill="' + inkC.ink + '" ' +
+        'stroke="' + inkC.halo + '" stroke-width="' + (2.6 * unit).toFixed(2) + '" paint-order="stroke" stroke-linejoin="round"' +
+        (c.kind === 'waterline' ? ' font-style="italic"' : '') + '>' +
+        '<textPath href="#' + id + '" startOffset="50%" text-anchor="middle">' + escapeHtml(c.name) + '</textPath></text>');
+      count++;
+    }
+    function layoutPoint(c) {
+      var fontBase = 10;
+      if (c.kind === 'place') fontBase = c.tier === 0 ? 13 : 11.5;
+      else if (c.kind === 'water') fontBase = 11;
+      else if (c.kind === 'poi') fontBase = c.tier === 0 ? 11 : 10;
+      var fontPx = fontBase * unit;
+      var tw = textWidthMap(c.name, fontPx);
+      var dotR = c.dot ? 2.2 * unit : 0;
+      var gap = c.dot ? 3.4 * unit : 0;
+      var totalW = tw + (c.dot ? dotR * 2 + gap : 0);
+      var left = c.dot ? c.x : c.x - tw / 2;          // 盒子左边
+      var b = { x0: left, x1: left + totalW, y0: c.y - fontPx * 0.78, y1: c.y + fontPx * 0.78 };
+      if (!inside(b) || overlapBox(b)) return;
+      if (sameNameNear(c.name, c.x, c.y, tw * 1.6)) return;
+      placed.push(b);
+      placedNames.push({ name: c.name, x: c.x, y: c.y });
+      var tx = c.dot ? (c.x + dotR * 2 + gap + tw / 2) : c.x;
+      if (c.dot) {
+        out.push('<circle cx="' + c.x.toFixed(1) + '" cy="' + c.y.toFixed(1) + '" r="' + dotR.toFixed(2) +
+          '" fill="none" stroke="' + inkC.ink + '" stroke-width="' + (0.95 * unit).toFixed(2) + '"/>');
+      }
+      out.push(textSvg(tx, c.y, c.name, fontPx, c.kind === 'water' ? ' font-style="italic"' : ''));
+      count++;
+    }
+    var cands = [];
+    var i;
+    var cxv = r.x + r.w / 2, cyv = r.y + r.h / 2;
+    function distC(x, y) { var dx = x - cxv, dy = y - cyv; return Math.sqrt(dx * dx + dy * dy); }
+    function inView(x, y) { return x > rx0 && x < rx1 && y > ry0 && y < ry1; }
+    if (showPlaces) {
+      for (i = 0; i < LG.places.length; i++) {
+        var pl = LG.places[i];
+        if (!inView(pl.x, pl.y)) continue;
+        cands.push({ prio: 0 + pl.tier, dist: distC(pl.x, pl.y), kind: 'place', name: pl.name, tier: pl.tier, x: pl.x, y: pl.y, dot: false });
+      }
+      for (i = 0; i < LG.waters.length; i++) {
+        var wa = LG.waters[i];
+        if (wa.pts) {
+          if (!polylineIntersects(wa.pts, rx0, ry0, rx1, ry1)) continue;
+          var wp0 = wa.pts[Math.floor(wa.pts.length / 2)];
+          cands.push({ prio: 30, dist: distC(wp0[0], wp0[1]), kind: 'waterline', name: wa.name, pts: wa.pts });
+        } else if (inView(wa.x, wa.y)) cands.push({ prio: 31, dist: distC(wa.x, wa.y), kind: 'water', name: wa.name, x: wa.x, y: wa.y, dot: true });
+      }
+      for (i = 0; i < LG.pois.length; i++) {
+        var po = LG.pois[i];
+        if (!inView(po.x, po.y)) continue;
+        cands.push({ prio: 40 + po.tier, dist: distC(po.x, po.y), kind: 'poi', name: po.name, tier: po.tier, x: po.x, y: po.y, dot: true });
+      }
+    }
+    if (showRoads) {
+      for (i = 0; i < LG.roads.length; i++) {
+        var rd = LG.roads[i];
+        var bx = rd.bx;
+        if (!(bx[0] < rx1 && bx[2] > rx0 && bx[1] < ry1 && bx[3] > ry0)) continue;
+        var midx = (bx[0] + bx[2]) / 2, midy = (bx[1] + bx[3]) / 2;
+        cands.push({ prio: 10 + rd.rank, dist: distC(midx, midy), kind: 'road', name: rd.name, rank: rd.rank, pts: rd.pts });
+      }
+    }
+    cands.sort(function (a, b2) {
+      return (a.prio - b2.prio) || ((a.dist || 0) - (b2.dist || 0)) || (a.name.length - b2.name.length);
+    });
+    for (i = 0; i < cands.length && count < MAX_LABELS; i++) {
+      var c = cands[i];
+      if (c.kind === 'road' || c.kind === 'waterline') layoutLine(c);
+      else layoutPoint(c);
+    }
+    return out.join('');
+  }
+  function currentLabelCount() {
+    var el = $('labelsLayer');
+    return el ? el.querySelectorAll('text').length : 0;
+  }
+
+  /* ============================================================
+     导出（当前视图 / 全图）
+     ============================================================ */
+  function exportRect(scope) {
+    var geom = ensureGeom();
+    if (scope === 'full') {
+      var st = stageSize();
+      return { x: 0, y: 0, w: geom.width, h: geom.height, z: 1, dispW: st.w, dispH: st.h, mapW: geom.width, mapH: geom.height };
+    }
+    return viewRect();
+  }
+  function composeSvg(scope, exportWidth) {
+    var geom = ensureGeom();
+    var pal = PALETTES[state.palette];
+    var r = exportRect(scope);
+    var outW = exportWidth || state.width;
+    var outH = Math.max(1, Math.round(outW * r.h / r.w));
+    var scale = geom.width / 2400;
+    var body = [];
+    for (var i = 0; i < geom.groups.length; i++) {
+      var gr = geom.groups[i];
+      var g = GROUPS[gr.gi];
+      body.push('<path d="' + gr.d + '" fill="none" stroke="' + pal.colors[gr.gi] +
+        '" stroke-width="' + (g.width * scale).toFixed(2) +
+        '" stroke-linecap="round" stroke-linejoin="round"/>');
+    }
+    var bg = pal.bg ? '<rect x="' + r.x.toFixed(2) + '" y="' + r.y.toFixed(2) + '" width="' + r.w.toFixed(2) +
+      '" height="' + r.h.toFixed(2) + '" fill="' + pal.bg + '"/>' : '';
+    var labels = buildLabelsSvg(r);
+    var markers = markersSvg(r);
+    var label = state.ready.label || '自定义范围';
+    var title = label + ' · 道路底图（' + pal.name + (state.markers.length ? '，' + state.markers.length + ' 个标记' : '') + '）';
+    var desc = 'Data (c) OpenStreetMap contributors, ODbL 1.0. https://www.openstreetmap.org/copyright' +
+      (state.markers.length ? ' | markers: ' + state.markers.length : '') +
+      (labels ? ' | labels: ' + (labels.match(/<text /g) || []).length : '');
+    var svg = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + r.x.toFixed(2) + ' ' + r.y.toFixed(2) + ' ' + r.w.toFixed(2) + ' ' + r.h.toFixed(2) +
+      '" width="' + outW + '" height="' + outH + '" shape-rendering="geometricPrecision">\n' +
+      '<title>' + escapeHtml(title) + '</title>\n' +
+      '<desc>' + escapeHtml(desc) + '</desc>\n' +
+      (bg ? bg + '\n' : '') +
+      body.join('\n') + '\n' + labels + markers + '\n' +
+      '</svg>\n';
+    return { svg: svg, width: outW, height: outH, labels: labels, markers: markers };
+  }
+  function exportNameSuffix(scope) {
+    if (scope === 'full') return 'full';
+    return (Math.round(viewRect().z * 10) / 10).toFixed(1) + 'x';
+  }
+
+  /* ============================================================
+     缩放 / 平移 / 标记交互
+     ============================================================ */
+  function bindMapInteractions() {
+    var view = $('mapView');
+    if (!view || view.__bound) return;
+    view.__bound = true;
+    var down = null, last = null, dragging = false;
+    var lastClickTs = 0, lastClickX = 0, lastClickY = 0;
+    function local(e) {
+      var rect = view.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+    view.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var p = local(e);
+      var factor = Math.exp(-e.deltaY * 0.0015);
+      factor = clamp(factor, 0.5, 2);
+      zoomAt(factor, p.x, p.y);
+    }, { passive: false });
+    view.addEventListener('pointerdown', function (e) {
+      if (state.busy) return;
+      if (e.button !== undefined && e.button !== 0) return;
+      down = local(e);
+      last = down;
+      dragging = false;
+      try { view.setPointerCapture(e.pointerId); } catch (err) { }
+    });
+    view.addEventListener('pointermove', function (e) {
+      var p = local(e);
+      if (down) {
+        var dx = p.x - last.x, dy = p.y - last.y;
+        if (!dragging && Math.abs(p.x - down.x) + Math.abs(p.y - down.y) > DRAG_THRESHOLD) {
+          dragging = true;
+          view.classList.add('dragging');
+        }
+        if (dragging) {
+          panByPx(dx, dy);
+          last = p;
+        }
+      } else if (state.markerMode && state.markers.length && $('mapSvg')) {
+        var r = viewRect();
+        var hit = markersHit(p.x, p.y, r);
+        view.classList.toggle('hover-marker', hit >= 0);
+      }
+    });
+    view.addEventListener('pointerup', function (e) {
+      var p = local(e);
+      var wasDrag = dragging;
+      down = null; last = null; dragging = false;
+      view.classList.remove('dragging');
+      if (wasDrag || !state.markerMode) return;
+      var nowTs = Date.now();
+      var nearLast = Math.abs(p.x - lastClickX) < 8 && Math.abs(p.y - lastClickY) < 8;
+      if (nowTs - lastClickTs < 320 && nearLast) { lastClickTs = nowTs; lastClickX = p.x; lastClickY = p.y; return; }
+      lastClickTs = nowTs; lastClickX = p.x; lastClickY = p.y;
+      // 标记模式下的点击：先测已有标记，否则新增
+      var rr = viewRect();
+      if (!rr) return;
+      var hitIdx = markersHit(p.x, p.y, rr);
+      if (hitIdx >= 0) { deleteMarker(hitIdx); toast('已删除标记 ' + (hitIdx + 1)); }
+      else {
+        var mapX = rr.x + p.x / rr.dispW * rr.w;
+        var mapY = rr.y + p.y / rr.dispH * rr.h;
+        addMarkerAtMap(mapX, mapY);
+        toast('已添加标记 ' + state.markers.length);
+      }
+    });
+    view.addEventListener('pointercancel', function () {
+      down = null; last = null; dragging = false; view.classList.remove('dragging');
+    });
+    view.addEventListener('dblclick', function (e) {
+      if (state.markerMode) return;
+      e.preventDefault();
+      var p = local(e);
+      zoomAt(2, p.x, p.y);
+    });
+    var wheelGuard = function (e) { e.preventDefault(); };
+    view.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  }
+
   /* ---------- 预览渲染 ---------- */
   function paletteStageClass() {
     if (state.palette === 'light') return 'rm-stage stage-light';
@@ -876,50 +1764,104 @@
       fetchMs: 0,
       tiles: 0,
       zoom: 0,
+      labels: null,
       version: state.ready.version + 1
     };
     state.geom = { key: '', data: null };
+    state.projCache = null;
+    state.labelGeomCache = null;
+    state.markers = [];
+    updateMarkerPanel();
     renderPreview();
   }
 
+  function buildBaseSvg(geom) {
+    var pal = PALETTES[state.palette];
+    var scale = geom.width / 2400;
+    var body = [];
+    for (var i = 0; i < geom.groups.length; i++) {
+      var gr = geom.groups[i];
+      var g = GROUPS[gr.gi];
+      body.push('<path d="' + gr.d + '" fill="none" stroke="' + pal.colors[gr.gi] +
+        '" stroke-width="' + (g.width * scale).toFixed(2) +
+        '" stroke-linecap="round" stroke-linejoin="round"/>');
+    }
+    return '<svg id="mapSvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" shape-rendering="geometricPrecision">' +
+      (pal.bg ? '<rect id="bgRect" x="0" y="0" width="1" height="1" fill="' + pal.bg + '"/>' : '') +
+      '<g id="roadsLayer" fill="none" stroke-linecap="round" stroke-linejoin="round">' + body.join('') + '</g>' +
+      '<g id="labelsLayer"></g><g id="markersLayer"></g>' +
+      '</svg>';
+  }
+
+  var _renderRetry = 0;
   function renderPreview() {
-    var host = $('svgHost');
+    var host = $('mapView');
     if (!host) return;
     if (!state.ready.ways.length || !state.ready.bbox) {
       host.innerHTML = '<div class="rm-empty">还没有路网数据。<br>预置城市会自动加载内置离线数据；其它区域点「获取道路数据」用矢量瓦片抓取。</div>';
-      var tEl = $('previewTitle');
-      if (tEl) tEl.textContent = '未加载数据';
-      var mEl = $('previewMeta');
-      if (mEl) mEl.textContent = '选择区域后加载';
-      var bEl = $('previewBadge');
-      if (bEl) bEl.textContent = '—';
+      state.domSig = '';
+      var tEl0 = $('previewTitle');
+      if (tEl0) tEl0.textContent = '未加载数据';
+      var mEl0 = $('previewMeta');
+      if (mEl0) mEl0.textContent = '选择区域后加载';
+      var bEl0 = $('previewBadge');
+      if (bEl0) bEl0.textContent = '—';
       $('paletteChip').textContent = PALETTES[state.palette].name;
       drawSourceBadge('none');
       updateEmptyStats();
       updateLegend(null);
+      updateLabelToggles();
       return;
     }
     var geom = ensureGeom();
-    var svg = svgFromGeom(geom, state.palette);
-    // 内联到页面时去掉 XML 声明
-    host.innerHTML = svg.replace(/^<\?xml[^>]*>\s*/, '');
-
+    if (stageSize().w < 10) {
+      if (_renderRetry < 60) {
+        _renderRetry++;
+        setTimeout(renderPreview, 60);
+      }
+      return;
+    }
+    _renderRetry = 0;
+    var sig = state.ready.version + '|' + state.palette + '|' + state.width;
+    var viewKey = state.ready.version + '|' + state.width;
+    if (state.domSig !== sig || !$('mapSvg')) {
+      host.innerHTML = buildBaseSvg(geom);
+      state.domSig = sig;
+      if (state.viewKey !== viewKey) {
+        state.viewKey = viewKey;
+        resetView();
+        loadMarkersForArea();
+      }
+    }
     var stage = $('previewStage');
     stage.className = paletteStageClass();
-    if (stage.classList.contains('actual')) stage.classList.add('actual');
-
     var km = bboxKm(state.ready.bbox);
     var prefix = state.ready.source === 'sample' ? '内置示例 · ' : (state.ready.source === 'offline' ? '内置数据 · ' : '');
     $('previewTitle').textContent = prefix + state.ready.label;
-    $('previewMeta').textContent = fmtInt(state.ready.ways.length) + ' 条道路 · ' +
-      geom.width + '×' + geom.height + ' px · ' +
-      km.w.toFixed(1) + '×' + km.h.toFixed(1) + ' km';
     var badge = $('previewBadge');
     if (badge) badge.textContent = sourceBadgeText();
     $('paletteChip').textContent = PALETTES[state.palette].name;
     drawSourceBadge(state.ready.source);
-    updateStats(geom, svg);
+    updateLabelToggles();
+    applyView(true);
+    updatePreviewMeta(geom, km);
+    updateStats(geom, svgFromGeom(geom, state.palette));
     updateLegend(geom);
+  }
+
+  function updatePreviewMeta(geom, km) {
+    var el = $('previewMeta');
+    if (!el) return;
+    var txt = fmtInt(state.ready.ways.length) + ' 条道路 · ' + geom.width + '×' + geom.height + ' px · ' +
+      km.w.toFixed(1) + '×' + km.h.toFixed(1) + ' km';
+    var parts = [];
+    if (state.labelsRoad || state.labelsPlace) {
+      var n = currentLabelCount();
+      if (n > 0) parts.push('名称 ' + n + ' 条');
+    }
+    if (state.markers.length) parts.push('标记 ' + state.markers.length);
+    if (parts.length) txt += ' · ' + parts.join(' · ');
+    el.textContent = txt;
   }
 
   function updateEmptyStats() {
@@ -1003,88 +1945,63 @@
   }
   function requireData() {
     if (!state.ready.ways.length || !state.ready.bbox) {
-      toast('还没有可导出的数据：先抓取当前区域或使用内置示例');
+      toast('还没有可导出的数据：先加载城市或抓取区域');
       return false;
     }
     return true;
   }
   function downloadSvg() {
     if (!requireData()) return;
-    var geom = ensureGeom();
-    var svg = svgFromGeom(geom, state.palette);
-    var name = currentSlug() + '-' + state.palette + '.svg';
-    downloadBlob(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }), name);
-    toast('已导出 ' + name + '（' + fmtBytes(new Blob([svg]).size) + '）· 数据 © OpenStreetMap contributors, ODbL');
+    var scope = state.exportScope;
+    var out = composeSvg(scope, state.width);
+    var name = currentSlug() + '-' + state.palette + '-' + exportNameSuffix(scope) + '.svg';
+    downloadBlob(new Blob([out.svg], { type: 'image/svg+xml;charset=utf-8' }), name);
+    toast('已导出 ' + name + '（' + fmtBytes(new Blob([out.svg]).size) +
+      (state.markers.length ? '，含 ' + state.markers.length + ' 个标记' : '') + '）· 数据 © OpenStreetMap contributors, ODbL', 4200);
   }
   function downloadPng() {
     if (!requireData()) return;
-    var geom = ensureGeom();
-    var pal = PALETTES[state.palette];
+    var scope = state.exportScope;
+    var out = composeSvg(scope, state.width);
     var scale = state.pngScale;
     var MAX_SIDE = 8192, MAX_PIXELS = 36e6;
-    if (geom.width * scale > MAX_SIDE) scale = MAX_SIDE / geom.width;
-    if (geom.height * scale > MAX_SIDE) scale = Math.min(scale, MAX_SIDE / geom.height);
-    if (geom.width * geom.height * scale * scale > MAX_PIXELS) {
-      scale = Math.sqrt(MAX_PIXELS / (geom.width * geom.height));
-    }
-    scale = Math.max(0.5, Math.floor(scale * 100) / 100);
+    if (out.width * scale > MAX_SIDE) scale = MAX_SIDE / out.width;
+    if (out.height * scale > MAX_SIDE) scale = Math.min(scale, MAX_SIDE / out.height);
+    if (out.width * out.height * scale * scale > MAX_PIXELS) scale = Math.sqrt(MAX_PIXELS / (out.width * out.height));
+    scale = Math.max(0.3, Math.floor(scale * 100) / 100);
     var canvas = document.createElement('canvas');
-    canvas.width = Math.round(geom.width * scale);
-    canvas.height = Math.round(geom.height * scale);
-    var ctx = canvas.getContext('2d');
-    if (pal.bg) {
-      ctx.fillStyle = pal.bg;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    ctx.scale(scale, scale);
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    var unit = geom.width / 2400;
-    try {
-      for (var i = 0; i < geom.groups.length; i++) {
-        var gr = geom.groups[i];
-        var g = GROUPS[gr.gi];
-        var path = new Path2D(gr.d);
-        ctx.strokeStyle = pal.colors[gr.gi];
-        ctx.lineWidth = g.width * unit;
-        ctx.stroke(path);
+    canvas.width = Math.max(1, Math.round(out.width * scale));
+    canvas.height = Math.max(1, Math.round(out.height * scale));
+    var blob = new Blob([out.svg], { type: 'image/svg+xml;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function (png) {
+          URL.revokeObjectURL(url);
+          if (!png) { toast('PNG 生成失败（画布过大时浏览器可能拒绝）'); return; }
+          var name = currentSlug() + '-' + state.palette + '-' + exportNameSuffix(scope) + '@' + scale.toFixed(1) + 'x.png';
+          downloadBlob(png, name);
+          toast('已导出 ' + name + '（' + canvas.width + '×' + canvas.height + '）· 数据 © OpenStreetMap contributors, ODbL', 4500);
+        }, 'image/png');
+      } catch (e) {
+        URL.revokeObjectURL(url);
+        toast('PNG 导出失败：' + (e && e.message ? e.message : e));
       }
-    } catch (e) {
-      toast('PNG 导出失败：' + (e && e.message ? e.message : e));
-      return;
-    }
-    var self = this;
-    canvas.toBlob(function (blob) {
-      if (!blob) { toast('PNG 生成失败（画布过大时浏览器可能拒绝）'); return; }
-      var name = currentSlug() + '-' + state.palette + '@' + scale.toFixed(1) + 'x.png';
-      downloadBlob(blob, name);
-      toast('已导出 ' + name + '（' + canvas.width + '×' + canvas.height + '）· 数据 © OpenStreetMap contributors, ODbL', 4200);
-    }, 'image/png');
+    };
+    img.onerror = function () {
+      URL.revokeObjectURL(url);
+      toast('PNG 导出失败：SVG 光栅化出错，请改用「下载 SVG」');
+    };
+    img.src = url;
   }
   function copySvg() {
     if (!requireData()) return;
-    var geom = ensureGeom();
-    var svg = svgFromGeom(geom, state.palette);
-    function fallback() {
-      var ta = document.createElement('textarea');
-      ta.value = svg;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      var ok = false;
-      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
-      document.body.removeChild(ta);
-      if (ok) toast('已复制 SVG 源码（' + fmtBytes(new Blob([svg]).size) + '）');
-      else toast('复制失败（浏览器限制了剪贴板），请改用「下载 SVG」');
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(svg).then(function () {
-        toast('已复制 SVG 源码（' + fmtBytes(new Blob([svg]).size) + '）');
-      }, fallback);
-    } else {
-      fallback();
-    }
+    var out = composeSvg(state.exportScope, state.width);
+    copyText(out.svg, '已复制 SVG 源码（' + fmtBytes(new Blob([out.svg]).size) + '）');
   }
   function downloadSample() {
     if (!state.sample) { toast('内置示例数据未加载'); return; }
@@ -1317,12 +2234,15 @@
     return new Promise(function (resolve) {
       var waysMap = new Map();
       var failed = [];
+      var labels = { roads: [] };
+      var labelSeen = new Set();
       var next = 0, active = 0, done = 0, stopped = false;
       function finish() {
         if (stopped) return;
         stopped = true;
         resolve({
           ways: waysMap,
+          labels: labels,
           failed: failed,
           aborted: !!(state.abort && state.abort.aborted)
         });
@@ -1360,6 +2280,16 @@
             if (coords.length >= 4) {
               waysMap.set(el.id, { g: gi, c: coords });
               added++;
+              var nm = el.tags && el.tags.name;
+              if (typeof nm === 'string' && nm.trim()) {
+                var lk = nm.trim() + '|' + coords[0].toFixed(5) + ',' + coords[1].toFixed(5);
+                if (!labelSeen.has(lk) && labels.roads.length < 6000) {
+                  labelSeen.add(lk);
+                  var pts = [];
+                  for (var q = 0; q + 1 < coords.length; q += 2) pts.push([coords[q], coords[q + 1]]);
+                  labels.roads.push({ name: nm.trim(), rank: gi, pts: pts });
+                }
+              }
             }
           }
           done++;
@@ -1456,9 +2386,13 @@
         fetchMs: elapsed,
         tiles: t.tiles.length,
         zoom: 0,
+        labels: (res.labels && res.labels.roads && res.labels.roads.length)
+          ? { roads: res.labels.roads, places: [], pois: [], waters: [] } : null,
         version: state.ready.version + 1
       };
       state.geom = { key: '', data: null };
+      state.projCache = null;
+      state.labelGeomCache = null;
       renderPreview();
       if (res.aborted) {
         setProgress(1);
@@ -1519,6 +2453,10 @@
         logLine('✗ ' + reason, res.aborted ? 'warn' : 'err');
         return { ok: false, aborted: !!res.aborted, reason: reason };
       }
+      var vLabels = null;
+      if (res.labels && (res.labels.roads.length || res.labels.places.length || res.labels.pois.length || res.labels.waters.length)) {
+        vLabels = res.labels;
+      }
       state.ready = {
         ways: res.ways,
         bbox: bbox.slice(),
@@ -1529,9 +2467,12 @@
         fetchMs: elapsed,
         tiles: plan.range.count,
         zoom: plan.z,
+        labels: vLabels,
         version: state.ready.version + 1
       };
       state.geom = { key: '', data: null };
+      state.projCache = null;
+      state.labelGeomCache = null;
       renderPreview();
       setProgress(1);
       if (res.aborted) {
@@ -1691,6 +2632,10 @@
         width: state.width,
         pngScale: state.pngScale,
         includeService: $('optService') ? $('optService').checked : true,
+        labelsRoad: !!state.labelsRoad,
+        labelsPlace: !!state.labelsPlace,
+        exportScope: state.exportScope,
+        markerMode: !!state.markerMode,
         region: state.region,
         regionLabel: state.regionLabel,
         searchLabel: state.searchLabel
@@ -1705,6 +2650,10 @@
     if ([1600, 2400, 3200].indexOf(Number(prefs.width)) >= 0) state.width = Number(prefs.width);
     if ([2, 3].indexOf(Number(prefs.pngScale)) >= 0) state.pngScale = Number(prefs.pngScale);
     if ($('optService') && typeof prefs.includeService === 'boolean') $('optService').checked = prefs.includeService;
+    if (typeof prefs.labelsRoad === 'boolean') state.labelsRoad = prefs.labelsRoad;
+    if (typeof prefs.labelsPlace === 'boolean') state.labelsPlace = prefs.labelsPlace;
+    if (prefs.exportScope === 'view' || prefs.exportScope === 'full') state.exportScope = prefs.exportScope;
+    if (typeof prefs.markerMode === 'boolean') state.markerMode = prefs.markerMode;
     return prefs;
   }
 
@@ -1828,16 +2777,51 @@
     $('btnPng').addEventListener('click', downloadPng);
     $('btnCopy').addEventListener('click', copySvg);
     $('btnSample').addEventListener('click', downloadSample);
-    // 适应/实际大小
-    $('btnFit').addEventListener('click', function () {
-      var stage = $('previewStage');
-      stage.classList.toggle('actual');
-      if (stage.classList.contains('actual')) {
-        // 保留配色 class
-        stage.className = paletteStageClass() + ' actual';
-      } else {
-        stage.className = paletteStageClass();
+    // 地图交互：缩放 / 平移 / 标记
+    bindMapInteractions();
+    var mp = $('modePointer'), mm = $('modeMarker');
+    if (mp) mp.addEventListener('click', function () { setMarkerMode(false); });
+    if (mm) mm.addEventListener('click', function () { setMarkerMode(true); });
+    var zin = $('btnZoomIn'), zout = $('btnZoomOut'), zfit = $('btnZoomFit');
+    if (zin) zin.addEventListener('click', function () { zoomCenter(1.5); });
+    if (zout) zout.addEventListener('click', function () { zoomCenter(1 / 1.5); });
+    if (zfit) zfit.addEventListener('click', function () { resetView(); applyView(true); toast('已适应全图'); });
+    // 名称开关
+    var orn = $('optRoadNames'), opn = $('optPlaceNames');
+    function labelsChanged() {
+      if (!state.ready.ways.length) return;
+      savePrefs();
+      updateLabelsNow(viewRect());
+      updatePreviewMeta(ensureGeom(), bboxKm(state.ready.bbox));
+    }
+    if (orn) orn.addEventListener('change', function () { state.labelsRoad = orn.checked; labelsChanged(); });
+    if (opn) opn.addEventListener('change', function () { state.labelsPlace = opn.checked; labelsChanged(); });
+    // 导出范围
+    var scope = $('optExportScope');
+    if (scope) scope.addEventListener('change', function () {
+      state.exportScope = scope.value === 'full' ? 'full' : 'view';
+      savePrefs();
+    });
+    // 标记点面板
+    var list = $('markerList');
+    if (list) list.addEventListener('click', function (ev) {
+      var b = ev.target.closest('button');
+      if (!b) return;
+      var idx = parseInt(b.getAttribute('data-idx'), 10);
+      var act = b.getAttribute('data-act');
+      if (act === 'del') deleteMarker(idx);
+      else if (act === 'copy') {
+        var m = state.markers[idx];
+        if (m) copyText(m.lat.toFixed(6) + ', ' + m.lon.toFixed(6), '已复制经纬度（纬度, 经度）');
       }
+    });
+    var clr = $('btnClearMarkers');
+    if (clr) clr.addEventListener('click', clearMarkers);
+    // 窗口尺寸变化后重新布局视图
+    var _rs = 0;
+    window.addEventListener('resize', function () {
+      clearTimeout(_rs);
+      _rs = setTimeout(function () { if ($('mapSvg')) applyView(true); }, 140);
     });
     // file:// 提示
     if (location.protocol === 'file:') {
@@ -1865,7 +2849,7 @@
   function loadSample() {
     var S = window.ROADMAP_SAMPLE;
     if (!S || !S.ways || !S.ways.length) {
-      var host = $('svgHost');
+      var host = $('mapView');
       if (host) host.innerHTML = '<div class="rm-empty">内置示例数据缺失（sample-data.js 未加载）。<br>仍可选择区域并联网抓取。</div>';
       return;
     }
@@ -1878,9 +2862,12 @@
       slug: 'sample-taiyuan',
       fetchMs: 0,
       tiles: 0,
+      labels: null,
       version: state.ready.version + 1
     };
     state.geom = { key: '', data: null };
+    state.projCache = null;
+    state.labelGeomCache = null;
     renderPreview();
     logLine('已加载内置示例：' + S.label + '（' + fmtInt(S.ways.length) + ' 条道路，真实 OSM 数据快照）', 'ok');
     logLine('提示：选择区域后点「获取道路数据」，即可抓取任意地区的路网。');
@@ -1894,7 +2881,9 @@
     syncPaletteButtons();
     if ($('optWidth')) $('optWidth').value = String(state.width);
     if ($('optPngScale')) $('optPngScale').value = String(state.pngScale);
+    if ($('optExportScope')) $('optExportScope').value = state.exportScope;
     bindUI();
+    setMarkerMode(state.markerMode);
     syncPaletteButtons();
     // URL 参数优先：?city=beijing / ?bbox=s,w,n,e / ?palette=light
     var urlApplied = false;
@@ -1992,8 +2981,19 @@
     mapMvtProps: mapMvtProps,
     chooseVectorZoom: chooseVectorZoom,
     tileRangeForBbox: tileRangeForBbox,
-    _internals: { extractTileWays: extractTileWays, offlineCityWays: offlineCityWays },
-    getSvg: function () { return svgFromGeom(ensureGeom(), state.palette); },
+    viewRect: viewRect,
+    resetView: resetView,
+    zoomAt: zoomAt,
+    zoomCenter: zoomCenter,
+    applyView: applyView,
+    setMarkerMode: setMarkerMode,
+    updateMarkerPanel: updateMarkerPanel,
+    composeSvg: composeSvg,
+    labelsAvailable: labelsAvailable,
+    buildLabelsSvg: buildLabelsSvg,
+    _internals: { extractTileData: extractTileData, offlineCityWays: offlineCityWays, parseOfflineLabels: parseOfflineLabels },
+    getSvg: function (scope) { return composeSvg(scope || state.exportScope, state.width).svg; },
+    getFullSvg: function () { return composeSvg('full', state.width).svg; },
     getCsvStats: function () {
       var g = ensureGeom();
       return { totalWays: state.ready.ways.length, width: g.width, height: g.height, counts: g.counts.slice() };

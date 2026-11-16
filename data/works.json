@@ -15,7 +15,7 @@
  "totals": {
   "projects": 44,
   "files": 5019,
-  "bytes": 263893993,
+  "bytes": 266467407,
   "excluded": 4
  },
  "categories": [
@@ -1679,23 +1679,24 @@
    "id": "roadmap-svg",
    "dir": "works/roadmap-svg",
    "title": "城市路网 SVG 底图生成器",
-   "subtitle": "29 座城市离线秒开，任意区域在线生成，可下载 SVG / PNG",
+   "subtitle": "29 城离线秒开，可缩放、可打标记、可显示路名，导出 SVG / PNG",
    "category": "geo",
    "tags": [
     "OpenStreetMap",
-    "Overpass API",
     "Vector Tiles",
     "MVT",
     "SVG",
-    "地图"
+    "地图",
+    "标注"
    ],
-   "summary": "选一个城市、搜一个地名，或直接框一段经纬度，得到一张完全不含文字标注的矢量路网底图，导出 SVG 或 PNG。原版是一套 Python 脚本（Overpass 分块抓取 + BBBike 下载 + 自写投影渲染），城市写死在代码里；网页版把整条链路搬进浏览器，并做了三档数据源：**预置 29 城内置离线数据**（点开就是 0.1–0.4 秒出图、离线可用）、**自定义区域走矢量瓦片**（自研 MVT 解码器，按范围自动选 zoom，15 km 城区约 4–6 秒）、以及 **Overpass 兜底**（前两档都失败时才用）。",
+   "summary": "选一个城市、搜一个地名，或直接框一段经纬度，得到一张干净的矢量路网底图，导出 SVG 或 PNG。原版是一套 Python 脚本（Overpass 分块抓取 + BBBike 下载 + 自写投影渲染），城市写死在代码里；网页版把整条链路搬进浏览器，做了三档数据源：**预置 29 城内置离线数据**（点开 0.1–0.4 秒出图、离线可用）、**自定义区域走矢量瓦片**（自研 MVT 解码器，按范围自动选 zoom，15 km 城区约 4–6 秒）、**Overpass 兜底**。预览区支持缩放平移，可以在地图上打标记点、按需显示道路名与地标名，导出的就是你看到的那一块。",
    "highlights": [
     "29 座城市内置离线数据（构建时抓取），点开 0.1–0.4 秒出图，离线也能用",
     "自定义 bbox：自研零依赖 MVT 解码器，按 3–50 km 自动选 z11–z15，并发抓瓦片约 4–6 秒",
-    "三档数据源：内置数据 → 矢量瓦片（VersaTiles / OpenFreeMap）→ Overpass 兜底",
-    "浅色 / 深色 / 透明三配色，6 级道路分层线宽，无任何文字标注",
-    "导出 SVG / PNG、复制源码，数据 © OpenStreetMap contributors（ODbL）"
+    "滚轮/按钮缩放 1×–16× + 拖拽平移，导出的就是当前视图（也可导出全图）",
+    "可打标记点（圆环 + 十字丝，与地图同风格），带经纬度列表，随导出保留",
+    "可选显示道路名称与地标名称：沿路排版、自动避让、字号随缩放自适应",
+    "浅色 / 深色 / 透明三配色，6 级道路分层线宽，数据 © OpenStreetMap contributors（ODbL）"
    ],
    "tech": [
     "JavaScript",
@@ -1708,9 +1709,9 @@
    "entry": "works/roadmap-svg/README.md",
    "published": true,
    "sourceFiles": 44,
-   "sourceBytes": 11289410,
+   "sourceBytes": 13862824,
    "publishedFiles": 44,
-   "publishedBytes": 11289410,
+   "publishedBytes": 13862824,
    "excludeReason": "",
    "excludeNote": "",
    "featured": true
