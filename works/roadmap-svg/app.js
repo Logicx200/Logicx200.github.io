@@ -24,6 +24,17 @@
     'living_street', 'service'
   ];
 
+  /* ---------- 数据源与矢量瓦片 ---------- */
+  var CITY_INDEX_URL = 'cities/index.js';
+  var CITY_DATA_DIR = 'cities/';
+  var TILE_CONCURRENCY = 6;      // 矢量瓦片并发数
+  var MAX_VTILES = 36;           // 单次矢量瓦片抓取最大块数
+  var TILE_TIMEOUT = 30000;
+  var VERSATILES_URL = 'https://tiles.versatiles.org/tiles/osm/{z}/{x}/{y}';
+  var OPENFREEMAP_TILEJSON = 'https://tiles.openfreemap.org/planet';
+  var VECTOR_SOURCE_NAMES = { versatiles: 'VersaTiles', openfreemap: 'OpenFreeMap' };
+  var GROUP_SERVICE = 5;
+
   /* ---------- 道路分组（6 组，线宽为 2400px 画布下的像素） ---------- */
   var GROUPS = [
     { key: 'arterial', name: '快速路 / 高速', width: 3.8, match: ['motorway', 'motorway_link', 'trunk', 'trunk_link'] },
@@ -39,11 +50,11 @@
   var PALETTES = {
     light: {
       name: '浅色', bg: '#f7f4ec',
-      colors: ['#23221e', '#3c3b35', '#5c5a51', '#7d7a6e', '#9d998d', '#c0bcae']
+      colors: ['#23221e', '#3c3b35', '#5c5a51', '#7d7a6e', '#8f8b7f', '#a5a195']
     },
     dark: {
       name: '深色', bg: '#12141a',
-      colors: ['#f4f1e8', '#d9d5c8', '#b3ae9f', '#8a8578', '#635f55', '#42403a']
+      colors: ['#f4f1e8', '#dcd8cb', '#b8b3a4', '#969183', '#7a766a', '#5c5950']
     },
     transparent: {
       name: '透明', bg: null,
@@ -73,6 +84,7 @@
   ];
   var CITY_MAP = {};
   CITIES.forEach(function (c) { CITY_MAP[c.key] = c; });
+  /* 城市列表允许在 cities/index.js 加载后被重建（CITIES / CITY_MAP 均为 var） */
 
   /* ---------- 全局状态 ---------- */
   var state = {
@@ -88,10 +100,12 @@
       ways: [],            // [{g: groupIndex, c: [lon, lat, lon, lat, ...]}]
       bbox: null,
       label: '',
-      source: 'sample',    // sample | osm
+      source: 'sample',    // sample | offline | vector | osm
+      sourceDetail: '',
       slug: 'taiyuan-sample',
       fetchMs: 0,
       tiles: 0,
+      zoom: 0,
       version: 0
     },
     palette: 'dark',
@@ -99,6 +113,8 @@
     pngScale: 2,
 
     sample: null,
+    cityIndex: null,          // cities/index.js 的内容（含离线数据的城市列表）
+    offlineLoading: {},       // slug -> Promise（避免重复注入脚本）
     geom: { key: '', data: null },
     busy: false,
     searchBusy: false,
@@ -147,6 +163,549 @@
     if (/abort|AbortError/i.test(msg)) return '请求已取消或超时';
     return msg;
   }
+
+  /* ============================================================
+     MVT（Mapbox Vector Tile）解码器 —— 零依赖自研实现
+     支持两种 schema：
+       Shortbread（VersaTiles）：layer "streets"，属性 kind（link 为布尔）
+       OpenMapTiles（OpenFreeMap）：layer "transportation"，属性 class/subclass
+     ============================================================ */
+  var _utf8 = (typeof TextDecoder !== 'undefined') ? new TextDecoder('utf-8') : null;
+  function utf8Decode(buf, start, end) {
+    if (_utf8) return _utf8.decode(buf.subarray(start, end));
+    var out = '';
+    for (var i = start; i < end; i++) out += String.fromCharCode(buf[i]);
+    return out;
+  }
+  /* protobuf varint（LEB128，用乘法避免 32 位按位溢出） */
+  function readVarint(buf, pos) {
+    var result = 0, shift = 0, b;
+    do {
+      b = buf[pos++];
+      result += (b & 0x7f) * Math.pow(2, shift);
+      shift += 7;
+    } while ((b & 0x80) && pos < buf.length);
+    return [result, pos];
+  }
+  function skipField(buf, pos, wire) {
+    if (wire === 0) return readVarint(buf, pos)[1];
+    if (wire === 1) return pos + 8;
+    if (wire === 2) { var r = readVarint(buf, pos); return r[1] + r[0]; }
+    if (wire === 5) return pos + 4;
+    return buf.length;
+  }
+  function zigzag(n) { return (n >>> 1) ^ (-(n & 1)); }
+  function readPackedUint32(buf, pos, end) {
+    var out = [];
+    while (pos < end) { var r = readVarint(buf, pos); out.push(r[0]); pos = r[1]; }
+    return out;
+  }
+  function decodeMvtValue(buf, start, end) {
+    var pos = start;
+    while (pos < end) {
+      var tr = readVarint(buf, pos); pos = tr[1];
+      var field = tr[0] >>> 3, wire = tr[0] & 7;
+      if (wire === 2) {
+        var r = readVarint(buf, pos); pos = r[1];
+        if (field === 1) return utf8Decode(buf, pos, pos + r[0]);
+        pos += r[0];
+      } else if (wire === 5) {
+        return new DataView(buf.buffer, buf.byteOffset + pos, 4).getFloat32(0, true);
+      } else if (wire === 1) {
+        return new DataView(buf.buffer, buf.byteOffset + pos, 8).getFloat64(0, true);
+      } else if (wire === 0) {
+        var vr = readVarint(buf, pos); pos = vr[1];
+        var v = vr[0];
+        if (field === 6) v = zigzag(v);
+        else if (field === 7) v = !!v;
+        return v;
+      } else {
+        pos = skipField(buf, pos, wire);
+      }
+    }
+    return null;
+  }
+  function decodeMvtFeature(buf, start, end) {
+    var f = { id: 0, tagsRaw: null, type: 0, geomRaw: null };
+    var pos = start;
+    while (pos < end) {
+      var tr = readVarint(buf, pos); pos = tr[1];
+      var field = tr[0] >>> 3, wire = tr[0] & 7;
+      if (wire === 2) {
+        var r = readVarint(buf, pos); pos = r[1];
+        var send = pos + r[0];
+        if (field === 2) f.tagsRaw = readPackedUint32(buf, pos, send);
+        else if (field === 4) f.geomRaw = readPackedUint32(buf, pos, send);
+        pos = send;
+      } else if (wire === 0) {
+        var vr = readVarint(buf, pos); pos = vr[1];
+        if (field === 1) f.id = vr[0];
+        else if (field === 3) f.type = vr[0];
+      } else {
+        pos = skipField(buf, pos, wire);
+      }
+    }
+    return f;
+  }
+  function decodeMvtLayer(buf, start, end) {
+    var layer = { name: '', extent: 4096, keys: [], values: [], features: [] };
+    var pos = start;
+    while (pos < end) {
+      var tr = readVarint(buf, pos); pos = tr[1];
+      var field = tr[0] >>> 3, wire = tr[0] & 7;
+      if (field === 1 && wire === 2) {
+        var r = readVarint(buf, pos); pos = r[1];
+        layer.name = utf8Decode(buf, pos, pos + r[0]); pos += r[0];
+      } else if (field === 2 && wire === 2) {
+        var r2 = readVarint(buf, pos); pos = r2[1];
+        layer.features.push(decodeMvtFeature(buf, pos, pos + r2[0])); pos += r2[0];
+      } else if (field === 3 && wire === 2) {
+        var r3 = readVarint(buf, pos); pos = r3[1];
+        layer.keys.push(utf8Decode(buf, pos, pos + r3[0])); pos += r3[0];
+      } else if (field === 4 && wire === 2) {
+        var r4 = readVarint(buf, pos); pos = r4[1];
+        layer.values.push(decodeMvtValue(buf, pos, pos + r4[0])); pos += r4[0];
+      } else if (field === 5 && wire === 0) {
+        var r5 = readVarint(buf, pos); pos = r5[1];
+        layer.extent = r5[0] || 4096;
+      } else {
+        pos = skipField(buf, pos, wire);
+      }
+    }
+    return layer;
+  }
+  function decodeMvt(buf) {
+    var layers = [];
+    var pos = 0, len = buf.length;
+    while (pos < len) {
+      var tr = readVarint(buf, pos); pos = tr[1];
+      var field = tr[0] >>> 3, wire = tr[0] & 7;
+      if (field === 3 && wire === 2) {
+        var r = readVarint(buf, pos); pos = r[1];
+        layers.push(decodeMvtLayer(buf, pos, pos + r[0])); pos += r[0];
+      } else {
+        pos = skipField(buf, pos, wire);
+      }
+    }
+    return layers;
+  }
+  /* geometry 命令流 -> 若干折线（每条为 [x0,y0,x1,y1,...]，瓦片局部坐标，绝对增量已还原） */
+  function decodeMvtGeometry(geomRaw) {
+    var parts = [], cur = null, x = 0, y = 0, i = 0, n = geomRaw.length;
+    while (i < n) {
+      var cmdInt = geomRaw[i++];
+      var cmd = cmdInt & 7, count = cmdInt >>> 3;
+      if (cmd === 1) {                         // MoveTo
+        for (var k = 0; k < count; k++) {
+          x += zigzag(geomRaw[i++]); y += zigzag(geomRaw[i++]);
+          cur = [x, y]; parts.push(cur);
+        }
+      } else if (cmd === 2) {                  // LineTo
+        if (!cur) { cur = []; parts.push(cur); }
+        for (var k2 = 0; k2 < count; k2++) {
+          x += zigzag(geomRaw[i++]); y += zigzag(geomRaw[i++]);
+          cur.push(x, y);
+        }
+      } else if (cmd === 7) {                  // ClosePath（道路中心线不需要）
+      } else { break; }
+    }
+    return parts;
+  }
+  /* 瓦片局部坐标 -> 经纬度 */
+  function tilePointToLonLat(z, tx, ty, px, py, extent) {
+    var scale = Math.pow(2, z);
+    var worldX = (tx + px / extent) / scale;
+    var worldY = (ty + py / extent) / scale;
+    var lon = worldX * 360 - 180;
+    var lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * worldY))) * 180 / Math.PI;
+    return [lon, lat];
+  }
+  var IGNORED_KINDS = {
+    track: 1, path: 1, footway: 1, cycleway: 1, steps: 1, pedestrian: 1,
+    bridleway: 1, rail: 1, transit: 1, ferry: 1, aerialway: 1, raceway: 1
+  };
+  /* 两种 schema 的属性映射到现有 6 级；返回 -1 表示忽略 */
+  function mapMvtProps(layerName, tags) {
+    if (layerName === 'streets') {
+      var kind = tags.kind;
+      if (kind == null) return -1;
+      var k = String(kind);
+      if (k.indexOf('_link') >= 0) k = k.replace('_link', '');
+      if (IGNORED_KINDS[k]) return -1;
+      if (k === 'minor') return 4;
+      var gi = GROUP_INDEX[k];
+      return gi === undefined ? -1 : gi;
+    }
+    if (layerName === 'transportation') {
+      var cls = tags.class;
+      if (cls == null) return -1;
+      var c = String(cls);
+      if (IGNORED_KINDS[c]) return -1;
+      if (c === 'minor') {
+        var sub = tags.subclass == null ? '' : String(tags.subclass).replace('_link', '');
+        if (IGNORED_KINDS[sub]) return -1;
+        if (GROUP_INDEX[sub] !== undefined) return GROUP_INDEX[sub];
+        return 4;
+      }
+      if (c === 'service') return GROUP_SERVICE;
+      var gc = GROUP_INDEX[c];
+      if (gc !== undefined) return gc;
+      var sub2 = tags.subclass == null ? '' : String(tags.subclass).replace('_link', '');
+      if (GROUP_INDEX[sub2] !== undefined && !IGNORED_KINDS[sub2]) return GROUP_INDEX[sub2];
+      return -1;
+    }
+    return -1;
+  }
+  function resolveMvtTags(layer, feature) {
+    var tags = {};
+    if (!feature.tagsRaw) return tags;
+    for (var i = 0; i + 1 < feature.tagsRaw.length; i += 2) {
+      var key = layer.keys[feature.tagsRaw[i]];
+      var val = layer.values[feature.tagsRaw[i + 1]];
+      if (key !== undefined && val !== undefined) tags[key] = val;
+    }
+    return tags;
+  }
+  /* 解码一个瓦片里的道路折线；bbox 外的整段丢弃，跨瓦片重复几何去重 */
+  function extractTileWays(bytes, tile, bbox, seen, includeService) {
+    var buf = new Uint8Array(bytes);
+    var layers = decodeMvt(buf);
+    var out = [];
+    for (var li = 0; li < layers.length; li++) {
+      var layer = layers[li];
+      if (layer.name !== 'streets' && layer.name !== 'transportation') continue;
+      var extent = layer.extent || 4096;
+      for (var fi = 0; fi < layer.features.length; fi++) {
+        var f = layer.features[fi];
+        if (f.type !== 2 || !f.geomRaw || !f.geomRaw.length) continue;
+        var tags = resolveMvtTags(layer, f);
+        var gi = mapMvtProps(layer.name, tags);
+        if (gi < 0) continue;
+        if (!includeService && gi === GROUP_SERVICE) continue;
+        var parts = decodeMvtGeometry(f.geomRaw);
+        for (var pi = 0; pi < parts.length; pi++) {
+          var ring = parts[pi];
+          if (ring.length < 4) continue;
+          var coords = [];
+          var inBox = false;
+          for (var k = 0; k + 1 < ring.length; k += 2) {
+            var ll = tilePointToLonLat(tile.z, tile.x, tile.y, ring[k], ring[k + 1], extent);
+            coords.push(ll[0], ll[1]);
+            if (!inBox && ll[0] >= bbox[1] && ll[0] <= bbox[3] && ll[1] >= bbox[0] && ll[1] <= bbox[2]) inBox = true;
+          }
+          if (!inBox) continue;
+          var keyParts = [];
+          for (var c2 = 0; c2 < coords.length; c2++) keyParts.push(Math.round(coords[c2] * 1e6));
+          var hash = gi + ':' + keyParts.join(',');
+          if (seen.has(hash)) continue;
+          seen.add(hash);
+          out.push({ g: gi, c: coords });
+        }
+      }
+    }
+    return out;
+  }
+
+  /* ---------- 矢量瓦片：zoom / 瓦片范围 / 抓取 ---------- */
+  function lon2tileX(lon, z) { return Math.floor((lon + 180) / 360 * Math.pow(2, z)); }
+  function lat2tileY(lat, z) {
+    var r = lat * RAD;
+    return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * Math.pow(2, z));
+  }
+  function tileRangeForBbox(bbox, z) {
+    var max = Math.pow(2, z) - 1;
+    var x0 = clamp(lon2tileX(bbox[1], z), 0, max);
+    var x1 = clamp(lon2tileX(bbox[3], z), 0, max);
+    var y0 = clamp(lat2tileY(bbox[2], z), 0, max);
+    var y1 = clamp(lat2tileY(bbox[0], z), 0, max);
+    if (x1 < x0) { var t = x0; x0 = x1; x1 = t; }
+    if (y1 < y0) { var t2 = y0; y0 = y1; y1 = t2; }
+    var tiles = [];
+    for (var y = y0; y <= y1; y++) {
+      for (var x = x0; x <= x1; x++) tiles.push({ z: z, x: x, y: y });
+    }
+    return { tiles: tiles, nx: x1 - x0 + 1, ny: y1 - y0 + 1, count: tiles.length, x0: x0, x1: x1, y0: y0, y1: y1 };
+  }
+  /* 按 bbox 尺寸选 zoom（跨度 ≤3km→z15、≤8→z14、≤20→z13、≤50→z12…，上限 z14，块数受 MAX_VTILES 约束） */
+  function chooseVectorZoom(bbox) {
+    var km = bboxKm(bbox);
+    var span = Math.max(km.w, km.h);
+    var z = span <= 3 ? 15 : span <= 8 ? 14 : span <= 20 ? 13 : span <= 50 ? 12 : span <= 100 ? 11 : 10;
+    z = Math.min(z, 14);
+    var range = tileRangeForBbox(bbox, z);
+    while (range.count > MAX_VTILES && z > 7) {
+      z--;
+      range = tileRangeForBbox(bbox, z);
+    }
+    return { z: z, range: range, capped: range.count > MAX_VTILES };
+  }
+  var _ofmTemplatePromise = null;
+  function getOpenFreeMapTemplate() {
+    if (_ofmTemplatePromise) return _ofmTemplatePromise;
+    _ofmTemplatePromise = fetch(OPENFREEMAP_TILEJSON, { mode: 'cors', credentials: 'omit' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('TileJSON HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (j) {
+        var tiles = (j && j.tiles) || [];
+        for (var i = 0; i < tiles.length; i++) {
+          if (/\{z\}/.test(tiles[i]) && /\{x\}/.test(tiles[i]) && /\{y\}/.test(tiles[i])) return tiles[i];
+        }
+        throw new Error('TileJSON 中没有 tiles 模板');
+      })
+      .catch(function (e) { _ofmTemplatePromise = null; throw e; });
+    return _ofmTemplatePromise;
+  }
+  async function fetchTileBytes(url, timeoutMs) {
+    var ctrl = new AbortController();
+    if (state.abort) state.abort.controllers.push(ctrl);
+    var timer = setTimeout(function () { try { ctrl.abort(); } catch (e) { } }, timeoutMs || TILE_TIMEOUT);
+    try {
+      var res = await fetch(url, { mode: 'cors', credentials: 'omit', signal: ctrl.signal });
+      if (res.status === 404 || res.status === 204) return null;
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.arrayBuffer();
+    } finally {
+      clearTimeout(timer);
+      if (state.abort) {
+        var ix = state.abort.controllers.indexOf(ctrl);
+        if (ix >= 0) state.abort.controllers.splice(ix, 1);
+      }
+    }
+  }
+  /* 单块瓦片：先 VersaTiles（Shortbread），失败再 OpenFreeMap（OpenMapTiles） */
+  async function fetchVectorTile(tile) {
+    var errors = [];
+    try {
+      var url = VERSATILES_URL.replace('{z}', tile.z).replace('{x}', tile.x).replace('{y}', tile.y);
+      var bytes = await fetchTileBytes(url);
+      if (!bytes || !bytes.byteLength) return { bytes: null, source: 'versatiles' };
+      return { bytes: bytes, source: 'versatiles' };
+    } catch (e) {
+      if (state.abort && state.abort.aborted) throw makeAbortError();
+      errors.push('VersaTiles ' + describeError(e));
+    }
+    try {
+      var tpl = await getOpenFreeMapTemplate();
+      var url2 = tpl.replace('{z}', tile.z).replace('{x}', tile.x).replace('{y}', tile.y);
+      var bytes2 = await fetchTileBytes(url2);
+      if (!bytes2 || !bytes2.byteLength) return { bytes: null, source: 'openfreemap' };
+      return { bytes: bytes2, source: 'openfreemap' };
+    } catch (e2) {
+      if (state.abort && state.abort.aborted) throw makeAbortError();
+      errors.push('OpenFreeMap ' + describeError(e2));
+    }
+    throw new Error(errors.join('；') || '瓦片获取失败');
+  }
+  function describeVectorSources(sources) {
+    var names = [];
+    if (sources.versatiles) names.push('VersaTiles');
+    if (sources.openfreemap) names.push('OpenFreeMap');
+    return names.length ? names.join(' + ') : '矢量瓦片';
+  }
+  function updateVectorProgress(done, total, wayCount, zoom) {
+    setProgress(total ? done / total : 0);
+    var txt = '矢量瓦片抓取中… <b>[progress ' + done + ' / ' + total + ']</b> · z' + zoom + ' · 已取得 ' + fmtInt(wayCount) + ' 条道路';
+    setStatusHtml(txt);
+    var lt = $('loadingText');
+    if (lt) lt.textContent = '正在抓取矢量瓦片… [progress ' + done + '/' + total + ']';
+  }
+  function fetchAllVectorTiles(plan, bbox, includeService) {
+    return new Promise(function (resolve) {
+      var tiles = plan.range.tiles;
+      var ways = [];
+      var seen = new Set();
+      var failed = [];
+      var sources = { versatiles: 0, openfreemap: 0 };
+      var next = 0, active = 0, done = 0, stopped = false;
+      function finish() {
+        if (stopped) return;
+        stopped = true;
+        resolve({
+          ways: ways, failed: failed, sources: sources,
+          aborted: !!(state.abort && state.abort.aborted),
+          total: tiles.length
+        });
+      }
+      function launch() {
+        if (stopped) return;
+        while (active < TILE_CONCURRENCY && next < tiles.length) runTile(tiles[next++]);
+        if (active === 0 && next >= tiles.length) finish();
+      }
+      function runTile(tile) {
+        active++;
+        (async function () {
+          var got = await fetchVectorTile(tile);
+          var added = 0;
+          if (got && got.bytes) {
+            sources[got.source]++;
+            var newWays = extractTileWays(got.bytes, tile, bbox, seen, includeService);
+            for (var i = 0; i < newWays.length; i++) ways.push(newWays[i]);
+            added = newWays.length;
+          }
+          done++;
+          updateVectorProgress(done, tiles.length, ways.length, plan.z);
+          logLine('[progress ' + done + '/' + tiles.length + '] tile ' + plan.z + '/' + tile.x + '/' + tile.y +
+            ' · ' + (got && got.source ? VECTOR_SOURCE_NAMES[got.source] : '空瓦片') + ' · ' + added + ' 条', 'ok');
+        })().then(function () {
+          active--; launch();
+        }, function (err) {
+          active--;
+          if (err && err.userAbort) { finish(); return; }
+          failed.push({ tile: tile, message: describeError(err) });
+          done++;
+          updateVectorProgress(done, tiles.length, ways.length, plan.z);
+          logLine('[progress ' + done + '/' + tiles.length + '] tile ' + plan.z + '/' + tile.x + '/' + tile.y + ' ✗ ' + describeError(err), 'warn');
+          launch();
+        });
+      }
+      launch();
+    });
+  }
+
+  /* ---------- 预置城市离线数据（cities/index.js + cities/<slug>.js） ---------- */
+  function loadScriptAsync(src, timeoutMs) {
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      var done = false;
+      var timer = setTimeout(function () {
+        if (done) return;
+        done = true;
+        if (s.parentNode) s.parentNode.removeChild(s);
+        reject(new Error('加载超时'));
+      }, timeoutMs || 8000);
+      s.onload = function () {
+        if (done) return;
+        done = true; clearTimeout(timer); resolve();
+      };
+      s.onerror = function () {
+        if (done) return;
+        done = true; clearTimeout(timer);
+        if (s.parentNode) s.parentNode.removeChild(s);
+        reject(new Error('脚本加载失败'));
+      };
+      document.head.appendChild(s);
+    });
+  }
+  var _cityIndexPromise = null;
+  function ensureCityIndex() {
+    if (state.cityIndex) return Promise.resolve(state.cityIndex);
+    if (_cityIndexPromise) return _cityIndexPromise;
+    _cityIndexPromise = loadScriptAsync(CITY_INDEX_URL, 6000).then(function () {
+      var idx = window.XZ_CITY_INDEX;
+      if (!Array.isArray(idx) || !idx.length) throw new Error('cities/index.js 格式不正确');
+      state.cityIndex = idx;
+      return idx;
+    }).catch(function (e) {
+      _cityIndexPromise = null;
+      throw e;
+    });
+    return _cityIndexPromise;
+  }
+  function cityIndexEntry(slug) {
+    if (!state.cityIndex) return null;
+    for (var i = 0; i < state.cityIndex.length; i++) {
+      if (state.cityIndex[i] && state.cityIndex[i].slug === slug) return state.cityIndex[i];
+    }
+    return null;
+  }
+  function cityIndexHas(slug) { return !!cityIndexEntry(slug); }
+  function loadCityOffline(slug) {
+    var cached = window.XZ_CITIES && window.XZ_CITIES[slug];
+    if (cached) return Promise.resolve(cached);
+    if (state.offlineLoading[slug]) return state.offlineLoading[slug];
+    var p = loadScriptAsync(CITY_DATA_DIR + slug + '.js', 12000).then(function () {
+      var data = window.XZ_CITIES && window.XZ_CITIES[slug];
+      if (!data || !data.roads || !data.roads.length) throw new Error('城市数据为空');
+      delete state.offlineLoading[slug];
+      return data;
+    }).catch(function (e) {
+      delete state.offlineLoading[slug];
+      throw e;
+    });
+    state.offlineLoading[slug] = p;
+    return p;
+  }
+  /* 离线数据反量化：lon = w + x/q, lat = s + y/q（q=100000） */
+  function offlineCityWays(data) {
+    var q = data.q || 100000;
+    var w = data.bbox[1], s = data.bbox[0];
+    var ways = [];
+    var roads = data.roads || [];
+    for (var i = 0; i < roads.length; i++) {
+      var road = roads[i];
+      if (!road || road.length < 2) continue;
+      var g = road[0], arr = road[1];
+      if (g == null || !arr || arr.length < 4) continue;
+      var coords = new Array(arr.length);
+      for (var j = 0; j + 1 < arr.length; j += 2) {
+        coords[j] = w + arr[j] / q;
+        coords[j + 1] = s + arr[j + 1] / q;
+      }
+      ways.push({ g: g, c: coords });
+    }
+    return ways;
+  }
+  async function tryLoadOfflineCity(key) {
+    var city = CITY_MAP[key] || { name: key, bbox: null };
+    var entry = cityIndexEntry(key);
+    if (!entry) return false;
+    clearLog();
+    setStatusHtml('正在加载「' + escapeHtml(city.name) + '」内置离线数据…');
+    var t0 = performance.now();
+    try {
+      var data = await loadCityOffline(key);
+      var ways = offlineCityWays(data);
+      if (!ways.length) throw new Error('离线数据中没有道路');
+      var bbox = (data.bbox && data.bbox.length === 4) ? data.bbox.slice() : (entry.bbox ? entry.bbox.slice() : city.bbox.slice());
+      state.region = bbox.slice();
+      state.regionLabel = data.name || city.name;
+      syncBboxInputs();
+      updateRegionInfo();
+      state.ready = {
+        ways: ways,
+        bbox: bbox,
+        label: data.name || city.name,
+        source: 'offline',
+        sourceDetail: '内置数据 · 离线可用',
+        slug: key,
+        fetchMs: performance.now() - t0,
+        tiles: 0,
+        zoom: entry.zoom || 0,
+        version: state.ready.version + 1
+      };
+      state.geom = { key: '', data: null };
+      renderPreview();
+      setProgress(1);
+      setStatusHtml('已加载内置城市数据：<b>' + fmtInt(ways.length) + '</b> 条道路 · ' +
+        escapeHtml(state.ready.label) + ' · 离线可用（' + (entry.bytes ? fmtBytes(entry.bytes) : '随站点分发') + '）');
+      logLine('内置城市数据：' + state.ready.label + ' · ' + fmtInt(ways.length) + ' 条道路（离线，秒开）', 'ok');
+      return true;
+    } catch (e) {
+      logLine('内置城市数据加载失败：' + describeError(e) + '（可改用在线抓取）', 'warn');
+      return false;
+    }
+  }
+  /* 数据源徽标（①卡片标题处） */
+  function drawSourceBadge(kind) {
+    var el = $('regionSourceBadge');
+    if (!el) return;
+    var map = {
+      offline: { text: '内置数据', cls: 'src-offline' },
+      vector: { text: '矢量瓦片', cls: 'src-vector' },
+      osm: { text: 'Overpass 兜底', cls: 'src-osm' },
+      sample: { text: '内置示例', cls: 'src-offline' },
+      none: { text: '—', cls: '' }
+    };
+    var m = map[kind] || map.none;
+    el.textContent = m.text;
+    el.className = 'rm-src-badge ' + m.cls;
+  }
+
+  /* ---------- 主题 ---------- */
 
   /* ---------- 主题 ---------- */
   (function themeInit() {
@@ -298,11 +857,46 @@
     return 'rm-stage stage-transparent';
   }
 
+  function sourceBadgeText() {
+    if (state.ready.source === 'sample') return '内置示例数据';
+    if (state.ready.source === 'offline') return '内置数据 · 离线可用';
+    if (state.ready.source === 'vector') return '矢量瓦片 · ' + (state.ready.sourceDetail || 'VersaTiles');
+    if (state.ready.source === 'osm') return 'Overpass 实时数据';
+    return '—';
+  }
+
+  function resetReadyData() {
+    state.ready = {
+      ways: [],
+      bbox: null,
+      label: '',
+      source: 'sample',
+      sourceDetail: '',
+      slug: 'roadmap',
+      fetchMs: 0,
+      tiles: 0,
+      zoom: 0,
+      version: state.ready.version + 1
+    };
+    state.geom = { key: '', data: null };
+    renderPreview();
+  }
+
   function renderPreview() {
     var host = $('svgHost');
     if (!host) return;
     if (!state.ready.ways.length || !state.ready.bbox) {
-      host.innerHTML = '<div class="rm-empty">还没有路网数据。<br>点「获取道路数据」抓取当前区域，或使用内置示例。</div>';
+      host.innerHTML = '<div class="rm-empty">还没有路网数据。<br>预置城市会自动加载内置离线数据；其它区域点「获取道路数据」用矢量瓦片抓取。</div>';
+      var tEl = $('previewTitle');
+      if (tEl) tEl.textContent = '未加载数据';
+      var mEl = $('previewMeta');
+      if (mEl) mEl.textContent = '选择区域后加载';
+      var bEl = $('previewBadge');
+      if (bEl) bEl.textContent = '—';
+      $('paletteChip').textContent = PALETTES[state.palette].name;
+      drawSourceBadge('none');
+      updateEmptyStats();
+      updateLegend(null);
       return;
     }
     var geom = ensureGeom();
@@ -315,19 +909,31 @@
     if (stage.classList.contains('actual')) stage.classList.add('actual');
 
     var km = bboxKm(state.ready.bbox);
-    $('previewTitle').textContent = (state.ready.source === 'sample' ? '内置示例 · ' : '') + state.ready.label;
+    var prefix = state.ready.source === 'sample' ? '内置示例 · ' : (state.ready.source === 'offline' ? '内置数据 · ' : '');
+    $('previewTitle').textContent = prefix + state.ready.label;
     $('previewMeta').textContent = fmtInt(state.ready.ways.length) + ' 条道路 · ' +
       geom.width + '×' + geom.height + ' px · ' +
       km.w.toFixed(1) + '×' + km.h.toFixed(1) + ' km';
     var badge = $('previewBadge');
-    if (badge) badge.textContent = state.ready.source === 'sample' ? '内置示例数据' : 'Overpass 实时数据';
+    if (badge) badge.textContent = sourceBadgeText();
     $('paletteChip').textContent = PALETTES[state.palette].name;
+    drawSourceBadge(state.ready.source);
     updateStats(geom, svg);
     updateLegend(geom);
   }
 
+  function updateEmptyStats() {
+    ['stWays', 'stBbox', 'stSize', 'stCanvas', 'stBytes', 'stTime', 'stSource'].forEach(function (id) {
+      var el = $(id);
+      if (el) { el.textContent = '—'; if (el.title) el.title = ''; }
+    });
+    var step = $('sourceStep');
+    if (step) step.textContent = '未加载';
+  }
+
   function updateStats(geom, svg) {
     var km = bboxKm(state.ready.bbox);
+    var src = state.ready.source;
     $('stWays').textContent = fmtInt(state.ready.ways.length);
     $('stBbox').textContent = state.ready.bbox[0].toFixed(3) + '–' + state.ready.bbox[2].toFixed(3) + ' N / ' +
       state.ready.bbox[1].toFixed(3) + '–' + state.ready.bbox[3].toFixed(3) + ' E';
@@ -335,13 +941,28 @@
     $('stSize').textContent = km.w.toFixed(1) + ' × ' + km.h.toFixed(1) + ' km';
     $('stCanvas').textContent = geom.width + ' × ' + geom.height + ' px';
     $('stBytes').textContent = fmtBytes(new Blob([svg]).size);
-    if (state.ready.source === 'sample') {
-      $('stTime').textContent = '—（示例）';
-      $('sourceStep').textContent = '内置示例';
+    var srcText = '—', stepText = '—', timeText = '—';
+    if (src === 'sample') {
+      srcText = '内置示例（太原五一广场周边）';
+      stepText = '内置示例';
+      timeText = '—（示例）';
+    } else if (src === 'offline') {
+      srcText = '内置城市数据 · 离线可用';
+      stepText = '内置数据';
+      timeText = '≈ 0 s（离线）';
+    } else if (src === 'vector') {
+      srcText = '矢量瓦片 · ' + (state.ready.sourceDetail || 'VersaTiles') + (state.ready.zoom ? ' · z' + state.ready.zoom : '');
+      stepText = '矢量瓦片';
+      timeText = (state.ready.fetchMs / 1000).toFixed(1) + ' s · ' + state.ready.tiles + ' 块';
     } else {
-      $('stTime').textContent = (state.ready.fetchMs / 1000).toFixed(1) + ' s · ' + state.ready.tiles + ' 块';
-      $('sourceStep').textContent = 'Overpass 抓取';
+      srcText = 'Overpass API' + (state.ready.tiles ? ' · ' + state.ready.tiles + ' 块' : '');
+      stepText = 'Overpass 抓取';
+      timeText = (state.ready.fetchMs / 1000).toFixed(1) + ' s' + (state.ready.tiles ? ' · ' + state.ready.tiles + ' 块' : '');
     }
+    var srcEl = $('stSource');
+    if (srcEl) { srcEl.textContent = srcText; srcEl.title = srcText; }
+    $('stTime').textContent = timeText;
+    $('sourceStep').textContent = stepText;
   }
 
   function updateLegend(geom) {
@@ -351,7 +972,7 @@
     var html = '';
     for (var gi = 0; gi < GROUPS.length; gi++) {
       var g = GROUPS[gi];
-      var count = geom.counts[gi] || 0;
+      var count = (geom && geom.counts[gi]) || 0;
       var w = Math.max(1, Math.round(g.width * 0.9));
       var swatchBg = state.palette === 'transparent' ? 'background:#2a2c33;' : '';
       html += '<div class="rm-legend-row">' +
@@ -508,15 +1129,23 @@
     if (!el) return;
     if (!state.region) { el.textContent = '—'; return; }
     var km = bboxKm(state.region);
-    var t = computeTiles(state.region, MAX_TILES);
+    var offlineCity = state.mode === 'preset' && cityIndexHas(state.cityKey);
+    var plan = chooseVectorZoom(state.region);
     var warn = '';
     if (km.w > 45 || km.h > 45) warn = ' · <b>范围较大，建议缩小</b>';
     if (km.w > 120 || km.h > 120) warn = ' · <b>范围过大，无法抓取</b>';
+    var line3;
+    if (offlineCity) {
+      line3 = '内置离线数据 · 秒开';
+    } else if (plan.range.count <= MAX_VTILES) {
+      line3 = '矢量瓦片 z' + plan.z + ' · ' + plan.range.nx + '×' + plan.range.ny + ' = ' + plan.range.count + ' 块';
+    } else {
+      line3 = '<b>范围过大</b>，请缩小';
+    }
     el.innerHTML = '<b>' + escapeHtml(state.regionLabel || '自定义范围') + '</b><br>' +
       'S ' + state.region[0].toFixed(4) + ' · W ' + state.region[1].toFixed(4) +
       ' · N ' + state.region[2].toFixed(4) + ' · E ' + state.region[3].toFixed(4) + '<br>' +
-      '约 ' + km.w.toFixed(1) + ' × ' + km.h.toFixed(1) + ' km · 预计分块 ' +
-      t.nx + '×' + t.ny + ' = ' + t.tiles.length + ' 块' + warn;
+      '约 ' + km.w.toFixed(1) + ' × ' + km.h.toFixed(1) + ' km · ' + line3 + warn;
     savePrefs();
   }
 
@@ -542,9 +1171,6 @@
     if (extra && extra.searchLabel !== undefined) state.searchLabel = extra.searchLabel;
     if (!extra || extra.syncInputs !== false) syncBboxInputs();
     updateRegionInfo();
-    if (state.ready.ways.length && state.ready.source === 'osm') {
-      logLine('提示：预览仍是上一次抓取的数据，点「获取道路数据」后才会更新为当前区域。', 'warn');
-    }
   }
 
   function applyPresetCity(key) {
@@ -553,7 +1179,19 @@
     state.cityKey = key;
     if ($('citySelect')) $('citySelect').value = key;
     setRegion(city.bbox, city.name, 'preset', { cityKey: key });
-    $('status').textContent = '已选择「' + city.name + '」主城区（约 20 km 见方）。点「获取道路数据」从 Overpass 抓取。';
+    resetReadyData();
+    if (cityIndexHas(key)) {
+      drawSourceBadge('offline');
+      tryLoadOfflineCity(key).then(function (ok) {
+        if (!ok) {
+          drawSourceBadge('vector');
+          setStatusHtml('「' + escapeHtml(city.name) + '」内置数据加载失败，点「获取道路数据」用矢量瓦片抓取（失败自动回退 Overpass）。');
+        }
+      });
+    } else {
+      drawSourceBadge('vector');
+      setStatusHtml('已选择「' + escapeHtml(city.name) + '」。点「获取道路数据」用矢量瓦片抓取（失败自动回退 Overpass）。');
+    }
   }
 
   function validateBBox(bbox) {
@@ -596,7 +1234,9 @@
     if (err) { toast(err); return; }
     bbox = bbox.map(function (v) { return round5(v); });
     setRegion(bbox, '自定义范围', 'bbox', { searchLabel: '' });
-    $('status').textContent = '已应用自定义范围。点「获取道路数据」开始抓取。';
+    resetReadyData();
+    drawSourceBadge('vector');
+    $('status').textContent = '已应用自定义范围。点「获取道路数据」用矢量瓦片抓取（失败自动回退 Overpass）。';
   }
 
   /* ---------- Overpass 抓取 ---------- */
@@ -762,7 +1402,7 @@
     if (loading) loading.hidden = !busy;
   }
 
-  async function doFetch() {
+  async function doFetchOverpass(isFallback) {
     if (state.busy) return;
     if (!state.region) { toast('请先选择区域'); return; }
     var bbox = state.region;
@@ -775,13 +1415,14 @@
     var t = computeTiles(bbox, MAX_TILES);
     var tileKm = t.span * 111.32;
     state.abort = { aborted: false, controllers: [] };
-    clearLog();
+    if (!isFallback) clearLog();
+    else logLine('—— 回退 Overpass 兜底 ——', 'warn');
     setProgress(0);
     showRetry(false);
     setBusy(true);
-    setStatusHtml('抓取中… <b>[progress 0 / ' + t.tiles.length + ']</b>');
+    setStatusHtml('Overpass 兜底抓取中… <b>[progress 0 / ' + t.tiles.length + ']</b>');
     logLine('范围 ' + fmtBboxShort(bbox) + '（约 ' + km.w.toFixed(1) + ' × ' + km.h.toFixed(1) + ' km）');
-    logLine('分块 ' + t.nx + ' × ' + t.ny + ' = ' + t.tiles.length + ' 块，每块约 ' +
+    logLine('Overpass 分块 ' + t.nx + ' × ' + t.ny + ' = ' + t.tiles.length + ' 块，每块约 ' +
       tileKm.toFixed(1) + ' km' + (t.capped ? '（已自动放大分块以控制请求数）' : ''));
     var t0 = performance.now();
     try {
@@ -810,9 +1451,11 @@
         bbox: bbox.slice(),
         label: labelForRegion(),
         source: 'osm',
+        sourceDetail: 'Overpass API',
         slug: slugForRegion(),
         fetchMs: elapsed,
         tiles: t.tiles.length,
+        zoom: 0,
         version: state.ready.version + 1
       };
       state.geom = { key: '', data: null };
@@ -825,9 +1468,9 @@
         toast('已取消：保留已取得的 ' + fmtInt(waysArr.length) + ' 条道路');
       } else {
         setProgress(1);
-        setStatusHtml('抓取完成：<b>' + fmtInt(waysArr.length) + '</b> 条道路 · ' +
+        setStatusHtml('Overpass 抓取完成：<b>' + fmtInt(waysArr.length) + '</b> 条道路 · ' +
           t.tiles.length + ' 块 · 用时 ' + (elapsed / 1000).toFixed(1) + ' s。');
-        toast('抓取完成：' + fmtInt(waysArr.length) + ' 条道路（' + (elapsed / 1000).toFixed(1) + ' s）');
+        toast('Overpass 抓取完成：' + fmtInt(waysArr.length) + ' 条道路（' + (elapsed / 1000).toFixed(1) + ' s）');
       }
     } catch (err) {
       var msg = describeError(err);
@@ -841,6 +1484,104 @@
       setBusy(false);
       state.abort = null;
     }
+  }
+
+
+  /* ---------- 矢量瓦片抓取（自定义 bbox / 无离线数据的预置城市） ---------- */
+  async function doFetchVector(bbox, includeService) {
+    if (state.busy) return { ok: false, aborted: false, reason: 'busy' };
+    var plan = chooseVectorZoom(bbox);
+    if (plan.range.count > MAX_VTILES) {
+      return { ok: false, aborted: false, reason: '范围过大（需要 ' + plan.range.count + ' 块瓦片），请缩小区域' };
+    }
+    var km = bboxKm(bbox);
+    state.abort = { aborted: false, controllers: [] };
+    clearLog();
+    setProgress(0);
+    showRetry(false);
+    setBusy(true);
+    setStatusHtml('矢量瓦片抓取中… <b>[progress 0 / ' + plan.range.count + ']</b>');
+    logLine('矢量瓦片：' + fmtBboxShort(bbox) + '（约 ' + km.w.toFixed(1) + ' × ' + km.h.toFixed(1) + ' km）');
+    logLine('zoom z' + plan.z + ' · 瓦片 ' + plan.range.nx + ' × ' + plan.range.ny + ' = ' +
+      plan.range.count + ' 块 · 并发 ' + TILE_CONCURRENCY + ' · 先 VersaTiles，失败换 OpenFreeMap');
+    var t0 = performance.now();
+    try {
+      var res = await fetchAllVectorTiles(plan, bbox, includeService);
+      var elapsed = performance.now() - t0;
+      if (res.failed.length) {
+        logLine('! ' + res.failed.length + ' 块瓦片失败（部分路网可能缺失）', 'warn');
+      }
+      var srcDetail = describeVectorSources(res.sources);
+      if (!res.ways.length) {
+        var reason = res.aborted ? '已取消，没有取得瓦片数据'
+          : (res.failed.length ? '瓦片请求失败：' + res.failed[0].message : '当前区域没有匹配的道路数据');
+        setStatusHtml('<span class="err">' + escapeHtml(reason) + '</span>');
+        logLine('✗ ' + reason, res.aborted ? 'warn' : 'err');
+        return { ok: false, aborted: !!res.aborted, reason: reason };
+      }
+      state.ready = {
+        ways: res.ways,
+        bbox: bbox.slice(),
+        label: labelForRegion(),
+        source: 'vector',
+        sourceDetail: srcDetail,
+        slug: slugForRegion(),
+        fetchMs: elapsed,
+        tiles: plan.range.count,
+        zoom: plan.z,
+        version: state.ready.version + 1
+      };
+      state.geom = { key: '', data: null };
+      renderPreview();
+      setProgress(1);
+      if (res.aborted) {
+        setStatusHtml('已取消：保留已取得的 <b>' + fmtInt(res.ways.length) + '</b> 条道路（' +
+          srcDetail + ' · ' + (elapsed / 1000).toFixed(1) + ' s）。');
+        logLine('已取消，保留 ' + res.ways.length + ' 条道路', 'warn');
+        toast('已取消：保留已取得的 ' + fmtInt(res.ways.length) + ' 条道路');
+      } else {
+        setStatusHtml('矢量瓦片抓取完成：<b>' + fmtInt(res.ways.length) + '</b> 条道路 · ' + srcDetail +
+          ' · z' + plan.z + ' · ' + plan.range.count + ' 块 · 用时 ' + (elapsed / 1000).toFixed(1) + ' s。');
+        logLine('完成：' + res.ways.length + ' 条道路 · ' + srcDetail + ' · ' + (elapsed / 1000).toFixed(1) + ' s', 'ok');
+        toast('矢量瓦片抓取完成：' + fmtInt(res.ways.length) + ' 条道路（' + (elapsed / 1000).toFixed(1) + ' s）');
+      }
+      return { ok: true, aborted: !!res.aborted };
+    } catch (err) {
+      var msg = describeError(err);
+      logLine('✗ 矢量瓦片：' + msg, 'err');
+      return { ok: false, aborted: false, reason: msg };
+    } finally {
+      setBusy(false);
+      state.abort = null;
+    }
+  }
+
+  /* 「获取道路数据」总入口：预置城市离线数据 → 矢量瓦片 → Overpass 兜底 */
+  async function doFetch() {
+    if (state.busy) return;
+    if (!state.region) { toast('请先选择区域'); return; }
+    var bbox = state.region;
+    var km = bboxKm(bbox);
+    if (km.w > 120 || km.h > 120) {
+      toast('范围过大（约 ' + km.w.toFixed(0) + ' × ' + km.h.toFixed(0) + ' km），请缩小到 120 km 以内');
+      return;
+    }
+    var includeService = $('optService').checked;
+    // 1) 预置城市：有内置离线数据就直接秒开（点按钮 = 重新加载内置数据）
+    if (state.mode === 'preset' && state.cityKey && cityIndexHas(state.cityKey)) {
+      var loaded = await tryLoadOfflineCity(state.cityKey);
+      if (loaded) {
+        toast('已使用内置离线数据（秒开）；在线抓取请改用「自定义 bbox」或「名称搜索」。', 3600);
+        return;
+      }
+    }
+    // 2) 矢量瓦片
+    var vr = await doFetchVector(bbox, includeService);
+    if (vr && (vr.ok || vr.aborted)) return;
+    // 3) Overpass 兜底
+    logLine('矢量瓦片不可用（' + ((vr && vr.reason) || '未知原因') + '），回退 Overpass 兜底…', 'warn');
+    setStatusHtml('矢量瓦片不可用，正在回退 Overpass 兜底…');
+    await doFetchOverpass(true);
   }
 
   function cancelFetch() {
@@ -928,8 +1669,10 @@
         btn.addEventListener('click', function () {
           setRegion(bbox, (r.display_name || '').split(',')[0] || '搜索结果', 'search',
             { searchLabel: (r.display_name || '').split(',')[0] || '搜索结果' });
+          resetReadyData();
+          drawSourceBadge('vector');
           ul.hidden = true;
-          setStatusHtml('已选中「' + escapeHtml(nameEl.textContent) + '」。点「获取道路数据」开始抓取。');
+          setStatusHtml('已选中「' + escapeHtml(nameEl.textContent) + '」。点「获取道路数据」用矢量瓦片抓取（失败自动回退 Overpass）。');
         });
         li.appendChild(btn);
         ul.appendChild(li);
@@ -969,12 +1712,39 @@
   function buildCitySelect() {
     var sel = $('citySelect');
     if (!sel) return;
+    var prev = sel.value;
+    sel.innerHTML = '';
     for (var i = 0; i < CITIES.length; i++) {
       var opt = document.createElement('option');
       opt.value = CITIES[i].key;
-      opt.textContent = CITIES[i].name;
+      opt.textContent = CITIES[i].name + (cityIndexHas(CITIES[i].key) ? '（内置）' : '（在线）');
       sel.appendChild(opt);
     }
+    if (prev && CITY_MAP[prev]) sel.value = prev;
+  }
+
+  /* 用 cities/index.js 的信息重建城市列表（没有索引时保留硬编码 17 城） */
+  function rebuildCityMapFromIndex(idx) {
+    var list = [];
+    var map = {};
+    for (var i = 0; i < idx.length; i++) {
+      var it = idx[i];
+      if (!it || !it.slug || !it.name || !it.bbox || it.bbox.length !== 4) continue;
+      var city = {
+        key: it.slug,
+        name: it.name,
+        bbox: it.bbox.slice(),
+        zoom: it.zoom || 0,
+        bytes: it.bytes || 0,
+        ways: it.ways || 0,
+        offline: true
+      };
+      list.push(city);
+      map[city.key] = city;
+    }
+    if (!list.length) return;
+    CITIES = list;
+    CITY_MAP = map;
   }
 
   function switchTab(tab) {
@@ -1074,8 +1844,8 @@
       var n = $('envNotice');
       if (n) {
         n.hidden = false;
-        n.innerHTML = '<b>当前是 file:// 直接打开的页面：</b>路网数据抓取会被浏览器的跨域（CORS）策略拦截，' +
-          '页面本身与内置示例仍可正常使用。要在线抓取任意地区，请在站点根目录运行 ' +
+        n.innerHTML = '<b>当前是 file:// 直接打开的页面：</b>在线数据抓取（矢量瓦片 / Overpass）会被浏览器的跨域（CORS）策略拦截；' +
+          '<b>预置城市的内置离线数据仍可正常使用</b>。要在线抓取任意地区，请在站点根目录运行 ' +
           '<code>python -m http.server 8000</code>，然后访问 ' +
           '<code>http://localhost:8000/works/roadmap-svg/</code>。';
       }
@@ -1168,10 +1938,28 @@
     }
     loadSample();
     setStatusHtml('就绪。当前显示内置示例数据（' + fmtInt(state.ready.ways.length) +
-      ' 条道路）。选择区域后点「获取道路数据」即可抓取任意地区。');
-    // 首次若用户在 URL 里指定了 palette，重新渲染
+      ' 条道路）。预置城市会自动加载内置离线数据；其它区域点「获取道路数据」用矢量瓦片抓取。');
     renderPreview();
     savePrefs();
+    // 异步加载预置城市离线索引；成功则重建城市列表并按需秒开默认城市
+    ensureCityIndex().then(function (idx) {
+      rebuildCityMapFromIndex(idx);
+      buildCitySelect();
+      if (state.mode === 'preset' && state.cityKey) {
+        if ($('citySelect')) $('citySelect').value = state.cityKey;
+        tryLoadOfflineCity(state.cityKey).then(function (ok) {
+          if (!ok) renderPreview();
+        });
+      } else {
+        renderPreview();
+      }
+      updateRegionInfo();
+    }).catch(function () {
+      /* 没有 cities/index.js：保持硬编码 17 城 + 在线抓取 */
+      logLine('未找到 cities/index.js（预置城市离线数据未生成），已回退为在线抓取模式。', 'warn');
+      buildCitySelect();
+      updateRegionInfo();
+    });
   }
 
   function readThemePaletteDefault() {
@@ -1192,9 +1980,19 @@
     ensureGeom: ensureGeom,
     svgFromGeom: svgFromGeom,
     doFetch: doFetch,
+    doFetchVector: doFetchVector,
+    doFetchOverpass: doFetchOverpass,
     setRegion: setRegion,
     applyPresetCity: applyPresetCity,
     loadSample: loadSample,
+    ensureCityIndex: ensureCityIndex,
+    tryLoadOfflineCity: tryLoadOfflineCity,
+    loadCityOffline: loadCityOffline,
+    decodeMvt: decodeMvt,
+    mapMvtProps: mapMvtProps,
+    chooseVectorZoom: chooseVectorZoom,
+    tileRangeForBbox: tileRangeForBbox,
+    _internals: { extractTileWays: extractTileWays, offlineCityWays: offlineCityWays },
     getSvg: function () { return svgFromGeom(ensureGeom(), state.palette); },
     getCsvStats: function () {
       var g = ensureGeom();

@@ -69,6 +69,17 @@
     display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
   }
   .rm-card > h2 .step { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); letter-spacing: .06em; }
+
+  .rm-src-badge {
+    font-family: var(--font-sans); font-size: 10px; letter-spacing: .06em;
+    padding: 1px 7px; border-radius: 2px; border: 1px solid var(--rule-strong);
+    color: var(--ink-3); white-space: nowrap; line-height: 1.6;
+  }
+  .rm-src-badge.src-offline { color: var(--accent); border-color: var(--accent-underline); background: var(--accent-wash); }
+  .rm-src-badge.src-vector { color: #35618f; border-color: #a8bdd4; background: rgba(80, 130, 180, 0.08); }
+  [data-theme="dark"] .rm-src-badge.src-vector { color: #9dc0e0; border-color: #3d5a74; background: rgba(120, 170, 220, 0.10); }
+  .rm-src-badge.src-osm { color: #9a6a2f; border-color: #d8c0a0; background: rgba(180, 130, 60, 0.08); }
+  [data-theme="dark"] .rm-src-badge.src-osm { color: #d6b07a; border-color: #6d5738; background: rgba(200, 150, 80, 0.10); }
   .rm-card-body { padding: 11px 12px 12px; display: flex; flex-direction: column; gap: 10px; }
 
   .rm-tabs { display: flex; border: 1px solid var(--rule-strong); }
@@ -277,11 +288,11 @@
     <header class="rm-head page-head">
       <p class="page-eyebrow">TOOL · OPENSTREETMAP → SVG</p>
       <h1 class="page-title">城市路网 SVG 底图生成器</h1>
-      <p class="page-desc">选一座城市、搜一个地名，或者直接输入任意经纬度范围，从 OpenStreetMap 抓取道路中心线，按道路等级分层渲染成一张<b>不含任何文字标注</b>的矢量路网底图。支持浅色、深色、透明三种配色，SVG 与 PNG 一键下载，适合做海报底纹、示意图背景或数据可视化底图。</p>
+      <p class="page-desc">选一座城市、搜一个地名，或者直接输入任意经纬度范围，得到一张<b>不含任何文字标注</b>的矢量路网底图。预置城市读取随站点分发的内置离线数据（秒开）；其它区域按尺寸自动选 zoom，用矢量瓦片并发抓取；极端情况下自动回退 Overpass。支持浅色、深色、透明三种配色，SVG 与 PNG 一键下载，适合做海报底纹、示意图背景或数据可视化底图。</p>
       <div class="rm-meta-row">
         <span><i class="dot"></i>纯静态 · 零依赖 · 无需登录</span>
-        <span>预置 17 座城市 + 任意地名搜索 + 自定义 bbox</span>
-        <span>数据 © OpenStreetMap contributors（ODbL 1.0）</span>
+        <span>预置城市离线数据 + 任意地名搜索 + 自定义 bbox</span>
+        <span>数据 © OpenStreetMap contributors（ODbL 1.0）· 瓦片 OpenFreeMap / VersaTiles</span>
       </div>
     </header>
 
@@ -290,7 +301,7 @@
     <div class="rm-grid">
       <aside class="rm-side">
         <section class="rm-card">
-          <h2>① 选择区域 <span class="step" id="modeStep">预置城市</span></h2>
+          <h2>① 选择区域 <span class="step" id="modeStep">预置城市</span><span class="rm-src-badge" id="regionSourceBadge">—</span></h2>
           <div class="rm-card-body">
             <div class="rm-tabs" role="tablist" aria-label="区域选择方式">
               <button class="rm-tab active" type="button" data-tab="preset" role="tab" aria-selected="true">预置城市</button>
@@ -302,7 +313,7 @@
               <label class="rm-field">城市
                 <select id="citySelect"></select>
               </label>
-              <p class="rm-hint">预置城市覆盖主城区约 15–25 km 范围；想要其它地方请用「名称搜索」或「自定义 bbox」。</p>
+              <p class="rm-hint">标「内置」的城市已随站点打包离线路网数据（秒开、file:// 也能用）；标「在线」的点「获取道路数据」走矢量瓦片。其它地方请用「名称搜索」或「自定义 bbox」。</p>
             </div>
 
             <div class="rm-tab-panel" data-panel="search" hidden>
@@ -344,7 +355,7 @@
         </section>
 
         <section class="rm-card">
-          <h2>② 抓取道路数据 <span class="step">Overpass API</span></h2>
+          <h2>② 抓取道路数据 <span class="step">矢量瓦片 · Overpass 兜底</span></h2>
           <div class="rm-card-body">
             <label class="rm-check"><input type="checkbox" id="optService" checked> 包含 service 道路（小区内部路、停车场通道等，数据量会明显变大）</label>
             <div class="rm-row">
@@ -355,7 +366,7 @@
             <div class="rm-progress" aria-hidden="true"><i id="progBar"></i></div>
             <div class="rm-status" id="status">就绪。当前显示的是内置示例数据。</div>
             <pre class="rm-log" id="log" aria-live="polite"></pre>
-            <p class="rm-hint">分块抓取、失败自动重试并切换公共端点。<b>公共实例可能排队较慢</b>；抓取中可随时取消，已取得的部分仍会渲染。</p>
+            <p class="rm-hint">自定义区域按尺寸自动选 zoom，用 <b>VersaTiles / OpenFreeMap 矢量瓦片</b>并发抓取（失败自动换服务，最后回退 Overpass）；抓取中可随时取消，已取得的部分仍会渲染。</p>
           </div>
         </section>
 
@@ -426,6 +437,7 @@
           <h2>统计与图例 <span class="step" id="sourceStep">内置示例</span></h2>
           <div class="rm-card-body">
             <dl class="rm-stats" id="stats">
+              <dt>数据源</dt><dd id="stSource">—</dd>
               <dt>道路条数</dt><dd class="hl" id="stWays">—</dd>
               <dt>区域范围</dt><dd id="stBbox">—</dd>
               <dt>范围尺寸</dt><dd id="stSize">—</dd>
@@ -441,23 +453,23 @@
 
     <div class="rm-about">
       <section>
-        <h3>它是怎么画的</h3>
-        <p>按经纬度 bbox 把区域切成小网格，逐块向 Overpass API 请求 <code>highway=*</code> 道路的几何中心线；用 Web Mercator 投影（按纬度做 cos 修正）换算成像素，再按 6 个等级分组、以不同线宽和颜色画成一条条 <code>&lt;path&gt;</code>。只画线，不写任何路名或地名——这正是原项目的核心卖点。</p>
+        <h3>三档数据源</h3>
+        <p><b>① 内置离线</b>：预置城市的路网随站点分发，选城市即秒开（<code>file://</code> 也能用）。<b>② 矢量瓦片</b>：自定义 bbox / 地名搜索按范围自动选 zoom，并发抓取 <a href="https://tiles.versatiles.org" target="_blank" rel="noopener noreferrer">VersaTiles</a>（Shortbread）与 <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>（OpenMapTiles）的 MVT 瓦片，在浏览器里自研解码，15 km 城区约 4–6 秒。<b>③ Overpass 兜底</b>：两档都不可用时才逐块查 Overpass。三种来源最终都用 Web Mercator 投影、按 6 级分组、以不同线宽和颜色画成 <code>&lt;path&gt;</code>，只画线、不写任何路名或地名——这正是原项目的核心卖点。</p>
       </section>
       <section>
         <h3>数据来源与许可</h3>
-        <p>路网数据来自 <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>，通过 <a href="https://overpass-api.de/" target="_blank" rel="noopener noreferrer">Overpass API</a> 查询；地名搜索使用 <a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener noreferrer">Nominatim</a>。数据版权归 © OpenStreetMap contributors，按 <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener noreferrer">ODbL 1.0</a> 许可使用，二次分发请保留署名与许可链接。</p>
+        <p>所有路网数据均来自 <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>（© OpenStreetMap contributors，<a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener noreferrer">ODbL 1.0</a>）。矢量瓦片由 <a href="https://versatiles.org/" target="_blank" rel="noopener noreferrer">VersaTiles</a>（<a href="https://shortbread-tiles.org/" target="_blank" rel="noopener noreferrer">Shortbread</a> schema）与 <a href="https://openfreemap.org/" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>（<a href="https://openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> schema）提供；兜底查询用 <a href="https://overpass-api.de/" target="_blank" rel="noopener noreferrer">Overpass API</a>；地名搜索用 <a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener noreferrer">Nominatim</a>。二次分发请保留上述署名与许可链接。</p>
       </section>
       <section>
         <h3>使用提示</h3>
-        <p>页面本身零依赖、可离线打开；但<b>抓取数据需要联网</b>。用 <code>file://</code> 直接双击打开时，浏览器会把跨域请求判定为 CORS 失败，建议在站点根目录执行 <code>python -m http.server 8000</code> 后访问 <code>http://localhost:8000/works/roadmap-svg/</code>。抓取大范围时请耐心等待，或点「取消」保留已取得的部分。</p>
+        <p>页面本身零依赖：<b>预置城市的内置数据在 <code>file://</code> 下也能直接用</b>；但矢量瓦片 / Overpass 抓取需要联网且会被 CORS 限制，建议在站点根目录执行 <code>python -m http.server 8000</code> 后访问 <code>http://localhost:8000/works/roadmap-svg/</code>。抓取大范围时请耐心等待，或点「取消」保留已取得的部分。</p>
       </section>
     </div>
 
     <details class="rm-details">
       <summary>与原版 Python 工具的差异 &amp; 已知限制</summary>
-      <p>原版是本地 Python 脚本（<code>roadmap_svg.py</code>）：固定城市字典、分块请求 Overpass、落盘缓存、只输出深色/浅色两种全图 SVG，城市范围写死在代码里，加一座城市要改源码。网页版保留相同的分块抓取与投影/分级/无标注渲染思路，但把「先把数据下载到本地再渲染」改成了浏览器里「抓取 → 投影 → 即时渲染 → 导出」一条龙；区域来源扩展为预置 17 城、Nominatim 任意地名搜索、以及自定义四至坐标或中心点+宽高；配色扩展为浅色/深色/透明三种；导出支持 SVG（含 viewBox、<code>shape-rendering="geometricPrecision"</code>）、PNG（2×/3× canvas 导出）与复制源码。</p>
-      <p>限制：① Overpass / Nominatim 都是公共免费服务，有速率限制与排队，慢或临时不可用属正常，页面会重试并给出原因；② 大范围（超过约 0.6°×0.6°）会显著变慢，建议缩小区域或用较小画布导出；③ 浏览器端不落盘缓存，每次抓取都会重新请求；④ 只取道路中心线，不含建筑、水系、绿地等其它要素；⑤ PNG 导出受浏览器 canvas 尺寸限制，超长图会自动限制倍率。</p>
+      <p>原版是本地 Python 脚本（<code>roadmap_svg.py</code>）：固定城市字典、分块请求 Overpass、落盘缓存、只输出深色/浅色两种全图 SVG，城市范围写死在代码里，加一座城市要改源码。网页版保留投影/分级/无标注的渲染思路，但把数据获取升级为三档：预置城市读随站点分发的离线数据（坐标量化 q=100000，秒开）、自定义区域用矢量瓦片（浏览器内自研 MVT 解码器，兼容 Shortbread 的 <code>streets</code> 与 OpenMapTiles 的 <code>transportation</code> 两种 schema）、Overpass 只在最后兜底。区域来源扩展为预置城市 / Nominatim 搜索 / 自定义四至坐标或中心点+宽高；配色扩展为浅色/深色/透明；导出支持 SVG（含 viewBox、<code>shape-rendering="geometricPrecision"</code>）、PNG（2×/3× canvas）与复制源码。</p>
+      <p>限制：① 矢量瓦片服务与 Nominatim 都是公共免费服务，可能限流或临时不可用，页面会自动切换/重试并给出原因；② 自定义范围超过约 50 km 时矢量瓦片会降到较低 zoom（更概略），Overpass 兜底则可能很慢；③ 浏览器端不落盘缓存，在线数据每次都会重新请求；④ 只取道路中心线，不含建筑、水系、绿地等其它要素；⑤ PNG 导出受浏览器 canvas 尺寸限制，超长图会自动限制倍率。</p>
     </details>
 
     <footer class="site-footer">

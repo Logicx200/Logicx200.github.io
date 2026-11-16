@@ -14,8 +14,8 @@
  },
  "totals": {
   "projects": 44,
-  "files": 4988,
-  "bytes": 253299304,
+  "files": 5019,
+  "bytes": 263893993,
   "excluded": 4
  },
  "categories": [
@@ -1603,9 +1603,9 @@
    "entry": "works/esp32-oled-test/README.md",
    "published": true,
    "sourceFiles": 10,
-   "sourceBytes": 77004,
+   "sourceBytes": 77005,
    "publishedFiles": 10,
-   "publishedBytes": 77004,
+   "publishedBytes": 77005,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -1679,20 +1679,23 @@
    "id": "roadmap-svg",
    "dir": "works/roadmap-svg",
    "title": "城市路网 SVG 底图生成器",
-   "subtitle": "任意城市的无标注路网底图，在线生成并下载",
+   "subtitle": "29 座城市离线秒开，任意区域在线生成，可下载 SVG / PNG",
    "category": "geo",
    "tags": [
     "OpenStreetMap",
     "Overpass API",
+    "Vector Tiles",
+    "MVT",
     "SVG",
     "地图"
    ],
-   "summary": "选一个城市、搜一个地名，或直接框一段经纬度，从 OpenStreetMap 取道路几何，按等级分线宽画成完全不含文字标注的底图，导出 SVG 或 PNG。原版是一套 Python 脚本（Overpass 分块抓取 + BBBike 下载 + 自写投影渲染），城市范围写死在代码里；网页版把整条链路搬进浏览器，换城市不用改代码、不用装环境。",
+   "summary": "选一个城市、搜一个地名，或直接框一段经纬度，得到一张完全不含文字标注的矢量路网底图，导出 SVG 或 PNG。原版是一套 Python 脚本（Overpass 分块抓取 + BBBike 下载 + 自写投影渲染），城市写死在代码里；网页版把整条链路搬进浏览器，并做了三档数据源：**预置 29 城内置离线数据**（点开就是 0.1–0.4 秒出图、离线可用）、**自定义区域走矢量瓦片**（自研 MVT 解码器，按范围自动选 zoom，15 km 城区约 4–6 秒）、以及 **Overpass 兜底**（前两档都失败时才用）。",
    "highlights": [
-    "预置 17 城 + Nominatim 地名搜索 + 自定义 bbox（也支持中心点 + 宽高换算）",
-    "Overpass 分块抓取：进度条 / 取消 / 失败重试 / 端点自动轮换",
-    "浅色 / 深色 / 透明三配色，按 6 个道路等级分层线宽，无任何文字标注",
-    "下载 SVG / PNG、复制源码；内置太原示例打开即可离线预览"
+    "29 座城市内置离线数据（构建时抓取），点开 0.1–0.4 秒出图，离线也能用",
+    "自定义 bbox：自研零依赖 MVT 解码器，按 3–50 km 自动选 z11–z15，并发抓瓦片约 4–6 秒",
+    "三档数据源：内置数据 → 矢量瓦片（VersaTiles / OpenFreeMap）→ Overpass 兜底",
+    "浅色 / 深色 / 透明三配色，6 级道路分层线宽，无任何文字标注",
+    "导出 SVG / PNG、复制源码，数据 © OpenStreetMap contributors（ODbL）"
    ],
    "tech": [
     "JavaScript",
@@ -1704,10 +1707,10 @@
    "demo": "works/roadmap-svg/index.html",
    "entry": "works/roadmap-svg/README.md",
    "published": true,
-   "sourceFiles": 13,
-   "sourceBytes": 694722,
-   "publishedFiles": 13,
-   "publishedBytes": 694722,
+   "sourceFiles": 44,
+   "sourceBytes": 11289410,
+   "publishedFiles": 44,
+   "publishedBytes": 11289410,
    "excludeReason": "",
    "excludeNote": "",
    "featured": true
