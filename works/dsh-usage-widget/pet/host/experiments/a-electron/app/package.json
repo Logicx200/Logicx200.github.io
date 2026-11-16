@@ -1,0 +1,7 @@
+{
+  "name": "pet-exp-a",
+  "version": "0.1.0",
+  "private": true,
+  "description": "EXPERIMENT A: Electron transparent window - mouse hit test + click-through toggle + cost measurement",
+  "main": "main.js"
+}

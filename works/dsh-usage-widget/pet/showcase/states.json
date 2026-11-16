@@ -1,0 +1,161 @@
+[
+  {
+    "state": "offline",
+    "label": "离线",
+    "color": "#8B949E",
+    "pose": "offline",
+    "detail": "DSH 未在运行",
+    "reason": "dshRunning === false",
+    "trigger": "心跳文件里 dshRunning === false（DSH 没在跑）",
+    "signals": null
+  },
+  {
+    "state": "stale",
+    "label": "数据过期",
+    "color": "#D2A8FF",
+    "pose": "sleepy",
+    "detail": "快照 600s 无更新",
+    "reason": "snapshot age 600000ms > SNAPSHOT_STALE_MS",
+    "trigger": "snapshot.at 距今 > SNAPSHOT_STALE_MS(45 000 ms)（引擎死了/快照没更新）",
+    "signals": null
+  },
+  {
+    "state": "error",
+    "label": "出错了",
+    "color": "#F85149",
+    "pose": "gloomy",
+    "detail": "报错 · edit · FsError/FS_STALE_VERSION",
+    "reason": "tool edit failed 400ms ago",
+    "trigger": "tool/result data.error = {name:\"FsError\", code:\"FS_STALE_VERSION\"}（或 turn/end reason.kind=\"error\"）",
+    "signals": {
+      "lastError": {
+        "name": "edit",
+        "error": "FsError/FS_STALE_VERSION",
+        "at": 0
+      }
+    }
+  },
+  {
+    "state": "celebrating",
+    "label": "收工啦",
+    "color": "#E3B341",
+    "pose": "happy",
+    "detail": "12.3s · 41380 tokens",
+    "reason": "turn completed 600ms ago",
+    "trigger": "turn/end data.reason.kind = \"completed\"（引擎顺带算出 ms=12300 / tokens=41380）",
+    "signals": {
+      "turn": {
+        "phase": "end",
+        "at": 0,
+        "reason": "completed",
+        "ms": 12300,
+        "tokens": 41380
+      }
+    }
+  },
+  {
+    "state": "listening",
+    "label": "听主人说",
+    "color": "#79C0FF",
+    "pose": "starry",
+    "detail": "",
+    "reason": "user message 500ms ago <= LISTEN_TTL_MS",
+    "trigger": "user/message data.source.kind = \"user\"（引擎透传 lastUserAt；TTL 2 600 ms）",
+    "signals": {
+      "lastUserAt": 0,
+      "lastUserText": "把表情交互加进去"
+    }
+  },
+  {
+    "state": "team",
+    "label": "团队协作",
+    "color": "#56D4DD",
+    "pose": "team",
+    "detail": "运行 2 个智能体 · Whale Girl showcase",
+    "reason": "2 agents running",
+    "trigger": "≥2 个 agent 的 state = \"running\"（snapshot.agents）",
+    "signals": null
+  },
+  {
+    "state": "reading",
+    "label": "查资料",
+    "color": "#58A6FF",
+    "pose": "reading",
+    "detail": "web_search · live2d expression",
+    "reason": "tool web_search in flight (reading)",
+    "trigger": "tool/call data.name = \"web_search\"（读类工具；上网类还会掏出小设备）",
+    "signals": {
+      "tool": {
+        "name": "web_search",
+        "phase": "call",
+        "at": 0,
+        "ok": null,
+        "error": null,
+        "summary": "live2d expression"
+      }
+    }
+  },
+  {
+    "state": "writing",
+    "label": "写文件",
+    "color": "#F0883E",
+    "pose": "scribble",
+    "detail": "edit · pet/renderer/reactions.js",
+    "reason": "tool edit in flight (writing)",
+    "trigger": "tool/call data.name = \"edit\"（写类：write / edit / todo_write）",
+    "signals": {
+      "tool": {
+        "name": "edit",
+        "phase": "call",
+        "at": 0,
+        "ok": null,
+        "error": null,
+        "summary": "pet/renderer/reactions.js"
+      }
+    }
+  },
+  {
+    "state": "running",
+    "label": "跑命令",
+    "color": "#FFA657",
+    "pose": "sleeves",
+    "detail": "pwsh · 45.2% 剩余 00:37",
+    "reason": "1 job(s) present",
+    "trigger": "snapshot.jobs[] 非空（tool/call data.name = \"pwsh\" 的未配对调用）",
+    "signals": {
+      "tool": {
+        "name": "pwsh",
+        "phase": "call",
+        "at": 0,
+        "ok": null,
+        "error": null,
+        "summary": "npm test"
+      }
+    }
+  },
+  {
+    "state": "thinking",
+    "label": "想事情",
+    "color": "#A5D6FF",
+    "pose": "thinking",
+    "detail": "正在输出",
+    "reason": "assistant step open",
+    "trigger": "assistant 步骤开着（step/start 未配对 step/end）或 event 距今 ≤ 30 000 ms",
+    "signals": {
+      "streaming": {
+        "active": true,
+        "at": 0
+      }
+    }
+  },
+  {
+    "state": "idle",
+    "label": "空闲",
+    "color": "#9DA7B3",
+    "pose": "idle",
+    "detail": "",
+    "reason": "nothing happening, DSH up",
+    "trigger": "以上都不成立（DSH 在跑、没工具、没任务、没出词）",
+    "signals": null
+  }
+]

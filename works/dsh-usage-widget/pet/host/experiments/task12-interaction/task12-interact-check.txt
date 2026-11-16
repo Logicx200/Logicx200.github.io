@@ -1,0 +1,25 @@
+﻿=== task-12 hit silhouette + interactions ===
+pet window  : 1562,688 340x340
+character   : 1669,824 .. 1894,1019
+host pid    : 10524
+our hwnd    : 0x15063a
+ok   A1 head (character)               1782,869   route=ours(child) hit=Chrome_RenderWidgetHostHWND
+ok   A2 body (character)               1782,974   route=ours(child) hit=Chrome_RenderWidgetHostHWND
+ok   B1 window top-left (empty)        1568,694   route=OTHERS      hit=HwndWrapper[DefaultDomain;Pipeline Execution Thread;5a35753b-342d-4bc2-8871-6c1a90e184b5]
+ok   B2 window bottom-left (empty)     1568,1022  route=OTHERS      hit=Chrome_RenderWidgetHostHWND
+ok   B3 window bottom-right (empty)    1896,1022  route=OTHERS      hit=Chrome_RenderWidgetHostHWND
+C  clicked the body once (poke)
+E  clicked the head four times quickly (rage tier)
+D  right-clicked the head (menu)
+--- page interaction receipts (pet\host\interact.log) ---
+13:11:19.415 {"interact":{"kind":"poke","at":1790745079383,"zone":"body","tier":1}}
+13:11:19.460 {"interact":{"kind":"drag-end","at":1790745079404,"moved":0,"snapped":false}}
+13:11:20.084 {"interact":{"kind":"poke","at":1790745080082,"zone":"head","tier":2}}
+13:11:20.129 {"interact":{"kind":"drag-end","at":1790745080120,"moved":0,"snapped":false}}
+13:11:20.436 {"interact":{"kind":"poke","at":1790745080433,"zone":"head","tier":3}}
+13:11:20.482 {"interact":{"kind":"drag-end","at":1790745080478,"moved":0,"snapped":false}}
+13:11:20.785 {"interact":{"kind":"poke","at":1790745080783,"zone":"head","tier":3}}
+13:11:20.831 {"interact":{"kind":"drag-end","at":1790745080827,"moved":0,"snapped":false}}
+13:11:21.134 {"interact":{"kind":"poke","at":1790745081132,"zone":"head","tier":4}}
+13:11:21.173 {"interact":{"kind":"drag-end","at":1790745081168,"moved":0,"snapped":false}}
+13:11:21.926 {"interact":{"kind":"menu-open","at":1790745081924,"x":202,"y":177,"items":11}}

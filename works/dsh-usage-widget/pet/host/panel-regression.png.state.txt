@@ -1,0 +1,12 @@
+toastCount=0 panelChildren=0 max=5
+hint=Collapsed
+footer=￥14.0578|$1.9800|240.7M|谷时|￥65.1398|$9.1746|￥47.60
+agents=Visible summary=[1 运行中 · 12 空闲 · +10] rows=3 max=3
+  agent[  ▸ ][Integrate the Live2D pet into the token panel][18:08] colour=#FF93DDA0
+  agent[  ▸ ][Define the pet work-state model and colours][00:08] colour=#FF79818C
+  agent[  ▸ ][Prove transparent Live2D rendering and land the assets][18:27] colour=#FF79818C
+jobs=Visible summary=[1 个程序运行中] rows=1 max=2
+  job[  ▶ ][pwsh][00:38][无进度输出]
+  job cmd[    Remove-Item -LiteralPath 'F:\dsh-usage-widget\ui\_probe-hide.ps1' -Force -ErrorAction SilentlyContinue Remo…]
+window=403x225 at 1499,789 topmost=True opacity=0.86 visible=True
+pet enabled=False want=1902,1014 0x0 panelRect=1499,789 403x225 hwnd=0x0 visible=False proc=none

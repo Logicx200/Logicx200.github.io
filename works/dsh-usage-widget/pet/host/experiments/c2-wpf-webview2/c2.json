@@ -1,0 +1,25 @@
+﻿{
+    "hwnd":  395300,
+    "x":  60,
+    "y":  60,
+    "w":  480,
+    "h":  320,
+    "allowsTransparency":  true,
+    "pageClicks":  2,
+    "lastMessage":  "\"{\\\"kind\\\":\\\"down\\\",\\\"x\\\":120,\\\"y\\\":160,\\\"n\\\":2,\\\"t\\\":1790743206659}\"",
+    "messageCount":  3,
+    "probes":  {
+                   "p1_page_opaque_and_alpha1":  {
+                                                     "y":  220,
+                                                     "x":  180
+                                                 },
+                   "p2_alpha1_only":  {
+                                          "y":  80,
+                                          "x":  80
+                                      },
+                   "p3_nothing":  {
+                                      "y":  220,
+                                      "x":  460
+                                  }
+               }
+}

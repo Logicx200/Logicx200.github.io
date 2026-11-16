@@ -1,0 +1,22 @@
+﻿{
+    "ok":  true,
+    "host":  "WPF + WebView2 (pet/host/host.ps1)",
+    "pid":  20268,
+    "parentPid":  10940,
+    "hwnd":  "0x3003e",
+    "bounds":  {
+                   "y":  688,
+                   "width":  340,
+                   "height":  340,
+                   "x":  1562
+               },
+    "topmost":  true,
+    "clickThrough":  true,
+    "allowsTransparency":  true,
+    "windowBackground":  "#00FFFFFF",
+    "webviewDefaultBackground":  "Color [Transparent]",
+    "runtime":  "156.0.4314.58",
+    "url":  "https://pet.local/renderer/index.html?anchor=br\u0026fill=0.735\u0026dx=-0.0470588235294118\u0026dy=0.0705882352941176",
+    "userDataFolder":  "C:\\Users\\x1503\\AppData\\Local\\dsh-usage-widget\\webview2",
+    "page":  "\"{\\\"ready\\\":true,\\\"alpha\\\":[0,0,0,0],\\\"state\\\":{\\\"state\\\":\\\"offline\\\",\\\"label\\\":\\\"离线\\\",\\\"color\\\":\\\"#8B949E\\\",\\\"detail\\\":\\\"DSH 未在运行\\\",\\\"pose\\\":\\\"offline\\\",\\\"reason\\\":\\\"dshRunning === false\\\",\\\"source\\\":\\\"snapshot\\\"},\\\"motionGroups\\\":[\\\"idle\\\",\\\"aidale\\\",\\\"selfie\\\",\\\"selfieQuick\\\",\\\"ketchup\\\",\\\"openLid\\\",\\\"bubble\\\",\\\"splash\\\"],\\\"settingsMotions\\\":[\\\"idle\\\",\\\"aidale\\\",\\\"selfie\\\",\\\"selfieQuick\\\",\\\"ketchup\\\",\\\"openLid\\\",\\\"bubble\\\",\\\"splash\\\"],\\\"expressions\\\":[\\\"heartPop\\\",\\\"loveEyes\\\",\\\"parfait\\\",\\\"sad\\\",\\\"drool\\\",\\\"undo\\\",\\\"blank\\\",\\\"ponytail\\\",\\\"omurice\\\",\\\"menuPress\\\",\\\"naughty\\\",\\\"glassesSquare\\\",\\\"exclaim\\\",\\\"stickerBow\\\",\\\"brush\\\",\\\"squeeze\\\",\\\"whaleHat\\\",\\\"whaleOnDesk\\\",\\\"excited\\\",\\\"cry\\\",\\\"blush\\\",\\\"sweat\\\",\\\"stickerCat\\\",\\\"catPaws\\\",\\\"claw\\\",\\\"clawRecolor\\\",\\\"sunglasses\\\",\\\"sparkle\\\",\\\"darkCloth\\\",\\\"angry\\\",\\\"phoneRecolor\\\",\\\"doubleV\\\",\\\"headband\\\",\\\"soulOut\\\",\\\"tongueOut\\\",\\\"stickerRabbit\\\",\\\"glassesOval\\\",\\\"question\\\",\\\"eraser\\\",\\\"heartbeat\\\",\\\"starry\\\",\\\"gloomy\\\",\\\"glassesRound\\\",\\\"dizzy\\\"]}\""
+}

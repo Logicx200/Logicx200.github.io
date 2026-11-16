@@ -1,0 +1,24 @@
+﻿
+01:36:28.563 start; ps=5.1.26100.9549 apartment=STA
+01:36:28.701 webview2 assemblies loaded
+01:36:29.146 wpf window shown; AllowsTransparency=True bg=#00FFFFFF DefaultBackgroundColor=Color [Transparent]
+01:36:29.159 entering Dispatcher.Run()
+01:36:29.426 control loaded; calling EnsureCoreWebView2Async
+01:36:31.285 CoreWebView2 ready after 2000ms; runtime=154.0.4258.37
+01:36:31.296 NavigateToString called; DefaultBackgroundColor=Color [Transparent]
+01:36:31.299 tick 1 url=about:blank
+01:36:31.549 tick 2 url=about:blank
+01:36:31.800 tick 3 url=about:blank
+01:36:32.054 tick 4 url=about:blank
+01:36:32.302 tick 5 url=about:blank
+01:36:32.548 tick 6 url=about:blank
+01:36:32.798 tick 7 url=about:blank
+01:36:33.050 tick 8 url=about:blank
+01:36:33.299 tick 9 url=about:blank
+01:36:33.547 tick 10 url=about:blank
+01:36:33.828 tick 11 url=about:blank
+01:36:34.082 tick 12 url=about:blank
+01:36:34.333 tick 13 url=about:blank
+01:36:34.579 tick 14 url=about:blank
+01:36:34.628 screenshot saved: F:\dsh-usage-widget\pet\renderer\webview2-test\wpf-transparent.png
+01:36:34.717 dispatcher loop exited; DONE

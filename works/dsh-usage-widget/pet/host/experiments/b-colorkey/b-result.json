@@ -1,0 +1,52 @@
+﻿{
+    "q4":  {
+               "label":  "Q4 child blue",
+               "x":  165,
+               "y":  205,
+               "hit":  "0xe0840",
+               "hitClass":  "CASCADIA_HOSTING_WINDOW_CLASS",
+               "hitTitle":  "管理员: Windows PowerShell",
+               "root":  "0xe0840",
+               "proc":  "WindowsTerminal",
+               "isOurs":  false,
+               "route":  "OTHERS"
+           },
+    "q3":  {
+               "label":  "Q3 child magenta",
+               "x":  280,
+               "y":  340,
+               "hit":  "0xe0840",
+               "hitClass":  "CASCADIA_HOSTING_WINDOW_CLASS",
+               "hitTitle":  "管理员: Windows PowerShell",
+               "root":  "0xe0840",
+               "proc":  "WindowsTerminal",
+               "isOurs":  false,
+               "route":  "OTHERS"
+           },
+    "q2":  {
+               "label":  "Q2 parent green",
+               "x":  440,
+               "y":  190,
+               "hit":  "0x907ea",
+               "hitClass":  "WindowsForms10.Window.8.app.0.255493b_r13_ad1",
+               "hitTitle":  "",
+               "root":  "0x2d0380",
+               "proc":  "powershell",
+               "isOurs":  true,
+               "route":  "ours(child)"
+           },
+    "pageClicksAfter":  -1,
+    "q1":  {
+               "label":  "Q1 parent magenta",
+               "x":  400,
+               "y":  340,
+               "hit":  "0xe0840",
+               "hitClass":  "CASCADIA_HOSTING_WINDOW_CLASS",
+               "hitTitle":  "管理员: Windows PowerShell",
+               "root":  "0xe0840",
+               "proc":  "WindowsTerminal",
+               "isOurs":  false,
+               "route":  "OTHERS"
+           },
+    "pageClicksBefore":  -1
+}

@@ -1,0 +1,7 @@
+﻿
+12:41:08.742 assemblies ok
+12:41:08.914 hwnd=0x2d0380 SetLayeredWindowAttributes=True key=0x00ff00ff alpha=0 flags=1 exStyle=0x90008
+12:41:09.370 EnsureCoreWebView2Async called
+12:41:10.152 navigated
+12:41:10.354 MSG "{\"kind\":\"ready\",\"x\":0,\"y\":0,\"n\":0}"
+12:41:43.155 done

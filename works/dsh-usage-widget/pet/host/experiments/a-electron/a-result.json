@@ -1,0 +1,82 @@
+﻿{
+    "startupMsInProcess":  624,
+    "ctOn":  [
+                 {
+                     "label":  "CT-ON dot(opaque)",
+                     "x":  290,
+                     "y":  280,
+                     "hit":  "0x3072c",
+                     "hitClass":  "Chrome_RenderWidgetHostHWND",
+                     "hitTitle":  "Chrome Legacy Window",
+                     "root":  "0x10706",
+                     "proc":  "DeepSeek Harness",
+                     "isOurs":  false,
+                     "route":  "OTHERS"
+                 },
+                 {
+                     "label":  "CT-ON corner(transparent)",
+                     "x":  90,
+                     "y":  600,
+                     "hit":  "0x3072c",
+                     "hitClass":  "Chrome_RenderWidgetHostHWND",
+                     "hitTitle":  "Chrome Legacy Window",
+                     "root":  "0x10706",
+                     "proc":  "DeepSeek Harness",
+                     "isOurs":  false,
+                     "route":  "OTHERS"
+                 }
+             ],
+    "state":  {
+                  "pid":  6064,
+                  "electron":  "44.0.0",
+                  "execPath":  "F:\\dsh-usage-widget\\pet\\host\\experiments\\a-electron\\dist\\DeepSeek Harness.exe",
+                  "resourcesPath":  "F:\\dsh-usage-widget\\pet\\host\\experiments\\a-electron\\dist\\resources",
+                  "t0":  1790743589000,
+                  "readyAt":  1790743589622,
+                  "showAt":  1790743589624,
+                  "clickThrough":  true,
+                  "clicks":  0,
+                  "events":  [
+
+                             ],
+                  "error":  null,
+                  "hwnd":  "0xe07d4",
+                  "loadedAt":  1790743589390
+              },
+    "ctOff":  [
+                  {
+                      "label":  "CT-OFF dot(opaque)",
+                      "x":  290,
+                      "y":  280,
+                      "hit":  "0x1107ea",
+                      "hitClass":  "Chrome_RenderWidgetHostHWND",
+                      "hitTitle":  "Chrome Legacy Window",
+                      "root":  "0xe07d4",
+                      "proc":  "DeepSeek Harness",
+                      "isOurs":  true,
+                      "route":  "ours(child)"
+                  },
+                  {
+                      "label":  "CT-OFF corner(transparent)",
+                      "x":  90,
+                      "y":  600,
+                      "hit":  "0x1107ea",
+                      "hitClass":  "Chrome_RenderWidgetHostHWND",
+                      "hitTitle":  "Chrome Legacy Window",
+                      "root":  "0xe07d4",
+                      "proc":  "DeepSeek Harness",
+                      "isOurs":  true,
+                      "route":  "ours(child)"
+                  }
+              ],
+    "startupMsWallClock":  3107,
+    "treePids":  [
+                     6064,
+                     18216,
+                     21948,
+                     16340
+                 ],
+    "memMB":  498,
+    "clicksBefore":  0,
+    "clicksAfter":  4
+}

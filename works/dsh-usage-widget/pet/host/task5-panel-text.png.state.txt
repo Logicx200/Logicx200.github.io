@@ -1,0 +1,61 @@
+toastCount=5 panelChildren=5 max=5
+  [02:51:18 上传 命中 98,765tokens -￥0.0008] opacity=1 colour=#FF7EE787
+  [02:51:18 上传 未命中 4,321tokens -￥0.000035] opacity=1 colour=#FFFF7B72
+  [02:51:18 下载 6,789tokens -￥0.000056] opacity=1 colour=#FFC9D1DC
+  [02:51:19 上传 命中 312,000tokens -￥0.0031] opacity=1 colour=#FF7EE787
+  [02:51:19 上传 未命中 4,549tokens -￥0.000045] opacity=1 colour=#FFFF7B72
+hint=Collapsed
+footer=￥2.0705|$0.2903|7.8M|谷时|￥53.4893|$7.5328|￥8.47
+agents=Visible summary=[2 运行中 · 3 空闲 · +2] rows=3 max=3
+  agent[  ▸ ][Sample agent with a much too long label that has to be ellipsised][06:52] colour=#FF93DDA0
+  agent[  ▸ ][Build widget WPF UI][1:02:05] colour=#FF93DDA0
+  agent[  ▸ ][Idle reviewer][03:10] colour=#FF79818C
+jobs=Visible summary=[4 个程序运行中] rows=2 max=2
+  job[  ▶ ][pwsh][01:05][45.2%  剩余 00:37]
+  job cmd[    node sim.mjs --steps 500]
+  job[  ▶ ][node][03:02][无进度输出]
+  job cmd[    node -e "for (let i = 0; i < 1e9; i++) {}" --trace-warnings --max-old-space-size=4096]
+window=403x339 at 1491,543 topmost=True opacity=0.86 visible=True
+pet enabled=False want=1562,688 340x340 panelRect=1491,543 403x339 panelRight=1894 modelRight=1894 modelSource=measured hwnd=0x0 visible=False proc=none
+textrects=40 (screen px; window origin 1491,543)
+  text x=1502 y=551 w=381 h=16 right=1883 bottom=567 [02:51:18 上传 命中 98,765tokens -￥0.0008]
+  text x=1502 y=567 w=381 h=16 right=1883 bottom=583 [02:51:18 上传 未命中 4,321tokens -￥0.000035]
+  text x=1502 y=583 w=381 h=16 right=1883 bottom=599 [02:51:18 下载 6,789tokens -￥0.000056]
+  text x=1502 y=599 w=381 h=16 right=1883 bottom=615 [02:51:19 上传 命中 312,000tokens -￥0.0031]
+  text x=1502 y=615 w=381 h=16 right=1883 bottom=631 [02:51:19 上传 未命中 4,549tokens -￥0.000045]
+  text x=1502 y=644 w=42 h=16 right=1544 bottom=660 [智能体]
+  text x=1554 y=644 w=329 h=16 right=1883 bottom=660 [2 运行中 · 3 空闲 · +2]
+  text x=1502 y=660 w=33 h=16 right=1535 bottom=676 [  ▸ ]
+  text x=1535 y=660 w=297 h=16 right=1832 bottom=676 [Sample agent with a much too long label that has to be ellipsised]
+  text x=1842 y=660 w=41 h=16 right=1883 bottom=676 [06:52]
+  text x=1502 y=676 w=33 h=16 right=1535 bottom=692 [  ▸ ]
+  text x=1535 y=676 w=281 h=16 right=1816 bottom=692 [Build widget WPF UI]
+  text x=1826 y=676 w=57 h=16 right=1883 bottom=692 [1:02:05]
+  text x=1502 y=692 w=33 h=16 right=1535 bottom=708 [  ▸ ]
+  text x=1535 y=692 w=297 h=16 right=1832 bottom=708 [Idle reviewer]
+  text x=1842 y=692 w=41 h=16 right=1883 bottom=708 [03:10]
+  text x=1502 y=721 w=28 h=16 right=1530 bottom=737 [后台]
+  text x=1540 y=721 w=343 h=16 right=1883 bottom=737 [4 个程序运行中]
+  text x=1502 y=737 w=33 h=16 right=1535 bottom=753 [  ▶ ]
+  text x=1535 y=737 w=50 h=16 right=1585 bottom=753 [pwsh]
+  text x=1597 y=737 w=41 h=16 right=1638 bottom=753 [01:05]
+  text x=1748 y=737 w=135 h=16 right=1883 bottom=753 [45.2%  剩余 00:37]
+  text x=1502 y=753 w=381 h=16 right=1883 bottom=769 [    node sim.mjs --steps 500]
+  text x=1502 y=771 w=33 h=16 right=1535 bottom=787 [  ▶ ]
+  text x=1535 y=771 w=50 h=16 right=1585 bottom=787 [node]
+  text x=1597 y=771 w=41 h=16 right=1638 bottom=787 [03:02]
+  text x=1813 y=771 w=70 h=16 right=1883 bottom=787 [无进度输出]
+  text x=1502 y=787 w=381 h=16 right=1883 bottom=803 [    node -e "for (let i = 0; i < 1e9; i++) {}" --trace-warnings --max-old-space-size=4096]
+  text x=1502 y=809 w=28 h=16 right=1530 bottom=825 [今日]
+  text x=1540 y=809 w=63 h=16 right=1603 bottom=825 [￥2.0705]
+  text x=1623 y=809 w=57 h=16 right=1680 bottom=825 [$0.2903]
+  text x=1817 y=809 w=33 h=16 right=1850 bottom=825 [7.8M]
+  text x=1850 y=809 w=33 h=16 right=1883 bottom=825 [ tok]
+  text x=1502 y=825 w=28 h=16 right=1530 bottom=841 [峰谷]
+  text x=1540 y=825 w=28 h=16 right=1568 bottom=841 [谷时]
+  text x=1502 y=841 w=28 h=16 right=1530 bottom=857 [总计]
+  text x=1540 y=841 w=71 h=16 right=1611 bottom=857 [￥53.4893]
+  text x=1623 y=841 w=57 h=16 right=1680 bottom=857 [$7.5328]
+  text x=1502 y=857 w=28 h=16 right=1530 bottom=873 [余额]
+  text x=1540 y=857 w=47 h=16 right=1587 bottom=873 [￥8.47]
+model.metrics screen.model={"left":1669,"top":824,"right":1894,"bottom":1019} screen.label={"left":1829,"top":837,"right":1883,"bottom":853} gaps={"labelTopMinusModelTop":13,"modelRightMinusLabelRight":11}

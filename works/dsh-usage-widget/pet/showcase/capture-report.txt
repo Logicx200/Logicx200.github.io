@@ -1,0 +1,11 @@
+﻿offline | 离线 | #8B949E | pose=offline | detail="DSH 未在运行" | reason="dshRunning === false" | 436x545 | 73 KB
+stale | 数据过期 | #D2A8FF | pose=sleepy | detail="快照 600s 无更新" | reason="snapshot age 600000ms > SNAPSHOT_STALE_MS" | 436x545 | 87 KB
+error | 出错了 | #F85149 | pose=gloomy | detail="报错 · edit · FsError/FS_STALE_VERSION" | reason="tool edit failed 400ms ago" | 436x545 | 92 KB
+celebrating | 收工啦 | #E3B341 | pose=happy | detail="12.3s · 41380 tokens" | reason="turn completed 600ms ago" | 436x545 | 87 KB
+listening | 听主人说 | #79C0FF | pose=starry | detail="" | reason="user message 500ms ago <= LISTEN_TTL_MS" | 436x545 | 86 KB
+team | 团队协作 | #56D4DD | pose=team | detail="运行 2 个智能体 · Whale Girl showcase" | reason="2 agents running" | 436x545 | 88 KB
+reading | 查资料 | #58A6FF | pose=reading | detail="web_search · live2d expression" | reason="tool web_search in flight (reading)" | 436x545 | 90 KB
+writing | 写文件 | #F0883E | pose=scribble | detail="edit · pet/renderer/reactions.js" | reason="tool edit in flight (writing)" | 436x545 | 90 KB
+running | 跑命令 | #FFA657 | pose=sleeves | detail="pwsh · 45.2% 剩余 00:37" | reason="1 job(s) present" | 436x545 | 91 KB
+thinking | 想事情 | #A5D6FF | pose=thinking | detail="正在输出" | reason="assistant step open" | 436x545 | 86 KB
+idle | 空闲 | #9DA7B3 | pose=idle | detail="" | reason="nothing happening, DSH up" | 436x545 | 85 KB

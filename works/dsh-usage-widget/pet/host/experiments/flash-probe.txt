@@ -1,0 +1,1 @@
+﻿  baseline visible console-class windows: 6 [CASCADIA_HOSTING_WINDOW_CLASS/pid27696, CASCADIA_HOSTING_WINDOW_CLASS/pid27696, PseudoConsoleWindow/pid24708, CASCADIA_HOSTING_WINDOW_CLASS/pid27696, PseudoConsoleWindow/pid3636, PseudoConsoleWindow/pid21920]  peak during the 30 s window: 6 (baseline 6)  distinct console windows seen: 4

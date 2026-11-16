@@ -1,0 +1,138 @@
+[
+ {
+  "file": "base-0001-w0.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0002-w1.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0003-w2.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0004-w3.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0005-w4.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0006-w5.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0007-w6.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0008-w7.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0009-w8.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0010-w9.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0011-w10.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0012-w11.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0013-w12.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0014-w13.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0015-w14.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0016-w15.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0017-w16.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0018-w17.png",
+  "group": "baseline"
+ },
+ {
+  "file": "base-0019-w18.png",
+  "group": "baseline"
+ },
+ {
+  "file": "forced-0001-f-idle.png",
+  "group": "f-idle"
+ },
+ {
+  "file": "forced-0002-f-reading.png",
+  "group": "f-reading"
+ },
+ {
+  "file": "forced-0003-f-writing.png",
+  "group": "f-writing"
+ },
+ {
+  "file": "forced-0004-f-running.png",
+  "group": "f-running"
+ },
+ {
+  "file": "forced-0005-f-thinking.png",
+  "group": "f-thinking"
+ },
+ {
+  "file": "forced-0006-f-error.png",
+  "group": "f-error"
+ },
+ {
+  "file": "forced-0007-f-celebrating.png",
+  "group": "f-celebrating"
+ },
+ {
+  "file": "forced-0008-f-listening.png",
+  "group": "f-listening"
+ },
+ {
+  "file": "forced-0009-f-team.png",
+  "group": "f-team"
+ },
+ {
+  "file": "forced-0010-f-stale.png",
+  "group": "f-stale"
+ },
+ {
+  "file": "forced-0011-f-offline.png",
+  "group": "f-offline"
+ },
+ {
+  "file": "forced-0012-f-decor-glasses.png",
+  "group": "f-decor-glasses"
+ },
+ {
+  "file": "forced-0013-f-decor-phone.png",
+  "group": "f-decor-phone"
+ },
+ {
+  "file": "forced-0014-f-act-love.png",
+  "group": "f-act-love"
+ },
+ {
+  "file": "forced-0015-f-act-selfie.png",
+  "group": "f-act-selfie"
+ }
+]

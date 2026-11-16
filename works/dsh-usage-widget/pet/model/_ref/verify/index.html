@@ -1,0 +1,104 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<title>expressions bench</title>
+<style>
+ html,body{margin:0;height:100%;background:#101318;color:#e6edf3;
+   font:13px/1.6 Consolas,"Microsoft YaHei",monospace;overflow:hidden}
+ #out{position:fixed;left:10px;top:8px;right:10px;white-space:pre-wrap;z-index:9}
+ #big{font-size:20px;font-weight:700}
+ .ok{color:#7EE787}.bad{color:#FF7B72}.dim{color:#8B949E}
+ canvas{position:absolute;left:0;top:0}
+</style></head><body>
+<div id="out">loading…</div>
+<script src="../../../model/vendor/live2dcubismcore.min.js"></script>
+<script src="../../../model/vendor/pixi.min.js"></script>
+<script src="../../../model/vendor/cubism4.min.js"></script>
+<script>
+const NAMES = ["heartPop", "loveEyes", "parfait", "sad", "drool", "undo", "blank", "ponytail", "omurice", "menuPress", "naughty", "glassesSquare", "exclaim", "stickerBow", "brush", "squeeze", "whaleHat", "whaleOnDesk", "excited", "cry", "blush", "sweat", "stickerCat", "catPaws", "claw", "clawRecolor", "sunglasses", "sparkle", "darkCloth", "angry", "phoneRecolor", "doubleV", "headband", "soulOut", "tongueOut", "stickerRabbit", "glassesOval", "question", "eraser", "heartbeat", "starry", "gloomy", "glassesRound", "dizzy"];
+const lines = [];
+const out = document.getElementById('out');
+function say(s){ lines.push(s); out.innerHTML = lines.join('\n'); }
+const fail = (e) => { say('<span class="bad">ERROR: ' + (e && (e.stack||e.message) || e) + '</span>'); };
+
+const app = new PIXI.Application({ backgroundAlpha: 0, antialias: true, resizeTo: window,
+  resolution: 1 });
+document.body.appendChild(app.view);
+
+PIXI.live2d.Live2DModel.from('./model3.json', { autoInteract: false, idleMotionGroup: 'Idle' })
+ .then(function (model) {
+  app.stage.addChild(model);
+  const s = Math.min(app.screen.width / model.width, app.screen.height / model.height) * 0.72;
+  model.scale.set(s); model.anchor.set(0.5, 0.5);
+  model.x = app.screen.width * 0.62; model.y = app.screen.height * 0.62;
+
+  const im = model.internalModel;
+  const em = im.motionManager && im.motionManager.expressionManager;
+  say('<span id="big" class="' + (em ? 'ok' : 'bad') + '">expressionManager: ' +
+      (em ? 'DEFINED' : 'undefined') + '</span>');
+  say('definitions: ' + (em && em.definitions ? Object.keys(em.definitions).length : 0) +
+      '   (expected ' + NAMES.length + ')');
+
+  function fingerprint() {
+    try {
+      const p = im.coreModel._model.parameters;
+      let s = 0;
+      for (let i = 0; i < p.values.length; i++) s += Math.abs(p.values[i]);
+      return Math.round(s * 1000) / 1000;
+    } catch (e) { return null; }
+  }
+
+  // Sample INSIDE the frame. Reading parameters from outside core.update() returns the
+  // engine's restored baseline, so an outside probe reports "nothing changed" for every
+  // expression even when it rendered fine. (Documented trap in the A8Chann repo.)
+  let drawnFp = null;
+  const core = im.coreModel;
+  const origUpdate = core.update.bind(core);
+  core.update = function () { origUpdate(); drawnFp = fingerprint(); };
+
+  function measure(name) {
+    try { model.expression(name); } catch (e) { return null }
+    drawnFp = null;
+    // Expressions fade in, and InternalModel.update(dt, now) takes a monotonic `now` in ms.
+    // One call with now=0 measures the fade at t=0 -> nothing has changed yet.
+    let t = 1000;
+    for (let i = 0; i < 40; i++) { t += 40; try { im.update(1 / 25, t); } catch (e) {} }
+    return drawnFp;
+  }
+
+  function cheek() {
+    try { return Math.round(im.coreModel.getParameterValueById('ParamCheek16') * 1000) / 1000 }
+    catch (e) { return 'n/a' }
+  }
+
+  try { model.expression(null); } catch (e) {}
+  const neutralFp = measure(null);
+  const neutralCheek = cheek();
+
+  let okCount = 0, changed = 0, errs = [];
+  const changedNames = [];
+  for (const n of NAMES) {
+    let r = false;
+    try { r = !!model.expression(n); } catch (e) { errs.push(n + ': ' + e.message); }
+    if (r) okCount++;
+    const fp = measure(n);
+    if (fp !== null && neutralFp !== null && fp !== neutralFp) { changed++; changedNames.push(n); }
+  }
+  const starryFp = measure('starry');
+  say('neutral in-frame fingerprint: ' + neutralFp);
+  say('model.expression(name) accepted: <b>' + okCount + '/' + NAMES.length + '</b>');
+  say('in-frame fingerprint changed: <b>' + changed + '/' + NAMES.length + '</b>');
+  say('ParamCheek16  neutral=' + neutralCheek + '  after starry=' + cheek() +
+      '   (starry fp ' + starryFp + ')');
+  say('<span class="dim">changed: ' + changedNames.join(', ') + '</span>');
+  if (errs.length) say('<span class="bad">' + errs.join(' | ') + '</span>');
+
+  // leave a recognisable face on for the screenshot
+  try { model.expression('starry'); im.update(1 / 25, 3000); im.update(1 / 25, 3100); } catch (e) {}
+  say('<span class="dim">last applied: starry (星星眼) — look at her eyes</span>');
+  window.__BENCH__ = { defined: !!em, definitions: em && em.definitions ? Object.keys(em.definitions).length : 0,
+                       accepted: okCount, changed: changed, total: NAMES.length,
+                       neutralFp: neutralFp, neutralCheek: neutralCheek, starryCheek: cheek(),
+                       changedNames: changedNames };
+  document.title = 'bench ' + (em ? 'OK' : 'FAIL') + ' ' + okCount + '/' + NAMES.length;
+ })
+ .catch(fail);
+</script></body></html>

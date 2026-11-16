@@ -1,0 +1,12 @@
+pairwise pixel difference against f-idle (forced back-to-back, ~2.6 s apart):
+  sleepy 瞌睡        changed 22.369%   mean 16.924   max 246
+  thinking 想事情     changed 14.205%   mean  7.650   max 245
+  offline 离线       changed 13.716%   mean  6.034   max 192
+  gloomy 沮丧/报错     changed 21.700%   mean 16.177   max 242
+  happy 高兴/庆祝      changed 16.046%   mean  9.283   max 230
+  reading 看书       changed 23.943%   mean 18.598   max 246
+  scribble 写字      changed 17.491%   mean 10.386   max 232
+  sleeves 挽袖子      changed 22.968%   mean 17.504   max 244
+  f-stale          vs f-celebrating    changed 23.472%   mean 17.747
+  f-error          vs f-running        changed 14.688%   mean  8.282
+  f-offline        vs f-reading        changed 24.157%   mean 18.598

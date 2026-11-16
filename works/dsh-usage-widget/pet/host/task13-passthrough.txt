@@ -1,0 +1,20 @@
+﻿=== task-13 whole-window click-through ===
+pet window : 1562,688 340x340
+character  : 1669,824 .. 1894,1019
+host reports clickThrough = 
+our hwnd   : 0x1700f2
+WS_EX_TRANSPARENT = True (0x80028)
+ok   P1 head (character)       1782,869   route=OTHERS      hit=HwndWrapper[DefaultDomain;Pipeline Execution Thread;51fa9128-434d-433f-bae4-7eb1ec686053]
+ok   P2 body (character)       1782,974   route=OTHERS      hit=Chrome_RenderWidgetHostHWND
+ok   P3 window centre          1732,858   route=OTHERS      hit=HwndWrapper[DefaultDomain;Pipeline Execution Thread;51fa9128-434d-433f-bae4-7eb1ec686053]
+ok   P4 window top-left        1566,692   route=OTHERS      hit=Chrome_RenderWidgetHostHWND
+ok   P5 window top-right       1898,692   route=OTHERS      hit=Chrome_RenderWidgetHostHWND
+ok   P6 window bottom-left     1566,1024  route=OTHERS      hit=Chrome_RenderWidgetHostHWND
+ok   P7 window bottom-right    1898,1024  route=OTHERS      hit=Chrome_RenderWidgetHostHWND
+ok   P8 window top-centre      1732,692   route=OTHERS      hit=Chrome_RenderWidgetHostHWND
+ok   P9 window bottom-centre   1732,1024  route=OTHERS      hit=Chrome_RenderWidgetHostHWND
+ok   P10 window left-centre    1566,858   route=OTHERS      hit=HwndWrapper[DefaultDomain;Pipeline Execution Thread;51fa9128-434d-433f-bae4-7eb1ec686053]
+ok   P11 window right-centre   1898,858   route=OTHERS      hit=Chrome_RenderWidgetHostHWND
+
+points probed = 11 ; points that hit OUR window = 0
+RESULT: the pet window is fully click-through at every probed point

@@ -1,0 +1,127 @@
+{
+  "baseline": {
+    "idleFrames": 8,
+    "pixelNoiseOnCharacter": 28.62,
+    "pixelNoiseWholeCrop": 14.86,
+    "silhouetteJitter": 6.25
+  },
+  "picked": {
+    "offline": {
+      "burstFrames": 6,
+      "chosen": "offline-05.png",
+      "silhouetteDistance": 11.83,
+      "xNoiseSilhouette": 1.89,
+      "pixelVsIdleOnCharacter": 56.87,
+      "pixelVsIdleWholeCrop": 29.6,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-offline.png"
+    },
+    "stale": {
+      "burstFrames": 6,
+      "chosen": "stale-01.png",
+      "silhouetteDistance": 17.14,
+      "xNoiseSilhouette": 2.74,
+      "pixelVsIdleOnCharacter": 46.78,
+      "pixelVsIdleWholeCrop": 25.86,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-stale.png"
+    },
+    "error": {
+      "burstFrames": 6,
+      "chosen": "error-01.png",
+      "silhouetteDistance": 12.98,
+      "xNoiseSilhouette": 2.08,
+      "pixelVsIdleOnCharacter": 59.89,
+      "pixelVsIdleWholeCrop": 31.22,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-error.png"
+    },
+    "celebrating": {
+      "burstFrames": 6,
+      "chosen": "celebrating-05.png",
+      "silhouetteDistance": 14.86,
+      "xNoiseSilhouette": 2.38,
+      "pixelVsIdleOnCharacter": 61.29,
+      "pixelVsIdleWholeCrop": 31.77,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-celebrating.png"
+    },
+    "listening": {
+      "burstFrames": 6,
+      "chosen": "listening-06.png",
+      "silhouetteDistance": 12.73,
+      "xNoiseSilhouette": 2.04,
+      "pixelVsIdleOnCharacter": 47.06,
+      "pixelVsIdleWholeCrop": 25.31,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-listening.png"
+    },
+    "team": {
+      "burstFrames": 6,
+      "chosen": "team-05.png",
+      "silhouetteDistance": 17.82,
+      "xNoiseSilhouette": 2.85,
+      "pixelVsIdleOnCharacter": 55.25,
+      "pixelVsIdleWholeCrop": 29.09,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-team.png"
+    },
+    "reading": {
+      "burstFrames": 6,
+      "chosen": "reading-03.png",
+      "silhouetteDistance": 16.59,
+      "xNoiseSilhouette": 2.65,
+      "pixelVsIdleOnCharacter": 55.57,
+      "pixelVsIdleWholeCrop": 29.09,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-reading.png"
+    },
+    "writing": {
+      "burstFrames": 6,
+      "chosen": "writing-02.png",
+      "silhouetteDistance": 8.82,
+      "xNoiseSilhouette": 1.41,
+      "pixelVsIdleOnCharacter": 48.37,
+      "pixelVsIdleWholeCrop": 25.62,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-writing.png"
+    },
+    "running": {
+      "burstFrames": 6,
+      "chosen": "running-01.png",
+      "silhouetteDistance": 16.19,
+      "xNoiseSilhouette": 2.59,
+      "pixelVsIdleOnCharacter": 57.85,
+      "pixelVsIdleWholeCrop": 30.18,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-running.png"
+    },
+    "thinking": {
+      "burstFrames": 6,
+      "chosen": "thinking-06.png",
+      "silhouetteDistance": 15.59,
+      "xNoiseSilhouette": 2.49,
+      "pixelVsIdleOnCharacter": 57.85,
+      "pixelVsIdleWholeCrop": 30.09,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-thinking.png"
+    },
+    "idle": {
+      "burstFrames": 8,
+      "chosen": "idle-07.png",
+      "silhouetteDistance": 12.58,
+      "xNoiseSilhouette": 2.01,
+      "pixelVsIdleOnCharacter": 48.67,
+      "pixelVsIdleWholeCrop": 24.81,
+      "writing": "F:\\dsh-usage-widget\\pet\\showcase\\state-idle.png"
+    }
+  },
+  "pairwise": {
+    "pairs": 55,
+    "pixelWholeMean": 22.84,
+    "pixelWholeWorst": {
+      "a": "error",
+      "b": "offline",
+      "pixelWhole": 16.42
+    },
+    "silhouetteMean": 7.35,
+    "silhouetteWorst": {
+      "a": "celebrating",
+      "b": "thinking",
+      "silhouette": 1.49
+    },
+    "silhouetteWorstXBaseline": 0.24
+  },
+  "passPixelAboveBaseline": true,
+  "passSilhouette2x": false
+}

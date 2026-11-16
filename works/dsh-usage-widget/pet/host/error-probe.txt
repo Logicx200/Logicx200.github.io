@@ -1,0 +1,2 @@
+probe A
+probe B (changed behind the reader's back)

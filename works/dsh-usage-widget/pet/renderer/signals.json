@@ -1,0 +1,35 @@
+{
+  "at": 1793878349875,
+  "tool": {
+    "name": "pwsh",
+    "at": 1793878036163,
+    "phase": "result",
+    "ok": true,
+    "error": null,
+    "summary": "$ErrorActionPreference='Continue' $node='C:\\Us…",
+    "session": "session-ac4fc2c1-2ffd-4df3-af40-b96da076116c",
+    "state": "running"
+  },
+  "lastError": {
+    "name": "edit",
+    "at": 1793877680730,
+    "error": "FsError/FS_NOT_OBSERVED",
+    "session": null
+  },
+  "turn": {
+    "phase": "end",
+    "at": 1793878041300,
+    "reason": "completed",
+    "ms": 76177,
+    "tokens": 5060177
+  },
+  "streaming": {
+    "active": true,
+    "at": 1793878343910
+  },
+  "lastUserAt": 1793878343912,
+  "lastUserText": "把桌宠停掉吧",
+  "idleMs": 5291,
+  "agents": 0,
+  "jobs": 0
+}

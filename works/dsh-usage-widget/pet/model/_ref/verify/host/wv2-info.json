@@ -1,0 +1,19 @@
+﻿{
+    "ok":  true,
+    "host":  "WPF + WebView2 (Microsoft.Web.WebView2.Wpf, SDK 1.0.3179.45)",
+    "hwnd":  "0x1703d6",
+    "bounds":  {
+                   "y":  60,
+                   "width":  720,
+                   "height":  640,
+                   "x":  80
+               },
+    "topmost":  true,
+    "clickThrough":  true,
+    "allowsTransparency":  true,
+    "windowBackground":  "#00FFFFFF",
+    "webviewDefaultBackground":  "Color [Transparent]",
+    "runtime":  "154.0.4258.37",
+    "url":  "https://pet.local/model/_ref/verify/index.html",
+    "page":  "\"{\\\"ready\\\":false,\\\"alpha\\\":null,\\\"state\\\":null}\""
+}

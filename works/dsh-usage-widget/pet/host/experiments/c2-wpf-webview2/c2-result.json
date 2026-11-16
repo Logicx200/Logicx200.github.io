@@ -1,0 +1,41 @@
+﻿{
+    "p2":  {
+               "label":  "P2 alpha=1 only",
+               "x":  80,
+               "y":  80,
+               "hit":  "0x60812",
+               "hitClass":  "Chrome_RenderWidgetHostHWND",
+               "hitTitle":  "Chrome Legacy Window",
+               "root":  "0x60824",
+               "proc":  "msedgewebview2",
+               "isOurs":  true,
+               "route":  "ours(child)"
+           },
+    "p3":  {
+               "label":  "P3 nothing",
+               "x":  460,
+               "y":  220,
+               "hit":  "0x3072c",
+               "hitClass":  "Chrome_RenderWidgetHostHWND",
+               "hitTitle":  "Chrome Legacy Window",
+               "root":  "0x10706",
+               "proc":  "DeepSeek Harness",
+               "isOurs":  false,
+               "route":  "OTHERS"
+           },
+    "pageClicksAfter":  2,
+    "pageClicksBefore":  -1,
+    "clickInjected":  true,
+    "p1":  {
+               "label":  "P1 page-opaque + alpha1",
+               "x":  180,
+               "y":  220,
+               "hit":  "0x60812",
+               "hitClass":  "Chrome_RenderWidgetHostHWND",
+               "hitTitle":  "Chrome Legacy Window",
+               "root":  "0x60824",
+               "proc":  "msedgewebview2",
+               "isOurs":  true,
+               "route":  "ours(child)"
+           }
+}

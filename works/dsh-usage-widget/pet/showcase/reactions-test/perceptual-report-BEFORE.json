@@ -1,0 +1,179 @@
+{
+  "source": "perceptual-frames-before.json",
+  "noisePixelThreshold": 8,
+  "visibleMultiple": 2.0,
+  "groups": {
+    "baseline": 19,
+    "f-idle": 1,
+    "f-reading": 1,
+    "f-writing": 1,
+    "f-running": 1,
+    "f-thinking": 1,
+    "f-error": 1,
+    "f-celebrating": 1,
+    "f-listening": 1,
+    "f-team": 1,
+    "f-stale": 1,
+    "f-offline": 1,
+    "f-decor-glasses": 1,
+    "f-decor-phone": 1,
+    "f-act-love": 1,
+    "f-act-selfie": 1
+  },
+  "reactions": [
+    {
+      "name": "f-act-love",
+      "frames": 1,
+      "faceChangedPct": 32.716,
+      "wholeChangedPct": 29.159,
+      "xNoiseFace": 1.95,
+      "xNoiseWhole": 2.06,
+      "visible": false
+    },
+    {
+      "name": "f-act-selfie",
+      "frames": 1,
+      "faceChangedPct": 38.347,
+      "wholeChangedPct": 33.806,
+      "xNoiseFace": 2.29,
+      "xNoiseWhole": 2.38,
+      "visible": true
+    },
+    {
+      "name": "f-celebrating",
+      "frames": 1,
+      "faceChangedPct": 33.111,
+      "wholeChangedPct": 29.63,
+      "xNoiseFace": 1.98,
+      "xNoiseWhole": 2.09,
+      "visible": false
+    },
+    {
+      "name": "f-decor-glasses",
+      "frames": 1,
+      "faceChangedPct": 32.993,
+      "wholeChangedPct": 29.303,
+      "xNoiseFace": 1.97,
+      "xNoiseWhole": 2.07,
+      "visible": false
+    },
+    {
+      "name": "f-decor-phone",
+      "frames": 1,
+      "faceChangedPct": 33.528,
+      "wholeChangedPct": 29.695,
+      "xNoiseFace": 2.0,
+      "xNoiseWhole": 2.09,
+      "visible": true
+    },
+    {
+      "name": "f-error",
+      "frames": 1,
+      "faceChangedPct": 33.533,
+      "wholeChangedPct": 29.271,
+      "xNoiseFace": 2.0,
+      "xNoiseWhole": 2.06,
+      "visible": true
+    },
+    {
+      "name": "f-idle",
+      "frames": 1,
+      "faceChangedPct": 32.63,
+      "wholeChangedPct": 28.835,
+      "xNoiseFace": 1.95,
+      "xNoiseWhole": 2.03,
+      "visible": false
+    },
+    {
+      "name": "f-listening",
+      "frames": 1,
+      "faceChangedPct": 33.819,
+      "wholeChangedPct": 29.895,
+      "xNoiseFace": 2.02,
+      "xNoiseWhole": 2.11,
+      "visible": true
+    },
+    {
+      "name": "f-offline",
+      "frames": 1,
+      "faceChangedPct": 33.483,
+      "wholeChangedPct": 29.401,
+      "xNoiseFace": 2.0,
+      "xNoiseWhole": 2.07,
+      "visible": true
+    },
+    {
+      "name": "f-reading",
+      "frames": 1,
+      "faceChangedPct": 34.109,
+      "wholeChangedPct": 29.538,
+      "xNoiseFace": 2.04,
+      "xNoiseWhole": 2.08,
+      "visible": true
+    },
+    {
+      "name": "f-running",
+      "frames": 1,
+      "faceChangedPct": 33.338,
+      "wholeChangedPct": 29.379,
+      "xNoiseFace": 1.99,
+      "xNoiseWhole": 2.07,
+      "visible": false
+    },
+    {
+      "name": "f-stale",
+      "frames": 1,
+      "faceChangedPct": 34.091,
+      "wholeChangedPct": 29.212,
+      "xNoiseFace": 2.03,
+      "xNoiseWhole": 2.06,
+      "visible": true
+    },
+    {
+      "name": "f-team",
+      "frames": 1,
+      "faceChangedPct": 33.982,
+      "wholeChangedPct": 29.862,
+      "xNoiseFace": 2.03,
+      "xNoiseWhole": 2.11,
+      "visible": true
+    },
+    {
+      "name": "f-thinking",
+      "frames": 1,
+      "faceChangedPct": 33.801,
+      "wholeChangedPct": 29.473,
+      "xNoiseFace": 2.02,
+      "xNoiseWhole": 2.08,
+      "visible": true
+    },
+    {
+      "name": "f-writing",
+      "frames": 1,
+      "faceChangedPct": 33.755,
+      "wholeChangedPct": 29.948,
+      "xNoiseFace": 2.01,
+      "xNoiseWhole": 2.11,
+      "visible": true
+    }
+  ],
+  "showcase": {
+    "images": 11,
+    "pairs": 55,
+    "minPairChangedPct": {
+      "a": "team",
+      "b": "thinking",
+      "changedPct": 3.798
+    },
+    "xNoiseMinPair": 0.27,
+    "visible": false
+  },
+  "baseline": {
+    "frames": 19,
+    "noiseFacePct": 16.76,
+    "noiseWholePct": 14.18
+  },
+  "allReactionsVisible": false,
+  "allShowcasePairsVisible": false,
+  "pass": false
+}

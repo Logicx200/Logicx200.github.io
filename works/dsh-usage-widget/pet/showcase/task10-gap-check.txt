@@ -1,0 +1,28 @@
+﻿tables: decor=11 scenes=7 actions=12
+P1 three decorations across three slots
+  userProps=[glassesRound,stickerCat,parfait] anim=[-] override=[-] applied.props=[glassesRound,stickerCat,parfait] exclusive=[False] lowPower=[False]
+  params moving: ParamAngleX,ParamAngleY,ParamAngleZ,ParamBodyAngleZ,ParamEyeLOpen,ParamEyeROpen  |  playing=False queuedMax=0 idleGroup=Idle motiveGroups=openLid
+P2 same slot twice -> one survives
+  userProps=[sunglasses] anim=[-] override=[-] applied.props=[sunglasses] exclusive=[False] lowPower=[False]
+  params moving: ParamAngleX,ParamAngleY,ParamAngleZ,ParamBodyAngleZ,ParamEyeLOpen,ParamEyeROpen  |  playing=False queuedMax=0 idleGroup=Idle motiveGroups=openLid
+P3 clawRecolor -> claw auto-added
+  userProps=[clawRecolor,claw] anim=[-] override=[-] applied.props=[clawRecolor,claw] exclusive=[False] lowPower=[False]
+  params moving: ParamAngleX,ParamAngleY,ParamAngleZ,ParamBodyAngleX,ParamBodyAngleZ,ParamEyeLOpen,ParamEyeROpen  |  playing=False queuedMax=0 idleGroup=Idle motiveGroups=openLid
+P4 phoneRecolor -> phone (openLid hold) auto-added
+  userProps=[phoneRecolor,phone] anim=[-] override=[-] applied.props=[phoneRecolor] exclusive=[False] lowPower=[False]
+  params moving: ParamAngleX,ParamAngleY,ParamAngleZ,ParamBodyAngleX,ParamBodyAngleZ  |  playing=True queuedMax=0 idleGroup=Idle motiveGroups=openLid
+A1 act(doubleV) 2800 ms
+  userProps=[-] anim=[doubleV] override=[-] applied.props=[act:doubleV] exclusive=[False] lowPower=[False]
+  params moving: ParamAngleX,ParamAngleY,ParamAngleZ,ParamBodyAngleX,ParamBodyAngleZ,ParamEyeLOpen,ParamEyeROpen  |  playing=False queuedMax=0 idleGroup=Idle motiveGroups=openLid
+A2 act(love) 3200 ms + pulse
+  userProps=[-] anim=[love] override=[-] applied.props=[act:love] exclusive=[False] lowPower=[False]
+  params moving: ParamAngleX,ParamAngleY,ParamAngleZ,ParamBodyAngleX,ParamBodyAngleZ  |  playing=False queuedMax=0 idleGroup=Idle motiveGroups=openLid
+A3 act(omurice) 6200 ms + ketchup motion
+  userProps=[-] anim=[omurice] override=[-] applied.props=[act:omurice] exclusive=[False] lowPower=[False]
+  params moving: ParamAngleX,ParamAngleY,ParamAngleZ,ParamBodyAngleX,ParamBodyAngleZ  |  playing=True queuedMax=0 idleGroup=Idle motiveGroups=ketchup,openLid
+E1 tool error -> props:[] + exclusive
+  userProps=[glassesRound,parfait] anim=[-] override=[error(exclusive)] applied.props=[-] exclusive=[True] lowPower=[False]
+  params moving: ParamAngleX,ParamAngleY,ParamAngleZ,ParamBodyAngleZ,ParamEyeLOpen,ParamEyeROpen  |  playing=False queuedMax=0 idleGroup=Idle motiveGroups=ketchup,openLid
+L1 low power (ticker 20 fps, no idle brain)
+  userProps=[-] anim=[-] override=[-] applied.props=[-] exclusive=[False] lowPower=[True]
+  params moving: ParamAngleX,ParamAngleY,ParamAngleZ,ParamEyeLOpen,ParamEyeROpen  |  playing=False queuedMax=0 idleGroup=Idle motiveGroups=ketchup,openLid

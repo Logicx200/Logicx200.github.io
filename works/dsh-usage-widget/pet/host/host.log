@@ -1,0 +1,20 @@
+﻿
+14:17:26.734 sdk candidate rejected (no Wpf dll): F:\dsh-usage-widget\pet\host
+14:17:26.748 host start; sdk=F:\dsh-usage-widget\pet\renderer\webview2-test petRoot=F:\dsh-usage-widget\pet ps=5.1.26100.9711 apartment=STA
+14:17:27.411 sdk: loaded Microsoft.Web.WebView2.Core.dll from bytes (F:\dsh-usage-widget\pet\renderer\webview2-test)
+14:17:27.414 sdk: loaded Microsoft.Web.WebView2.Wpf.dll from bytes (F:\dsh-usage-widget\pet\renderer\webview2-test)
+14:17:27.418 sdk: loaded Microsoft.Web.WebView2.WinForms.dll from bytes (F:\dsh-usage-widget\pet\renderer\webview2-test)
+14:17:27.419 webview2 assemblies loaded
+14:17:27.883 window shown hwnd=0x3003e at 1562,688 340x340
+14:17:27.893 dispatcher run
+14:17:28.228 CoreWebView2Environment.CreateAsync called
+14:17:28.564 EnsureCoreWebView2Async called
+14:17:29.186 core ready runtime=156.0.4314.58
+14:17:29.228 navigating to https://pet.local/renderer/index.html?anchor=br&fill=0.735&dx=-0.0470588235294118&dy=0.0705882352941176
+14:17:36.496 INFO page="{\"ready\":true,\"alpha\":[0,0,0,0],\"state\":{\"state\":\"offline\",\"label\":\"离线\",\"color\":\"#8B949E\",\"detail\":\"DSH 未在运行\",\"pose\":\"offline\",\"reason\":\"dshRunning === false\",\"source\":\"snapshot\"},\"motionGroups\":[\"idle\",\"aidale\",\"selfie\",\"selfieQuick\",\"ketchup\",\"openLid\",\"bubble\",\"splash\"],\"settingsMotions\":[\"idle\",\"aidale\",\"selfie\",\"selfieQuick\",\"ketchup\",\"openLid\",\"bubble\",\"splash\"],\"expressions\":[\"heartPop\",\"loveEyes\",\"parfait\",\"sad\",\"drool\",\"undo\",\"blank\",\"ponytail\",\"omurice\",\"menuPress\",\"naughty\",\"glassesSquare\",\"exclaim\",\"stickerBow\",\"brush\",\"squeeze\",\"whaleHat\",\"whaleOnDesk\",\"excited\",\"cry\",\"blush\",\"sweat\",\"stickerCat\",\"catPaws\",\"claw\",\"clawRecolor\",\"sunglasses\",\"sparkle\",\"darkCloth\",\"angry\",\"phoneRecolor\",\"doubleV\",\"headband\",\"soulOut\",\"tongueOut\",\"stickerRabbit\",\"glassesOval\",\"question\",\"eraser\",\"heartbeat\",\"starry\",\"gloomy\",\"glassesRound\",\"dizzy\"]}"
+14:17:36.814 force-state applied (4 bytes)
+14:17:38.873 METRICS model screen={"left":1669,"top":824,"right":1894,"bottom":1019} label={"left":1836,"top":826,"right":1892,"bottom":844}
+14:17:40.454 METRICS model screen={"left":1669,"top":824,"right":1894,"bottom":1019} label={"left":1836,"top":826,"right":1892,"bottom":844}
+14:17:42.014 METRICS model screen={"left":1669,"top":824,"right":1894,"bottom":1019} label={"left":1836,"top":826,"right":1892,"bottom":844}
+19:32:36.895 exit: stop file
+19:32:37.209 DONE

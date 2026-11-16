@@ -1,0 +1,28 @@
+﻿
+03:03:36.863 start; petRoot=F:\dsh-usage-widget\pet ps=5.1.26100.9549 apartment=STA
+03:03:37.065 webview2 assemblies loaded
+03:03:37.581 window shown hwnd=0x1703d6 at 80,60 720x640 topmost=True
+03:03:37.942 EnsureCoreWebView2Async called
+03:03:38.576 core ready runtime=154.0.4258.37
+03:03:38.589 navigating to https://pet.local/model/_ref/verify/index.html
+03:03:45.885 INFO {
+    "ok":  true,
+    "host":  "WPF + WebView2 (Microsoft.Web.WebView2.Wpf, SDK 1.0.3179.45)",
+    "hwnd":  "0x1703d6",
+    "bounds":  {
+                   "y":  60,
+                   "width":  720,
+                   "height":  640,
+                   "x":  80
+               },
+    "topmost":  true,
+    "clickThrough":  true,
+    "allowsTransparency":  true,
+    "windowBackground":  "#00FFFFFF",
+    "webviewDefaultBackground":  "Color [Transparent]",
+    "runtime":  "154.0.4258.37",
+    "url":  "https://pet.local/model/_ref/verify/index.html",
+    "page":  "\"{\\\"ready\\\":false,\\\"alpha\\\":null,\\\"state\\\":null}\""
+}
+03:03:45.949 screenshot saved F:\dsh-usage-widget\pet\model\_ref\verify\host\wv2-proof.png
+03:04:12.326 DONE

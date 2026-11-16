@@ -1,0 +1,29 @@
+﻿
+01:40:42.663 start; petRoot=F:\dsh-usage-widget\pet ps=5.1.26100.9549 apartment=STA
+01:40:42.808 webview2 assemblies loaded
+01:40:43.238 window shown hwnd=0x11f08fe at 1150,320 440x540 topmost=True
+01:40:43.580 EnsureCoreWebView2Async called
+01:40:43.902 core ready runtime=154.0.4258.37
+01:40:43.913 navigating to https://pet.local/renderer/index.html
+01:40:51.191 INFO {
+    "ok":  true,
+    "host":  "WPF + WebView2 (Microsoft.Web.WebView2.Wpf, SDK 1.0.3179.45)",
+    "hwnd":  "0x11f08fe",
+    "bounds":  {
+                   "y":  320,
+                   "width":  440,
+                   "height":  540,
+                   "x":  1150
+               },
+    "topmost":  true,
+    "clickThrough":  true,
+    "allowsTransparency":  true,
+    "windowBackground":  "#00FFFFFF",
+    "webviewDefaultBackground":  "Color [Transparent]",
+    "runtime":  "154.0.4258.37",
+    "url":  "https://pet.local/renderer/index.html",
+    "page":  "\"{\\\"ready\\\":true,\\\"alpha\\\":[0,0,0,0],\\\"state\\\":{\\\"state\\\":\\\"busy\\\",\\\"label\\\":\\\"后台任务\\\",\\\"color\\\":\\\"#FFA657\\\",\\\"detail\\\":\\\"pwsh\\\",\\\"pose\\\":\\\"busy\\\",\\\"reason\\\":\\\"1 job(s) present\\\",\\\"source\\\":\\\"snapshot\\\",\\\"assets\\\":null}}\""
+}
+01:40:51.237 screenshot saved F:\dsh-usage-widget\pet\renderer\webview2-test\wv2-proof.png
+01:40:53.798 DONE
+01:41:25.365 DONE

@@ -1,0 +1,20 @@
+=== 11 showcase states, re-shot at the motion peak (task-15 §6.1) ===
+baseline (idle burst, 8 frames): pixels on her 28.62%  whole crop 14.86%  silhouette jitter 6.25
+
+per state, the chosen burst frame:
+state        chosen         sil.dist x jitter pix(char) pix(whole)
+offline      offline-05.png    11.83    1.89     56.87     29.60
+stale        stale-01.png      17.14    2.74     46.78     25.86
+error        error-01.png      12.98    2.08     59.89     31.22
+celebrating  celebrating-05.png    14.86    2.38     61.29     31.77
+listening    listening-06.png    12.73    2.04     47.06     25.31
+team         team-05.png       17.82    2.85     55.25     29.09
+reading      reading-03.png    16.59    2.65     55.57     29.09
+writing      writing-02.png     8.82    1.41     48.37     25.62
+running      running-01.png    16.19    2.59     57.85     30.18
+thinking     thinking-06.png    15.59    2.49     57.85     30.09
+idle         idle-07.png       12.58    2.01     48.67     24.81
+
+pairwise over 55 image pairs:
+  pixels   : mean 22.84%   worst 16.42% (error vs offline)   -> ABOVE the 14.86% baseline
+  silhouette: mean 7.35   worst 1.49 (celebrating vs thinking) = 0.24x jitter -> FAIL (bar 2x)

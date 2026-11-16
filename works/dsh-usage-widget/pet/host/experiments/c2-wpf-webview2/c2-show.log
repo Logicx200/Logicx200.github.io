@@ -1,0 +1,9 @@
+﻿
+12:40:01.217 assemblies ok
+12:40:01.715 window hwnd=0x60824 at 60,60 480x320
+12:40:02.170 EnsureCoreWebView2Async called
+12:40:02.581 navigated
+12:40:02.725 MSG len=50 body="{\"kind\":\"ready\",\"n\":0,\"t\":1790743202714}"
+12:40:06.666 MSG len=69 body="{\"kind\":\"down\",\"x\":120,\"y\":160,\"n\":1,\"t\":1790743206659}"
+12:40:06.673 MSG len=69 body="{\"kind\":\"down\",\"x\":120,\"y\":160,\"n\":2,\"t\":1790743206659}"
+12:40:36.171 done

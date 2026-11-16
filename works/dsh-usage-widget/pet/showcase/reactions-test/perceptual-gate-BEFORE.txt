@@ -1,0 +1,7 @@
+=== perceptual gate (silhouette metric, bar = 2.0x baseline jitter) ===
+mode: dir
+baseline silhouette jitter: median 5.48  max 6.39  (7 frame pairs)
+  reaction-reading   distance   3.64  =  0.66x jitter   FAIL(<2x)
+  reaction-running   distance   5.16  =  0.94x jitter   FAIL(<2x)
+  peak: reaction-running = 0.94x jitter   (criterion: peak of the gesture >= 2.0x baseline jitter)
+  RESULT: FAIL

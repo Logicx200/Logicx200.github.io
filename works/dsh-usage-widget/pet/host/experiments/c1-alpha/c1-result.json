@@ -1,0 +1,50 @@
+﻿[
+    {
+        "label":  "A alpha=1/255",
+        "x":  140,
+        "y":  140,
+        "hit":  "0x30690",
+        "hitClass":  "HwndWrapper[DefaultDomain;Pipeline Execution Thread;9d13422f-b5ae-44c7-80be-b1c5cd0d1362]",
+        "hitTitle":  "PET-EXP-C1",
+        "root":  "0x30690",
+        "proc":  "powershell",
+        "isOurs":  true,
+        "route":  "ours(top)"
+    },
+    {
+        "label":  "B alpha=0",
+        "x":  280,
+        "y":  140,
+        "hit":  "0x3072c",
+        "hitClass":  "Chrome_RenderWidgetHostHWND",
+        "hitTitle":  "Chrome Legacy Window",
+        "root":  "0x10706",
+        "proc":  "DeepSeek Harness",
+        "isOurs":  false,
+        "route":  "OTHERS"
+    },
+    {
+        "label":  "C opaque",
+        "x":  140,
+        "y":  280,
+        "hit":  "0x30690",
+        "hitClass":  "HwndWrapper[DefaultDomain;Pipeline Execution Thread;9d13422f-b5ae-44c7-80be-b1c5cd0d1362]",
+        "hitTitle":  "PET-EXP-C1",
+        "root":  "0x30690",
+        "proc":  "powershell",
+        "isOurs":  true,
+        "route":  "ours(top)"
+    },
+    {
+        "label":  "D empty area",
+        "x":  410,
+        "y":  320,
+        "hit":  "0x30682",
+        "hitClass":  "CASCADIA_HOSTING_WINDOW_CLASS",
+        "hitTitle":  "管理员: Windows PowerShell",
+        "root":  "0x30682",
+        "proc":  "WindowsTerminal",
+        "isOurs":  false,
+        "route":  "OTHERS"
+    }
+]

@@ -1,0 +1,31 @@
+避雷针电场模拟结果目录结构说明
+================================
+
+主目录: LightningRod_Simulation_003_theta29
+   ├── data/           - 数据文件目录
+   │   ├── simulation_data.mat      - 原始模拟数据
+   │   ├── simulation_parameters.mat - 模拟参数
+   │   ├── convergence_history.csv  - 收敛历史数据
+   │   ├── key_results.csv          - 关键结果汇总
+   │   ├── axis_distribution.csv    - 轴线分布数据
+   │   └── radial_distribution.csv  - 径向分布数据
+   │
+   ├── figures/        - 图形文件目录(PNG格式)
+   │   ├── 收敛性分析.png
+   │   ├── 三维电势分布.png
+   │   ├── 三维电场分布.png
+   │   └── ... (共8个PNG文件)
+   │
+   ├── plots/          - 绘图文件目录(FIG格式，MATLAB可编辑)
+   │   ├── 收敛性分析.fig
+   │   ├── 三维电势分布.fig
+   │   ├── 三维电场分布.fig
+   │   └── ... (共8个FIG文件)
+   │
+   ├── reports/        - 报告文件目录
+   │   └── simulation_report.txt    - 仿真报告
+   │
+   └── 目录结构说明.txt  - 本文件
+
+模拟参数: θ = 29°, R = 0.015 m, H_total = 1.058 m
+模拟时间: 30-Dec-2025 11:45:07

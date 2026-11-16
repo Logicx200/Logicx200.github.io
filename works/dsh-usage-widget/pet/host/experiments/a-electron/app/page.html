@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>PET-EXP-A page</title>
+<style>
+  html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:transparent; }
+  #dot  { position:absolute; left:50%; top:120px; width:200px; height:200px; margin-left:-100px;
+          border-radius:50%; background:#ff2d20; }
+  #n    { position:absolute; left:10px; top:10px; color:#0f0; font:15px Consolas; background:rgba(0,0,0,.7); padding:4px 6px; }
+  #mode { position:absolute; left:10px; bottom:10px; color:#8fd; font:12px Consolas; background:rgba(0,0,0,.7); padding:3px 5px; }
+</style>
+</head>
+<body>
+<div id="dot"></div>
+<div id="n">page clicks: <span id="c">0</span></div>
+<div id="mode">electron transparent window</div>
+<script>
+  var n = 0
+  function report(e) {
+    n += 1
+    document.getElementById('c').textContent = n
+    try { window.exp.click({ x: e.clientX, y: e.clientY, which: e.type }) } catch (err) {}
+  }
+  document.addEventListener('mousedown', report, true)
+  document.addEventListener('pointerdown', report, true)
+  document.addEventListener('mousemove', function (e) {
+    if (!window.__mv || Date.now() - window.__mv > 500) {
+      window.__mv = Date.now()
+      try { window.exp.move({ x: e.clientX, y: e.clientY }) } catch (err) {}
+    }
+  }, true)
+</script>
+</body>
+</html>

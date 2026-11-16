@@ -1,0 +1,2 @@
+=== perceptual gate (silhouette metric, bar = 2.0x baseline jitter) ===
+mode: images

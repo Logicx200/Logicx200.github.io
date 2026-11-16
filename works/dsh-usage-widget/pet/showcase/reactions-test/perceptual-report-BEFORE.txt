@@ -1,0 +1,21 @@
+=== perceptual (visibility) gate ===
+frames index : perceptual-frames-before.json
+bar          : reaction face-band difference >= 2.0x the baseline noise
+baseline     : 19 frames, noise face 16.76% / whole 14.18%
+  f-act-love         face  32.716% =  1.95x noise   whole  29.159% =  2.06x   FAIL(<2x)
+  f-act-selfie       face  38.347% =  2.29x noise   whole  33.806% =  2.38x   VISIBLE
+  f-celebrating      face  33.111% =  1.98x noise   whole  29.630% =  2.09x   FAIL(<2x)
+  f-decor-glasses    face  32.993% =  1.97x noise   whole  29.303% =  2.07x   FAIL(<2x)
+  f-decor-phone      face  33.528% =   2.0x noise   whole  29.695% =  2.09x   VISIBLE
+  f-error            face  33.533% =   2.0x noise   whole  29.271% =  2.06x   VISIBLE
+  f-idle             face  32.630% =  1.95x noise   whole  28.835% =  2.03x   FAIL(<2x)
+  f-listening        face  33.819% =  2.02x noise   whole  29.895% =  2.11x   VISIBLE
+  f-offline          face  33.483% =   2.0x noise   whole  29.401% =  2.07x   VISIBLE
+  f-reading          face  34.109% =  2.04x noise   whole  29.538% =  2.08x   VISIBLE
+  f-running          face  33.338% =  1.99x noise   whole  29.379% =  2.07x   FAIL(<2x)
+  f-stale            face  34.091% =  2.03x noise   whole  29.212% =  2.06x   VISIBLE
+  f-team             face  33.982% =  2.03x noise   whole  29.862% =  2.11x   VISIBLE
+  f-thinking         face  33.801% =  2.02x noise   whole  29.473% =  2.08x   VISIBLE
+  f-writing          face  33.755% =  2.01x noise   whole  29.948% =  2.11x   VISIBLE
+  showcase     : 11 images, 55 pairs, worst pair {'a': 'team', 'b': 'thinking', 'changedPct': 3.798} changed 3.798% = 0.27x noise -> FAIL(<2x)
+  RESULT       : FAIL

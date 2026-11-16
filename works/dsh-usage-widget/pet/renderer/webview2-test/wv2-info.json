@@ -1,0 +1,19 @@
+﻿{
+    "ok":  true,
+    "host":  "WPF + WebView2 (Microsoft.Web.WebView2.Wpf, SDK 1.0.3179.45)",
+    "hwnd":  "0x11f08fe",
+    "bounds":  {
+                   "y":  320,
+                   "width":  440,
+                   "height":  540,
+                   "x":  1150
+               },
+    "topmost":  true,
+    "clickThrough":  true,
+    "allowsTransparency":  true,
+    "windowBackground":  "#00FFFFFF",
+    "webviewDefaultBackground":  "Color [Transparent]",
+    "runtime":  "154.0.4258.37",
+    "url":  "https://pet.local/renderer/index.html",
+    "page":  "\"{\\\"ready\\\":true,\\\"alpha\\\":[0,0,0,0],\\\"state\\\":{\\\"state\\\":\\\"busy\\\",\\\"label\\\":\\\"后台任务\\\",\\\"color\\\":\\\"#FFA657\\\",\\\"detail\\\":\\\"pwsh\\\",\\\"pose\\\":\\\"busy\\\",\\\"reason\\\":\\\"1 job(s) present\\\",\\\"source\\\":\\\"snapshot\\\",\\\"assets\\\":null}}\""
+}

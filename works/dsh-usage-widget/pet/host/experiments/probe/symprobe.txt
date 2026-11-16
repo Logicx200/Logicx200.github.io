@@ -1,0 +1,2 @@
+execPath=F:\dsh-usage-widget\pet\host\experiments\a-electron\dist\DeepSeek Harness.exe
+resourcesPath=F:\dsh-usage-widget\pet\host\experiments\a-electron\dist\resources

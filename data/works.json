@@ -13,11 +13,10 @@
   }
  },
  "totals": {
-  "projects": 36,
-  "files": 4472,
-  "bytes": 215365318,
-  "excluded": 4,
-  "publishedWorkspaceFiles": 4472
+  "projects": 44,
+  "files": 4988,
+  "bytes": 253299304,
+  "excluded": 4
  },
  "categories": [
   {
@@ -88,8 +87,8 @@
    "published": true,
    "sourceFiles": 38,
    "sourceBytes": 3910000,
-   "publishedFiles": 38,
-   "publishedBytes": 3911569,
+   "publishedFiles": 39,
+   "publishedBytes": 3961793,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -124,8 +123,8 @@
    "published": true,
    "sourceFiles": 31,
    "sourceBytes": 1540000,
-   "publishedFiles": 31,
-   "publishedBytes": 1537659,
+   "publishedFiles": 32,
+   "publishedBytes": 1550749,
    "excludeReason": "",
    "excludeNote": "",
    "featured": true
@@ -159,8 +158,8 @@
    "published": true,
    "sourceFiles": 38,
    "sourceBytes": 7840000,
-   "publishedFiles": 37,
-   "publishedBytes": 4885569,
+   "publishedFiles": 38,
+   "publishedBytes": 4903434,
    "excludeReason": "",
    "excludeNote": "示例视频（*.webm）未上传",
    "featured": true
@@ -195,8 +194,8 @@
    "published": true,
    "sourceFiles": 172,
    "sourceBytes": 264340000,
-   "publishedFiles": 96,
-   "publishedBytes": 12131195,
+   "publishedFiles": 97,
+   "publishedBytes": 12143317,
    "excludeReason": "",
    "excludeNote": "6 个 .npz 中间结果（共约 72 MB）与 hapi_db 谱线库未上传",
    "featured": false
@@ -231,8 +230,8 @@
    "published": true,
    "sourceFiles": 31,
    "sourceBytes": 49520000,
-   "publishedFiles": 24,
-   "publishedBytes": 9892346,
+   "publishedFiles": 25,
+   "publishedBytes": 9902593,
    "excludeReason": "",
    "excludeNote": "3 个超过 8 MB 的 GIF 动画与 data/ 中 4 个 .npz 未上传",
    "featured": false
@@ -266,8 +265,8 @@
    "published": true,
    "sourceFiles": 137,
    "sourceBytes": 40820000,
-   "publishedFiles": 105,
-   "publishedBytes": 11099474,
+   "publishedFiles": 106,
+   "publishedBytes": 11111476,
    "excludeReason": "",
    "excludeNote": "03_仿真数据 中的大体积原始输出未上传，按 20 MB 项目上限裁剪素材",
    "featured": false
@@ -303,8 +302,8 @@
    "published": true,
    "sourceFiles": 382,
    "sourceBytes": 240500000,
-   "publishedFiles": 124,
-   "publishedBytes": 17644798,
+   "publishedFiles": 125,
+   "publishedBytes": 17664885,
    "excludeReason": "",
    "excludeNote": "07_光谱数据 与 03_数据 中的 .npz/.parquet 等大文件未上传",
    "featured": false
@@ -339,8 +338,8 @@
    "published": true,
    "sourceFiles": 81,
    "sourceBytes": 43770000,
-   "publishedFiles": 59,
-   "publishedBytes": 11084817,
+   "publishedFiles": 60,
+   "publishedBytes": 11091344,
    "excludeReason": "",
    "excludeNote": "_hapi_db 谱线库与 .npz 中间数据未上传，按 15 MB 上限裁剪素材（工况分类图仅保留 SVG/PDF 版本，封面改用报告流程图）",
    "featured": false
@@ -375,8 +374,8 @@
    "published": true,
    "sourceFiles": 33,
    "sourceBytes": 3790000,
-   "publishedFiles": 33,
-   "publishedBytes": 3793336,
+   "publishedFiles": 34,
+   "publishedBytes": 3800143,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -411,8 +410,8 @@
    "published": true,
    "sourceFiles": 27,
    "sourceBytes": 3500000,
-   "publishedFiles": 23,
-   "publishedBytes": 3460422,
+   "publishedFiles": 24,
+   "publishedBytes": 3486077,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -446,8 +445,8 @@
    "published": true,
    "sourceFiles": 2136,
    "sourceBytes": 13816200000,
-   "publishedFiles": 1285,
-   "publishedBytes": 15643682,
+   "publishedFiles": 1286,
+   "publishedBytes": 15650630,
    "excludeReason": "",
    "excludeNote": "86 个 .plt 仿真输出（单文件最大 2.0 GB）与大部分中间数据未上传，只保留脚本、报告与小体积图件",
    "featured": false
@@ -482,8 +481,8 @@
    "published": true,
    "sourceFiles": 60,
    "sourceBytes": 28250000,
-   "publishedFiles": 57,
-   "publishedBytes": 19810102,
+   "publishedFiles": 58,
+   "publishedBytes": 19816898,
    "excludeReason": "",
    "excludeNote": "data/ 与 out/ 中可由脚本重新生成的地图中间数据未上传",
    "featured": false
@@ -518,8 +517,8 @@
    "published": true,
    "sourceFiles": 76,
    "sourceBytes": 31010000,
-   "publishedFiles": 67,
-   "publishedBytes": 14622552,
+   "publishedFiles": 68,
+   "publishedBytes": 14629151,
    "excludeReason": "",
    "excludeNote": "多轮渲染对比截图按 15 MB 上限筛选上传",
    "featured": false
@@ -554,8 +553,8 @@
    "published": true,
    "sourceFiles": 216,
    "sourceBytes": 33780000,
-   "publishedFiles": 179,
-   "publishedBytes": 15290150,
+   "publishedFiles": 180,
+   "publishedBytes": 15296856,
    "excludeReason": "",
    "excludeNote": "过程截图与 .bmp 原始帧按 15 MB 上限裁剪，保留关键截图",
    "featured": false
@@ -590,8 +589,8 @@
    "published": true,
    "sourceFiles": 75,
    "sourceBytes": 21150000,
-   "publishedFiles": 70,
-   "publishedBytes": 5869371,
+   "publishedFiles": 71,
+   "publishedBytes": 5874105,
    "excludeReason": "",
    "excludeNote": "官方 MSI 安装包与 .exe 工具未上传（命中排除规则）",
    "featured": false
@@ -625,8 +624,8 @@
    "published": true,
    "sourceFiles": 74,
    "sourceBytes": 15150000,
-   "publishedFiles": 73,
-   "publishedBytes": 14635832,
+   "publishedFiles": 74,
+   "publishedBytes": 14647231,
    "excludeReason": "",
    "excludeNote": "1 个超限文件未上传",
    "featured": false
@@ -661,8 +660,8 @@
    "published": true,
    "sourceFiles": 6,
    "sourceBytes": 140000,
-   "publishedFiles": 6,
-   "publishedBytes": 142180,
+   "publishedFiles": 7,
+   "publishedBytes": 165139,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -697,8 +696,8 @@
    "published": true,
    "sourceFiles": 56,
    "sourceBytes": 6380000,
-   "publishedFiles": 54,
-   "publishedBytes": 5948650,
+   "publishedFiles": 55,
+   "publishedBytes": 5979259,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -731,8 +730,8 @@
    "published": true,
    "sourceFiles": 5,
    "sourceBytes": 8000,
-   "publishedFiles": 5,
-   "publishedBytes": 8149,
+   "publishedFiles": 6,
+   "publishedBytes": 12690,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -766,8 +765,8 @@
    "published": true,
    "sourceFiles": 9,
    "sourceBytes": 244000,
-   "publishedFiles": 9,
-   "publishedBytes": 249875,
+   "publishedFiles": 10,
+   "publishedBytes": 266699,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -801,8 +800,8 @@
    "published": true,
    "sourceFiles": 27,
    "sourceBytes": 2400000,
-   "publishedFiles": 27,
-   "publishedBytes": 2396137,
+   "publishedFiles": 28,
+   "publishedBytes": 2417827,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -837,8 +836,8 @@
    "published": true,
    "sourceFiles": 46,
    "sourceBytes": 3230000,
-   "publishedFiles": 46,
-   "publishedBytes": 3229067,
+   "publishedFiles": 47,
+   "publishedBytes": 3234889,
    "excludeReason": "",
    "excludeNote": "",
    "featured": true
@@ -870,8 +869,8 @@
    "published": true,
    "sourceFiles": 10,
    "sourceBytes": 35000,
-   "publishedFiles": 10,
-   "publishedBytes": 35855,
+   "publishedFiles": 11,
+   "publishedBytes": 40274,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -903,8 +902,8 @@
    "published": true,
    "sourceFiles": 6,
    "sourceBytes": 5000,
-   "publishedFiles": 6,
-   "publishedBytes": 5148,
+   "publishedFiles": 7,
+   "publishedBytes": 9596,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -939,8 +938,8 @@
    "published": true,
    "sourceFiles": 3370,
    "sourceBytes": 321260000,
-   "publishedFiles": 1784,
-   "publishedBytes": 15690099,
+   "publishedFiles": 1785,
+   "publishedBytes": 15728266,
    "excludeReason": "",
    "excludeNote": "node_modules / .cache / .npm-cache 等约 335 MB 缓存未上传（见未上传区块）",
    "featured": true
@@ -974,8 +973,8 @@
    "published": true,
    "sourceFiles": 123,
    "sourceBytes": 1100000,
-   "publishedFiles": 116,
-   "publishedBytes": 1037911,
+   "publishedFiles": 117,
+   "publishedBytes": 1054890,
    "excludeReason": "",
    "excludeNote": "",
    "featured": true
@@ -1009,8 +1008,8 @@
    "published": true,
    "sourceFiles": 6,
    "sourceBytes": 1780000,
-   "publishedFiles": 6,
-   "publishedBytes": 1775474,
+   "publishedFiles": 7,
+   "publishedBytes": 1783151,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -1044,8 +1043,8 @@
    "published": true,
    "sourceFiles": 35,
    "sourceBytes": 1260000,
-   "publishedFiles": 25,
-   "publishedBytes": 248697,
+   "publishedFiles": 26,
+   "publishedBytes": 254578,
    "excludeReason": "",
    "excludeNote": "e2_*.npy 中间数组未上传（命中 .npy 排除规则）",
    "featured": false
@@ -1078,8 +1077,8 @@
    "published": true,
    "sourceFiles": 48,
    "sourceBytes": 18230000,
-   "publishedFiles": 48,
-   "publishedBytes": 18229500,
+   "publishedFiles": 51,
+   "publishedBytes": 18252085,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -1114,8 +1113,8 @@
    "published": true,
    "sourceFiles": 4,
    "sourceBytes": 35000,
-   "publishedFiles": 4,
-   "publishedBytes": 36167,
+   "publishedFiles": 5,
+   "publishedBytes": 40926,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -1145,8 +1144,8 @@
    "published": true,
    "sourceFiles": 3,
    "sourceBytes": 292000,
-   "publishedFiles": 3,
-   "publishedBytes": 286201,
+   "publishedFiles": 4,
+   "publishedBytes": 291682,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -1179,11 +1178,11 @@
    "published": true,
    "sourceFiles": 1,
    "sourceBytes": 10000,
-   "publishedFiles": 1,
-   "publishedBytes": 13914,
+   "publishedFiles": 2,
+   "publishedBytes": 18570,
    "excludeReason": "",
    "excludeNote": "",
-   "featured": true
+   "featured": false
   },
   {
    "id": "ecosystem",
@@ -1213,8 +1212,8 @@
    "published": true,
    "sourceFiles": 1,
    "sourceBytes": 28000,
-   "publishedFiles": 1,
-   "publishedBytes": 28101,
+   "publishedFiles": 2,
+   "publishedBytes": 32725,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -1247,8 +1246,8 @@
    "published": true,
    "sourceFiles": 3,
    "sourceBytes": 48000,
-   "publishedFiles": 3,
-   "publishedBytes": 46025,
+   "publishedFiles": 4,
+   "publishedBytes": 50616,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -1278,8 +1277,8 @@
    "published": true,
    "sourceFiles": 12,
    "sourceBytes": 550000,
-   "publishedFiles": 12,
-   "publishedBytes": 553421,
+   "publishedFiles": 13,
+   "publishedBytes": 607820,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -1312,8 +1311,8 @@
    "published": true,
    "sourceFiles": 3,
    "sourceBytes": 18000,
-   "publishedFiles": 3,
-   "publishedBytes": 20299,
+   "publishedFiles": 4,
+   "publishedBytes": 24966,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
@@ -1437,6 +1436,281 @@
    "excludeReason": "data/ 下的 .geojson.xz 与 out/ 下的 SVG 是可由脚本重新生成的中间数据（19 MB + 12 MB）。",
    "excludeNote": "需要时用 navwarn-map 的渲染脚本重新生成",
    "featured": false
+  },
+  {
+   "id": "practice-scripts",
+   "dir": "works/practice-scripts",
+   "title": "练习脚本：抓评论与视频跟踪",
+   "subtitle": "Selenium 抓豆瓣评论 + OpenCV 跟踪，配观测视频",
+   "category": "misc",
+   "tags": [
+    "Python",
+    "Selenium",
+    "OpenCV",
+    "练手"
+   ],
+   "summary": "早期练手的一组脚本：用 Selenium（Edge 驱动）打开豆瓣页面抓评论并存成 txt；用 OpenCV 的 legacy 跟踪器（CSRT/KCF/MIL 等）框选视频里的目标跟踪，以及实时摄像头里追最亮的点。目录里还留了一段火箭发射的观测视频做测试素材。",
+   "highlights": [
+    "Selenium 评论抓取（等待、滚动、去重）",
+    "OpenCV 多种 legacy tracker 对比",
+    "摄像头实时找最亮点并跟随"
+   ],
+   "tech": [
+    "Python",
+    "Selenium",
+    "OpenCV"
+   ],
+   "cover": "",
+   "demo": "",
+   "entry": "works/practice-scripts/README.md",
+   "published": true,
+   "sourceFiles": 8,
+   "sourceBytes": 6682671,
+   "publishedFiles": 8,
+   "publishedBytes": 6682671,
+   "excludeReason": "",
+   "excludeNote": "",
+   "featured": false
+  },
+  {
+   "id": "dsh-usage-widget",
+   "dir": "works/dsh-usage-widget",
+   "title": "DSH 用量悬浮窗（旧版）",
+   "subtitle": "在屏幕角落显示 token 用量与余额的独立小面板",
+   "category": "dsh",
+   "tags": [
+    "DeepSeek Harness",
+    "Node.js",
+    "PowerShell",
+    "WPF"
+   ],
+   "summary": "DeepSeek Harness 最早的一版用量显示工具，不是插件而是独立程序：Node 写的「数据引擎」读 DSH 会话日志折算出 token 花费与缓存命中，再通过 NDJSON 流推给一个 PowerShell + WPF 的无边框半透明悬浮窗；窗体里还塞了一只 Live2D 桌宠（WebView2 宿主）。后来这套能力演进成了站点里的 live-console 页面和心情之眼。",
+   "highlights": [
+    "引擎（Node）与窗口（PowerShell/WPF）分离，NDJSON 流式通信",
+    "读会话日志折算花费 + 查账户余额",
+    "Live2D 桌宠 + WebView2 宿主，无边框半透明置顶"
+   ],
+   "tech": [
+    "Node.js",
+    "PowerShell",
+    "WPF"
+   ],
+   "cover": "works/dsh-usage-widget/ui/preview-status.png",
+   "demo": "",
+   "entry": "works/dsh-usage-widget/README.md",
+   "published": true,
+   "sourceFiles": 320,
+   "sourceBytes": 14848459,
+   "publishedFiles": 320,
+   "publishedBytes": 14848459,
+   "excludeReason": "",
+   "excludeNote": "",
+   "featured": false
+  },
+  {
+   "id": "matlab-field-sim",
+   "dir": "works/matlab-field-sim",
+   "title": "避雷针电场仿真（MATLAB）",
+   "subtitle": "三维有限差分解拉普拉斯方程，算避雷针电场与电势",
+   "category": "optics",
+   "tags": [
+    "MATLAB",
+    "静电场",
+    "有限差分",
+    "三维"
+   ],
+   "summary": "用三维有限差分法在 60×60×80 的网格上解拉普拉斯方程（SOR 超松弛迭代，松弛因子 1.6），模拟「圆锥 + 圆柱」组合避雷针周围的电场与电势分布。目录里按时间顺序留了 6 个版本，能看到几何尺寸、网格与可视化方案是怎么一步步改的。",
+   "highlights": [
+    "拉普拉斯方程三维有限差分，SOR 超松弛迭代（因子 1.6）",
+    "60×60×80 网格、仿真域 1×1×3 m",
+    "6 个版本：锥角 29°/30°、可视化方案迭代"
+   ],
+   "tech": [
+    "MATLAB"
+   ],
+   "cover": "works/matlab-field-sim/LightningRod_Simulation_theta30_修正版/轴线分布.png",
+   "demo": "",
+   "entry": "works/matlab-field-sim/README.md",
+   "published": true,
+   "sourceFiles": 104,
+   "sourceBytes": 14313458,
+   "publishedFiles": 104,
+   "publishedBytes": 14313458,
+   "excludeReason": "",
+   "excludeNote": "",
+   "featured": false
+  },
+  {
+   "id": "esp32-data-logger",
+   "dir": "works/esp32-data-logger",
+   "title": "ESP32 数据采集固件",
+   "subtitle": "ESP-IDF 下的 ADC 采样 + UART 上报",
+   "category": "misc",
+   "tags": [
+    "ESP32",
+    "ESP-IDF",
+    "C",
+    "PlatformIO"
+   ],
+   "summary": "PlatformIO + ESP-IDF 的固件工程：用 ADC 连续采样外部信号，通过 UART 把数据打包上报，带任务划分、环形缓冲与采样节拍控制。工程骨架和 sdkconfig 都保留着，可以直接用 `pio run` 复现。",
+   "highlights": [
+    "ADC 连续采样 + UART 上报",
+    "ESP-IDF 任务与缓冲管理",
+    "PlatformIO 工程可直接构建"
+   ],
+   "tech": [
+    "C",
+    "ESP-IDF",
+    "PlatformIO"
+   ],
+   "cover": "",
+   "demo": "",
+   "entry": "works/esp32-data-logger/README.md",
+   "published": true,
+   "sourceFiles": 15,
+   "sourceBytes": 124981,
+   "publishedFiles": 15,
+   "publishedBytes": 124981,
+   "excludeReason": "",
+   "excludeNote": "",
+   "featured": false
+  },
+  {
+   "id": "esp32-oled-test",
+   "dir": "works/esp32-oled-test",
+   "title": "ESP32 OLED 显示测试",
+   "subtitle": "I2C OLED 的工程骨架（主程序未完成）",
+   "category": "misc",
+   "tags": [
+    "ESP32",
+    "ESP-IDF",
+    "OLED",
+    "PlatformIO"
+   ],
+   "summary": "一个 ESP-IDF + PlatformIO 的工程骨架，用来验证 OLED 走 I2C 的接线与驱动环境。**如实说明：`src/main.c` 是空的**——当时只把工程搭起来、验证了工具链能构建，显示代码没写完，所以这里保留的是一个「能编译的空工程」。",
+   "highlights": [
+    "ESP-IDF 工程骨架与 sdkconfig 可复用",
+    "main.c 为空，仅验证工具链",
+    "留作以后接 OLED 的起点"
+   ],
+   "tech": [
+    "C",
+    "ESP-IDF",
+    "PlatformIO"
+   ],
+   "cover": "",
+   "demo": "",
+   "entry": "works/esp32-oled-test/README.md",
+   "published": true,
+   "sourceFiles": 10,
+   "sourceBytes": 77004,
+   "publishedFiles": 10,
+   "publishedBytes": 77004,
+   "excludeReason": "",
+   "excludeNote": "",
+   "featured": false
+  },
+  {
+   "id": "rockets-report",
+   "dir": "works/rockets-report",
+   "title": "可复用航天器技术路线研究",
+   "subtitle": "一次性整理的报告：技术路线、关键指标与对比",
+   "category": "research",
+   "tags": [
+    "航天",
+    "调研报告",
+    "可复用火箭"
+   ],
+   "summary": "一份关于可复用航天器技术路线的资料整理，含各家方案的对比、关键指标与趋势判断，输出成 Markdown 与带排版的 HTML 两个版本。",
+   "highlights": [
+    "技术路线与关键指标对比",
+    "Markdown / HTML 双版本"
+   ],
+   "tech": [],
+   "cover": "",
+   "demo": "",
+   "entry": "works/rockets-report/README.md",
+   "published": true,
+   "sourceFiles": 4,
+   "sourceBytes": 326977,
+   "publishedFiles": 4,
+   "publishedBytes": 326977,
+   "excludeReason": "",
+   "excludeNote": "",
+   "featured": false
+  },
+  {
+   "id": "schrodinger-wavepacket",
+   "dir": "works/schrodinger-wavepacket",
+   "title": "含时薛定谔方程波包演化",
+   "subtitle": "一维波包撞向势垒的实时动画",
+   "category": "optics",
+   "tags": [
+    "量子力学",
+    "Python",
+    "数值求解",
+    "动画"
+   ],
+   "summary": "解一维含时薛定谔方程，看一个高斯波包撞向势垒之后怎么分裂：一部分反射、一部分穿过去。时间推进用分步傅里叶（split-operator）法，动能项在动量空间用 FFT 精确处理，长时间演化也不发散；再用 matplotlib 的 FuncAnimation 逐帧画出来，能直观看到隧穿概率随势垒高度变化。",
+   "highlights": [
+    "分步傅里叶（split-operator）法推进，FFT 处理动能项",
+    "波包遇到势垒的反射 / 透射分支",
+    "FuncAnimation 输出演化动画（含高内存友好的导出路径）"
+   ],
+   "tech": [
+    "Python",
+    "NumPy",
+    "SciPy",
+    "Matplotlib"
+   ],
+   "cover": "works/schrodinger-wavepacket/previews/wavepacket-frame-start.png",
+   "demo": "",
+   "entry": "works/schrodinger-wavepacket/README.md",
+   "published": true,
+   "sourceFiles": 6,
+   "sourceBytes": 433702,
+   "publishedFiles": 6,
+   "publishedBytes": 433702,
+   "excludeReason": "",
+   "excludeNote": "",
+   "featured": false
+  },
+  {
+   "id": "roadmap-svg",
+   "dir": "works/roadmap-svg",
+   "title": "城市路网 SVG 底图生成器",
+   "subtitle": "任意城市的无标注路网底图，在线生成并下载",
+   "category": "geo",
+   "tags": [
+    "OpenStreetMap",
+    "Overpass API",
+    "SVG",
+    "地图"
+   ],
+   "summary": "选一个城市、搜一个地名，或直接框一段经纬度，从 OpenStreetMap 取道路几何，按等级分线宽画成完全不含文字标注的底图，导出 SVG 或 PNG。原版是一套 Python 脚本（Overpass 分块抓取 + BBBike 下载 + 自写投影渲染），城市范围写死在代码里；网页版把整条链路搬进浏览器，换城市不用改代码、不用装环境。",
+   "highlights": [
+    "预置 17 城 + Nominatim 地名搜索 + 自定义 bbox（也支持中心点 + 宽高换算）",
+    "Overpass 分块抓取：进度条 / 取消 / 失败重试 / 端点自动轮换",
+    "浅色 / 深色 / 透明三配色，按 6 个道路等级分层线宽，无任何文字标注",
+    "下载 SVG / PNG、复制源码；内置太原示例打开即可离线预览"
+   ],
+   "tech": [
+    "JavaScript",
+    "Overpass API",
+    "Canvas",
+    "SVG"
+   ],
+   "cover": "works/roadmap-svg/python/preview_太原.png",
+   "demo": "works/roadmap-svg/index.html",
+   "entry": "works/roadmap-svg/README.md",
+   "published": true,
+   "sourceFiles": 13,
+   "sourceBytes": 694722,
+   "publishedFiles": 13,
+   "publishedBytes": 694722,
+   "excludeReason": "",
+   "excludeNote": "",
+   "featured": true
   }
  ]
 }

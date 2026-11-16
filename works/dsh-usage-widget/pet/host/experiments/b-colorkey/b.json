@@ -1,0 +1,30 @@
+﻿{
+    "hwnd":  2950016,
+    "x":  60,
+    "y":  60,
+    "w":  520,
+    "h":  320,
+    "colorKeyApplied":  true,
+    "layeredKey":  "0x00ff00ff",
+    "pageClicks":  -1,
+    "messageCount":  1,
+    "lastMessage":  "\"{\\\"kind\\\":\\\"ready\\\",\\\"x\\\":0,\\\"y\\\":0,\\\"n\\\":0}\"",
+    "probes":  {
+                   "q1_parent_magenta":  {
+                                             "y":  340,
+                                             "x":  400
+                                         },
+                   "q2_parent_green":  {
+                                           "y":  190,
+                                           "x":  440
+                                       },
+                   "q3_child_magenta":  {
+                                            "y":  340,
+                                            "x":  280
+                                        },
+                   "q4_child_blue":  {
+                                         "y":  205,
+                                         "x":  165
+                                     }
+               }
+}

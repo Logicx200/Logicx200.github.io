@@ -1,0 +1,477 @@
+﻿<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>城市路网 SVG 底图生成器 · 学哲玩</title>
+<meta name="description" content="在线工具：从 OpenStreetMap 分块抓取任意城市/任意经纬度范围的道路中心线，按等级分层渲染成无文字标注的 SVG / PNG 路网底图。浅色、深色、透明三种配色，一键下载。数据 © OpenStreetMap contributors (ODbL)。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+<style>
+  :root { --rm-wide: 1240px; }
+
+  /* ---------- 顶栏 ---------- */
+  .rm-bar { position: sticky; top: 0; z-index: 50; background: var(--paper); border-bottom: 1px solid var(--rule); }
+  .rm-bar .bar-inner { display: flex; align-items: center; gap: 14px; height: 54px; }
+  .rm-bar .bar-back {
+    display: inline-flex; align-items: center; white-space: nowrap;
+    font-size: 13px; letter-spacing: .04em; color: var(--ink-2); text-decoration: none;
+  }
+  .rm-bar .bar-back:hover { color: var(--accent); }
+  .rm-bar .bar-sep { color: var(--rule-strong); }
+  .rm-bar .bar-title {
+    font-family: var(--font-serif); font-size: 15px; letter-spacing: .07em; color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .rm-bar .bar-spacer { flex: 1; }
+  .rm-bar .theme-toggle svg { width: 14px; height: 14px; }
+  .rm-bar .icon-moon { display: none; }
+  [data-theme="dark"] .rm-bar .icon-sun { display: none; }
+  [data-theme="dark"] .rm-bar .icon-moon { display: block; }
+
+  /* ---------- 页面骨架 ---------- */
+  .rm-wrap { width: 100%; max-width: var(--rm-wide); margin: 0 auto; padding-inline: clamp(18px, 4vw, 34px); }
+  main.rm-main { padding-bottom: 8px; }
+  .rm-head { padding: clamp(28px, 4.5vw, 48px) 0 16px; }
+  .rm-head .page-eyebrow { margin: 0 0 12px; }
+  .rm-head .page-title { margin: 0; }
+  .rm-head .page-desc { margin: 14px 0 0; max-width: 52em; }
+  .rm-meta-row {
+    display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 14px;
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); letter-spacing: .04em;
+  }
+  .rm-meta-row .dot { width: 5px; height: 5px; background: var(--accent); display: inline-block; transform: translateY(-2px); margin-right: 6px; }
+
+  .rm-notice {
+    border: 1px solid var(--rule-strong);
+    border-left: 3px solid var(--accent);
+    background: var(--accent-wash);
+    padding: 10px 14px; margin: 0 0 14px;
+    font-size: 12.5px; line-height: 1.8; color: var(--ink-2);
+  }
+  .rm-notice b { color: var(--ink); }
+  .rm-notice code { font-family: var(--font-mono); font-size: 11.5px; background: var(--paper-2); padding: 1px 5px; }
+
+  /* ---------- 主体两栏 ---------- */
+  .rm-grid { display: grid; grid-template-columns: 350px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .rm-side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+  .rm-card { border: 1px solid var(--rule); background: var(--paper); }
+  .rm-card > h2 {
+    margin: 0; padding: 8px 12px 7px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--font-serif); font-weight: 500; font-size: 13px;
+    letter-spacing: .05em; color: var(--ink);
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  }
+  .rm-card > h2 .step { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); letter-spacing: .06em; }
+  .rm-card-body { padding: 11px 12px 12px; display: flex; flex-direction: column; gap: 10px; }
+
+  .rm-tabs { display: flex; border: 1px solid var(--rule-strong); }
+  .rm-tab {
+    flex: 1; font: inherit; font-size: 12px; padding: 6px 4px;
+    border: 0; border-right: 1px solid var(--rule);
+    background: transparent; color: var(--ink-2); cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .rm-tab:last-child { border-right: 0; }
+  .rm-tab:hover { color: var(--accent); }
+  .rm-tab.active { background: var(--accent); color: var(--paper); }
+
+  .rm-field { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--ink-3); letter-spacing: .04em; }
+  .rm-field select, .rm-field input[type="number"], .rm-field input[type="text"] {
+    width: 100%; font: inherit; font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink); background: var(--paper-2);
+    border: 1px solid var(--rule-strong); border-radius: 2px; padding: 4px 6px;
+  }
+  .rm-field select { font-family: var(--font-sans); }
+  .rm-field select:focus, .rm-field input:focus { outline: 1px solid var(--accent); outline-offset: 1px; }
+  .rm-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 10px; }
+  .rm-row { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+  .rm-row .grow { flex: 1; }
+
+  .rm-btn {
+    font: inherit; font-size: 12.5px; letter-spacing: .04em;
+    padding: 6px 13px; border-radius: 2px; cursor: pointer;
+    border: 1px solid var(--rule-strong); background: transparent; color: var(--ink);
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .rm-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .rm-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  .rm-btn.primary:hover { background: var(--accent-deep); color: var(--paper); }
+  .rm-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rm-btn.small { padding: 4px 9px; font-size: 11.5px; }
+  .rm-btn.danger { color: #a44432; border-color: #c9a396; }
+  .rm-btn.danger:hover { background: #a44432; color: #fff; border-color: #a44432; }
+
+  .rm-check { display: flex; align-items: flex-start; gap: 7px; font-size: 11.5px; color: var(--ink-2); line-height: 1.6; cursor: pointer; }
+  .rm-check input { margin: 3px 0 0; accent-color: var(--accent); flex: none; }
+  .rm-hint { margin: 0; font-size: 11px; line-height: 1.7; color: var(--ink-3); }
+  .rm-hint b { color: var(--ink-2); font-weight: 600; }
+  .rm-hint code { font-family: var(--font-mono); font-size: 10.5px; background: var(--paper-2); padding: 0 4px; }
+
+  .rm-region {
+    font-family: var(--font-mono); font-size: 10.5px; line-height: 1.7;
+    color: var(--ink-2); background: var(--paper-2);
+    border: 1px dashed var(--rule-strong); padding: 6px 8px;
+  }
+  .rm-region b { color: var(--accent); font-weight: 600; }
+
+  .rm-results { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; max-height: 176px; overflow: auto; }
+  .rm-results button {
+    width: 100%; text-align: left; font: inherit; font-size: 11.5px; line-height: 1.5;
+    color: var(--ink-2); background: var(--paper-2); border: 1px solid var(--rule); border-radius: 2px;
+    padding: 5px 8px; cursor: pointer;
+  }
+  .rm-results button:hover { border-color: var(--accent); color: var(--accent); }
+  .rm-results .res-name { display: block; color: var(--ink); font-weight: 600; font-size: 12px; }
+  .rm-results .res-bbox { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); }
+
+  /* 进度与状态 */
+  .rm-progress { height: 4px; background: var(--paper-3); overflow: hidden; }
+  .rm-progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .15s linear; }
+  .rm-status { font-size: 11.5px; line-height: 1.65; color: var(--ink-2); min-height: 2.6em; }
+  .rm-status b { color: var(--accent); }
+  .rm-status .err { color: #a44432; }
+  .rm-log {
+    margin: 0; padding: 6px 8px; max-height: 118px; overflow: auto;
+    font-family: var(--font-mono); font-size: 10.5px; line-height: 1.65; color: var(--ink-3);
+    background: var(--paper-2); border: 1px solid var(--rule);
+    white-space: pre-wrap; word-break: break-all;
+  }
+  .rm-log .ok { color: var(--accent); }
+  .rm-log .warn { color: #b07a1f; }
+  .rm-log .err { color: #a44432; }
+
+  /* 配色选择 */
+  .rm-palettes { display: flex; gap: 6px; }
+  .rm-palette {
+    flex: 1; font: inherit; font-size: 11.5px; padding: 5px 4px;
+    border: 1px solid var(--rule-strong); background: transparent; color: var(--ink-2);
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .rm-palette i { width: 12px; height: 12px; display: inline-block; border: 1px solid var(--rule-strong); }
+  .rm-palette:hover { color: var(--accent); border-color: var(--accent); }
+  .rm-palette.active { border-color: var(--accent); color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+
+  /* 统计 */
+  .rm-stats { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; font-size: 11px; color: var(--ink-3); }
+  .rm-stats dt { margin: 0; }
+  .rm-stats dd { margin: 0; text-align: right; font-family: var(--font-mono); font-size: 11px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .rm-stats dd.hl { color: var(--accent); font-weight: 600; }
+  .rm-legend { display: flex; flex-direction: column; gap: 3px; border-top: 1px solid var(--rule); padding-top: 8px; }
+  .rm-legend-row { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--ink-2); }
+  .rm-legend-row i { height: 0; border-top-style: solid; display: inline-block; width: 26px; flex: none; }
+  .rm-legend-row span.count { margin-left: auto; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); }
+
+  /* 预览 */
+  .rm-right { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .rm-preview { border: 1px solid var(--rule); background: var(--paper); display: flex; flex-direction: column; min-width: 0; position: static; }
+  .rm-preview-head {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 14px;
+    padding: 8px 12px; border-bottom: 1px solid var(--rule);
+  }
+  .rm-preview-head .title { font-family: var(--font-serif); font-size: 14px; color: var(--ink); letter-spacing: .03em; }
+  .rm-preview-head .meta { margin-left: 10px; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); }
+  .rm-preview-tools { display: flex; align-items: center; gap: 8px; }
+  .rm-chip {
+    font-size: 10.5px; letter-spacing: .06em; color: var(--accent);
+    border: 1px solid var(--accent-underline); padding: 1px 7px; border-radius: 2px;
+    font-family: var(--font-mono);
+  }
+  .rm-stage {
+    position: relative; padding: 14px; min-height: 320px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--paper-2);
+  }
+  .rm-stage.stage-light { background: #f7f4ec; }
+  .rm-stage.stage-dark { background: #12141a; }
+  .rm-stage.stage-transparent {
+    background-color: var(--paper-2);
+    background-image:
+      linear-gradient(45deg, rgba(128,128,128,.14) 25%, transparent 25%, transparent 75%, rgba(128,128,128,.14) 75%),
+      linear-gradient(45deg, rgba(128,128,128,.14) 25%, transparent 25%, transparent 75%, rgba(128,128,128,.14) 75%);
+    background-size: 18px 18px;
+    background-position: 0 0, 9px 9px;
+  }
+  .rm-stage.actual { overflow: auto; align-items: flex-start; justify-content: flex-start; max-height: 72vh; }
+  #svgHost { width: 100%; display: flex; justify-content: center; }
+  #svgHost svg {
+    display: block; width: auto; height: auto;
+    max-width: 100%; max-height: 66vh;
+    image-rendering: auto;
+  }
+  .rm-stage.actual #svgHost svg { max-width: none; max-height: none; }
+  .rm-badge {
+    position: absolute; left: 18px; top: 18px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em;
+    color: var(--ink-2); background: var(--paper); border: 1px solid var(--rule-strong);
+    padding: 2px 7px; opacity: .92;
+  }
+  .rm-preview-foot {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px;
+    padding: 7px 12px; border-top: 1px solid var(--rule);
+    font-size: 10.5px; color: var(--ink-3); letter-spacing: .03em;
+  }
+  .rm-preview-foot a { color: var(--ink-2); text-decoration-color: var(--rule-strong); }
+  .rm-preview-foot a:hover { color: var(--accent); }
+  .rm-loading {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    font-size: 12px; color: var(--ink-2); z-index: 3;
+  }
+  .rm-loading .bar { width: 160px; height: 2px; background: var(--rule); overflow: hidden; }
+  .rm-loading .bar i { display: block; height: 100%; width: 40%; background: var(--accent); animation: rmslide 1.1s linear infinite; }
+  @keyframes rmslide { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+  .rm-empty { font-size: 12.5px; color: var(--ink-3); text-align: center; line-height: 1.9; padding: 30px 10px; }
+
+  /* 说明 */
+  .rm-about { margin-top: 20px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .rm-about section { border: 1px solid var(--rule); background: var(--paper); padding: 12px 14px; }
+  .rm-about h3 { margin: 0 0 6px; font-family: var(--font-serif); font-size: 13px; font-weight: 500; }
+  .rm-about p { margin: 0; font-size: 11.5px; line-height: 1.8; color: var(--ink-2); }
+  .rm-about a { color: var(--accent); }
+  .rm-details { margin-top: 14px; border-top: 1px solid var(--rule); padding-top: 10px; font-size: 12px; color: var(--ink-2); line-height: 1.9; }
+  .rm-details summary { cursor: pointer; color: var(--ink-2); }
+  .rm-details p { margin: 8px 0 0; }
+  .rm-details code { font-family: var(--font-mono); font-size: 11px; background: var(--paper-2); padding: 1px 5px; }
+
+  .rm-toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(10px);
+    background: var(--ink); color: var(--paper);
+    font-size: 12.5px; letter-spacing: .02em; padding: 8px 18px; border-radius: 2px;
+    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 90;
+    max-width: min(560px, 86vw); line-height: 1.6;
+  }
+  .rm-toast.show { opacity: .95; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 1040px) {
+    .rm-grid { grid-template-columns: minmax(0, 1fr); }
+    .rm-preview { position: static; }
+    .rm-about { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body class="page-works" data-page="roadmap-svg">
+<a class="skip-link" href="#main">跳到正文</a>
+
+<header class="rm-bar">
+  <div class="rm-wrap bar-inner">
+    <a class="bar-back" href="../">← 返回作品列表</a>
+    <span class="bar-sep" aria-hidden="true">/</span>
+    <span class="bar-title">城市路网 SVG 底图生成器</span>
+    <span class="bar-spacer"></span>
+    <button class="theme-toggle" type="button" id="themeToggle" aria-label="切换明暗主题" title="切换明暗主题">
+      <svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg>
+      <svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main" class="rm-main">
+  <div class="rm-wrap">
+    <header class="rm-head page-head">
+      <p class="page-eyebrow">TOOL · OPENSTREETMAP → SVG</p>
+      <h1 class="page-title">城市路网 SVG 底图生成器</h1>
+      <p class="page-desc">选一座城市、搜一个地名，或者直接输入任意经纬度范围，从 OpenStreetMap 抓取道路中心线，按道路等级分层渲染成一张<b>不含任何文字标注</b>的矢量路网底图。支持浅色、深色、透明三种配色，SVG 与 PNG 一键下载，适合做海报底纹、示意图背景或数据可视化底图。</p>
+      <div class="rm-meta-row">
+        <span><i class="dot"></i>纯静态 · 零依赖 · 无需登录</span>
+        <span>预置 17 座城市 + 任意地名搜索 + 自定义 bbox</span>
+        <span>数据 © OpenStreetMap contributors（ODbL 1.0）</span>
+      </div>
+    </header>
+
+    <div class="rm-notice" id="envNotice" hidden></div>
+
+    <div class="rm-grid">
+      <aside class="rm-side">
+        <section class="rm-card">
+          <h2>① 选择区域 <span class="step" id="modeStep">预置城市</span></h2>
+          <div class="rm-card-body">
+            <div class="rm-tabs" role="tablist" aria-label="区域选择方式">
+              <button class="rm-tab active" type="button" data-tab="preset" role="tab" aria-selected="true">预置城市</button>
+              <button class="rm-tab" type="button" data-tab="search" role="tab" aria-selected="false">名称搜索</button>
+              <button class="rm-tab" type="button" data-tab="bbox" role="tab" aria-selected="false">自定义 bbox</button>
+            </div>
+
+            <div class="rm-tab-panel" data-panel="preset">
+              <label class="rm-field">城市
+                <select id="citySelect"></select>
+              </label>
+              <p class="rm-hint">预置城市覆盖主城区约 15–25 km 范围；想要其它地方请用「名称搜索」或「自定义 bbox」。</p>
+            </div>
+
+            <div class="rm-tab-panel" data-panel="search" hidden>
+              <label class="rm-field">地名 / 城市名（支持中英文）
+                <input type="text" id="searchInput" placeholder="例如：洛阳、Lanzhou、Kyoto" autocomplete="off">
+              </label>
+              <div class="rm-row">
+                <button class="rm-btn primary" type="button" id="btnSearch">搜索</button>
+                <span class="rm-hint" style="margin:0">使用 Nominatim 公共搜索服务，请勿频繁请求。</span>
+              </div>
+              <ul class="rm-results" id="searchResults" hidden></ul>
+            </div>
+
+            <div class="rm-tab-panel" data-panel="bbox" hidden>
+              <div class="rm-row" style="margin-bottom:7px">
+                <label class="rm-check"><input type="radio" name="bboxmode" value="edges" checked> 四至坐标</label>
+                <label class="rm-check"><input type="radio" name="bboxmode" value="center"> 中心点 + 宽高</label>
+              </div>
+              <div id="bboxEdges" class="rm-grid2">
+                <label class="rm-field">南纬 S<input type="number" id="bS" step="0.001" value="37.855"></label>
+                <label class="rm-field">北纬 N<input type="number" id="bN" step="0.001" value="37.875"></label>
+                <label class="rm-field">西经 W<input type="number" id="bW" step="0.001" value="112.545"></label>
+                <label class="rm-field">东经 E<input type="number" id="bE" step="0.001" value="112.575"></label>
+              </div>
+              <div id="bboxCenter" class="rm-grid2" hidden>
+                <label class="rm-field">中心纬度<input type="number" id="cLat" step="0.001" value="37.865"></label>
+                <label class="rm-field">中心经度<input type="number" id="cLon" step="0.001" value="112.560"></label>
+                <label class="rm-field">东西宽 km<input type="number" id="cWkm" step="0.5" value="3"></label>
+                <label class="rm-field">南北高 km<input type="number" id="cHkm" step="0.5" value="2.5"></label>
+              </div>
+              <div class="rm-row">
+                <button class="rm-btn small" type="button" id="btnApplyBbox">应用范围</button>
+                <span class="rm-hint" style="margin:0">范围越大抓取越慢；建议不超过 0.6° × 0.6°。</span>
+              </div>
+            </div>
+
+            <div class="rm-region" id="regionInfo">—</div>
+          </div>
+        </section>
+
+        <section class="rm-card">
+          <h2>② 抓取道路数据 <span class="step">Overpass API</span></h2>
+          <div class="rm-card-body">
+            <label class="rm-check"><input type="checkbox" id="optService" checked> 包含 service 道路（小区内部路、停车场通道等，数据量会明显变大）</label>
+            <div class="rm-row">
+              <button class="rm-btn primary grow" type="button" id="btnFetch">获取道路数据</button>
+              <button class="rm-btn danger" type="button" id="btnCancel" disabled>取消</button>
+              <button class="rm-btn" type="button" id="btnRetry" hidden title="重新抓取当前区域">重试</button>
+            </div>
+            <div class="rm-progress" aria-hidden="true"><i id="progBar"></i></div>
+            <div class="rm-status" id="status">就绪。当前显示的是内置示例数据。</div>
+            <pre class="rm-log" id="log" aria-live="polite"></pre>
+            <p class="rm-hint">分块抓取、失败自动重试并切换公共端点。<b>公共实例可能排队较慢</b>；抓取中可随时取消，已取得的部分仍会渲染。</p>
+          </div>
+        </section>
+
+        <section class="rm-card">
+          <h2>③ 配色与导出</h2>
+          <div class="rm-card-body">
+            <div class="rm-palettes" role="radiogroup" aria-label="配色">
+              <button class="rm-palette" type="button" data-palette="light"><i style="background:#f7f4ec"></i>浅色</button>
+              <button class="rm-palette" type="button" data-palette="dark"><i style="background:#12141a"></i>深色</button>
+              <button class="rm-palette" type="button" data-palette="transparent"><i style="background:conic-gradient(#999 0 25%,#ddd 0 50%,#999 0 75%,#ddd 0)"></i>透明</button>
+            </div>
+            <div class="rm-grid2">
+              <label class="rm-field">画布宽度
+                <select id="optWidth">
+                  <option value="1600">1600 px</option>
+                  <option value="2400" selected>2400 px</option>
+                  <option value="3200">3200 px</option>
+                </select>
+              </label>
+              <label class="rm-field">PNG 倍率
+                <select id="optPngScale">
+                  <option value="2" selected>2×</option>
+                  <option value="3">3×</option>
+                </select>
+              </label>
+            </div>
+            <div class="rm-row">
+              <button class="rm-btn primary grow" type="button" id="btnSvg">下载 SVG</button>
+              <button class="rm-btn grow" type="button" id="btnPng">下载 PNG</button>
+            </div>
+            <div class="rm-row">
+              <button class="rm-btn small" type="button" id="btnCopy">复制 SVG 源码</button>
+              <button class="rm-btn small" type="button" id="btnSample">下载内置示例</button>
+            </div>
+            <p class="rm-hint">导出文件请保留署名：<b>数据 © OpenStreetMap contributors，ODbL 1.0</b>。</p>
+          </div>
+        </section>
+
+      </aside>
+
+      <div class="rm-right">
+        <section class="rm-preview" aria-label="路网预览">
+        <header class="rm-preview-head">
+          <div>
+            <span class="title" id="previewTitle">内置示例 · 太原五一广场周边</span>
+            <span class="meta" id="previewMeta">—</span>
+          </div>
+          <div class="rm-preview-tools">
+            <span class="rm-chip" id="paletteChip">深色</span>
+            <button class="rm-btn small" type="button" id="btnFit">实际大小 / 适应</button>
+          </div>
+        </header>
+        <div class="rm-stage" id="previewStage">
+          <div id="svgHost"></div>
+          <span class="rm-badge" id="previewBadge">内置示例</span>
+          <div class="rm-loading" id="loading" hidden>
+            <span id="loadingText">正在抓取道路数据…</span>
+            <div class="bar"><i></i></div>
+          </div>
+        </div>
+        <footer class="rm-preview-foot">
+          <span>数据 © OpenStreetMap contributors · ODbL 1.0 · 无文字标注</span>
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">许可说明</a>
+        </footer>
+        </section>
+
+        <section class="rm-card">
+          <h2>统计与图例 <span class="step" id="sourceStep">内置示例</span></h2>
+          <div class="rm-card-body">
+            <dl class="rm-stats" id="stats">
+              <dt>道路条数</dt><dd class="hl" id="stWays">—</dd>
+              <dt>区域范围</dt><dd id="stBbox">—</dd>
+              <dt>范围尺寸</dt><dd id="stSize">—</dd>
+              <dt>画布尺寸</dt><dd id="stCanvas">—</dd>
+              <dt>SVG 大小</dt><dd id="stBytes">—</dd>
+              <dt>抓取耗时</dt><dd id="stTime">—</dd>
+            </dl>
+            <div class="rm-legend" id="legend"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="rm-about">
+      <section>
+        <h3>它是怎么画的</h3>
+        <p>按经纬度 bbox 把区域切成小网格，逐块向 Overpass API 请求 <code>highway=*</code> 道路的几何中心线；用 Web Mercator 投影（按纬度做 cos 修正）换算成像素，再按 6 个等级分组、以不同线宽和颜色画成一条条 <code>&lt;path&gt;</code>。只画线，不写任何路名或地名——这正是原项目的核心卖点。</p>
+      </section>
+      <section>
+        <h3>数据来源与许可</h3>
+        <p>路网数据来自 <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>，通过 <a href="https://overpass-api.de/" target="_blank" rel="noopener noreferrer">Overpass API</a> 查询；地名搜索使用 <a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener noreferrer">Nominatim</a>。数据版权归 © OpenStreetMap contributors，按 <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener noreferrer">ODbL 1.0</a> 许可使用，二次分发请保留署名与许可链接。</p>
+      </section>
+      <section>
+        <h3>使用提示</h3>
+        <p>页面本身零依赖、可离线打开；但<b>抓取数据需要联网</b>。用 <code>file://</code> 直接双击打开时，浏览器会把跨域请求判定为 CORS 失败，建议在站点根目录执行 <code>python -m http.server 8000</code> 后访问 <code>http://localhost:8000/works/roadmap-svg/</code>。抓取大范围时请耐心等待，或点「取消」保留已取得的部分。</p>
+      </section>
+    </div>
+
+    <details class="rm-details">
+      <summary>与原版 Python 工具的差异 &amp; 已知限制</summary>
+      <p>原版是本地 Python 脚本（<code>roadmap_svg.py</code>）：固定城市字典、分块请求 Overpass、落盘缓存、只输出深色/浅色两种全图 SVG，城市范围写死在代码里，加一座城市要改源码。网页版保留相同的分块抓取与投影/分级/无标注渲染思路，但把「先把数据下载到本地再渲染」改成了浏览器里「抓取 → 投影 → 即时渲染 → 导出」一条龙；区域来源扩展为预置 17 城、Nominatim 任意地名搜索、以及自定义四至坐标或中心点+宽高；配色扩展为浅色/深色/透明三种；导出支持 SVG（含 viewBox、<code>shape-rendering="geometricPrecision"</code>）、PNG（2×/3× canvas 导出）与复制源码。</p>
+      <p>限制：① Overpass / Nominatim 都是公共免费服务，有速率限制与排队，慢或临时不可用属正常，页面会重试并给出原因；② 大范围（超过约 0.6°×0.6°）会显著变慢，建议缩小区域或用较小画布导出；③ 浏览器端不落盘缓存，每次抓取都会重新请求；④ 只取道路中心线，不含建筑、水系、绿地等其它要素；⑤ PNG 导出受浏览器 canvas 尺寸限制，超长图会自动限制倍率。</p>
+    </details>
+
+    <footer class="site-footer">
+      <div class="footer-row">
+        <p>© 2026 学哲玩<span class="footer-sep">·</span>工具页<span class="footer-sep">·</span>数据 © OpenStreetMap contributors</p>
+        <p>纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p>
+      </div>
+    </footer>
+  </div>
+</main>
+
+<div class="rm-toast" id="toast" role="status"></div>
+
+<script src="sample-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

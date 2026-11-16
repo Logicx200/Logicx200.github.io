@@ -1,0 +1,9 @@
+{
+  "name": "dsh-usage-pet-host-electron",
+  "version": "0.1.0",
+  "private": true,
+  "description": "透明桌宠宿主（Electron）—— 复用 DSH 自带 Electron 运行时的最小证明",
+  "main": "main.js",
+  "author": "local",
+  "license": "MIT"
+}

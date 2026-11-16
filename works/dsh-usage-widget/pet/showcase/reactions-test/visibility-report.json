@@ -1,0 +1,2239 @@
+{
+  "noisePixelThreshold": 8,
+  "faceBand": 0.45,
+  "runs": {
+    "baseline": {
+      "tag": "base",
+      "frames": 19,
+      "states": [
+        "running/sleeves"
+      ]
+    },
+    "production": {
+      "tag": "prod",
+      "frames": 190,
+      "groups": {
+        "running/sleeves": 190
+      },
+      "toolGroups": {
+        "job_output/call": 140,
+        "pwsh/result": 22,
+        "load_workspace_dependencies/result": 21,
+        "write/result": 7
+      },
+      "timeline": [
+        {
+          "at": "14:20:54.159",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:20:54.688",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:20:55.228",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:20:55.757",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:20:56.291",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:20:56.827",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:20:57.348",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:20:57.882",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:20:58.423",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:20:58.955",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:20:59.488",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:00.009",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:00.527",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:01.058",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:01.593",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:02.118",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:02.640",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:03.174",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:03.710",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:04.228",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:04.748",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:05.277",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "pwsh",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:05.812",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:06.340",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:06.873",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:07.408",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:07.929",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:08.450",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:08.972",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:09.509",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:10.042",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:10.576",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:11.091",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:11.618",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:12.154",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:12.688",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:13.227",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:13.750",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:14.288",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:14.812",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:15.333",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:15.856",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:16.374",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "load_workspace_dependencies",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:16.906",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "write",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:17.429",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "write",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:17.960",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "write",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:18.492",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "write",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:19.022",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "write",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:19.541",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "write",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:20.073",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "write",
+          "toolPhase": "result"
+        },
+        {
+          "at": "14:21:20.608",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:21.142",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:21.666",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:22.204",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:22.727",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:23.255",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:23.771",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:24.299",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:24.834",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:25.369",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:25.894",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:26.415",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:26.942",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:27.472",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:28.006",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:28.542",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:29.071",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:29.604",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:30.126",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:30.652",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:31.189",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:31.724",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:32.258",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:32.792",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:33.310",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:33.830",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:34.354",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:34.876",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:35.403",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:35.925",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:36.459",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:36.977",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:37.498",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:38.020",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:38.555",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:39.092",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:39.621",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:40.154",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:40.680",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:41.208",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:41.728",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:42.248",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:42.782",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:43.305",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:43.825",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:44.355",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:44.874",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:45.403",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:45.931",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:46.464",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:46.990",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:47.511",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:48.032",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:48.555",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:49.077",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:49.610",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:50.139",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:50.664",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:51.195",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:51.713",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:52.235",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:52.755",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:53.269",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:53.792",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:54.321",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:54.840",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:55.360",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:55.888",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:56.416",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:56.952",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:57.473",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:57.993",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:58.511",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:59.033",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:21:59.560",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:00.081",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:00.611",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:01.137",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:01.659",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:02.177",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:02.698",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:03.222",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:03.758",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:04.286",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:04.818",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:05.339",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:05.860",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:06.379",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:06.902",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:07.422",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:07.951",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:08.472",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:08.991",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:09.510",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:10.032",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:10.560",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:11.084",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:11.626",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:12.153",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:12.678",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:13.201",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:13.739",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:14.268",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:14.791",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:15.325",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:15.853",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:16.379",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:16.899",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:17.423",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:17.960",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:18.491",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:19.020",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:19.555",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:20.089",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:20.609",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:21.129",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:21.650",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:22.173",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:22.700",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:23.236",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:23.760",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:24.290",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:24.809",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:25.346",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:25.864",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:26.388",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:26.913",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:27.435",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:27.956",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:28.476",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:28.998",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:29.530",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:30.052",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:30.580",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:31.103",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:31.623",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:32.154",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:32.683",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:33.212",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        },
+        {
+          "at": "14:22:33.740",
+          "state": "running",
+          "pose": "sleeves",
+          "label": "跑命令",
+          "tool": "job_output",
+          "toolPhase": "call"
+        }
+      ]
+    },
+    "forced": {
+      "tag": "forced",
+      "frames": 16,
+      "labels": [
+        "f-idle",
+        "f-reading",
+        "f-writing",
+        "f-running",
+        "f-thinking",
+        "f-error",
+        "f-celebrating",
+        "f-listening",
+        "f-team",
+        "f-stale",
+        "f-offline",
+        "f-decor-glasses",
+        "f-decor-phone",
+        "f-act-love",
+        "f-act-selfie",
+        "f-released"
+      ]
+    }
+  },
+  "comparisons": [
+    {
+      "name": "baseline self-check (frame1 vs frame2)",
+      "kind": "baseline",
+      "trigger": "nothing changed",
+      "reference": "base frame 1",
+      "frame": {
+        "state": "running",
+        "pose": "sleeves",
+        "label": "base frame 2"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 9.483,
+        "changedPct": 16.766,
+        "maxDiff": 247
+      },
+      "faceRegion": {
+        "meanAbsDiff": 12.243,
+        "changedPct": 22.308,
+        "maxDiff": 247
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 7.645,
+        "changedPct": 13.726,
+        "maxDiff": 219
+      },
+      "xBaselineWhole": 1.18,
+      "xBaselineFace": 1.33,
+      "xBaselineClean": 1.01
+    },
+    {
+      "name": "production: tool pwsh/result (state kept constant)",
+      "kind": "production",
+      "trigger": "real tool call pwsh/result captured mid-flight",
+      "reference": "production reference tool job_output/call in the same state",
+      "frame": {
+        "state": "running",
+        "pose": "sleeves",
+        "label": "w0",
+        "at": "14:20:54.159",
+        "tool": "pwsh"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 7.262,
+        "changedPct": 14.544,
+        "maxDiff": 222
+      },
+      "faceRegion": {
+        "meanAbsDiff": 6.603,
+        "changedPct": 14.75,
+        "maxDiff": 216
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 8.245,
+        "changedPct": 15.157,
+        "maxDiff": 222
+      },
+      "xBaselineWhole": 1.03,
+      "xBaselineFace": 0.88,
+      "xBaselineClean": 1.12
+    },
+    {
+      "name": "production: tool load_workspace_dependencies/result (state kept constant)",
+      "kind": "production",
+      "trigger": "real tool call load_workspace_dependencies/result captured mid-flight",
+      "reference": "production reference tool job_output/call in the same state",
+      "frame": {
+        "state": "running",
+        "pose": "sleeves",
+        "label": "w22",
+        "at": "14:21:05.812",
+        "tool": "load_workspace_dependencies"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 8.865,
+        "changedPct": 16.77,
+        "maxDiff": 226
+      },
+      "faceRegion": {
+        "meanAbsDiff": 8.585,
+        "changedPct": 16.914,
+        "maxDiff": 226
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 8.935,
+        "changedPct": 16.695,
+        "maxDiff": 215
+      },
+      "xBaselineWhole": 1.18,
+      "xBaselineFace": 1.01,
+      "xBaselineClean": 1.23
+    },
+    {
+      "name": "production: tool write/result (state kept constant)",
+      "kind": "production",
+      "trigger": "real tool call write/result captured mid-flight",
+      "reference": "production reference tool job_output/call in the same state",
+      "frame": {
+        "state": "running",
+        "pose": "sleeves",
+        "label": "w43",
+        "at": "14:21:16.906",
+        "tool": "write"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 9.226,
+        "changedPct": 16.851,
+        "maxDiff": 233
+      },
+      "faceRegion": {
+        "meanAbsDiff": 11.052,
+        "changedPct": 19.836,
+        "maxDiff": 233
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 8.744,
+        "changedPct": 16.075,
+        "maxDiff": 212
+      },
+      "xBaselineWhole": 1.19,
+      "xBaselineFace": 1.18,
+      "xBaselineClean": 1.19
+    },
+    {
+      "name": "forced: f-reading",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"pose\":\"reading\",\"state\":\"reading\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "reading",
+        "pose": "sleeves",
+        "label": "f-reading",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 18.598,
+        "changedPct": 23.943,
+        "maxDiff": 246
+      },
+      "faceRegion": {
+        "meanAbsDiff": 23.715,
+        "changedPct": 28.946,
+        "maxDiff": 246
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 16.396,
+        "changedPct": 22.386,
+        "maxDiff": 228
+      },
+      "xBaselineWhole": 1.69,
+      "xBaselineFace": 1.73,
+      "xBaselineClean": 1.65
+    },
+    {
+      "name": "forced: f-writing",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"pose\":\"scribble\",\"state\":\"writing\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "writing",
+        "pose": "sleeves",
+        "label": "f-writing",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 10.386,
+        "changedPct": 17.491,
+        "maxDiff": 232
+      },
+      "faceRegion": {
+        "meanAbsDiff": 10.165,
+        "changedPct": 18.656,
+        "maxDiff": 232
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 10.346,
+        "changedPct": 17.134,
+        "maxDiff": 220
+      },
+      "xBaselineWhole": 1.23,
+      "xBaselineFace": 1.11,
+      "xBaselineClean": 1.26
+    },
+    {
+      "name": "forced: f-running",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"pose\":\"sleeves\",\"state\":\"running\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "running",
+        "pose": "sleeves",
+        "label": "f-running",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 17.504,
+        "changedPct": 22.968,
+        "maxDiff": 244
+      },
+      "faceRegion": {
+        "meanAbsDiff": 23.404,
+        "changedPct": 28.547,
+        "maxDiff": 244
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 14.608,
+        "changedPct": 20.808,
+        "maxDiff": 227
+      },
+      "xBaselineWhole": 1.62,
+      "xBaselineFace": 1.7,
+      "xBaselineClean": 1.54
+    },
+    {
+      "name": "forced: f-thinking",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"pose\":\"thinking\",\"state\":\"thinking\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "thinking",
+        "pose": "sleeves",
+        "label": "f-thinking",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 7.65,
+        "changedPct": 14.205,
+        "maxDiff": 245
+      },
+      "faceRegion": {
+        "meanAbsDiff": 10.686,
+        "changedPct": 18.434,
+        "maxDiff": 245
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 5.484,
+        "changedPct": 11.69,
+        "maxDiff": 225
+      },
+      "xBaselineWhole": 1.0,
+      "xBaselineFace": 1.1,
+      "xBaselineClean": 0.86
+    },
+    {
+      "name": "forced: f-error",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"pose\":\"gloomy\",\"state\":\"error\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "error",
+        "pose": "sleeves",
+        "label": "f-error",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 16.177,
+        "changedPct": 21.7,
+        "maxDiff": 242
+      },
+      "faceRegion": {
+        "meanAbsDiff": 23.434,
+        "changedPct": 28.483,
+        "maxDiff": 242
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 12.679,
+        "changedPct": 19.067,
+        "maxDiff": 227
+      },
+      "xBaselineWhole": 1.53,
+      "xBaselineFace": 1.7,
+      "xBaselineClean": 1.41
+    },
+    {
+      "name": "forced: f-celebrating",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"pose\":\"happy\",\"state\":\"celebrating\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "celebrating",
+        "pose": "sleeves",
+        "label": "f-celebrating",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 9.283,
+        "changedPct": 16.046,
+        "maxDiff": 230
+      },
+      "faceRegion": {
+        "meanAbsDiff": 11.277,
+        "changedPct": 18.633,
+        "maxDiff": 230
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 8.27,
+        "changedPct": 14.933,
+        "maxDiff": 230
+      },
+      "xBaselineWhole": 1.13,
+      "xBaselineFace": 1.11,
+      "xBaselineClean": 1.1
+    },
+    {
+      "name": "forced: f-listening",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"pose\":\"starry\",\"state\":\"listening\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "listening",
+        "pose": "sleeves",
+        "label": "f-listening",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 19.072,
+        "changedPct": 24.428,
+        "maxDiff": 243
+      },
+      "faceRegion": {
+        "meanAbsDiff": 23.978,
+        "changedPct": 28.742,
+        "maxDiff": 243
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 16.722,
+        "changedPct": 22.817,
+        "maxDiff": 233
+      },
+      "xBaselineWhole": 1.72,
+      "xBaselineFace": 1.72,
+      "xBaselineClean": 1.68
+    },
+    {
+      "name": "forced: f-team",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"pose\":\"team\",\"state\":\"team\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "team",
+        "pose": "sleeves",
+        "label": "f-team",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 9.641,
+        "changedPct": 16.945,
+        "maxDiff": 228
+      },
+      "faceRegion": {
+        "meanAbsDiff": 10.788,
+        "changedPct": 18.597,
+        "maxDiff": 228
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 8.644,
+        "changedPct": 15.901,
+        "maxDiff": 224
+      },
+      "xBaselineWhole": 1.19,
+      "xBaselineFace": 1.11,
+      "xBaselineClean": 1.17
+    },
+    {
+      "name": "forced: f-stale",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"pose\":\"sleepy\",\"state\":\"stale\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "stale",
+        "pose": "sleeves",
+        "label": "f-stale",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 16.924,
+        "changedPct": 22.369,
+        "maxDiff": 246
+      },
+      "faceRegion": {
+        "meanAbsDiff": 24.401,
+        "changedPct": 29.273,
+        "maxDiff": 246
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 13.19,
+        "changedPct": 19.474,
+        "maxDiff": 227
+      },
+      "xBaselineWhole": 1.58,
+      "xBaselineFace": 1.75,
+      "xBaselineClean": 1.44
+    },
+    {
+      "name": "forced: f-offline",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"pose\":\"offline\",\"state\":\"offline\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "offline",
+        "pose": "sleeves",
+        "label": "f-offline",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 6.034,
+        "changedPct": 13.716,
+        "maxDiff": 192
+      },
+      "faceRegion": {
+        "meanAbsDiff": 7.201,
+        "changedPct": 16.111,
+        "maxDiff": 192
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 5.396,
+        "changedPct": 12.735,
+        "maxDiff": 191
+      },
+      "xBaselineWhole": 0.97,
+      "xBaselineFace": 0.96,
+      "xBaselineClean": 0.94
+    },
+    {
+      "name": "forced: f-decor-glasses",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"props\":[\"glassesRound\"],\"clearBubble\":true,\"pose\":\"idle\",\"state\":\"idle\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "idle+glassesRound",
+        "pose": "sleeves",
+        "label": "f-decor-glasses",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 14.618,
+        "changedPct": 20.579,
+        "maxDiff": 242
+      },
+      "faceRegion": {
+        "meanAbsDiff": 19.227,
+        "changedPct": 25.126,
+        "maxDiff": 242
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 12.978,
+        "changedPct": 19.386,
+        "maxDiff": 227
+      },
+      "xBaselineWhole": 1.45,
+      "xBaselineFace": 1.5,
+      "xBaselineClean": 1.43
+    },
+    {
+      "name": "forced: f-decor-phone",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"props\":[\"phone\"],\"clearBubble\":true,\"pose\":\"idle\",\"state\":\"idle\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "idle+phone",
+        "pose": "sleeves",
+        "label": "f-decor-phone",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 8.593,
+        "changedPct": 14.163,
+        "maxDiff": 232
+      },
+      "faceRegion": {
+        "meanAbsDiff": 5.681,
+        "changedPct": 11.134,
+        "maxDiff": 232
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 10.781,
+        "changedPct": 16.27,
+        "maxDiff": 232
+      },
+      "xBaselineWhole": 1.0,
+      "xBaselineFace": 0.66,
+      "xBaselineClean": 1.2
+    },
+    {
+      "name": "forced: f-act-love",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"act\":\"love\",\"pose\":\"idle\",\"state\":\"idle\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "idle+act(love)",
+        "pose": "sleeves",
+        "label": "f-act-love",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 16.01,
+        "changedPct": 22.31,
+        "maxDiff": 242
+      },
+      "faceRegion": {
+        "meanAbsDiff": 18.934,
+        "changedPct": 25.149,
+        "maxDiff": 242
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 15.327,
+        "changedPct": 21.982,
+        "maxDiff": 236
+      },
+      "xBaselineWhole": 1.57,
+      "xBaselineFace": 1.5,
+      "xBaselineClean": 1.62
+    },
+    {
+      "name": "forced: f-act-selfie",
+      "kind": "forced",
+      "trigger": "force-state.json: {\"clearBubble\":true,\"act\":\"selfie\",\"pose\":\"idle\",\"state\":\"idle\"}",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "idle+act(selfie)",
+        "pose": "sleeves",
+        "label": "f-act-selfie",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 16.075,
+        "changedPct": 22.481,
+        "maxDiff": 239
+      },
+      "faceRegion": {
+        "meanAbsDiff": 19.448,
+        "changedPct": 25.303,
+        "maxDiff": 239
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 14.642,
+        "changedPct": 21.852,
+        "maxDiff": 225
+      },
+      "xBaselineWhole": 1.59,
+      "xBaselineFace": 1.51,
+      "xBaselineClean": 1.61
+    },
+    {
+      "name": "forced: f-released",
+      "kind": "forced",
+      "trigger": "force-state.json deleted",
+      "reference": "forced idle (f-idle)",
+      "frame": {
+        "state": "released->production",
+        "pose": "sleeves",
+        "label": "f-released",
+        "productionStateAtThatMoment": "running"
+      },
+      "wholeFrame": {
+        "meanAbsDiff": 15.323,
+        "changedPct": 24.014,
+        "maxDiff": 244
+      },
+      "faceRegion": {
+        "meanAbsDiff": 20.834,
+        "changedPct": 28.706,
+        "maxDiff": 244
+      },
+      "characterOnlyBand": {
+        "meanAbsDiff": 11.777,
+        "changedPct": 21.029,
+        "maxDiff": 222
+      },
+      "xBaselineWhole": 1.69,
+      "xBaselineFace": 1.71,
+      "xBaselineClean": 1.55
+    }
+  ],
+  "cleanBand": {
+    "startFrac": 0.309,
+    "panelBottomScreenY": 882.0,
+    "cropTopY": 818
+  },
+  "noise": {
+    "frames": 19,
+    "constantState": [
+      "running/sleeves"
+    ],
+    "wholeFrame": {
+      "changedPctMedian": 14.18,
+      "changedPctMax": 16.766,
+      "meanAbsDiffMedian": 7.399
+    },
+    "faceRegion": {
+      "changedPctMedian": 16.759,
+      "changedPctMax": 22.308,
+      "meanAbsDiffMedian": 8.583
+    },
+    "characterOnlyBand": {
+      "rows": "0.31 .. 1.0 of the crop",
+      "changedPctMedian": 13.555,
+      "changedPctMax": 16.544,
+      "meanAbsDiffMedian": 7.082
+    },
+    "panelBandBehindHer": {
+      "rows": "0.00 .. 0.31 of the crop",
+      "changedPctMedian": 15.418,
+      "changedPctMax": 23.556
+    }
+  },
+  "productionToolReference": {
+    "toolKey": "job_output/call",
+    "frames": 140,
+    "stateKey": "running/sleeves"
+  },
+  "acceptedShowcase": {
+    "images": 11,
+    "reference": "idle",
+    "stats": {
+      "celebrating": {
+        "vs": "idle",
+        "changedPct": 4.724,
+        "meanAbsDiff": 2.971
+      },
+      "error": {
+        "vs": "idle",
+        "changedPct": 5.921,
+        "meanAbsDiff": 4.342
+      },
+      "listening": {
+        "vs": "idle",
+        "changedPct": 4.923,
+        "meanAbsDiff": 3.351
+      },
+      "offline": {
+        "vs": "idle",
+        "changedPct": 5.749,
+        "meanAbsDiff": 3.746
+      },
+      "reading": {
+        "vs": "idle",
+        "changedPct": 5.705,
+        "meanAbsDiff": 3.721
+      },
+      "running": {
+        "vs": "idle",
+        "changedPct": 6.113,
+        "meanAbsDiff": 4.529
+      },
+      "stale": {
+        "vs": "idle",
+        "changedPct": 7.796,
+        "meanAbsDiff": 6.049
+      },
+      "team": {
+        "vs": "idle",
+        "changedPct": 6.717,
+        "meanAbsDiff": 5.0
+      },
+      "thinking": {
+        "vs": "idle",
+        "changedPct": 5.918,
+        "meanAbsDiff": 4.305
+      },
+      "writing": {
+        "vs": "idle",
+        "changedPct": 6.324,
+        "meanAbsDiff": 4.178
+      }
+    },
+    "note": "the 11 accepted state images are nearly the same picture - see the sheet strip"
+  },
+  "contactSheet": "F:\\dsh-usage-widget\\pet\\showcase\\reactions-contact-sheet.png"
+}

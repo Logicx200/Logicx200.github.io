@@ -1,0 +1,31 @@
+=== pet reaction visibility (task-14) ===
+baseline: 19 frames, state constant ['running/sleeves']
+  noise whole frame: 14.18% pixels changed (max 16.766%)
+  noise face band  : 16.759% pixels changed (max 22.308%)
+  noise character-only band (rows below the panel): 13.555% (max 16.544%)
+  noise panel band behind her: 15.418% (max 23.556%)
+production frames: {"running/sleeves": 190}
+production tool groups: {"job_output/call": 140, "pwsh/result": 22, "load_workspace_dependencies/result": 21, "write/result": 7}
+
+comparison                                                 whole%  xnoise    face%  xnoise   clean%  xnoise
+baseline self-check (frame1 vs frame2)                     16.766    1.18   22.308    1.33   13.726    1.01
+production: tool pwsh/result (state kept constant)         14.544    1.03   14.750    0.88   15.157    1.12
+production: tool load_workspace_dependencies/result (sta   16.770    1.18   16.914    1.01   16.695    1.23
+production: tool write/result (state kept constant)        16.851    1.19   19.836    1.18   16.075    1.19
+forced: f-reading                                          23.943    1.69   28.946    1.73   22.386    1.65
+forced: f-writing                                          17.491    1.23   18.656    1.11   17.134    1.26
+forced: f-running                                          22.968    1.62   28.547     1.7   20.808    1.54
+forced: f-thinking                                         14.205     1.0   18.434     1.1   11.690    0.86
+forced: f-error                                            21.700    1.53   28.483     1.7   19.067    1.41
+forced: f-celebrating                                      16.046    1.13   18.633    1.11   14.933     1.1
+forced: f-listening                                        24.428    1.72   28.742    1.72   22.817    1.68
+forced: f-team                                             16.945    1.19   18.597    1.11   15.901    1.17
+forced: f-stale                                            22.369    1.58   29.273    1.75   19.474    1.44
+forced: f-offline                                          13.716    0.97   16.111    0.96   12.735    0.94
+forced: f-decor-glasses                                    20.579    1.45   25.126     1.5   19.386    1.43
+forced: f-decor-phone                                      14.163     1.0   11.134    0.66   16.270     1.2
+forced: f-act-love                                         22.310    1.57   25.149     1.5   21.982    1.62
+forced: f-act-selfie                                       22.481    1.59   25.303    1.51   21.852    1.61
+forced: f-released                                         24.014    1.69   28.706    1.71   21.029    1.55
+
+contact sheet: F:\dsh-usage-widget\pet\showcase\reactions-contact-sheet.png

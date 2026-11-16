@@ -1,0 +1,16 @@
+toastCount=5 panelChildren=5 max=5
+  [02:01:57 上传 命中 98,765tokens -￥0.0008] opacity=1 colour=#FF7EE787
+  [02:01:57 上传 未命中 4,321tokens -￥0.000035] opacity=1 colour=#FFFF7B72
+  [02:01:57 下载 6,789tokens -￥0.000056] opacity=1 colour=#FFC9D1DC
+  [02:01:58 上传 命中 312,000tokens -￥0.0031] opacity=1 colour=#FF7EE787
+  [02:01:58 上传 未命中 4,549tokens -￥0.000045] opacity=1 colour=#FFFF7B72
+hint=Collapsed
+footer=￥2.0705|$0.2903|7.8M|谷时|￥53.4893|$7.5328|￥8.47
+agents=Visible summary=[1 运行中 · 1 空闲] rows=2 max=3
+  agent[  ▸ ][Apply widget UI feedback][06:52] colour=#FF93DDA0
+  agent[  ▸ ][Idle reviewer][03:10] colour=#FF79818C
+jobs=Visible summary=[1 个程序运行中] rows=1 max=2
+  job[  ▶ ][pwsh][01:05][45.2%  剩余 00:37]
+  job cmd[    node sim.mjs --steps 500]
+window=403x289 at 1499,725 topmost=True opacity=0.86 visible=True
+pet enabled=False want=1902,1014 0x0 panelRect=1499,725 403x289 hwnd=0x0 visible=False proc=none

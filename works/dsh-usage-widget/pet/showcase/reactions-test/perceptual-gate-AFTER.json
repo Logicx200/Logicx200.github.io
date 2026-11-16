@@ -1,0 +1,57 @@
+{
+  "mode": "measure",
+  "multiplier": 2.0,
+  "at": "2026-09-30 14:36:59",
+  "baseline": {
+    "label": "baseline silhouette jitter",
+    "frames": 7,
+    "medianDistance": 3.81,
+    "maxDistance": 8.53
+  },
+  "reactions": [
+    {
+      "label": "reaction-0.3s",
+      "frames": 1,
+      "medianDistance": 5.26,
+      "maxDistance": 5.26,
+      "xBaseline": 1.38,
+      "visible": false
+    },
+    {
+      "label": "reaction-0.8s",
+      "frames": 1,
+      "medianDistance": 6.23,
+      "maxDistance": 6.23,
+      "xBaseline": 1.64,
+      "visible": false
+    },
+    {
+      "label": "reaction-1.3s",
+      "frames": 1,
+      "medianDistance": 7.89,
+      "maxDistance": 7.89,
+      "xBaseline": 2.07,
+      "visible": true
+    },
+    {
+      "label": "reaction-1.9s",
+      "frames": 1,
+      "medianDistance": 10.49,
+      "maxDistance": 10.49,
+      "xBaseline": 2.75,
+      "visible": true
+    }
+  ],
+  "best": {
+    "label": "reaction-1.9s",
+    "frames": 1,
+    "medianDistance": 10.49,
+    "maxDistance": 10.49,
+    "xBaseline": 2.75,
+    "visible": true
+  },
+  "allVisible": false,
+  "peakVisible": true,
+  "pass": true,
+  "criterion": "peak of the gesture >= 2.0x baseline jitter"
+}

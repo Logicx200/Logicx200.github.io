@@ -1,0 +1,18 @@
+{
+  "pollMs": 2000,
+  "balanceMs": 60000,
+  "usdToCny": 7.1,
+  "defaultModel": "deepseek-flash",
+  "toastMax": 5,
+  "toastLifeMs": 0,
+  "toastFadeMs": 0,
+  "agentsMax": 3,
+  "jobsMax": 2,
+  "activityJobsMax": 200,
+  "bridgePath": "",
+  "bridgeStaleMs": 10000,
+  "opacity": 0.86,
+  "margin": 18,
+  "fontFamily": "Cascadia Code, Consolas",
+  "fontSize": 14
+}
