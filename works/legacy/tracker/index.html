@@ -1,0 +1,282 @@
+﻿<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>视频标志物跟踪 · 阻尼分析 · 早期项目移植</title>
+<meta name="description" content="把早年的 OpenCV 光流视频标志物跟踪程序移植成网页版：本地视频首帧点选标志物、基于 NCC 模板匹配的逐帧跟踪、轨迹与位移/置信度曲线、指数衰减拟合阻尼系数；没有视频时用内置合成弹簧振子演示，零依赖。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/css/site.css">
+<style>
+  :root { --demo-wide: 1220px; }
+
+  .demo-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+  .demo-bar .bar-inner { display: flex; align-items: center; gap: 14px; height: 54px; }
+  .demo-bar .demo-back {
+    display: inline-flex; align-items: center;
+    font-size: 13px; letter-spacing: .04em; color: var(--ink-2);
+    text-decoration: none; white-space: nowrap;
+  }
+  .demo-bar .demo-back:hover { color: var(--accent); }
+  .demo-bar .bar-sep { color: var(--rule-strong); }
+  .demo-bar .bar-title {
+    font-family: var(--font-serif); font-size: 15px; letter-spacing: .07em;
+    color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .demo-bar .bar-spacer { flex: 1; }
+  .demo-bar .theme-toggle svg { width: 14px; height: 14px; }
+  .demo-bar .icon-moon { display: none; }
+  [data-theme="dark"] .demo-bar .icon-sun { display: none; }
+  [data-theme="dark"] .demo-bar .icon-moon { display: block; }
+
+  .demo-wrap { width: 100%; max-width: var(--demo-wide); margin: 0 auto; padding-inline: clamp(18px, 4vw, 34px); }
+  main.demo-main { padding-bottom: 8px; }
+  .dp-head { padding: clamp(28px, 4.5vw, 46px) 0 16px; }
+  .dp-head .page-eyebrow { margin: 0 0 12px; }
+  .dp-head .page-title { margin: 0; }
+  .dp-head .page-desc { margin: 13px 0 0; max-width: 50em; }
+
+  .demo-btn {
+    font: inherit; font-size: 12.5px; letter-spacing: .04em;
+    padding: 6px 13px; border-radius: 2px;
+    border: 1px solid var(--rule-strong); background: transparent;
+    color: var(--ink); cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .demo-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .demo-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  .demo-btn.primary:hover { background: var(--accent-deep); color: var(--paper); }
+  .demo-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+  .ctrl-bar {
+    border: 1px solid var(--rule); background: var(--paper-2);
+    padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .ctrl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+  .ctrl-row .grow { flex: 1; }
+  .ctrl-label { font-size: 11px; color: var(--ink-3); letter-spacing: .05em; }
+  .mini-input {
+    font: inherit; font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink); background: var(--paper);
+    border: 1px solid var(--rule-strong); border-radius: 2px; padding: 3px 5px;
+    width: 66px;
+  }
+  .mini-field { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--ink-3); }
+
+  .trk-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+    align-items: start;
+  }
+  .trk-left { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+  .panel { border: 1px solid var(--rule); background: var(--paper); display: flex; flex-direction: column; min-width: 0; }
+  .panel > header {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    padding: 7px 11px 6px; border-bottom: 1px solid var(--rule);
+    font-size: 11px; color: var(--ink-3); letter-spacing: .06em;
+  }
+  .panel > header h2 {
+    margin: 0; font-family: var(--font-serif); font-size: 13px; font-weight: 500;
+    letter-spacing: .05em; color: var(--ink); white-space: nowrap;
+  }
+  .panel > header .hint { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .panel-canvas { position: relative; flex: 1; min-height: 0; }
+  .panel-canvas canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+  .video-canvas { aspect-ratio: 4 / 3; flex: none; }
+  .video-canvas canvas { cursor: crosshair; }
+  .video-hint {
+    padding: 7px 11px; border-top: 1px solid var(--rule);
+    font-size: 11.5px; color: var(--ink-2); line-height: 1.6;
+  }
+  .video-hint b { color: var(--accent); }
+
+  .progress { height: 3px; background: var(--paper-3); overflow: hidden; }
+  .progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .12s linear; }
+
+  .damp-body { padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 9px; }
+  .damp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 12px; }
+  .damp-grid label { display: flex; flex-direction: column; gap: 3px; font-size: 10.5px; color: var(--ink-3); letter-spacing: .03em; }
+  .damp-grid input, .damp-grid select {
+    font: inherit; font-family: var(--font-mono); font-size: 11.5px;
+    color: var(--ink); background: var(--paper-2);
+    border: 1px solid var(--rule-strong); border-radius: 2px; padding: 3px 6px;
+  }
+  .fit-result {
+    display: grid; grid-template-columns: 1fr auto; gap: 3px 10px;
+    font-size: 11px; color: var(--ink-3);
+    border-top: 1px solid var(--rule); padding-top: 8px;
+  }
+  .fit-result dd {
+    margin: 0; text-align: right; font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink); font-variant-numeric: tabular-nums;
+  }
+  .fit-result dd.hl { color: var(--accent); font-weight: 600; }
+
+  .charts2 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .chart {
+    border: 1px solid var(--rule); background: var(--paper);
+    display: flex; flex-direction: column;
+  }
+  .chart > header {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    padding: 6px 10px 5px; border-bottom: 1px solid var(--rule);
+    font-size: 11px; color: var(--ink-2); letter-spacing: .04em;
+  }
+  .chart > header b { font-family: var(--font-mono); font-size: 11px; color: var(--ink); }
+  .chart > header .unit { font-size: 10px; color: var(--ink-3); }
+  .chart-canvas { position: relative; aspect-ratio: 4 / 3; }
+  .chart-canvas canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+
+  .dp-note { margin: clamp(26px, 4vw, 40px) 0 0; color: var(--ink-3); font-size: 12.5px; line-height: 1.9; }
+  .dp-note details { margin-top: 12px; border-top: 1px solid var(--rule); padding-top: 10px; color: var(--ink-2); }
+  .dp-note summary { cursor: pointer; color: var(--ink-2); font-size: 12.5px; }
+  .dp-note details p { margin: 8px 0 0; }
+  .dp-note code { font-family: var(--font-mono); font-size: 11.5px; background: var(--paper-2); padding: 1px 5px; }
+
+  @media (max-width: 900px) {
+    .trk-grid { grid-template-columns: minmax(0, 1fr); }
+    .charts2 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 620px) {
+    .charts2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body class="page-legacy" data-page="legacy-tracker">
+<a class="skip-link" href="#main">跳到正文</a>
+
+<header class="demo-bar">
+  <div class="demo-wrap bar-inner">
+    <a class="demo-back" href="../">← 返回早期项目</a>
+    <span class="bar-sep" aria-hidden="true">/</span>
+    <span class="bar-title">视频标志物跟踪 · 阻尼分析</span>
+    <span class="bar-spacer"></span>
+    <button class="theme-toggle" type="button" id="themeToggle" aria-label="切换明暗主题" title="切换明暗主题">
+      <svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg>
+      <svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main" class="demo-main">
+  <div class="demo-wrap">
+    <header class="dp-head page-head">
+      <p class="page-eyebrow">LEGACY · PYTHON → WEB</p>
+      <h1 class="page-title">视频标志物跟踪 · 阻尼分析</h1>
+      <p class="page-desc">早期用 OpenCV 写的「视频标志物跟踪分析系统」：加载视频、标定坐标系、点选标志物、逐帧跟踪、画位移曲线，再用指数衰减拟合出阻尼系数。网页版用 Canvas 读取本地视频帧，以 NCC 模板匹配代替原来的 LK 光流，其余流程一一对应；没有视频也可以直接用内置的合成弹簧振子演示。</p>
+    </header>
+
+    <div class="ctrl-bar">
+      <div class="ctrl-row">
+        <button class="demo-btn primary" type="button" id="btnDemo">使用内置演示动画</button>
+        <button class="demo-btn" type="button" id="btnLoadVideo">加载本地视频…</button>
+        <input type="file" id="fileVideo" accept="video/*" hidden>
+        <button class="demo-btn" type="button" id="btnCalib">标定坐标系（点两点）</button>
+        <button class="demo-btn" type="button" id="btnReticle">重新标记（点新位置）</button>
+        <button class="demo-btn" type="button" id="btnTrack">开始跟踪</button>
+        <button class="demo-btn" type="button" id="btnReplay">回放</button>
+        <button class="demo-btn" type="button" id="btnSave">保存结果 CSV</button>
+        <span class="grow"></span>
+        <span class="ctrl-label" id="sourceLabel">内置演示</span>
+      </div>
+      <div class="ctrl-row">
+        <span class="mini-field">视频帧率 <input class="mini-input" type="number" id="optFps" value="30" min="1" max="240" step="1"> fps</span>
+        <span class="mini-field">抽帧步长 <input class="mini-input" type="number" id="optStep" value="1" min="1" max="30" step="1"> 帧</span>
+        <span class="mini-field">模板边长 <input class="mini-input" type="number" id="optTpl" value="25" min="9" max="41" step="2"> px</span>
+        <span class="mini-field">搜索半径 <input class="mini-input" type="number" id="optSearch" value="10" min="3" max="40" step="1"> px</span>
+        <span class="mini-field">置信度阈值 <input class="mini-input" type="number" id="optConf" value="0.5" min="0.1" max="0.95" step="0.05"></span>
+        <span class="mini-field">比例尺 <input class="mini-input" type="number" id="optScale" value="0.05" min="0.0001" max="10" step="0.001"> cm/px</span>
+      </div>
+      <div class="ctrl-row">
+        <span class="ctrl-label" id="statusText">正在准备内置演示…</span>
+      </div>
+      <div class="progress"><i id="progBar"></i></div>
+    </div>
+
+    <div class="trk-grid">
+      <div class="trk-left">
+        <section class="panel">
+          <header><h2>视频 / 帧预览</h2><span class="hint" id="videoHint2">—</span></header>
+          <div class="panel-canvas video-canvas"><canvas id="cvMain" aria-label="视频帧与跟踪标记"></canvas></div>
+          <div class="video-hint" id="videoHint">正在生成内置演示视频…</div>
+        </section>
+
+        <section class="panel">
+          <header><h2>阻尼系数拟合</h2><span class="hint">指数衰减 A·e^(−b·t) + y₀</span></header>
+          <div class="damp-body">
+            <div class="damp-grid">
+              <label>标记<select id="dampMarker"></select></label>
+              <label>拟合方法<select id="dampMethod">
+                <option value="envelope">包络拟合（推荐）</option>
+                <option value="direct">原版直接拟合</option>
+              </select></label>
+              <label>起始帧<input type="number" id="dampStart" value="0" min="0" step="1"></label>
+              <label>结束帧<input type="number" id="dampEnd" value="0" min="0" step="1"></label>
+            </div>
+            <div class="ctrl-row">
+              <button class="demo-btn primary" type="button" id="btnFit">拟合阻尼系数</button>
+              <span class="ctrl-label">拟合曲线会叠加在「Y 方向位移」图上</span>
+            </div>
+            <dl class="fit-result">
+              <dt>阻尼系数 b</dt><dd class="hl" id="fitB">—</dd>
+              <dt>初始幅值 A₀</dt><dd id="fitA">—</dd>
+              <dt>平衡位置 y₀</dt><dd id="fitY0">—</dd>
+              <dt>拟合优度 R²</dt><dd id="fitR2">—</dd>
+              <dt>拟合点数</dt><dd id="fitN">—</dd>
+              <dt>阻尼时间常数 1/b</dt><dd id="fitTau">—</dd>
+            </dl>
+          </div>
+        </section>
+      </div>
+
+      <div class="charts2">
+        <div class="chart">
+          <header><span>X 方向位移</span><span><b id="valDX">—</b> <span class="unit">cm</span></span></header>
+          <div class="chart-canvas"><canvas id="chX" aria-label="X 方向位移曲线"></canvas></div>
+        </div>
+        <div class="chart">
+          <header><span>Y 方向位移</span><span><b id="valDY">—</b> <span class="unit">cm</span></span></header>
+          <div class="chart-canvas"><canvas id="chY" aria-label="Y 方向位移曲线"></canvas></div>
+        </div>
+        <div class="chart">
+          <header><span>总位移</span><span><b id="valD">—</b> <span class="unit">cm</span></span></header>
+          <div class="chart-canvas"><canvas id="chD" aria-label="总位移曲线"></canvas></div>
+        </div>
+        <div class="chart">
+          <header><span>跟踪置信度</span><span><b id="valConf">—</b> <span class="unit">0–1</span></span></header>
+          <div class="chart-canvas"><canvas id="chConf" aria-label="跟踪置信度曲线"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <video id="vid" muted playsinline preload="auto" style="display:none"></video>
+
+    <p class="dp-note">
+      根据 <code>F:\Project\Tracker on Opencv.py</code> 里的原始 Python 程序移植，原作 2025-12。
+      原版是命令行菜单 + OpenCV 窗口的桌面程序（加载视频 → 标定坐标系 → 选择标志物 → 光流跟踪 → 显示结果 → 保存结果 → 阻尼分析）；网页版把这些步骤改成页面按钮，并用内置合成动画作为无视频时的演示数据。
+    </p>
+    <details class="dp-note">
+      <summary>移植说明（算法对照、简化与差异）</summary>
+      <p>原版跟踪核心是 <code>cv2.calcOpticalFlowPyrLK</code>（15×15 窗口、2 层金字塔）；浏览器没有内置光流，网页版改为在上一帧位置附近的搜索窗内做归一化互相关（NCC）模板匹配，并对相关峰做抛物线亚像素修正——它同样逐帧给每个标志物一个位置，NCC 峰值直接作为置信度。原版置信度是「与上一位置的像素距离换算」的启发式，网页版用真实的匹配得分，因此在图上更直接可读。</p>
+      <p>原版的阻尼分析对竖直位移 y−y₀ 直接拟合 A·e^(−b·t)+y₀（scipy curve_fit）。网页版保留这个「原版直接拟合」，另外提供更稳定的「包络拟合」：取 |位移| 的局部极值做 ln(A)=ln(A₀)−b·t 线性拟合，对欠阻尼振动能给出更可靠的 b；两种结果都会显示 b、A₀、y₀ 与 R²。</p>
+      <p>简化：标定坐标系改为「点两点 + 输入实际距离」的页面交互；原版的逐帧重新标记（R 键 + A/D 切帧）简化为「回到首帧重新点选后重新跟踪」；保存结果改为导出 CSV（浏览器不能直接写本地文件，用下载代替）。内置演示动画为 640×480、600 帧、30 fps 的合成弹簧振子，真实阻尼系数 b=0.10 s⁻¹，可在面板里直接验证拟合结果。</p>
+    </details>
+  </div>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

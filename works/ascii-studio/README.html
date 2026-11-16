@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>ASCII STUDIO · 说明 · 学哲玩</title>
+<meta name="description" content="把图片和视频变成字符画 / 复古像素画">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 网页 · 创意工具</p><h1 class="work-doc-title">ASCII STUDIO</h1><p class="work-doc-sub">把图片和视频变成字符画 / 复古像素画</p><div class="work-doc-meta"><span>网页 · 创意工具</span><span>37 个文件</span><span>4.7 MB</span><span class="tag">字符画</span><span class="tag">像素风</span><span class="tag">Canvas</span><span class="tag">零依赖</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a class="is-demo" href="index.html">在线试玩 ▶</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/ascii-studio" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><p>把图片和视频，变成字符画，或古早平面像素游戏。</p>
+<p>一个完全在浏览器本地运行的视觉转换工作台：拖入素材，选择「字符画 / 像素画」，调好密度、颜色与明暗，导出 PNG / TXT，或把正在播放的动画录制成视频。零外部依赖，不需要构建，也不上传任何文件。</p>
+<p><img src="docs/pixel.png" alt="复古像素模式" loading="lazy" decoding="async"></p>
+<h2 id="两种风格">两种风格</h2>
+<div class="table-container"><table><thead><tr><th>字符画模式</th><th>像素游戏模式</th></tr></thead><tbody><tr><td><img src="docs/image.png" alt="字符画模式" loading="lazy" decoding="async"></td><td><img src="docs/pixel-gameboy.png" alt="PICO-8 像素模式" loading="lazy" decoding="async"></td></tr></tbody></table></div>
+<ul><li><strong>字符画</strong>：把每个采样格映射成字符，支持 5 套预设字符集与自定义字符，可单色或保留原色。</li><li><strong>像素画</strong>：使用方形像素 + 限制色板 + 抖动 + 可选描边，做出 PICO-8、Game Boy、街机、CGA、灰阶、双色等复古游戏质感。</li></ul>
+<h2 id="功能">功能</h2>
+<h3 id="通用">通用</h3>
+<ul><li>支持图片与视频素材；所有处理都在浏览器本地完成</li><li>实时预览，拖动列数滑杆即时重绘</li><li>自动增强、亮度、对比度、抖动方式等参数在两种模式间共享</li><li>参数自动保存在 localStorage，下次打开继续使用</li><li>响应式布局，桌面、平板、手机都能用</li><li>视频支持播放、暂停、拖动进度、循环、原片对照与录制</li></ul>
+<h3 id="字符画">字符画</h3>
+<ul><li>5 套预设字符集：经典、精细、方块、点阵、二进制，外加自定义字符</li><li>明暗反转、有序抖动、误差扩散</li><li>单色模式可换 5 种字符颜色；原色模式保留画面色彩并提亮阴影</li><li>亮度、对比度、字符宽高比等细调参数</li><li>导出高清 PNG、带 BOM 的 TXT，或直接复制字符</li></ul>
+<h3 id="像素画">像素画</h3>
+<ul><li>6 套复古色板：PICO-8 16 色、Game Boy 4 色、街机 16 色、CGA 16 色、灰阶 6 色、双色</li><li>方形像素、横向像素宽 40–220，自动按原图比例计算行数</li><li>可选「像素描边」：在明暗交界处压上色板最暗的颜色，强化物体轮廓</li><li>抖动可选关闭 / 有序 / 误差扩散，用限制色板模拟渐变</li><li>像素模式导出高清 PNG，并支持视频逐帧录制</li><li>像素模式没有文本输出，复制与 TXT 会自动禁用</li></ul>
+<h3 id="视频">视频</h3>
+<ul><li>支持浏览器可解码的 MP4 / WebM / MOV / OGV 等格式</li><li>载入后静音自动播放，可暂停、拖动进度、切换循环</li><li>可调节目标渲染帧率（10 / 15 / 20 / 24 / 30 FPS）</li><li>原片对照小窗，随时确认还原效果</li><li>把当前动画录制为 WebM / MP4（取决于浏览器 MediaRecorder 支持）</li><li>未静音且浏览器支持捕获音轨时，录制会带上原始声音；静音时只录画面</li></ul>
+<h2 id="快速开始">快速开始</h2>
+<h3 id="环境">环境</h3>
+<ul><li>Node.js <strong>18 或更高版本</strong></li><li>推荐使用最新版 Edge 或 Chrome</li><li>不需要 <code>npm install</code>，项目没有第三方运行时依赖</li></ul>
+<h3 id="启动">启动</h3>
+<p><strong>Windows：</strong> 双击 <code>start.cmd</code>。脚本会启动本地服务并自动打开浏览器。</p>
+<p><strong>macOS / Linux / 有 Node 的任何环境：</strong></p>
+<pre><code class="language-bash">node server.js</code></pre>
+<p>然后访问终端里打印的地址（默认 <a href="http://127.0.0.1:4173/" target="_blank" rel="noopener noreferrer">http://127.0.0.1:4173/</a>）。按 <code>Ctrl+C</code> 停止服务。</p>
+<p>如果 4173 被占用，服务会自动尝试后续端口，以终端输出为准。</p>
+<blockquote><p>请不要直接双击 <code>index.html</code> 使用。浏览器对 <code>file://</code> 下的示例素材、视频分段加载和录屏有额外限制，走本地服务最稳。</p></blockquote>
+<h3 id="使用方法">使用方法</h3>
+<ol><li><strong>载入</strong>：点击「选择素材」、把文件拖到页面任意位置，或从 3 个内置示例里挑一个。</li><li><strong>选风格</strong>：在左侧顶部的「字符画 / 像素画」间切换；像素模式再选一套复古色板。</li><li><strong>调节</strong>：列数决定密度，抖动改善渐变，自动增强控制明暗层次。视频还能拖动进度、切换帧率。</li><li><strong>带走</strong>：字符画可复制 / TXT / PNG；像素画导出 PNG。视频场景下都可以点播放器右侧的「录制」保存动画。</li></ol>
+<h2 id="界面说明">界面说明</h2>
+<div class="table-container"><table><thead><tr><th>区域</th><th>说明</th></tr></thead><tbody><tr><td>模式切换</td><td>在字符画与像素画之间切换，参数会分别保留</td></tr><tr><td>左侧控制台</td><td>素材、风格、网格、观感参数，所有改动实时生效</td></tr><tr><td>预览舞台</td><td>实时画布；左上角 LIVE 表示视频正在逐帧渲染</td></tr><tr><td>播放器</td><td>播放/暂停、时间轴、音量、循环、目标 FPS、录制</td></tr><tr><td>底部读数</td><td>网格尺寸、字符数/像素数、单帧转换耗时与实时帧率</td></tr></tbody></table></div>
+<h3 id="参数">参数</h3>
+<ul><li><strong>字符集</strong>（字符画）：决定画面笔触。经典最像传统终端字符画；方块更适合看形状；精细适合细节多的照片。</li><li><strong>像素色板</strong>（像素画）：限制可选颜色，数量越少越有早年掌机味。PICO-8 色彩最丰富，Game Boy / 双色最克制。</li><li><strong>像素描边</strong>（像素画）：在明显明暗边缘画上深色轮廓，更像游戏 sprite。</li><li><strong>列数</strong>：越高越细，计算量也越大。字符画默认图片 140 列 / 视频 104 列；像素画默认图片 128 px / 视频 96 px。</li><li><strong>抖动</strong>：给渐变加入颗粒，改善平滑区域的色带。找不到合适效果时保持「关闭」即可。</li><li><strong>自动增强</strong>：把素材的实际明暗范围拉伸到完整范围；视频会锁定首帧的色阶，避免逐帧忽明忽暗。</li><li><strong>原色 / 单色</strong>（仅字符画）：单色渲染无论原图多暗都清晰可读；原色保留素材色彩并提亮阴影。</li><li><strong>字符比例</strong>（字符画高级设置）：单字宽高比，默认 0.58，适合等宽字体。像素模式固定为方形像素。</li></ul>
+<h2 id="导出">导出</h2>
+<div class="table-container"><table><thead><tr><th>格式</th><th>说明</th></tr></thead><tbody><tr><td>PNG</td><td>两种模式都支持；按当前参数重新渲染高清图</td></tr><tr><td>TXT</td><td>仅字符画；UTF-8 BOM + CRLF 换行，Windows 记事本可直接打开</td></tr><tr><td>复制</td><td>仅字符画；把字符画放进剪贴板</td></tr><tr><td>视频录制</td><td>两种模式都支持；按当前参数从片头逐帧录制，3 分钟上限；默认 WebM，浏览器只支持 MP4 时自动切换</td></tr></tbody></table></div>
+<p>录制时请留意：</p>
+<ul><li>录制会从视频开头重新开始，按目标帧率实时进行。</li><li>想保留原声，请在录制前取消静音；静音状态下只录制画面。</li><li>录制过程中参数、模式与素材入口会暂时锁定，避免画面尺寸变化。</li></ul>
+<h2 id="快捷键">快捷键</h2>
+<div class="table-container"><table><thead><tr><th>快捷键</th><th>操作</th></tr></thead><tbody><tr><td><code>Space</code></td><td>视频播放 / 暂停</td></tr><tr><td><code>P</code></td><td>保存 PNG</td></tr><tr><td><code>C</code></td><td>复制字符画（仅字符画模式）</td></tr><tr><td><code>Ctrl</code> / <code>⌘</code> + <code>V</code></td><td>粘贴剪贴板里的图片</td></tr><tr><td><code>Esc</code></td><td>关闭原片对照 / 说明弹窗</td></tr><tr><td><code>?</code></td><td>打开使用说明</td></tr></tbody></table></div>
+<h2 id="更多截图">更多截图</h2>
+<div class="table-container"><table><thead><tr><th>字符画调参</th><th>视频字符动画</th></tr></thead><tbody><tr><td><img src="docs/tuned.png" alt="调整后的方块字符画" loading="lazy" decoding="async"></td><td><img src="docs/video.png" alt="视频字符动画" loading="lazy" decoding="async"></td></tr></tbody></table></div>
+<div class="table-container"><table><thead><tr><th>视频像素动画</th><th>PICO-8 像素风格</th></tr></thead><tbody><tr><td><img src="docs/pixel-video.png" alt="视频像素动画" loading="lazy" decoding="async"></td><td><img src="docs/pixel.png" alt="PICO-8 像素风格" loading="lazy" decoding="async"></td></tr></tbody></table></div>
+<div class="table-container"><table><thead><tr><th>手机图片模式</th><th>手机视频模式</th><th>手机像素模式</th></tr></thead><tbody><tr><td><img src="docs/mobile.png" alt="手机图片模式" loading="lazy" decoding="async"></td><td><img src="docs/mobile-video.png" alt="手机视频模式" loading="lazy" decoding="async"></td><td><img src="docs/mobile-pixel.png" alt="手机像素模式" loading="lazy" decoding="async"></td></tr></tbody></table></div>
+<p>使用说明弹窗：<a href="docs/help.png">查看大图</a>。空状态预览（实时 ASCII 星球）：<a href="docs/home.png">查看大图</a>。</p>
+<h2 id="浏览器与格式支持">浏览器与格式支持</h2>
+<ul><li><strong>推荐</strong>：最新版 Microsoft Edge / Google Chrome（本项目使用 Edge 157 完成端到端验收）</li><li><strong>视频解码</strong>：由浏览器决定。H.264 MP4 和 VP8/VP9 WebM 支持最好；MOV 或较新的 AV1/HEVC 是否可播取决于系统与浏览器。</li><li><strong>录制</strong>：依赖 <code>MediaRecorder</code> + <code>canvas.captureStream()</code>。Chrome / Edge 支持良好；Safari 的格式与编码支持可能不同，代码会自动选择可用的 MIME 类型。</li><li><strong>GIF</strong>：作为图片读取第一帧，不做逐帧动画转换。</li><li>加密 / DRM 视频无法读取，也无法被本工具处理。</li></ul>
+<h2 id="隐私">隐私</h2>
+<p>所有解码、转换、导出和录制都在你的浏览器中完成。除了向 <code>127.0.0.1</code> 上的本地服务请求页面、字体图标和示例素材外，不会发起任何网络请求，也不会上传文件。</p>
+<h2 id="项目结构">项目结构</h2>
+<pre><code class="language-text">ascii-studio/
+├─ index.html
+├─ css/styles.css
+├─ js/
+│  ├─ ascii-core.js      # 字符画转换引擎（可在 Node 中单测）
+│  ├─ ascii-render.js    # 字符画 Canvas 预览 / 导出渲染器
+│  ├─ pixel-core.js      # 像素化与限制色板引擎（可在 Node 中单测）
+│  ├─ pixel-render.js    # 整数倍像素渲染与高清导出
+│  └─ app.js             # 交互、媒体载入、播放与录制
+├─ server.js             # 零依赖本地静态服务器（支持 Range）
+├─ start.cmd             # Windows 一键启动
+├─ samples/              # 内置示例图片 / 视频与缩略图
+├─ assets/               # favicon 与颗粒纹理
+├─ tools/                # 示例素材生成脚本
+├─ tests/
+│  ├─ core.test.js       # 字符画引擎单元测试
+│  ├─ pixel-core.test.js # 像素引擎单元测试
+│  ├─ project-files.test.js
+│  └─ browser-smoke.js   # CDP 无头浏览器端到端验收
+└─ docs/                 # README 截图</code></pre>
+<h2 id="开发与验证">开发与验证</h2>
+<pre><code class="language-bash"># 字符画引擎 / 像素引擎 / 启动脚本检查（Node 内置 test runner）
+npm test
+
+# 无头浏览器端到端验收（自动启动本地服务 + Edge/Chrome）
+npm run qa</code></pre>
+<p><code>npm run qa</code> 会验证：空状态、两种渲染模式、像素色板与描边、方形像素尺寸、字符/像素 PNG 导出、TXT 导出、视频播放/暂停/拖动、原片对照、帧率切换、动画录制、使用说明、移动端布局与响应式画布，并生成截图到 <code>tests/screenshots/</code>。</p>
+<blockquote><p>核心应用只需要 Node.js 18+；<code>npm run qa</code> 的 CDP 脚本使用 Node.js 内置 WebSocket，建议使用 Node.js 22+。</p></blockquote>
+<p>如果浏览器不在默认路径，可以指定：</p>
+<pre><code class="language-powershell">$env:BROWSER_PATH = &quot;C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe&quot;
+npm run qa</code></pre>
+<h3 id="重新生成示例素材">重新生成示例素材</h3>
+<p>示例图片和视频已经包含在仓库里；如需重新生成：</p>
+<pre><code class="language-bash">python tools/make_samples.py        # 需要 Pillow + numpy
+python tools/make_sample_video.py   # 额外需要 opencv-python</code></pre>
+<p>素材为程序化生成的原创画面，可自由用于演示与二次创作。</p>
+<h2 id="已知边界">已知边界</h2>
+<ul><li>超高列数 + 高帧率可能掉帧；可以降低列数或目标 FPS。</li><li>录制按实时速度生成 WebM，复杂画面下录制文件可能较大。</li><li>单帧 PNG 导出上限为 4096 × 4096 像素（超大会自动缩放）；像素画每格会放大整数倍。</li><li>视频自动化验收依赖无头浏览器对 <code>MediaRecorder</code> 的支持；部分环境可能跳过录制文件校验，但应用内会给出明确提示。</li><li>像素色板是对照片的风格化重绘，并不追求还原真实色彩。</li></ul>
+<h2 id="license">License</h2>
+<p>MIT. 详见 <a href="LICENSE">LICENSE</a>。</p></article><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

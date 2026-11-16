@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>ADS-B 监视雷达（RTL-SDR） · 说明 · 学哲玩</title>
+<meta name="description" content="1090 MHz 航班解码 + 雷达 PPI 风格网页显示">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 雷达 · 地理 · 导航</p><h1 class="work-doc-title">ADS-B 监视雷达（RTL-SDR）</h1><p class="work-doc-sub">1090 MHz 航班解码 + 雷达 PPI 风格网页显示</p><div class="work-doc-meta"><span>雷达 · 地理 · 导航</span><span>31 个文件</span><span>1.5 MB</span><span class="tag">ADS-B</span><span class="tag">RTL-SDR</span><span class="tag">PPI 雷达</span><span class="tag">Python</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/adsb-radar" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="ads-b-监视雷达--rtl-sdr-v4">ADS-B 监视雷达 · RTL-SDR V4</h2>
+<p>用 RTL-SDR Blog V4 接收附近空域 1090 MHz ADS-B 航班信号，并在浏览器里以<strong>雷达荧光屏（PPI）风格</strong>显示航迹：旋转扫描线、余辉拖尾、距离环、方位刻度，以及简略的线条地图（海岸线 / 国界 / 大型机场）。</p>
+<p><img src="radar-preview.png" alt="雷达界面" loading="lazy" decoding="async"></p>
+<hr>
+<h2 id="一工作原理">一、工作原理</h2>
+<ol><li>飞机通过 1090 MHz（Mode S / ADS-B，DF17/18）广播身份、位置、高度、速度。</li><li>RTL-SDR V4 以 2.4 MSps 采样 1090 MHz 频段。</li><li>程序解调并解码这些报文，用 <strong>CPR 定位</strong> 还原经纬度，逐架跟踪。</li><li>本地网页服务把目标画成雷达画面：中心为天线，方位/距离投影，扫一圈“点亮”一次目标（荧光余辉）。</li></ol>
+<hr>
+<h2 id="二硬件准备rtl-sdr-v4">二、硬件准备（RTL-SDR V4）</h2>
+<h3 id="1-安装驱动windows">1. 安装驱动（Windows）</h3>
+<p>RTL-SDR Blog V4 需要专用驱动：</p>
+<ol><li>到 RTL-SDR Blog 官网 / GitHub 下载 <strong>rtl-sdr-blog Windows 发布包</strong>（内含 <code>Zadig</code> 和 <code>rtl_test.exe</code> 等工具）。</li><li>插入 USB 接收棒，打开发布包里的 <strong>Zadig</strong>。</li><li><code>Options → List All Devices</code>，选择 <strong><code>Bulk-In, Interface (Interface 0)</code></strong>（或 <code>RTL2838UHIDIR</code>），驱动选 <strong>WinUSB</strong>，点 Install。</li><li>用发布包里的 <code>rtl_test -s 2400000</code> 验证能读到采样（看到不断增长的计数即成功）。</li></ol>
+<blockquote><p>V4 需要较新的 librtlsdr（≥ 0.8，含 R828D 支持）。发布包里的 DLL 已包含；若用 Python 的 <code>pyrtlsdr</code> 解调报“打不开设备 / 没有信号”，把发布包里的 <code>rtlsdr.dll</code>、<code>libusb-1.0.dll</code> 复制到项目根目录的 <code>bin\</code> 下（程序会自动优先加载）。</p></blockquote>
+<h3 id="2-天线v-型偶极天线调成-1090-mhz">2. 天线：V 型偶极天线调成 1090 MHz</h3>
+<p>V 型偶极天线（套件里的伸缩天线）出厂一般按 137 MHz（气象卫星）设计，<strong>用于 1090 MHz 需要缩短</strong>：</p>
+<ul><li>每根振子拉出约 <strong>6.9 cm</strong>（半波长偶极，单臂 ≈ λ/4 = 69 mm）。</li><li>两臂夹角约 <strong>120°</strong>，整体尽量<strong>竖直</strong>放置（ADS-B 是垂直极化），放在窗边、高处、朝天空无遮挡。</li><li>1090 MHz 信号直线传播，尽量避开高楼遮挡，并远离电脑机箱/开关电源等噪声源。</li></ul>
+<hr>
+<h2 id="三软件安装">三、软件安装</h2>
+<p>需要 Python 3.9+（Windows 下推荐官方安装包）。</p>
+<pre><code class="language-powershell">cd adsb-radar
+python -m pip install -r requirements.txt</code></pre>
+<p><code>numpy</code> 为必需；<code>pyrtlsdr</code> 仅在用「纯 Python 解调」数据源时需要（见下）。</p>
+<hr>
+<h2 id="四运行">四、运行</h2>
+<p>在项目目录 <code>adsb-radar\</code> 下：</p>
+<pre><code class="language-powershell"># 方式 B：纯 Python 直接解调（自包含，Windows 下 pip 装 pyrtlsdr + pyrtlsdrlib 即可）——本机推荐
+python run.py --source rtlsdr --lat 37.72 --lon 112.66 --gain 40.2
+
+# 方式 A：用 rtl_adsb（rtl-sdr 官方工具，最快，需单独下载工具包）
+python run.py --source rtl_adsb --lat 37.72 --lon 112.66
+
+# 方式 C：从局域网内的 dump1090 / readsb 转发（如树莓派）
+python run.py --source network --host 192.168.1.20 --port-remote 30002
+
+# 方式 D：无硬件，用仿真流量看效果
+python run.py --source sim</code></pre>
+<p>打开浏览器访问 <strong>http://127.0.0.1:8080/</strong>（端口可用 <code>--port</code> 改）。</p>
+<blockquote><p><strong>先自检</strong>：<code>python tools\test_receiver.py --gain 40.2</code> 抓几秒数据，看到 <code>CRC-valid &gt; 0</code> 就说明整条链路通了；一直是 0 多半是天线没调好。</p>
+<p><code>--lat/--lon</code> 是天线的经纬度（小数度），本项目已按晋中榆次大学城填了 <code>37.72, 112.66</code>（<code>config.json</code>），可按实际位置微调。填了坐标后才有地图线条和“单帧快速定位”。</p></blockquote>
+<h3 id="增益怎么调">增益怎么调</h3>
+<ul><li>默认 <code>--gain 40.2</code>（固定增益，比 <code>auto</code>/AGC 更适合 ADS-B 脉冲）。</li><li>增益太高会<strong>削波</strong>（满量程），产生大量假信号反而更慢/更乱；太高就往下调（如 33.8、29.7）。</li><li>附近无强干扰时可用 49.6（最大）；有本地强信号时用 40 左右更稳。</li></ul>
+<h3 id="常用参数">常用参数</h3>
+<div class="table-container"><table><thead><tr><th>参数</th><th>说明</th></tr></thead><tbody><tr><td><code>--source</code></td><td><code>rtl_adsb</code> / <code>rtlsdr</code> / <code>network</code> / <code>sim</code></td></tr><tr><td><code>--lat --lon</code></td><td>天线经纬度</td></tr><tr><td><code>--range</code></td><td>雷达半径 km（默认 250）</td></tr><tr><td><code>--gain</code></td><td>增益，如 <code>auto</code> 或 <code>49.6</code></td></tr><tr><td><code>--ppm</code></td><td>频率校正（晶体偏差 ppm）</td></tr><tr><td><code>--port</code></td><td>网页端口（默认 8080）</td></tr><tr><td><code>--sim-n</code></td><td>仿真目标数量</td></tr></tbody></table></div>
+<p>也可以把常用设置写进项目目录的 <code>config.json</code>（可选，键名与命令行参数一致），命令行参数会覆盖它。例如：</p>
+<pre><code class="language-json">{&quot;source&quot;: &quot;rtl_adsb&quot;, &quot;lat&quot;: 31.23, &quot;lon&quot;: 121.47, &quot;range_km&quot;: 300, &quot;gain&quot;: &quot;auto&quot;}</code></pre>
+<hr>
+<h2 id="五雷达界面">五、雷达界面</h2>
+<ul><li><strong>扫描线</strong>：绿色亮线按 4 秒一圈旋转；目标被扫到时最亮，随后余辉衰减（荧光屏效果）。</li><li><strong>目标</strong>：三角为航向，短线为速度矢量；数据块显示 呼号 / 高度(FL) / 地速 / 距离 / 方位。</li><li><strong>线条地图</strong>：海岸线、国界、大型机场（需填 <code>--lat/--lon</code> 且 <code>web/data/</code> 有数据）。</li><li>右侧面板：目标列表（点击锁定）、范围切换（50/100/200/400 km）、扫描线/尾迹/标签开关、绿色/琥珀配色。</li></ul>
+<p>地图数据可用 <code>python tools\fetch_map_data.py</code> 重新下载生成（需要联网）。</p>
+<hr>
+<h2 id="六目录结构">六、目录结构</h2>
+<pre><code>adsb-radar/
+├── run.py                 # 入口
+├── adsbradar/
+│   ├── demod.py           # 1090MHz PPM 解调（readsb/dump1090 demod_2400 的移植）
+│   ├── crc.py             # Mode S CRC-24 校验
+│   ├── decode.py          # DF17/18 报文解析（呼号/高度/速度/CPR）
+│   ├── cpr.py             # CPR 全局+局部定位
+│   ├── tracker.py         # 航迹状态机（成对 CPR、尾迹、过期）
+│   ├── sources.py         # 数据源：rtl_adsb / pyrtlsdr / 网络 / 仿真
+│   ├── server.py          # 本地 HTTP + JSON 状态
+│   └── web/               # 雷达前端（Canvas，无外部依赖）
+├── tools/fetch_map_data.py
+├── tests/                 # 单元测试（含真实报文向量）
+└── requirements.txt</code></pre>
+<hr>
+<h2 id="七常见问题">七、常见问题</h2>
+<ul><li><strong><code>--source rtlsdr</code> 报 “Error loading librtlsdr”</strong>：缺 DLL。执行 <code>pip install pyrtlsdrlib</code>（它自带编译好的 librtlsdr 0.8git，支持 V4 的 R828D）。</li><li><strong>收不到任何目标</strong>：先跑 <code>python tools\test_receiver.py</code> 看 <code>CRC-valid</code>；为 0 时检查天线是否每臂 6.9 cm、竖直、靠窗，增益调到 40~49.6（太高会削波）。</li><li><strong>tuner 显示 R820T/2（而不是 R828D）</strong>：V4 的 R828D 在较新 librtlsdr 里常显示为 R820T/2，对 1090 MHz 接收无影响（R828D 只在 &lt;24 MHz 短波需要特殊初始化）。</li><li><strong><code>--source rtlsdr</code> 打不开设备</strong>：检查 Zadig 是否给 <code>Bulk-In, Interface 0</code> 装了 WinUSB；<code>Get-PnpDevice</code> 里该接口的驱动 Provider 应为 <code>libwdi</code>。</li><li><strong>地图空白</strong>：说明没填 <code>--lat/--lon</code>，或 <code>web/data/</code> 下没有数据文件（运行 <code>python tools\fetch_map_data.py</code> 生成）。</li><li><strong>只有少数飞机</strong>：1090 MHz 直线传播，高度越高、遮挡越少收得越远；范围环设为 200–400 km 更合适。</li></ul>
+<blockquote><p>安全与合规：仅用于接收民航 ADS-B 广播（公开信号）。请遵守当地无线电相关法规。</p></blockquote></article><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>红外仿真项目进度看板 · 说明 · 学哲玩</title>
+<meta name="description" content="纯静态实时进度 / 里程碑 / 日志面板">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 网页 · 创意工具</p><h1 class="work-doc-title">红外仿真项目进度看板</h1><p class="work-doc-sub">纯静态实时进度 / 里程碑 / 日志面板</p><div class="work-doc-meta"><span>网页 · 创意工具</span><span>6 个文件</span><span>138.8 KB</span><span class="tag">进度看板</span><span class="tag">纯静态</span><span class="tag">零依赖</span><span class="tag">可视化</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a class="is-demo" href="index.html">在线试玩 ▶</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/progress-board" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="红外仿真项目--实时进度看板">红外仿真项目 · 实时进度看板</h2>
+<p>用于展示 <strong>“红外目标探测大气参数化与成像效果评估”从阶段报告升级到正式报告</strong>的全过程进度。页面为纯静态 HTML/CSS/JS，无 CDN、无外部字体、无第三方依赖，可离线使用；数据由同目录的 <code>progress.json</code> 驱动，每 <strong>2 秒</strong>自动拉取并在不刷新页面的情况下更新。</p>
+<p>适用场景：长时间任务推进时挂在副屏/浏览器标签页上，随时查看总体完成度、各工作流进展、里程碑和实时日志，便于安排时间。</p>
+<hr>
+<h2 id="一快速启动">一、快速启动</h2>
+<h3 id="1-启动本地静态服务">1. 启动本地静态服务</h3>
+<p>在“进度看板”目录执行：</p>
+<pre><code class="language-powershell">Set-Location 'F:\DeepSeek工作区\进度看板'
+python -m http.server 8766</code></pre>
+<p>或使用传统 CMD：</p>
+<pre><code class="language-bat">cd /d F:\DeepSeek工作区\进度看板
+python -m http.server 8766</code></pre>
+<h3 id="2-打开页面">2. 打开页面</h3>
+<p>浏览器访问：</p>
+<pre><code>http://localhost:8766/</code></pre>
+<blockquote><p>建议端口固定为 <code>8766</code>。若端口被占用，可改用 <code>8767</code> 等端口，但启动命令与浏览器地址需保持一致。 安全起见可只监听本机：<code>python -m http.server 8766 --bind 127.0.0.1</code>。 停止服务：在运行窗口按 <code>Ctrl + C</code>。</p></blockquote>
+<h3 id="3-实时写入进度">3. 实时写入进度</h3>
+<p>另开一个终端，仍在同一目录下执行（示例）：</p>
+<pre><code class="language-powershell">python update_progress.py --set extract 25 running &quot;字段映射与参数基线表整理中&quot;
+python update_progress.py --overall 8 &quot;参数解析推进&quot;
+python update_progress.py --log &quot;参数基线表 v0.1 已完成第一轮核对&quot; --level done</code></pre>
+<p>保存后无需手动刷新或按任何按钮，页面会在 2 秒内自动拉取新数据。顶部右上角会显示“实时同步 / 最后更新 / 上次同步”状态。</p>
+<hr>
+<h2 id="二-file-打开限制重要">二、⚠️ file:// 打开限制（重要）</h2>
+<p>直接双击 <code>index.html</code> 时，地址栏是 <code>file:///...</code>。现代浏览器出于同源安全策略，会阻止页面 <code>fetch()</code> 读取同目录的 <code>progress.json</code>，因此 <strong>无法实时刷新</strong>。看板会显示友好提示；如果之前通过 HTTP 成功加载过，则可能回显 localStorage 缓存数据并明确标记为缓存。</p>
+<p><strong>正确方式</strong>：始终先用 <code>python -m http.server 8766</code> 启动本地服务，再访问 <code>http://localhost:8766/</code>。如果只是临时离线提交/归档，也可以将该目录放到任何静态服务器下，只要 <code>index.html</code> 与 <code>progress.json</code> 同级即可。</p>
+<hr>
+<h2 id="三页面功能">三、页面功能</h2>
+<div class="table-container"><table><thead><tr><th>区域</th><th>内容</th></tr></thead><tbody><tr><td>顶部栏</td><td>项目标题、版本、实时同步状态、最后更新时间、上次同步时间、深浅主题切换按钮</td></tr><tr><td>总体区</td><td>环形总体进度、当前阶段、总体状态说明、预计完成时间与剩余时间、里程碑完成数、阶段报告 → 正式报告的阶段轨道</td></tr><tr><td>汇总区</td><td>进行中 / 已完成 / 受阻 / 待启动工作流计数、下一步关键动作、当前焦点</td></tr><tr><td>工作流卡片</td><td>7 条工作流：进度条、状态徽章、负责人、备注、产物文件；运行中工作流带动态指示</td></tr><tr><td>里程碑</td><td>垂直时间线，已完成节点、下一步节点、未完成节点；过期未完成节点会提示“待更新”</td></tr><tr><td>实时日志</td><td>最近 30 条，最新在上；INFO / WARN / DONE 分级着色；底部可滚动</td></tr><tr><td>状态与容错</td><td>每 2 秒拉取一次；文件缺失、JSON 损坏、服务中断时显示中文提示，保留上次成功数据并自动重试</td></tr><tr><td>响应式</td><td>桌面、平板、手机自适应；支持系统“减少动态效果”设置</td></tr><tr><td>主题</td><td>深色专业风（默认）/ 浅色主题，选择记录在 localStorage</td></tr></tbody></table></div>
+<p>刷新逻辑说明：</p>
+<ul><li>页面请求 <code>progress.json</code> 时带时间戳并设置 <code>no-store</code>，避免浏览器缓存旧数据；</li><li>内容未变化时不重绘 DOM；变化时平滑更新进度条并高亮新日志；</li><li>拉取失败时保留内存中的上次数据，同时写入 <code>localStorage</code> 的缓存也用于页面刷新后的回显；</li><li>顶部连接中断后仍会自动重试；服务恢复后无需刷新页面；</li><li>最后更新时间为 <code>progress.json</code> 内 <code>meta.updated_at</code>，上次同步为浏览器最近一次成功拉取时间。</li></ul>
+<hr>
+<h2 id="四文件说明">四、文件说明</h2>
+<pre><code class="language-text">进度看板/
+├─ index.html          页面结构（内联 SVG 图标，无外部资源）
+├─ style.css           深色/浅色主题、布局、响应式与动效
+├─ dashboard.js        每 2 秒拉取 progress.json、渲染、缓存与容错
+├─ progress.json       看板数据文件（由 update_progress.py 写入）
+├─ update_progress.py  命令行更新工具（原子写、字段保留、日志/里程碑/工作流）
+└─ README.md           本文件</code></pre>
+<p>页面不会引用任何外部 URL、CDN 或网络字体。</p>
+<hr>
+<h2 id="五progressjson-数据结构">五、progress.json 数据结构</h2>
+<p>下面为结构示例（数值仅用于演示字段类型，当前实际数据见上一节快照）：</p>
+<pre><code class="language-json">{
+  &quot;meta&quot;: {
+    &quot;project&quot;: &quot;红外目标探测大气参数化与成像效果评估&quot;,
+    &quot;version&quot;: &quot;0.1.0&quot;,
+    &quot;updated_at&quot;: &quot;2026-11-02 15:39:00&quot;,
+    &quot;stage&quot;: &quot;参数解析与基线准备&quot;,
+    &quot;eta&quot;: &quot;2026-11-06 18:00&quot;,
+    &quot;summary&quot;: &quot;当前总体状态说明（可选扩展）&quot;,
+    &quot;focus&quot;: &quot;当前焦点（可选扩展）&quot;,
+    &quot;next_action&quot;: &quot;下一步关键动作（可选扩展）&quot;
+  },
+  &quot;overall&quot;: {
+    &quot;percent&quot;: 5,
+    &quot;label&quot;: &quot;启动基线&quot;
+  },
+  &quot;workstreams&quot;: [
+    {
+      &quot;id&quot;: &quot;extract&quot;,
+      &quot;name&quot;: &quot;软件参数解析&quot;,
+      &quot;percent&quot;: 10,
+      &quot;status&quot;: &quot;running&quot;,
+      &quot;owner&quot;: &quot;sim-extractor&quot;,
+      &quot;note&quot;: &quot;当前工作流备注&quot;,
+      &quot;artifacts&quot;: [
+        &quot;软件参数提取/DefaultPlanFile_flat.json&quot;
+      ]
+    }
+  ],
+  &quot;milestones&quot;: [
+    {
+      &quot;time&quot;: &quot;2026-11-02 15:32&quot;,
+      &quot;title&quot;: &quot;正式报告升级启动&quot;,
+      &quot;detail&quot;: &quot;里程碑说明&quot;,
+      &quot;done&quot;: true
+    }
+  ],
+  &quot;log&quot;: [
+    {
+      &quot;time&quot;: &quot;2026-11-02 15:37:00&quot;,
+      &quot;level&quot;: &quot;info&quot;,
+      &quot;text&quot;: &quot;日志内容&quot;
+    }
+  ]
+}</code></pre>
+<p>字段约定：</p>
+<ul><li><code>meta</code>：必填对象。<code>project</code> / <code>version</code> / <code>updated_at</code> / <code>stage</code> / <code>eta</code> 为约定字段；<code>summary</code>、<code>focus</code>、<code>next_action</code> 为看板可选扩展，用于首屏说明与“下一步关键动作”。</li><li><code>overall</code>：必填对象。<code>percent</code> 为 0–100 的数字，<code>label</code> 为总体状态短标签。</li><li><code>workstreams</code>：必填数组。每条包含 <code>id</code>、<code>name</code>、<code>percent</code>、<code>status</code>、<code>owner</code>、<code>note</code>、<code>artifacts</code>。<ul><li><code>status</code> 只使用 <code>pending</code> / <code>running</code> / <code>done</code> / <code>blocked</code>，分别显示为待启动 / 进行中 / 已完成 / 受阻。</li><li><code>artifacts</code> 中的文件路径只作为说明文字展示，不会自动转换成下载链接。</li></ul></li><li><code>milestones</code>：数组，按时间线顺序排列；<code>done</code> 为布尔值。</li><li><code>log</code>：数组，按时间正序追加；页面仅展示最后 30 条并倒序显示（最新在上）。</li><li>看板与脚本均会保留额外字段，方便后续扩展；但顶层若缺失 <code>meta</code>、<code>overall</code>、<code>workstreams</code>，脚本会拒绝写入以防破坏文件。</li></ul>
+<p>当前数据快照（截至 <code>2026-11-02 15:46</code>，以 <code>progress.json</code> 实际内容为准）：</p>
+<ul><li>总体 <strong>40%</strong>，阶段“正式报告生成与看板部署”，预计完成 <strong>2026-11-02 20:30</strong>；</li><li><code>extract</code> 软件参数解析 <strong>100% / done</strong>，负责人 <code>sim-extractor</code>；</li><li>其余 6 条工作流均为 <strong>running</strong>：sensor 75%、atmos 65%、scenario 65%、sim 60%、report 55%、pdf 25%；</li><li>7 个里程碑，已完成 4 个；其中新增了“Q2 正式算例完成”；</li><li>11 条日志，最新为正式报告 v1.0 主体生成与 PDF 导出准备。</li></ul>
+<blockquote><p>说明：初始化时曾写入一份总体 <strong>5%</strong> 的启动基线（<code>extract</code> 10% running、其余 pending），用于页面与自动刷新验收。随后执行端通过 <code>update_progress.py</code> 写入了真实推进数据，本看板当前保留并按 40% 的实时状态展示，不覆盖该更新。</p></blockquote>
+<hr>
+<h2 id="六update_progresspy-用法">六、update_progress.py 用法</h2>
+<p>先进入看板目录：</p>
+<pre><code class="language-powershell">Set-Location 'F:\DeepSeek工作区\进度看板'</code></pre>
+<h3 id="1-查看--帮助">1. 查看 / 帮助</h3>
+<pre><code class="language-powershell">python update_progress.py --show
+python update_progress.py --help</code></pre>
+<h3 id="2-更新工作流">2. 更新工作流</h3>
+<pre><code class="language-powershell"># 语法：--set ID PERCENT STATUS [NOTE]
+python update_progress.py --set extract 35 running &quot;正在核对字段映射表&quot;
+python update_progress.py --set extract 100 done &quot;参数映射表 v1.0 已交付&quot;
+python update_progress.py --set sensor 5 blocked &quot;等待探测器参数确认&quot;</code></pre>
+<ul><li><code>STATUS</code> 必须是 <code>pending</code> / <code>running</code> / <code>done</code> / <code>blocked</code>。</li><li><code>NOTE</code> 可省略；省略时保留原备注。</li><li>只修改指定字段，<code>owner</code>、<code>artifacts</code> 和未知扩展字段不变。</li><li>可一次更新多条（重复 <code>--set</code>）：</li></ul>
+<pre><code class="language-powershell">python update_progress.py --set extract 100 done --set sensor 20 running &quot;开始搭建像元与 MTF 模型&quot;</code></pre>
+<h3 id="3-更新总体进度">3. 更新总体进度</h3>
+<pre><code class="language-powershell">python update_progress.py --overall 8
+python update_progress.py --overall 8 &quot;参数解析推进&quot;</code></pre>
+<p>省略 <code>LABEL</code> 时保留原标签。总体百分比由人工控制，不会根据工作流百分比自动加权计算。</p>
+<h3 id="4-追加日志">4. 追加日志</h3>
+<pre><code class="language-powershell">python update_progress.py --log &quot;参数映射表 v0.1 已完成&quot; --level info
+python update_progress.py --log &quot;传感器参数缺少文档，需要确认&quot; --level warn
+python update_progress.py --log &quot;软件参数解析完成&quot; --level done</code></pre>
+<ul><li><code>--level</code>：<code>info</code> / <code>warn</code> / <code>done</code>，默认 <code>info</code>。</li><li>可一次追加多条（重复 <code>--log</code>）；同一批次共用同一个级别。</li></ul>
+<h3 id="5-新增--更新里程碑">5. 新增 / 更新里程碑</h3>
+<pre><code class="language-powershell"># 计划中的里程碑（done: false）
+python update_progress.py --milestone &quot;2026-11-06 18:00&quot; &quot;PDF 终稿交付&quot; &quot;完成 PDF 导出与校对&quot;
+
+# 标记该标题的里程碑为已完成（同标题会更新，不会重复新增）
+python update_progress.py --milestone &quot;2026-11-06 18:00&quot; &quot;PDF 终稿交付&quot; --milestone-done</code></pre>
+<p>时间与标题也可以不加引号分开传：</p>
+<pre><code class="language-powershell">python update_progress.py --milestone 2026-11-06 18:00 &quot;PDF 终稿交付&quot; &quot;完成校对&quot; --milestone-done</code></pre>
+<p>脚本按 <strong>标题</strong> 做 upsert：相同标题更新时间和详情；未加 <code>--milestone-done</code> 时保留已有完成状态，新增项默认为未完成。</p>
+<h3 id="6-更新-meta-字段">6. 更新 meta 字段</h3>
+<pre><code class="language-powershell">python update_progress.py --meta stage &quot;模型接入与工况扩充&quot;
+python update_progress.py --meta eta &quot;2026-11-06 18:00&quot; --meta version &quot;0.2.0&quot;
+python update_progress.py --meta next_action &quot;完成参数基线后启动传感器建模&quot;
+python update_progress.py --meta focus &quot;参数映射表 v0.1&quot;</code></pre>
+<p><code>meta.updated_at</code> 会由脚本自动设置为执行时刻，无需手动维护。</p>
+<h3 id="7-组合更新--预览--指定文件">7. 组合更新 + 预览 + 指定文件</h3>
+<pre><code class="language-powershell"># 常见更新组合
+python update_progress.py `
+  --set extract 60 running &quot;正在生成映射草案&quot; `
+  --overall 12 &quot;参数解析阶段&quot; `
+  --log &quot;参数解析推进到 60%&quot; --level info
+
+# 只预览，不写文件
+python update_progress.py --set extract 70 running &quot;预览一下&quot; --dry-run
+
+# 指定其他数据文件
+python update_progress.py --file .\progress.backup.json --show</code></pre>
+<p>PowerShell 中如需换行，使用反引号 `<code> </code> `` 续行；也可以写成单行。</p>
+<h3 id="安全写入机制">安全写入机制</h3>
+<ul><li>读取完整 JSON → 在内存中修改指定字段 → 写同目录临时文件 → <code>fsync</code> → <code>os.replace</code> 原子替换；</li><li>写入期间使用同目录 <code>progress.json.lock</code> 串行化并发更新（避免读-改-写丢更新）；异常退出留下的锁超过 45 秒会视为过期；</li><li>JSON 非法、顶层结构缺失、工作流 ID 不存在、百分比越界、状态值非法时 <strong>拒绝写入</strong>，不会破坏现有文件；</li><li>未识别的字段全部保留，方便后续给 <code>meta</code> / 工作流扩展内容；</li><li>写入失败时会清理临时文件；页面因原子替换不会读到半截 JSON。</li></ul>
+<hr>
+<h2 id="七推荐工作流">七、推荐工作流</h2>
+<ol><li>每次推进前先更新工作流和总体进度；</li><li>用 <code>--log</code> 记录关键节点、风险和完成事件；</li><li>里程碑完成时同步标记 <code>--milestone-done</code>；</li><li>任务结束或需要交接时，更新 <code>meta.stage</code> / <code>meta.next_action</code> / <code>meta.eta</code>。</li></ol>
+<p>一条较完整的阶段更新示例：</p>
+<pre><code class="language-powershell">python update_progress.py `
+  --set extract 100 done &quot;参数基线表与字段清单已交付&quot; `
+  --set sensor 15 running &quot;开始接入 NETD 与 MTF 参数&quot; `
+  --overall 20 &quot;基线完成，进入模型接入&quot; `
+  --log &quot;软件参数解析完成，正式报告进入模型接入阶段&quot; --level done `
+  --milestone &quot;2026-11-03 18:00&quot; &quot;软件参数解析完成&quot; --milestone-done `
+  --meta stage &quot;传感器与大气模型接入&quot; `
+  --meta next_action &quot;完成传感器等效建模并启动大气数据接入&quot;</code></pre>
+<hr>
+<h2 id="八注意事项--已知限制">八、注意事项 / 已知限制</h2>
+<ul><li><strong>必须通过 HTTP 打开</strong>才能读取 <code>progress.json</code>；直接双击打开会受浏览器限制（见第二节）。</li><li>数据刷新是 2 秒轮询，不是 WebSocket 推送；对本地几百 KB 的 JSON 足够，但没有“即时推送”语义。浏览器后台标签页可能被节流，切回前台会立即补拉一次。</li><li>当本地服务停止或文件异常时，页面保留最后一次成功数据并显示错误提示；如果强制刷新页面，则依赖 localStorage 缓存回显，缓存时间可能早于最新文件。</li><li>页面与 <code>progress.json</code> 必须放在同一目录，且通过同一个 HTTP 服务访问；跨目录/跨端口读取会受同源策略限制。</li><li>工作流 owner 名称只是展示文本，不会自动创建子代理或分派任务。</li><li>更新工具不负责启动 HTTP 服务；需要先运行 <code>python -m http.server 8766</code>。</li><li>不支持通过脚本直接删除日志/里程碑；如需删除请手动编辑 <code>progress.json</code>，修改前建议保留一份副本。</li><li>页面使用现代 CSS（<code>color-mix</code>、CSS 变量、Grid）和原生 <code>fetch</code>；建议使用近期版本的 Edge / Chrome / Firefox。</li><li><code>python -m http.server</code> 默认监听所有网卡。若机器处于不可信网络，建议加 <code>--bind 127.0.0.1</code> 只允许本机访问。</li><li>端口/服务生命周期由使用者控制；若其他程序占用 8766，换端口并同步修改访问地址即可。</li></ul>
+<hr>
+<h2 id="九本地验证建议">九、本地验证建议</h2>
+<pre><code class="language-powershell">Set-Location 'F:\DeepSeek工作区\进度看板'
+
+# 1) 校验数据与 CLI
+python update_progress.py --show
+node --check dashboard.js          # 已安装 Node.js 时可选
+python -m py_compile update_progress.py
+
+# 2) 启动服务
+python -m http.server 8766 --bind 127.0.0.1
+
+# 3) 另开终端检查 JSON 可访问并返回 200
+Invoke-WebRequest http://127.0.0.1:8766/progress.json -UseBasicParsing |
+  Select-Object StatusCode, Content</code></pre>
+<p>浏览器打开 <code>http://127.0.0.1:8766/</code> 后，可另开终端执行：</p>
+<pre><code class="language-powershell">python update_progress.py --log &quot;页面自动刷新验证&quot; --level info</code></pre>
+<p>观察页面是否在约 2 秒内更新日志与顶部“上次同步”。</p></article><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

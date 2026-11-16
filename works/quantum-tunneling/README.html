@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>量子隧穿穿透概率与时域动画 · 说明 · 学哲玩</title>
+<meta name="description" content="一维方势垒：解析解 / WKB / 散射求解 / 波包仿真">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 光学 · 量子 · 物理仿真</p><h1 class="work-doc-title">量子隧穿穿透概率与时域动画</h1><p class="work-doc-sub">一维方势垒：解析解 / WKB / 散射求解 / 波包仿真</p><div class="work-doc-meta"><span>光学 · 量子 · 物理仿真</span><span>24 个文件</span><span>9.4 MB</span><span class="tag">量子隧穿</span><span class="tag">波包动力学</span><span class="tag">数值仿真</span><span class="tag">Python</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/quantum-tunneling" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="量子隧穿理论模型穿透概率计算与时域仿真动画">量子隧穿理论模型：穿透概率计算与时域仿真动画</h2>
+<p>一维方势垒量子隧穿的完整数值实验：解析穿透概率、WKB 近似、独立的散射求解器、 以及基于含时薛定谔方程的分步傅里叶时域波包仿真与动画。</p>
+<p><strong>详细结果与数据表见 <a href="REPORT.md"><code>REPORT.md</code></a>。</strong></p>
+<h2 id="快速开始">快速开始</h2>
+<pre><code class="language-powershell">cd quantum_tunneling
+python selftest.py          # 先跑自检: 22 项交叉验证 (约 2 分钟, 退出码 0 为全部通过)
+python param_sweep.py       # 生成 fig1-fig6 参数扫描图
+python make_animation.py    # 生成 4 个时域仿真 GIF 动画 + 关键帧 + 时间序列
+python make_compare.py      # 生成场景对比图
+python report_data.py       # 打印报告用定量表格</code></pre>
+<p>依赖：NumPy、Matplotlib、Pillow（当前环境 Python 3.11.5 / NumPy 2.2.6 / Matplotlib 3.10.0 / Pillow 11.1.0）。</p>
+<h2 id="物理与数值设定">物理与数值设定</h2>
+<p>自然单位 $\hbar=m=1$，方势垒 $V(x)=V_0\,(|x|&lt;a/2)$。解析透射系数</p>
+<p>$$T(E)=\frac{1}{1+\dfrac{V_0^2}{4E(E-V_0)}\sin^2(k_1a)},\qquad T(E&lt;V_0)=\frac{1}{1+\dfrac{V_0^2\sinh^2(\kappa a)}{4E(V_0-E)}}$$</p>
+<p>时域仿真：高斯波包（$\sigma=8$，$x_0=-60$，$k_0=1.8$），网格 $N=16384$、$L=400$、 $\Delta x=0.0244$，$\Delta t=0.0025$，势垒边缘以 $1.5\Delta x$ 的 $\cos^2$ 斜坡平滑。</p>
+<h2 id="结果速览">结果速览</h2>
+<div class="table-container"><table><thead><tr><th>场景</th><th>$V_0$</th><th>$a$</th><th>$E_0$</th><th>数值 $T$</th><th>解析 $T(E_0)$</th><th>谱平均 $\langle T\rangle$</th><th>动画</th></tr></thead><tbody><tr><td>薄垒</td><td>2.0</td><td>0.4</td><td>1.620</td><td>0.82881</td><td>0.82942</td><td>0.82897</td><td><code>animations/tunneling_barrier_a0.4.gif</code></td></tr><tr><td>中等隧穿</td><td>2.0</td><td>1.0</td><td>1.620</td><td>0.38822</td><td>0.38748</td><td>0.38813</td><td><code>animations/tunneling_barrier_a1.0.gif</code></td></tr><tr><td>厚垒</td><td>2.0</td><td>3.0</td><td>1.125</td><td>0.001542</td><td>0.001405</td><td>0.001543</td><td><code>animations/tunneling_barrier_a3.0.gif</code></td></tr><tr><td>越顶</td><td>1.0</td><td>1.0</td><td>1.620</td><td>0.83215</td><td>0.83306</td><td>0.83213</td><td><code>animations/tunneling_above_barrier.gif</code></td></tr></tbody></table></div>
+<p>透射率随垒高/垒宽在本次扫描范围内跨越约 <strong>10 个数量级</strong>（$9.85\times10^{-1}$ 到 $7.6\times10^{-11}$）。</p>
+<h2 id="验证要点">验证要点</h2>
+<ul><li>解析闭式解 vs 独立散射求解器（72 组参数）：max$|\Delta T|=8.2\times10^{-13}$</li><li>界面连续性残差 $1.6\times10^{-11}$；概率守恒 $|t|^2+|r|^2-1=7.8\times10^{-16}$</li><li>时域仿真 vs 解析谱平均（$T\gtrsim10^{-3}$）：偏差 0.002%–0.5%</li><li>时间步与网格收敛性已检查；发现并处理了两个数值陷阱（点取样阶跃势的量化误差、 吸收边界导致的概率不守恒），详见 <code>REPORT.md</code> §3.1</li></ul>
+<h2 id="文件结构">文件结构</h2>
+<pre><code>tunneling_core.py        计算核心: 解析解 / 独立求解器 / WKB / 谱平均 / 分步傅里叶演化
+selftest.py              22 项交叉验证自检
+param_sweep.py           参数扫描 (fig1-fig6)
+make_animation.py        时域仿真、GIF 动画、关键帧、时间序列
+make_compare.py          场景对比图
+report_data.py           报告定量数据
+diag_discretization.py   离散化收敛性诊断
+check_texact.py          闭式解与逐点标准公式校验
+plot_style.py            中文字体与绘图风格
+figures/                 全部静态图 (fig1-fig6, anim_compare, snap_*, verification_table.txt)
+animations/              4 个隧穿时域仿真 GIF
+data/                    各场景概率时间序列 (.npz)</code></pre></article><section class="work-gallery" aria-labelledby="work-gallery-title"><h2 class="work-gallery-title" id="work-gallery-title">图集</h2><p class="work-gallery-note">正文配图较少，以下从项目目录挑选了 8 张图片。</p><div class="work-gallery-grid"><figure class="work-gallery-item"><a href="figures/fig6_sweep_summary.png"><img src="figures/fig6_sweep_summary.png" alt="fig6_sweep_summary.png" loading="lazy" decoding="async"></a><figcaption>fig6_sweep_summary.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="figures/fig1_T_vs_E_heights.png"><img src="figures/fig1_T_vs_E_heights.png" alt="fig1_T_vs_E_heights.png" loading="lazy" decoding="async"></a><figcaption>fig1_T_vs_E_heights.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="figures/fig2_T_vs_E_widths.png"><img src="figures/fig2_T_vs_E_widths.png" alt="fig2_T_vs_E_widths.png" loading="lazy" decoding="async"></a><figcaption>fig2_T_vs_E_widths.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="figures/anim_compare.png"><img src="figures/anim_compare.png" alt="anim_compare.png" loading="lazy" decoding="async"></a><figcaption>anim_compare.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="figures/fig3_heatmap.png"><img src="figures/fig3_heatmap.png" alt="fig3_heatmap.png" loading="lazy" decoding="async"></a><figcaption>fig3_heatmap.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="figures/fig4_exponential_decay.png"><img src="figures/fig4_exponential_decay.png" alt="fig4_exponential_decay.png" loading="lazy" decoding="async"></a><figcaption>fig4_exponential_decay.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="figures/fig5_wkb_accuracy.png"><img src="figures/fig5_wkb_accuracy.png" alt="fig5_wkb_accuracy.png" loading="lazy" decoding="async"></a><figcaption>fig5_wkb_accuracy.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="figures/snap_barrier_a0.4.png"><img src="figures/snap_barrier_a0.4.png" alt="snap_barrier_a0.4.png" loading="lazy" decoding="async"></a><figcaption>snap_barrier_a0.4.png</figcaption></figure></div></section><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

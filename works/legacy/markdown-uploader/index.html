@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>Markdown Base64 图片工具 · 早期项目移植</title>
+<meta name="description" content="纯本地把图片转成 Base64 内嵌的 Markdown 片段：拖拽、粘贴或选择多张图片，逐条复制、改名、一键复制全部。另提供可选的 SM.MS 图床上传模式，只有填入 Token 并点击才会发请求。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/css/site.css">
+<style>
+  .demo-topbar {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    padding-top: 22px; flex-wrap: wrap;
+  }
+  .demo-back-link {
+    display: inline-block; font-size: 13.5px; color: var(--ink-2); text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong); padding-bottom: 2px;
+    transition: color 160ms var(--ease), border-color 160ms var(--ease);
+  }
+  .demo-back-link:hover { color: var(--accent); border-color: var(--accent); }
+  .demo-topbar-note { font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em; color: var(--ink-3); }
+
+  .mu-page-head { padding-top: clamp(24px, 3.4vw, 38px); }
+  .mu-head-meta {
+    display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: baseline;
+    margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--rule);
+    font-size: 12.5px; color: var(--ink-3);
+  }
+  .mu-head-meta b { font-family: var(--font-mono); font-weight: 500; font-size: 12.5px; color: var(--ink); letter-spacing: .03em; }
+  .mu-badge-local {
+    display: inline-flex; align-items: center; gap: 6px; padding: 1px 8px;
+    border: 1px solid var(--accent); color: var(--accent);
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em;
+  }
+  .mu-badge-local i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+
+  .mu-layout {
+    display: grid; grid-template-columns: minmax(0, 1fr) 288px;
+    gap: clamp(20px, 3vw, 30px); align-items: start;
+    margin-top: clamp(22px, 3vw, 30px);
+  }
+  @media (max-width: 920px) { .mu-layout { grid-template-columns: minmax(0, 1fr); } }
+  .mu-card { border: 1px solid var(--rule); background: var(--paper-2); }
+  .mu-card + .mu-card { margin-top: 18px; }
+  .mu-card-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 11px 16px; border-bottom: 1px solid var(--rule); background: var(--paper);
+  }
+  .mu-card-title {
+    margin: 0; font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .16em; color: var(--ink-2); text-transform: uppercase;
+  }
+  .mu-card-note { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .06em; color: var(--ink-3); }
+
+  .mu-drop {
+    display: flex; align-items: center; gap: 18px;
+    margin: 16px; padding: 20px 22px; min-height: 100px; width: calc(100% - 32px);
+    border: 1px dashed var(--rule-strong); background: var(--paper); color: var(--ink-2);
+    cursor: pointer; text-align: left; font-family: var(--font-sans);
+    transition: border-color 160ms var(--ease), background 160ms var(--ease);
+  }
+  .mu-drop:hover, .mu-drop:focus-visible, .mu-drop.is-drag { border-color: var(--accent); background: var(--accent-wash); }
+  .mu-drop-icon {
+    flex: none; display: flex; align-items: center; justify-content: center;
+    width: 46px; height: 46px; border: 1px solid var(--rule-strong); color: var(--accent);
+  }
+  .mu-drop-icon svg { width: 22px; height: 22px; }
+  .mu-drop-copy strong { display: block; font-size: 15px; font-weight: 500; color: var(--ink); }
+  .mu-drop-copy span { display: block; margin-top: 3px; font-size: 12.5px; color: var(--ink-3); }
+  .mu-drop-ext {
+    margin-left: auto; flex: none; font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: .12em; color: var(--ink-3); border: 1px solid var(--rule); padding: 2px 8px;
+  }
+  .mu-toolbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    padding: 0 16px 16px;
+  }
+  .mu-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border: 1px solid var(--rule-strong); background: transparent;
+    color: var(--ink-2); font-family: var(--font-sans); font-size: 12.5px; cursor: pointer;
+    transition: color 140ms var(--ease), border-color 140ms var(--ease), background 140ms var(--ease);
+  }
+  .mu-btn svg { width: 14px; height: 14px; }
+  .mu-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-wash); }
+  .mu-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .mu-btn-primary { border-color: var(--accent); color: var(--accent); }
+  .mu-btn-primary:hover { background: var(--accent); color: var(--paper); }
+  .mu-toolbar-right { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .mu-list { padding: 0 16px 6px; display: grid; gap: 10px; }
+  .mu-item {
+    display: grid; grid-template-columns: 108px minmax(0, 1fr) auto; gap: 14px;
+    padding: 12px; border: 1px solid var(--rule); background: var(--paper); align-items: start;
+  }
+  @media (max-width: 620px) { .mu-item { grid-template-columns: 72px minmax(0, 1fr); } .mu-item-actions { grid-column: 1 / -1; } }
+  .mu-thumb {
+    width: 108px; height: 76px; border: 1px solid var(--rule); background:
+      repeating-conic-gradient(var(--paper-2) 0% 25%, var(--paper) 0% 50%) 0 0/14px 14px;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  @media (max-width: 620px) { .mu-thumb { width: 72px; height: 56px; } }
+  .mu-thumb img { max-width: 100%; max-height: 100%; display: block; }
+  .mu-item-main { min-width: 0; }
+  .mu-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .mu-alt {
+    flex: 1 1 160px; min-width: 0; padding: 3px 7px; border: 1px solid var(--rule);
+    background: var(--paper); color: var(--ink); font-family: var(--font-sans); font-size: 13px;
+  }
+  .mu-alt:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+  .mu-meta { margin-top: 5px; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); word-break: break-all; }
+  .mu-md-line {
+    margin-top: 7px; padding: 5px 8px; max-height: 46px; overflow: hidden;
+    background: var(--paper-2); font-family: var(--font-mono); font-size: 10.5px;
+    line-height: 1.55; color: var(--ink-2); word-break: break-all;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .mu-item-actions { display: flex; flex-direction: column; gap: 6px; }
+  .mu-icon-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border: 1px solid var(--rule-strong); background: transparent;
+    color: var(--ink-2); cursor: pointer; transition: color 140ms, border-color 140ms, background 140ms;
+  }
+  .mu-icon-btn svg { width: 15px; height: 15px; }
+  .mu-icon-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-wash); }
+  .mu-icon-btn.is-danger:hover { color: #b5544c; border-color: #b5544c; background: rgba(181, 84, 76, .08); }
+  .mu-empty { padding: 26px 22px; color: var(--ink-3); font-size: 13px; line-height: 1.9; }
+  .mu-empty strong { display: block; margin-bottom: 4px; color: var(--ink-2); font-weight: 500; }
+
+  .mu-out-wrap { padding: 16px; }
+  .mu-out {
+    display: block; width: 100%; height: 168px; resize: vertical; padding: 12px 14px;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+    font-family: var(--font-mono); font-size: 11.5px; line-height: 1.7; white-space: pre;
+    overflow: auto;
+  }
+  .mu-out:focus { outline: 1px solid var(--accent); }
+  .mu-out-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .mu-out-info { margin-left: auto; align-self: center; font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); }
+
+  /* 侧栏 */
+  .mu-side { display: grid; gap: 16px; position: sticky; top: calc(var(--nav-h) + 16px); }
+  @media (max-width: 920px) { .mu-side { position: static; } }
+  .mu-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mu-stat { padding: 11px 16px; border-bottom: 1px solid var(--rule); }
+  .mu-stat:nth-child(odd) { border-right: 1px solid var(--rule); }
+  .mu-stat:nth-last-child(-n+2) { border-bottom: 0; }
+  .mu-stat b { display: block; font-family: var(--font-serif); font-size: 20px; font-weight: 500; line-height: 1.2; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .mu-stat b.is-muted { color: var(--ink-3); }
+  .mu-stat span { display: block; margin-top: 2px; font-size: 11px; color: var(--ink-3); letter-spacing: .05em; }
+  .mu-status { display: flex; align-items: center; gap: 9px; padding: 13px 16px; }
+  .mu-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); flex: none; }
+  .mu-dot.is-ok { background: var(--accent); }
+  .mu-dot.is-busy { background: #c08a3e; animation: mu-pulse 1s infinite ease-in-out; }
+  .mu-dot.is-err { background: #b5544c; }
+  @keyframes mu-pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  .mu-status-text { font-size: 13px; color: var(--ink); }
+  .mu-side-note { margin: 0; padding: 12px 16px; font-size: 11.5px; line-height: 1.8; color: var(--ink-3); }
+  .mu-side-note code { font-family: var(--font-mono); font-size: 11px; }
+
+  /* 可选 SM.MS 模式 */
+  .mu-optional { margin-top: clamp(30px, 4vw, 44px); }
+  .mu-optional > summary {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    padding: 16px 18px; border: 1px solid var(--rule); background: var(--paper-2);
+    cursor: pointer; list-style: none; font-family: var(--font-serif); font-size: 18px;
+    letter-spacing: .04em; color: var(--ink);
+  }
+  .mu-optional > summary::-webkit-details-marker { display: none; }
+  .mu-optional > summary::marker { content: ""; }
+  .mu-optional-hint { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; color: var(--ink-3); }
+  .mu-optional-body { border: 1px solid var(--rule); border-top: 0; background: var(--paper-2); padding: 18px; }
+  .mu-optional-warn {
+    display: flex; gap: 10px; padding: 12px 14px; margin-bottom: 16px;
+    border: 1px solid var(--rule-strong); border-left: 2px solid #b08034;
+    background: var(--paper); font-size: 12.5px; line-height: 1.8; color: var(--ink-2);
+  }
+  .mu-optional-warn svg { width: 16px; height: 16px; flex: none; margin-top: 3px; color: #b08034; }
+  .mu-field { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 12px; }
+  .mu-field > label { flex: none; width: 92px; font-size: 12.5px; color: var(--ink-3); }
+  .mu-input {
+    flex: 1 1 220px; min-width: 0; padding: 5px 9px; border: 1px solid var(--rule);
+    background: var(--paper); color: var(--ink); font-family: var(--font-sans); font-size: 13px;
+  }
+  .mu-input:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+  .mu-md-input {
+    display: block; width: 100%; height: 120px; resize: vertical; padding: 10px 12px;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+    font-family: var(--font-mono); font-size: 11.5px; line-height: 1.65;
+  }
+  .mu-opt-inline { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 12.5px; color: var(--ink-2); }
+  .mu-opt-inline label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .mu-opt-inline input { accent-color: var(--accent); }
+  .mu-smm-list { display: grid; gap: 8px; margin: 14px 0; }
+  .mu-smm-item {
+    display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 10px;
+    align-items: center; padding: 8px 10px; border: 1px solid var(--rule); background: var(--paper);
+  }
+  .mu-smm-thumb { width: 54px; height: 40px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--paper-2); }
+  .mu-smm-thumb img { max-width: 100%; max-height: 100%; display: block; }
+  .mu-smm-name { font-family: var(--font-mono); font-size: 11px; color: var(--ink); word-break: break-all; }
+  .mu-smm-meta { margin-top: 2px; font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); }
+  .mu-smm-state { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); white-space: nowrap; }
+  .mu-smm-state.is-ok { color: var(--accent); }
+  .mu-smm-state.is-err { color: #b5544c; }
+  .mu-smm-state.is-busy { color: #b08034; }
+  .mu-smm-log {
+    height: 130px; overflow: auto; padding: 10px 12px; background: var(--paper);
+    font-family: var(--font-mono); font-size: 11px; line-height: 1.8; color: var(--ink-2);
+  }
+  .mu-smm-log .is-ok { color: var(--accent); }
+  .mu-smm-log .is-err { color: #b5544c; }
+  .mu-smm-log .is-warn { color: #b08034; }
+  .mu-smm-out { margin-top: 12px; }
+  .mu-smm-out textarea { height: 120px; }
+
+  .mu-notes { margin-top: clamp(34px, 5vw, 50px); }
+  .mu-notes h2 { margin: 0 0 6px; font-family: var(--font-serif); font-size: clamp(19px, 2.4vw, 23px); font-weight: 500; letter-spacing: .06em; }
+  .mu-notes-grid {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 32px;
+    margin-top: 16px; padding-top: 18px; border-top: 1px solid var(--rule);
+  }
+  @media (max-width: 920px) { .mu-notes-grid { grid-template-columns: 1fr; } }
+  .mu-note-block { min-width: 0; }
+  .mu-note-block h3 { margin: 0 0 7px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .14em; color: var(--ink-3); text-transform: uppercase; }
+  .mu-note-block p, .mu-note-block li { font-size: 13px; line-height: 1.85; color: var(--ink-2); margin: 0; }
+  .mu-note-block ul { margin: 0; padding-left: 1.2em; }
+  .mu-note-block li { margin: 3px 0; }
+  .mu-note-block code { font-family: var(--font-mono); font-size: 11.5px; background: var(--paper-2); padding: 1px 4px; }
+  .mu-footnote { margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  .mu-toast {
+    position: fixed; left: 50%; bottom: 30px; transform: translate(-50%, 14px); z-index: 120;
+    padding: 9px 18px; background: var(--ink); color: var(--paper); font-size: 13px;
+    opacity: 0; pointer-events: none; transition: opacity 200ms var(--ease), transform 200ms var(--ease);
+  }
+  .mu-toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+</style>
+</head>
+<body class="page-legacy">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../../notes/">文章</a></li><li><a class="nav-link" href="../../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+
+<main id="main">
+<div class="wrap">
+  <div class="demo-topbar">
+    <a class="demo-back-link" href="../">← 返回早期项目</a>
+    <span class="demo-topbar-note">LEGACY TOOL / IMAGE → BASE64 MARKDOWN</span>
+  </div>
+
+  <header class="page-head mu-page-head">
+    <p class="page-eyebrow">LEGACY · 早期项目 / TOOL</p>
+    <h1 class="page-title">Markdown Base64 图片工具</h1>
+    <p class="page-desc">把图片直接内嵌进 Markdown，是原程序最常用的功能。网页版默认<strong>纯本地</strong>：拖入、粘贴或选择图片，浏览器用 <code>FileReader</code> 读成 <code>data:image/...</code> 链接，逐条复制或一键复制全部。原程序里的 SM.MS 图床上传保留为页面底部的<strong>可选模式</strong>——只有你填入自己的 Token 并点击上传按钮时才会联网。</p>
+    <div class="mu-head-meta">
+      <span class="mu-badge-local"><i></i>默认 100% 本地</span>
+      <span>可选图床 <b>SM.MS</b></span>
+      <span>原作 <b>2025-12</b></span>
+    </div>
+  </header>
+
+  <div class="mu-layout">
+    <section aria-label="图片转 Base64 Markdown 工作区">
+      <div class="mu-card">
+        <div class="mu-card-head">
+          <h2 class="mu-card-title">01 · 选择图片（可多选）</h2>
+          <span class="mu-card-note">拖拽 / 粘贴 / 点击选择</span>
+        </div>
+        <button class="mu-drop" id="muDrop" type="button">
+          <span class="mu-drop-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.4" cy="9.4" r="1.6"/><path d="m3.8 17 4.7-5 3.3 3.2 2.8-3.2 5.6 5.7"/></svg>
+          </span>
+          <span class="mu-drop-copy">
+            <strong>把图片拖到这里，或 Ctrl+V 粘贴截图</strong>
+            <span>PNG / JPEG / GIF / WebP / BMP，可一次拖入多张；图片不会离开浏览器</span>
+          </span>
+          <span class="mu-drop-ext">IMG → MD</span>
+        </button>
+        <div class="mu-toolbar">
+          <button class="mu-btn mu-btn-primary" id="muPick" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0 4 4m-4-4-4 4"/><path d="M4 16v3.2c0 1 .8 1.8 1.8 1.8h12.4c1 0 1.8-.8 1.8-1.8V16"/></svg>
+            选择图片
+          </button>
+          <button class="mu-btn" id="muSample" type="button">插入示例图</button>
+          <button class="mu-btn" id="muClear" type="button">清空</button>
+          <div class="mu-toolbar-right">
+            <button class="mu-btn mu-btn-primary" id="muCopyAll" type="button" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.8c0-1-.8-1.8-1.8-1.8H5.8C4.8 4 4 4.8 4 5.8v8.4c0 1 .8 1.8 1.8 1.8H8"/></svg>
+              复制全部 Markdown
+            </button>
+            <button class="mu-btn" id="muDownload" type="button" disabled>下载 .md</button>
+          </div>
+        </div>
+        <div class="mu-list" id="muList">
+          <div class="mu-empty"><strong>还没有图片</strong>把图片拖进来，或点击「插入示例图」看看效果。生成的是 <code>![alt](data:image/png;base64,...)</code> 片段。</div>
+        </div>
+      </div>
+
+      <div class="mu-card">
+        <div class="mu-card-head">
+          <h2 class="mu-card-title">02 · 汇总输出</h2>
+          <span class="mu-card-note" id="muOutInfo">0 张图片</span>
+        </div>
+        <div class="mu-out-wrap">
+          <textarea class="mu-out" id="muOut" readonly spellcheck="false" placeholder="所有图片的 Markdown 片段会汇总在这里…"></textarea>
+          <div class="mu-out-actions">
+            <button class="mu-btn mu-btn-primary" id="muCopyOut" type="button" disabled>复制全部</button>
+            <button class="mu-btn" id="muDownloadOut" type="button" disabled>下载 .md</button>
+            <span class="mu-out-info" id="muOutMeta">—</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="mu-side" aria-label="状态与统计">
+      <div class="mu-card">
+        <div class="mu-status">
+          <span class="mu-dot" id="muDot"></span>
+          <span class="mu-status-text" id="muStatus">就绪</span>
+        </div>
+        <div class="mu-stats">
+          <div class="mu-stat"><b id="muStCount" class="is-muted">0</b><span>图片</span></div>
+          <div class="mu-stat"><b id="muStSize" class="is-muted">0</b><span>原图大小 KB</span></div>
+          <div class="mu-stat"><b id="muStB64" class="is-muted">0</b><span>Base64 字符</span></div>
+          <div class="mu-stat"><b id="muStMd" class="is-muted">0</b><span>Markdown 字符</span></div>
+        </div>
+        <p class="mu-side-note">所有图片解码、Base64 编码都在本地内存中完成，页面不会发起网络请求。Base64 会让文件体积增加约 33%，大图建议先压缩。</p>
+      </div>
+      <div class="mu-card">
+        <div class="mu-card-head"><h2 class="mu-card-title">使用提示</h2></div>
+        <p class="mu-side-note">1. 拖入多张图片，或用 <code>Ctrl+V</code> 粘贴截图。<br>2. 在每条卡片里改 alt 文字（对无障碍与 SEO 友好）。<br>3. 逐条复制，或「复制全部 Markdown」粘贴到文章里。<br>4. 需要在线链接时，展开页面底部的 SM.MS 模式。</p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ================= 可选 SM.MS 模式 ================= -->
+  <details class="mu-optional" id="smmPanel">
+    <summary>
+      <span>可选：Base64 → SM.MS 图床（原程序的上传模式）</span>
+      <span class="mu-optional-hint">需联网 · 手动触发 · 需要你自己的 Token</span>
+    </summary>
+    <div class="mu-optional-body">
+      <div class="mu-optional-warn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3Z"/><path d="M12 9.5v4.5"/><path d="M12 17.2h.01"/></svg>
+        <span><strong>联网提示：</strong>下面这个模式会把图片上传到第三方图床 <code>sm.ms</code>。<strong>只有你填写自己的 API Token 并点击「开始上传」时</strong>才会发起网络请求，其余任何操作都不联网。Token 仅保存在当前页面内存与浏览器 localStorage（可随时清除），不会发给除 sm.ms 之外的任何服务。若浏览器被 CORS 拦截，会显示错误而不会静默失败。</span>
+      </div>
+      <div class="mu-field">
+        <label for="smmToken">SM.MS Token</label>
+        <input class="mu-input" id="smmToken" type="password" autocomplete="off" spellcheck="false" placeholder="填入你自己的 SM.MS API Token（只在本机使用）">
+        <button class="mu-btn" id="smmToggleToken" type="button">显示</button>
+        <button class="mu-btn" id="smmForget" type="button">清除已存 Token</button>
+      </div>
+      <div class="mu-field">
+        <label for="smmFile">已有 Markdown</label>
+        <input class="mu-input" id="smmFile" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain">
+        <span style="font-size:12px;color:var(--ink-3)">或直接粘贴到下面的输入框：</span>
+      </div>
+      <textarea class="mu-md-input" id="smmMd" spellcheck="false" placeholder="粘贴含 Base64 图片的 Markdown，例如：&#10;![图1](data:image/png;base64,iVBORw0KGgo...）&#10;也支持 &lt;img src=&quot;data:image/...&quot;&gt; 与 CSS background-image。"></textarea>
+      <div class="mu-field" style="margin-top:10px">
+        <span class="mu-opt-inline">
+          <label><input type="checkbox" id="smmFix" checked>自动修复 Base64（去掉空白/换行）</label>
+          <label><input type="checkbox" id="smmValidate" checked>校验 Base64 格式</label>
+        </span>
+        <div class="mu-toolbar-right" style="margin-left:auto">
+          <button class="mu-btn" id="smmParse" type="button">解析图片</button>
+          <button class="mu-btn mu-btn-primary" id="smmUpload" type="button" disabled>开始上传</button>
+        </div>
+      </div>
+      <div class="mu-smm-list" id="smmList"></div>
+      <div class="mu-smm-log" id="smmLog" aria-live="polite"><div>等待解析 Markdown…</div></div>
+      <div class="mu-smm-out">
+        <textarea class="mu-out" id="smmOut" readonly spellcheck="false" placeholder="上传成功后，替换了线上链接的 Markdown 会显示在这里…"></textarea>
+        <div class="mu-out-actions">
+          <button class="mu-btn" id="smmCopyOut" type="button" disabled>复制替换结果</button>
+          <button class="mu-btn" id="smmDownloadOut" type="button" disabled>下载 .md</button>
+          <button class="mu-btn" id="smmDownloadOrig" type="button" disabled>下载原文件备份</button>
+          <span class="mu-out-info" id="smmOutMeta">未开始</span>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ================= 说明 ================= -->
+  <section class="mu-notes" aria-label="功能说明与限制">
+    <h2>实现说明与限制</h2>
+    <div class="mu-notes-grid">
+      <div class="mu-note-block">
+        <h3>与原 Python 版的对应关系</h3>
+        <ul>
+          <li>原程序是「读 .md → 找 Base64 图片 → 上传 SM.MS → 替换链接」；网页版保留了这个模式，并新增更常用的反向功能「图片 → Base64 Markdown」（原程序没有）。</li>
+          <li>Base64 正则、清洗、校验与「自动修复」逻辑照搬原程序：去掉空白字符、去掉 <code>data:</code> 前缀、用 <code>atob</code> 校验。</li>
+          <li>SM.MS 上传：<code>POST https://sm.ms/api/v2/upload</code>，Header <code>Authorization: Token</code>，multipart 字段 <code>smfile</code>，失败自动重试 3 次，与原程序一致。</li>
+          <li>原程序的「备份原文件 / 覆盖原文件 / 同目录另存」在浏览器里改为：下载替换后的 .md，以及下载原文件备份。</li>
+        </ul>
+      </div>
+      <div class="mu-note-block">
+        <h3>限制与注意</h3>
+        <ul>
+          <li>SM.MS API 的 CORS 策略可能拒绝来自 <code>file://</code> / 静态页面的直连请求；被拦截时页面会明确报错，此时请使用本地 Base64 模式或官方客户端。</li>
+          <li>本地模式不压缩图片；Base64 体积约为原图的 4/3，大图会让 Markdown 变得很大，可在其它工具里先压缩尺寸。</li>
+          <li>不支持 SVG 之外的矢量格式内嵌预览；EMF/WMF 等 Word 矢量图片在浏览器中无法显示。</li>
+          <li>「下载 .md」使用浏览器下载，文件名基于当前日期生成。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="mu-footnote"><span>根据原 Python 程序移植，原作 2025-12。</span><span>原程序：Markdown Base64图片上传工具（requests + Pillow + Tkinter）。</span></p>
+  </section>
+</div>
+</main>
+
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>早期项目网页版</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="../">早期项目</a><a href="../../../works/">作品</a></span></p></div></div></footer>
+
+<div class="mu-toast" id="muToast" role="status" aria-live="polite"></div>
+<input type="file" id="muFileInput" accept="image/*" multiple hidden>
+
+<script>
+'use strict';
+/* =====================================================================
+ *  Markdown Base64 图片工具
+ *  A. 图片 → Base64 Markdown（纯本地，浏览器 FileReader）
+ *  B. Base64 → SM.MS 图床（可选，手动触发，需用户 Token）
+ *  参考原程序：Markdown Base64图片上传工具.py
+ * ===================================================================== */
+(function () {
+  const $ = function (sel) { return document.querySelector(sel); };
+  const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
+  const state = {
+    items: [],
+    selectedB64: [],
+    smmImages: [],
+    smmOutput: '',
+    smmOriginal: '',
+    smmFileName: ''
+  };
+
+  const els = {
+    drop: $('#muDrop'),
+    fileInput: $('#muFileInput'),
+    list: $('#muList'),
+    out: $('#muOut'),
+    outInfo: $('#muOutInfo'),
+    outMeta: $('#muOutMeta'),
+    copyAll: $('#muCopyAll'),
+    download: $('#muDownload'),
+    copyOut: $('#muCopyOut'),
+    downloadOut: $('#muDownloadOut'),
+    pick: $('#muPick'),
+    sample: $('#muSample'),
+    clear: $('#muClear'),
+    dot: $('#muDot'),
+    status: $('#muStatus'),
+    toast: $('#muToast'),
+    stCount: $('#muStCount'),
+    stSize: $('#muStSize'),
+    stB64: $('#muStB64'),
+    stMd: $('#muStMd'),
+    smm: {
+      panel: $('#smmPanel'),
+      token: $('#smmToken'),
+      toggleToken: $('#smmToggleToken'),
+      forget: $('#smmForget'),
+      file: $('#smmFile'),
+      md: $('#smmMd'),
+      fix: $('#smmFix'),
+      validate: $('#smmValidate'),
+      parse: $('#smmParse'),
+      upload: $('#smmUpload'),
+      list: $('#smmList'),
+      log: $('#smmLog'),
+      out: $('#smmOut'),
+      copyOut: $('#smmCopyOut'),
+      downloadOut: $('#smmDownloadOut'),
+      downloadOrig: $('#smmDownloadOrig'),
+      outMeta: $('#smmOutMeta')
+    }
+  };
+
+  /* ---------------- 小工具 ---------------- */
+  let toastTimer = null;
+  function toast(msg) {
+    els.toast.textContent = msg;
+    els.toast.classList.add('is-on');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { els.toast.classList.remove('is-on'); }, 2000);
+  }
+  function setStatus(kind, text) {
+    els.dot.className = 'mu-dot' + (kind ? ' is-' + kind : '');
+    els.status.textContent = text;
+  }
+  function formatBytes(n) {
+    if (n >= 1024 * 1024) return (n / 1024 / 1024).toFixed(2) + ' MB';
+    return (n / 1024).toFixed(1) + ' KB';
+  }
+  function todayStamp() {
+    const d = new Date();
+    const p = function (n) { return n < 10 ? '0' + n : '' + n; };
+    return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
+  }
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).catch(function () { return fallbackCopy(text); });
+    }
+    return Promise.resolve(fallbackCopy(text));
+  }
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    ta.remove();
+    if (!ok) throw new Error('浏览器拒绝了剪贴板操作');
+  }
+  function downloadText(filename, text, mime) {
+    const blob = new Blob([text], { type: (mime || 'text/markdown') + ';charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1200);
+  }
+  function b64NoPrefix(dataUrl) {
+    const comma = dataUrl.indexOf(',');
+    return comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
+  }
+  function mimeOf(dataUrl) {
+    const m = /^data:([^;,]+)/.exec(dataUrl);
+    return m ? m[1] : 'image/png';
+  }
+  function extOf(mime) {
+    const map = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp', 'image/bmp': 'bmp', 'image/svg+xml': 'svg' };
+    return map[mime] || 'png';
+  }
+  function altFromName(name) {
+    return name.replace(/\.[^.]+$/, '').replace(/[\[\]\n\r]/g, ' ').trim() || 'image';
+  }
+  function escapeAlt(alt) {
+    return String(alt || '').replace(/[\[\]\n\r]/g, ' ').trim() || 'image';
+  }
+
+  /* ---------------- A. 图片 → Base64 Markdown ---------------- */
+  function itemMarkdown(item) {
+    return '![' + escapeAlt(item.alt) + '](' + item.dataUrl + ')';
+  }
+  function refreshAll(skipList) {
+    const items = state.items;
+    const mdList = items.map(itemMarkdown);
+    const md = mdList.join('\n\n');
+    els.out.value = md;
+    els.outInfo.textContent = items.length + ' 张图片';
+    els.outMeta.textContent = md ? (md.length.toLocaleString('zh-CN') + ' 字符') : '—';
+
+    const has = items.length > 0;
+    els.copyAll.disabled = !has;
+    els.download.disabled = !has;
+    els.copyOut.disabled = !has;
+    els.downloadOut.disabled = !has;
+
+    const totalBytes = items.reduce(function (s, it) { return s + it.bytes; }, 0);
+    const b64chars = items.reduce(function (s, it) { return s + b64NoPrefix(it.dataUrl).length; }, 0);
+    setStat(els.stCount, items.length);
+    setStat(els.stSize, Math.round(totalBytes / 1024));
+    setStat(els.stB64, b64chars.toLocaleString('zh-CN'));
+    setStat(els.stMd, md.length.toLocaleString('zh-CN'));
+    if (items.length) setStatus('ok', '已生成 ' + items.length + ' 条 Markdown');
+    else setStatus('', '就绪');
+    if (!skipList) renderList();
+    window.__muState = { count: items.length, markdown: md };
+  }
+  function setStat(el, val) {
+    el.textContent = val;
+    el.className = val && val !== '0' ? '' : 'is-muted';
+  }
+
+  function renderList() {
+    els.list.innerHTML = '';
+    if (!state.items.length) {
+      els.list.innerHTML = '<div class="mu-empty"><strong>还没有图片</strong>把图片拖进来，或点击「插入示例图」看看效果。生成的是 <code>![alt](data:image/png;base64,...)</code> 片段。</div>';
+      return;
+    }
+    state.items.forEach(function (item, idx) {
+      const row = document.createElement('div');
+      row.className = 'mu-item';
+      row.dataset.id = item.id;
+
+      const thumb = document.createElement('div');
+      thumb.className = 'mu-thumb';
+      const img = document.createElement('img');
+      img.src = item.dataUrl;
+      img.alt = item.alt;
+      thumb.appendChild(img);
+
+      const main = document.createElement('div');
+      main.className = 'mu-item-main';
+      const nameRow = document.createElement('div');
+      nameRow.className = 'mu-name-row';
+      const altLabel = document.createElement('label');
+      altLabel.className = 'sr-only';
+      altLabel.textContent = '第 ' + (idx + 1) + ' 张图片的 alt 文字';
+      const altInput = document.createElement('input');
+      altInput.className = 'mu-alt';
+      altInput.type = 'text';
+      altInput.value = item.alt;
+      altInput.spellcheck = false;
+      altInput.setAttribute('aria-label', 'alt 文字');
+      altInput.addEventListener('input', function () {
+        item.alt = altInput.value;
+        itemMdEl.textContent = itemMarkdown(item);
+        refreshAll(true);
+      });
+      nameRow.appendChild(altLabel);
+      nameRow.appendChild(altInput);
+      const meta = document.createElement('div');
+      meta.className = 'mu-meta';
+      meta.textContent = (idx + 1) + '. ' + item.name + ' · ' + formatBytes(item.bytes) + ' · ' + item.mime;
+      const itemMdEl = document.createElement('div');
+      itemMdEl.className = 'mu-md-line';
+      itemMdEl.textContent = itemMarkdown(item);
+      main.appendChild(nameRow);
+      main.appendChild(meta);
+      main.appendChild(itemMdEl);
+
+      const actions = document.createElement('div');
+      actions.className = 'mu-item-actions';
+      const copyBtn = document.createElement('button');
+      copyBtn.type = 'button';
+      copyBtn.className = 'mu-icon-btn';
+      copyBtn.title = '复制这条 Markdown';
+      copyBtn.setAttribute('aria-label', '复制第 ' + (idx + 1) + ' 条 Markdown');
+      copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.8c0-1-.8-1.8-1.8-1.8H5.8C4.8 4 4 4.8 4 5.8v8.4c0 1 .8 1.8 1.8 1.8H8"/></svg>';
+      copyBtn.addEventListener('click', function () {
+        copyText(itemMarkdown(item)).then(function () { toast('已复制第 ' + (idx + 1) + ' 条 Markdown'); })
+          .catch(function (err) { toast('复制失败：' + err.message); });
+      });
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'mu-icon-btn is-danger';
+      delBtn.title = '移除';
+      delBtn.setAttribute('aria-label', '移除第 ' + (idx + 1) + ' 张图片');
+      delBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+      delBtn.addEventListener('click', function () {
+        state.items = state.items.filter(function (it) { return it.id !== item.id; });
+        refreshAll();
+        toast('已移除 1 张图片');
+      });
+      actions.appendChild(copyBtn);
+      actions.appendChild(delBtn);
+
+      row.appendChild(thumb);
+      row.appendChild(main);
+      row.appendChild(actions);
+      els.list.appendChild(row);
+    });
+  }
+
+  let itemSeq = 0;
+  function addDataUrl(dataUrl, name, mimeHint) {
+    const mime = mimeHint || mimeOf(dataUrl);
+    const b64 = b64NoPrefix(dataUrl);
+    // 粗略推算原始字节数
+    let bytes = 0;
+    try {
+      const clean = b64.replace(/=+$/, '');
+      bytes = Math.floor(clean.length * 3 / 4);
+    } catch (e) { bytes = 0; }
+    const item = {
+      id: 'img-' + (++itemSeq),
+      name: name || ('image-' + itemSeq + '.' + extOf(mime)),
+      mime: mime,
+      bytes: bytes,
+      dataUrl: dataUrl,
+      alt: altFromName(name || ('image-' + itemSeq))
+    };
+    state.items.push(item);
+    refreshAll();
+    return item;
+  }
+
+  async function addFiles(fileList) {
+    const files = Array.prototype.slice.call(fileList || []).filter(function (f) {
+      return f && (/^image\//.test(f.type) || /\.(png|jpe?g|gif|webp|bmp|svg|avif)$/i.test(f.name));
+    });
+    if (!files.length) { toast('没有找到图片文件'); return; }
+    setStatus('busy', '正在读取 ' + files.length + ' 张图片…');
+    let ok = 0;
+    let failed = 0;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.size > MAX_IMAGE_BYTES) {
+        failed += 1;
+        continue;
+      }
+      try {
+        const dataUrl = await readFileAsDataUrl(file);
+        addDataUrl(dataUrl, file.name, file.type || mimeOf(dataUrl));
+        ok += 1;
+      } catch (err) {
+        failed += 1;
+      }
+    }
+    setStatus('ok', '已添加 ' + ok + ' 张图片' + (failed ? '，失败 ' + failed : ''));
+    toast('已添加 ' + ok + ' 张图片' + (failed ? '（' + failed + ' 张失败）' : ''));
+  }
+  function readFileAsDataUrl(file) {
+    return new Promise(function (resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function () { resolve(String(reader.result)); };
+      reader.onerror = function () { reject(reader.error || new Error('读取图片失败')); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /* 示例图片：canvas 生成，便于直接看到效果 */
+  function makeSampleImage(kind) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 400;
+    const ctx = canvas.getContext('2d');
+    if (kind === 'wave') {
+      const g = ctx.createLinearGradient(0, 0, 640, 400);
+      g.addColorStop(0, '#0f2f28');
+      g.addColorStop(0.55, '#2f6f5e');
+      g.addColorStop(1, '#b7d8cb');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 640, 400);
+      ctx.strokeStyle = 'rgba(251,250,247,0.85)';
+      ctx.lineWidth = 1.4;
+      for (let k = 0; k < 7; k++) {
+        ctx.beginPath();
+        for (let x = 0; x <= 640; x += 4) {
+          const y = 200 + Math.sin(x / 46 + k * 0.7) * (34 + k * 9) * Math.exp(-Math.pow((x - 320) / 420, 2)) + (k - 3) * 20;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      ctx.fillStyle = 'rgba(251,250,247,0.92)';
+      ctx.font = 'bold 26px Georgia, serif';
+      ctx.fillText('Base64 / example', 34, 64);
+      ctx.font = '15px Consolas, monospace';
+      ctx.fillText('image #1 · 640 × 400', 34, 90);
+    } else {
+      const g = ctx.createLinearGradient(0, 0, 0, 400);
+      g.addColorStop(0, '#1c1c1a');
+      g.addColorStop(1, '#3a3f39');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 640, 400);
+      const colors = ['#82b9a5', '#c08a3e', '#b5544c', '#6b8cbc'];
+      for (let k = 0; k < 22; k++) {
+        ctx.fillStyle = colors[k % colors.length];
+        ctx.globalAlpha = 0.25 + (k % 4) * 0.14;
+        const x = 40 + (k * 137) % 560;
+        const y = 70 + (k * 89) % 240;
+        const size = 22 + (k * 31) % 70;
+        if (k % 3 === 0) {
+          ctx.beginPath();
+          ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillRect(x, y, size, size * 0.72);
+        }
+      }
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = 'rgba(251,250,247,0.6)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(20, 20, 600, 360);
+      ctx.fillStyle = 'rgba(251,250,247,0.92)';
+      ctx.font = 'bold 26px Georgia, serif';
+      ctx.fillText('Mars / rings', 44, 64);
+      ctx.font = '15px Consolas, monospace';
+      ctx.fillText('image #2 · 640 × 400', 44, 90);
+    }
+    return canvas.toDataURL('image/png');
+  }
+  function insertSamples() {
+    addDataUrl(makeSampleImage('wave'), 'sample-wave.png', 'image/png');
+    addDataUrl(makeSampleImage('dots'), 'sample-rings.png', 'image/png');
+    toast('已插入 2 张示例图片');
+  }
+
+  /* ---------------- B. Base64 → SM.MS（可选） ---------------- */
+  function cleanBase64(str) {
+    return String(str || '').replace(/\s+/g, '').replace(/^data:[^,]+,/, '');
+  }
+  function isValidBase64(str) {
+    try {
+      const cleaned = cleanBase64(str);
+      if (!cleaned || cleaned.length % 4 === 1) return false;
+      atob(cleaned);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  function extractBase64Images(content) {
+    const images = [];
+    const re = /!\[([^\]]*)\]\(\s*data:image\/([^;,\s)]+);base64,([^)\s]+)\s*\)/gi;
+    let m;
+    while ((m = re.exec(content)) !== null) {
+      images.push({
+        match: m[0],
+        alt: m[1],
+        type: m[2].toLowerCase(),
+        b64: m[3]
+      });
+    }
+    const reImg = /<img\b[^>]*\bsrc=["'](data:image\/([^;,"'\s]+);base64,([^"'\s]+))["'][^>]*>/gi;
+    while ((m = reImg.exec(content)) !== null) {
+      images.push({ match: m[0], alt: '', type: m[2].toLowerCase(), b64: m[3], html: true });
+    }
+    return images;
+  }
+  function smmLog(msg, kind) {
+    const line = document.createElement('div');
+    if (kind) line.className = 'is-' + kind;
+    const d = new Date();
+    const p = function (n) { return n < 10 ? '0' + n : '' + n; };
+    line.textContent = '[' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + '] ' + msg;
+    els.smm.log.appendChild(line);
+    els.smm.log.scrollTop = els.smm.log.scrollHeight;
+  }
+  function renderSmmList() {
+    els.smm.list.innerHTML = '';
+    if (!state.smmImages.length) {
+      els.smm.upload.disabled = true;
+      return;
+    }
+    state.smmImages.forEach(function (img, idx) {
+      const row = document.createElement('div');
+      row.className = 'mu-smm-item';
+      const thumb = document.createElement('div');
+      thumb.className = 'mu-smm-thumb';
+      const im = document.createElement('img');
+      im.src = 'data:image/' + img.type + ';base64,' + cleanBase64(img.b64);
+      im.alt = img.alt || ('image ' + (idx + 1));
+      thumb.appendChild(im);
+      const info = document.createElement('div');
+      const name = document.createElement('div');
+      name.className = 'mu-smm-name';
+      name.textContent = (idx + 1) + '. ' + (img.alt || '(无 alt)') + ' · image/' + img.type;
+      const meta = document.createElement('div');
+      meta.className = 'mu-smm-meta';
+      const size = Math.floor(cleanBase64(img.b64).length * 3 / 4);
+      meta.textContent = formatBytes(size) + ' · Base64 ' + cleanBase64(img.b64).length.toLocaleString('zh-CN') + ' 字符';
+      info.appendChild(name);
+      info.appendChild(meta);
+      const st = document.createElement('div');
+      st.className = 'mu-smm-state' + (img.state ? ' is-' + img.state.kind : '');
+      st.textContent = img.state ? img.state.text : '待上传';
+      row.appendChild(thumb);
+      row.appendChild(info);
+      row.appendChild(st);
+      els.smm.list.appendChild(row);
+    });
+    els.smm.upload.disabled = !state.smmImages.length;
+  }
+
+  function parseSmmMarkdown() {
+    const content = els.smm.md.value;
+    if (!content.trim()) {
+      smmLog('输入为空：请粘贴 Markdown 或选择 .md 文件。', 'warn');
+      return;
+    }
+    state.smmOriginal = content;
+    const raw = extractBase64Images(content);
+    let fixedCount = 0;
+    const images = [];
+    raw.forEach(function (img) {
+      let b64 = img.b64;
+      let valid = true;
+      if (els.smm.validate.checked) valid = isValidBase64(b64);
+      if (!valid && els.smm.fix.checked) {
+        const cleaned = cleanBase64(b64);
+        if (isValidBase64(cleaned)) {
+          b64 = cleaned;
+          valid = true;
+          fixedCount += 1;
+        }
+      }
+      if (!valid) {
+        // 保留但标记，交给用户决定
+        b64 = cleanBase64(b64);
+      }
+      img.b64 = b64;
+      img.valid = valid;
+      images.push(img);
+    });
+    state.smmImages = images;
+    renderSmmList();
+    els.smm.log.innerHTML = '';
+    smmLog('找到 ' + images.length + ' 张 Base64 图片。', images.length ? 'ok' : 'warn');
+    if (fixedCount) smmLog('自动修复了 ' + fixedCount + ' 张图片的 Base64 字符。', 'warn');
+    const invalid = images.filter(function (it) { return !it.valid; });
+    if (invalid.length) smmLog('有 ' + invalid.length + ' 张图片 Base64 校验未通过，上传会失败。', 'err');
+    if (!images.length) {
+      smmLog('没有找到标准 Markdown data:image 图片，支持 ![alt](data:image/...) / <img src="data:image/..."> 写法。', 'warn');
+    }
+    smmLog('准备好后点击「开始上传」——此操作才会联网。', 'info');
+    els.smm.outMeta.textContent = images.length + ' 张待上传';
+  }
+
+  async function uploadOne(img, token) {
+    const cleaned = cleanBase64(img.b64);
+    const extMap = { jpeg: 'jpg', jpg: 'jpg', png: 'png', gif: 'gif', webp: 'webp', bmp: 'bmp' };
+    const ext = extMap[img.type] || 'png';
+    const binary = atob(cleaned);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const blob = new Blob([bytes], { type: 'image/' + img.type });
+    const form = new FormData();
+    form.append('smfile', blob, 'image.' + ext);
+    form.append('format', 'json');
+    const res = await fetch('https://sm.ms/api/v2/upload', {
+      method: 'POST',
+      headers: {
+        Authorization: token,
+        'User-Agent': 'Mozilla/5.0 (browser markdown-base64-tool)'
+      },
+      body: form
+    });
+    let json = null;
+    try { json = await res.json(); } catch (e) { json = null; }
+    if (res.status === 200 && json && json.success) {
+      const data = json.data || {};
+      const url = data.url || data.path || '';
+      if (!url) return { ok: false, error: '接口成功但未返回 URL' };
+      const alt = escapeAlt(img.alt);
+      return { ok: true, url: url, markdown: '![' + alt + '](' + url + ')' };
+    }
+    if (json && json.code === 'image_repeated') {
+      const url = json.images || (json.data && json.data.url) || '';
+      if (url) {
+        const alt = escapeAlt(img.alt);
+        return { ok: true, url: url, markdown: '![' + alt + '](' + url + ')', repeated: true };
+      }
+    }
+    const message = (json && (json.message || json.code)) || ('HTTP ' + res.status);
+    return { ok: false, error: String(message) };
+  }
+
+  async function uploadAll() {
+    const token = els.smm.token.value.trim();
+    if (!token) { toast('请先填入 SM.MS API Token'); smmLog('缺少 API Token，未发起任何请求。', 'err'); return; }
+    if (!state.smmImages.length) { toast('请先解析出 Base64 图片'); return; }
+    els.smm.upload.disabled = true;
+    setStatus('busy', '正在上传（联网）…');
+    smmLog('开始上传 ' + state.smmImages.length + ' 张图片到 sm.ms —— 这是本页唯一会联网的操作。', 'warn');
+    let success = 0;
+    let failed = 0;
+    for (let i = 0; i < state.smmImages.length; i++) {
+      const img = state.smmImages[i];
+      img.state = { kind: 'busy', text: '上传中…' };
+      renderSmmList();
+      let result = null;
+      let lastErr = '';
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        smmLog('上传 ' + (i + 1) + '/' + state.smmImages.length + '（尝试 ' + attempt + '/3）…', 'info');
+        try {
+          result = await uploadOne(img, token);
+        } catch (err) {
+          result = { ok: false, error: (err && err.message) || String(err) };
+        }
+        if (result && result.ok) break;
+        lastErr = (result && result.error) || '未知错误';
+        if (/Failed to fetch|NetworkError|Load failed|network/i.test(lastErr)) {
+          lastErr += '（可能是 CORS 或网络问题）';
+          break;
+        }
+        await new Promise(function (r) { setTimeout(r, 500 * attempt); });
+      }
+      if (result && result.ok) {
+        success += 1;
+        img.state = { kind: 'ok', text: '成功' };
+        const replacement = result.repeated ? '[图床已有] ' + result.url : result.url;
+        img.replaced = result.markdown;
+        smmLog('  ' + (result.repeated ? '图片已存在，复用链接：' : '成功：') + result.url, 'ok');
+      } else {
+        failed += 1;
+        img.state = { kind: 'err', text: '失败' };
+        img.replaced = null;
+        smmLog('  失败：' + (lastErr || '上传失败，已重试 3 次'), 'err');
+      }
+      renderSmmList();
+    }
+    // 替换原文中的 base64 图片
+    let output = state.smmOriginal;
+    state.smmImages.forEach(function (img) {
+      if (img.replaced) output = output.split(img.match).join(img.replaced);
+    });
+    state.smmOutput = output;
+    els.smm.out.value = output;
+    els.smm.copyOut.disabled = !output;
+    els.smm.downloadOut.disabled = !output;
+    els.smm.downloadOrig.disabled = !state.smmOriginal;
+    els.smm.outMeta.textContent = '成功 ' + success + ' / 失败 ' + failed;
+    setStatus(failed ? 'err' : 'ok', '上传完成：成功 ' + success + '，失败 ' + failed);
+    smmLog('上传结束：成功 ' + success + '，失败 ' + failed + '。', failed ? 'warn' : 'ok');
+    if (failed) smmLog('失败图片在替换结果中保留原 Base64，不会丢失内容。', 'warn');
+    els.smm.upload.disabled = false;
+  }
+
+  /* ---------------- 事件绑定 ---------------- */
+  els.pick.addEventListener('click', function () { els.fileInput.click(); });
+  els.drop.addEventListener('click', function () { els.fileInput.click(); });
+  els.fileInput.addEventListener('change', function () {
+    addFiles(els.fileInput.files);
+    els.fileInput.value = '';
+  });
+  els.sample.addEventListener('click', insertSamples);
+  els.clear.addEventListener('click', function () {
+    state.items = [];
+    refreshAll();
+    toast('已清空全部图片');
+  });
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    els.drop.addEventListener(ev, function (e) { e.preventDefault(); els.drop.classList.add('is-drag'); });
+  });
+  ['dragleave', 'drop'].forEach(function (ev) {
+    els.drop.addEventListener(ev, function (e) { e.preventDefault(); els.drop.classList.remove('is-drag'); });
+  });
+  els.drop.addEventListener('drop', function (e) {
+    if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files);
+  });
+  document.addEventListener('dragover', function (e) { e.preventDefault(); });
+  document.addEventListener('drop', function (e) {
+    if (els.drop.contains(e.target)) return;
+    e.preventDefault();
+    if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files);
+  });
+  document.addEventListener('paste', function (e) {
+    if (!e.clipboardData) return;
+    const items = e.clipboardData.items || [];
+    const files = [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].kind === 'file' && /^image\//.test(items[i].type)) {
+        const f = items[i].getAsFile();
+        if (f) files.push(f);
+      }
+    }
+    if (files.length) {
+      e.preventDefault();
+      addFiles(files);
+    }
+  });
+  els.copyAll.addEventListener('click', function () { copyAllMarkdown(); });
+  els.copyOut.addEventListener('click', function () { copyAllMarkdown(); });
+  function copyAllMarkdown() {
+    const md = state.items.map(itemMarkdown).join('\n\n');
+    if (!md) return;
+    copyText(md).then(function () { toast('已复制全部 ' + state.items.length + ' 条 Markdown'); })
+      .catch(function (err) { toast('复制失败：' + err.message); els.out.focus(); els.out.select(); });
+  }
+  els.download.addEventListener('click', function () { downloadAll(); });
+  els.downloadOut.addEventListener('click', function () { downloadAll(); });
+  function downloadAll() {
+    const md = state.items.map(itemMarkdown).join('\n\n');
+    if (!md) return;
+    const name = 'images-base64-' + todayStamp() + '.md';
+    downloadText(name, md + '\n', 'text/markdown');
+    toast('已开始下载 ' + name);
+  }
+
+  /* SM.MS 模式 */
+  els.smm.toggleToken.addEventListener('click', function () {
+    const showing = els.smm.token.type === 'text';
+    els.smm.token.type = showing ? 'password' : 'text';
+    els.smm.toggleToken.textContent = showing ? '显示' : '隐藏';
+  });
+  els.smm.forget.addEventListener('click', function () {
+    els.smm.token.value = '';
+    try { localStorage.removeItem('mu-smm-token'); } catch (e) { /* 忽略 */ }
+    toast('已清除本机保存的 Token');
+  });
+  els.smm.token.addEventListener('change', function () {
+    try {
+      const v = els.smm.token.value.trim();
+      if (v) localStorage.setItem('mu-smm-token', v);
+    } catch (e) { /* 忽略 */ }
+  });
+  try {
+    const saved = localStorage.getItem('mu-smm-token');
+    if (saved) els.smm.token.value = saved;
+  } catch (e) { /* 忽略 */ }
+  els.smm.file.addEventListener('change', function () {
+    const f = els.smm.file.files && els.smm.file.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = function () {
+      els.smm.md.value = String(reader.result || '');
+      state.smmFileName = f.name;
+      smmLog('已读入 ' + f.name + '（' + formatBytes(f.size) + '）', 'info');
+      parseSmmMarkdown();
+    };
+    reader.readAsText(f);
+  });
+  els.smm.parse.addEventListener('click', parseSmmMarkdown);
+  els.smm.upload.addEventListener('click', function () {
+    if (window.confirm('即将把 ' + state.smmImages.length + ' 张图片上传到 sm.ms 图床（第三方服务），确定继续？')) {
+      uploadAll();
+    } else {
+      smmLog('已取消上传，未发起任何网络请求。', 'info');
+    }
+  });
+  els.smm.copyOut.addEventListener('click', function () {
+    if (!state.smmOutput) return;
+    copyText(state.smmOutput).then(function () { toast('已复制替换结果'); })
+      .catch(function (err) { toast('复制失败：' + err.message); });
+  });
+  els.smm.downloadOut.addEventListener('click', function () {
+    if (!state.smmOutput) return;
+    const base = (state.smmFileName || 'markdown').replace(/\.[^.]+$/, '');
+    downloadText(base + '_uploaded.md', state.smmOutput, 'text/markdown');
+    toast('已开始下载替换结果');
+  });
+  els.smm.downloadOrig.addEventListener('click', function () {
+    if (!state.smmOriginal) return;
+    const base = (state.smmFileName || 'markdown').replace(/\.[^.]+$/, '');
+    downloadText(base + '.backup.md', state.smmOriginal, 'text/markdown');
+    toast('已开始下载原文件备份');
+  });
+  els.smm.panel.addEventListener('toggle', function () {
+    if (els.smm.panel.open && !state.smmImages.length && !els.smm.md.value.trim()) {
+      smmLog('此模式会把图片上传到 sm.ms；只有点击「开始上传」后才会联网。', 'info');
+    }
+  });
+
+  /* 主题切换 */
+  const themeToggle = document.querySelector('[data-theme-toggle]');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function () {
+      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('xz-theme', next); } catch (e) { /* 忽略 */ }
+    });
+  }
+
+  /* 自测钩子 */
+  window.__muTest = {
+    extract: extractBase64Images,
+    clean: cleanBase64,
+    valid: isValidBase64,
+    addDataUrl: addDataUrl,
+    markdown: function () { return state.items.map(itemMarkdown).join('\n\n'); },
+    count: function () { return state.items.length; },
+    makeSample: makeSampleImage
+  };
+
+  /* 首屏插入两张示例图，方便直接看到效果 */
+  setTimeout(function () {
+    if (!state.items.length) insertSamples();
+  }, 400);
+})();
+</script>
+</body>
+</html>

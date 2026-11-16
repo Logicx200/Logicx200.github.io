@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>DSH 后台任务状态桥 · 说明 · 学哲玩</title>
+<meta name="description" content="把 ctx.jobs 进度镜像成一个 JSON 文件">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · DeepSeek Harness 插件</p><h1 class="work-doc-title">DSH 后台任务状态桥</h1><p class="work-doc-sub">把 ctx.jobs 进度镜像成一个 JSON 文件</p><div class="work-doc-meta"><span>DeepSeek Harness 插件</span><span>9 个文件</span><span>244 KB</span><span class="tag">DSH 插件</span><span class="tag">后台任务</span><span class="tag">进度桥</span><span class="tag">host-only</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/dsh-usage-bridge" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="dsh-usage-bridge">dsh-usage-bridge</h2>
+<p>把 DeepSeek Harness 的<strong>后台任务状态</strong>镜像成一个 JSON 文件，供独立的桌面小组件（widget）读取并显示实时进度。</p>
+<p>它只做一件事：<strong>写文件</strong>。</p>
+<hr>
+<h2 id="这是什么">这是什么</h2>
+<p>DSH 本身已经维护了一个后台任务注册表（<code>ctx.jobs</code>），里面有任务 id、类型、标签、状态、<code>updateProgress()</code> 写入的进度行，以及一个<strong>任务运行期间可读</strong>的输出环形缓冲区。</p>
+<p>这个插件订阅该注册表的事件，按固定周期用 <code>readAt()</code> 读取正在运行任务的输出尾部，从输出里解析出百分比与 ETA，然后把结果<strong>原子地</strong>写入一个 JSON 文件：</p>
+<pre><code>$DSH_HOME/usage-widget/jobs.json</code></pre>
+<p>桌面小组件读取这个文件即可，<strong>完全不需要和 DSH 应用通信</strong>——没有 HTTP、没有端口、没有鉴权。</p>
+<hr>
+<h2 id="纯-host-端没有-client-半边">纯 host 端，没有 client 半边</h2>
+<p>这一点是刻意设计的，也是它能保证“绝不会影响界面”的原因：</p>
+<ul><li><code>package.json</code> 中<strong>没有</strong> <code>dsh.client</code> 字段；</li><li>不提供任何浏览器端 bundle（没有 <code>lib/</code>，没有 <code>exports[&quot;./client&quot;]</code>）；</li><li>不注册 Slot、不注册路由（route）、不注册工具（tool）、不注册 Service；</li><li><code>cordis.patch.yml</code> 只插入<strong>一行</strong> loader 记录。</li></ul>
+<p>因此浏览器端根本不知道它存在：加载这个插件唯一的可观测效果，就是某个文件里多了几个字节。</p>
+<hr>
+<h2 id="写出的文件">写出的文件</h2>
+<p>默认路径 <code>$DSH_HOME/usage-widget/jobs.json</code>（目录不存在会自动创建）。<strong>加载后的第一个 tick 无条件写一次</strong>，所以即使注册表里一个任务都没有，文件也会在 <code>intervalMs</code> 之内出现，内容是一个空信标：</p>
+<pre><code class="language-json">{ &quot;at&quot;: 1790695900650, &quot;jobs&quot;: [] }</code></pre>
+<p>这就是“桥接还活着吗”的答案：重启后看到 <code>{&quot;at&quot;:…,&quot;jobs&quot;:[]}</code>，即说明插件已加载并在正常走时钟。实际内容形如：</p>
+<pre><code class="language-json">{
+  &quot;at&quot;: 1790695900650,
+  &quot;jobs&quot;: [
+    {
+      &quot;id&quot;: &quot;bash-3&quot;,
+      &quot;kind&quot;: &quot;bash&quot;,
+      &quot;label&quot;: &quot;node sim.mjs&quot;,
+      &quot;owner&quot;: &quot;session-…&quot;,
+      &quot;status&quot;: &quot;running&quot;,
+      &quot;progress&quot;: &quot;step 120/500&quot;,
+      &quot;detail&quot;: null,
+      &quot;percent&quot;: 24,
+      &quot;etaMs&quot;: 95000,
+      &quot;startedAt&quot;: 1790695900650,
+      &quot;finishedAt&quot;: null,
+      &quot;lastLine&quot;: &quot;step 120/500&quot;
+    }
+  ]
+}</code></pre>
+<p>字段含义：</p>
+<div class="table-container"><table><thead><tr><th>字段</th><th>含义</th></tr></thead><tbody><tr><td><code>at</code></td><td>本次快照的写入时刻（毫秒时间戳），小组件可据此判断数据是否新鲜</td></tr><tr><td><code>id</code> / <code>kind</code> / <code>label</code> / <code>owner</code></td><td>直接来自注册表的任务身份</td></tr><tr><td><code>status</code></td><td><code>running</code> / <code>stopping</code> / <code>completed</code> / <code>killed</code> / <code>failed</code></td></tr><tr><td><code>progress</code></td><td>注册表自己的进度行（<code>JobHandle.updateProgress()</code> 写入），没有则为 <code>null</code></td></tr><tr><td><code>detail</code></td><td>终态说明（例如失败原因），没有则为 <code>null</code></td></tr><tr><td><code>percent</code></td><td>推导出的完成百分比，<code>0</code>–<code>100</code>；推导不出为 <code>null</code></td></tr><tr><td><code>etaMs</code></td><td>推导出的剩余毫秒数，已钳制在 <strong>1 秒 ~ 7 天</strong>；推导不出为 <code>null</code></td></tr><tr><td><code>startedAt</code> / <code>finishedAt</code></td><td>开始 / 结束时刻；未结束为 <code>null</code></td></tr><tr><td><code>lastLine</code></td><td>输出尾部的最后一条非空行，去空白、最长 160 字符</td></tr></tbody></table></div>
+<p>解析规则：</p>
+<ul><li><code>percent</code> 优先取注册表自己的 <code>progress</code> 字符串；没有时才从输出尾部解析。</li><li>支持的写法：<code>47.5%</code>（带百分号），以及 <code>step 120/500</code>、<code>120 | 500</code>、<code>120 of 500</code> 这类比例。</li><li>会做合理性校验：总数 ≤ 0 或 &gt; 1e12 一律丢弃；百分比不在 <code>0</code>–<code>100</code> 内一律丢弃。</li><li><code>etaMs</code> 依据<strong>最近两次采样</strong>的速率（百分比/毫秒）推算，因此任务提速时 ETA 会变小，任务卡住时 ETA 会变大——而不是一直沿用历史平均速率。</li><li>已结束的任务会在文件里<strong>保留约 30 秒</strong>，让小组件能显示一次“完成”，随后自动移除。</li><li>写入是原子的：先写同目录下的临时文件，再 <code>rename</code> 覆盖目标文件，<strong>小组件永远不会读到写了一半的文件</strong>。</li></ul>
+<hr>
+<h2 id="两个配置项">两个配置项</h2>
+<p>在 <code>cordis.patch.yml</code> 的 loader 记录里：</p>
+<pre><code class="language-yaml">- insert:
+    - id: usage-bridge
+      name: dsh-usage-bridge
+      config:
+        statePath: &quot;&quot;      # 空字符串 = 使用默认路径 $DSH_HOME/usage-widget/jobs.json
+        intervalMs: 1000   # 读取与写盘的周期（毫秒），默认 1000</code></pre>
+<div class="table-container"><table><thead><tr><th>配置键</th><th>默认值</th><th>说明</th></tr></thead><tbody><tr><td><code>statePath</code></td><td><code>&quot;&quot;</code>（空）</td><td>空字符串表示用默认路径；填绝对路径可覆盖</td></tr><tr><td><code>intervalMs</code></td><td><code>1000</code></td><td>每隔多久读一次任务输出、并<strong>最多</strong>写一次文件。事件（注册/结束）会立刻触发一次写入</td></tr></tbody></table></div>
+<p><code>$DSH_HOME</code> 的解析方式：环境变量 <code>DSH_HOME</code>；未设置时回退到 <code>~/.dsh</code>。这与其他 host 端插件在本机使用的约定保持一致。</p>
+<hr>
+<h2 id="卸载">卸载</h2>
+<ol><li>从 profile 的 <code>dsh.profile.bundles</code> 里删掉本 bundle 的记录；</li><li>删除指向本目录的 junction / 链接（若当初是通过链接安装的）；</li><li>可选：删除 <code>$DSH_HOME/usage-widget/jobs.json</code>（以及空的 <code>usage-widget</code> 目录）。</li></ol>
+<p>因为没有任何 client 半边，卸载后<strong>不需要清理浏览器端资源</strong>，刷新页面即可。</p>
+<hr>
+<h2 id="read-为什么故意不调用"><code>read</code> 为什么故意不调用</h2>
+<p>注册表提供两个读接口：</p>
+<ul><li><code>readAt(id, from)</code> —— 按<strong>绝对字节偏移</strong>读取，<strong>不移动任何游标</strong>；</li><li><code>read(id)</code> —— 从<strong>模型自己的游标</strong>消费，并把游标推进到当前末尾。</li></ul>
+<p>本插件<strong>只使用 <code>readAt</code>，整个包里没有任何一处调用 <code>read</code></strong>。</p>
+<p>原因是 <code>read</code> 会推进模型自己的读取游标——如果桥接插件调用了它，模型就会<strong>失去对自己启动的任务输出的可见性</strong>（输出被插件“偷走”了）。<code>readAt</code> 与模型游标互不干扰，两者读的是同一份字节。</p>
+<p>这一点由离线检查强制保证：stub 里的 <code>read()</code> 被实现为<strong>直接抛异常</strong>，只要插件调用一次，检查就会失败。</p>
+<p>环形缓冲是有界且可丢失的：如果注册表报告某次读取是 <code>lossy</code>（保留窗口已经从游标下方滑走），插件<strong>不会</strong>尝试补全缺口，而是直接把游标重新对齐到注册表返回的 <code>next</code>，然后继续读新输出。</p>
+<hr>
+<h2 id="离线自检">离线自检</h2>
+<p>不需要启动 DSH，也不接触真实应用：</p>
+<pre><code class="language-powershell">&amp; &quot;C:\Users\x1503\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe&quot; test/bridge-check.mjs</code></pre>
+<p><code>test/bridge-check.mjs</code> 用一个 <strong>stub Cordis context</strong> 驱动插件：伪造的 <code>ctx.jobs</code>（事件总线 + 输出环）、effect 注册器、被接管的进程级 <code>setInterval</code>/<code>clearInterval</code>、被捕获的 <code>console.error</code>，以及一个临时 <code>$DSH_HOME</code>。stub 的 context 是一个 <strong>Proxy</strong>，复刻 Cordis 自己的语义：除 <code>jobs</code> 和 <code>effect</code> 之外的任何属性读取都<strong>直接抛异常</strong>。它覆盖：</p>
+<ol><li>注册的 running 任务出现在 <code>jobs.json</code>，且 <code>label</code> / <code>status</code> / <code>startedAt</code> 正确；</li><li>环里喂 <code>step 120/500</code> 得到 <code>percent: 24</code>，喂 <code>47.5%</code> 得到 <code>percent: 47.5</code>；</li><li>两个采样产生被钳制的 <code>etaMs</code>，且速率变化时 ETA 朝正确方向移动；</li><li>已结束任务短暂保留后消失；</li><li>读取抛异常时插件不死、且文件仍是合法 JSON（含 lossy 重同步）；</li><li><code>read()</code> 从未被调用（stub 让它抛异常，检查依然通过）；</li><li><code>$DSH_HOME</code> 解析正确，显式 <code>statePath</code> 覆盖默认路径；</li><li>注册表不存在时 <code>apply()</code> 彻底惰性；</li><li>注册表什么都没报告时，<strong>第一个 tick 仍写出 <code>{&quot;at&quot;:…,&quot;jobs&quot;:[]}</code> 空信标</strong>；</li><li>插件从未读过 <code>jobs</code> / <code>effect</code> 之外的任何 ctx 属性。</li></ol>
+<hr>
+<h2 id="设计取舍与已知风险">设计取舍与已知风险</h2>
+<ul><li><strong>只声明它真正需要的东西</strong>：<code>export const inject = ['jobs']</code>，然后直接读 <code>ctx.jobs</code>。Cordis 的 ctx 是一个 <strong>proxy：读取任何既不是核心方法、又没在 <code>inject</code> 里声明的属性，GET 本身就会抛异常</strong>（<code>?.</code> 也救不了，因为抛的是取属性这一步）。所以插件读取的 ctx 属性被压缩到恰好两个：<code>ctx.jobs</code>（服务）与 <code>ctx.effect</code>（核心方法）。注册表不存在时 Cordis 根本不会调用 <code>apply</code>，插件处于 pending 而不是 failed 状态。定时器用进程级 <code>setInterval</code>/<code>clearInterval</code>（<code>timer</code> 服务暴露的是 <code>ctx.interval</code>，不是 <code>ctx.setInterval</code>），并在同一个 <code>ctx.effect</code> 的 teardown 里清掉。日志走 <code>console.error</code>，从不碰 <code>ctx.logger</code>。</li><li><strong>绝不向宿主抛异常</strong>：订阅回调、定时器 tick、环读取、文件写入全部包在 try/catch 里；同类失败只记一条日志（防刷屏），插件继续运行。</li><li><strong>文件写入是“发出即忘”的</strong>：宿主事件永远不会等待磁盘。写入通过内部的 promise 队列<strong>串行化</strong>，避免两次并发 <code>rename</code> 以相反顺序落盘、导致旧状态覆盖新状态。</li><li><strong>风险</strong>：即使写入被串行化，磁盘上仍可能短暂看到“上一周期”的内容——这是有意的（widget 读的是快照，<code>at</code> 字段可用于判断新鲜度）。另外 <code>percent</code>/<code>etaMs</code> 是从<strong>文本</strong>里猜出来的：如果某个脚本输出了看起来像百分比、实际不是的数字，推导值就会失真。注册表自己的 <code>progress</code> 行始终优先，建议生产方用 <code>updateProgress()</code> 提供权威进度。</li></ul></article><section class="work-gallery" aria-labelledby="work-gallery-title"><h2 class="work-gallery-title" id="work-gallery-title">图集</h2><p class="work-gallery-note">正文配图较少，以下从项目目录挑选了 1 张图片。</p><div class="work-gallery-grid"><figure class="work-gallery-item"><a href="bridge-after-restart.png"><img src="bridge-after-restart.png" alt="bridge-after-restart.png" loading="lazy" decoding="async"></a><figcaption>bridge-after-restart.png</figcaption></figure></div></section><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

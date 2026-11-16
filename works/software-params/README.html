@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>XGGDCOSSim2 软件参数提取 · 说明 · 学哲玩</title>
+<meta name="description" content="大气数据块 / 模型库 / 传感器参数的结构化交付">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 红外 · 大气仿真</p><h1 class="work-doc-title">XGGDCOSSim2 软件参数提取</h1><p class="work-doc-sub">大气数据块 / 模型库 / 传感器参数的结构化交付</p><div class="work-doc-meta"><span>红外 · 大气仿真</span><span>73 个文件</span><span>14 MB</span><span class="tag">参数提取</span><span class="tag">大气数据</span><span class="tag">XGGDCOSSim2</span><span class="tag">数据交付</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/software-params" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="软件参数提取--交付索引xggdcossim2-光电环境仿真软件">软件参数提取 —— 交付索引（XGGDCOSSim2 光电环境仿真软件）</h2>
+<blockquote><p>任务：<strong>只读</strong>分析 <code>D:\XGGDCOSSim2</code> 内部设置参数，整理为结构化数据，供另一个模型升级仿真使用。 约束遵守情况：源目录 <strong>未做任何写操作</strong>（全部读取 + 复制到本工作区后解码）；所有输出均为 <strong>UTF-8 中文</strong>。 工作区：<code>F:\DeepSeek工作区\软件参数提取\</code></p></blockquote>
+<hr>
+<h2 id="1-交付物清单">1. 交付物清单</h2>
+<div class="table-container"><table><thead><tr><th>#</th><th>交付物</th><th>路径</th><th>规模</th><th>说明</th></tr></thead><tbody><tr><td>1</td><td>Q2 数据块索引</td><td><code>Q2解析\atmosphere_index.csv</code></td><td>2 行 × 24 列</td><td>每数据块一行（band/location/region_type/atm_no/rt_file/时空/波长/温湿压/气溶胶/大气模式/天气/俯仰步长/n_rows/row_start/row_end）</td></tr><tr><td>2</td><td>Q2 全量数据行</td><td><code>Q2解析\atmosphere_data\*.csv</code> + <code>Q2解析\atmosphere_data.parquet</code></td><td><strong>6 个分块、44,010 行 × 30 列</strong>；parquet 单文件 502.9 KB</td><td>全部数据行 + 每行自带完整元数据；CSV 为 utf-8-sig，parquet 为 zstd 压缩（已回读校验）</td></tr><tr><td>3</td><td>场景条件汇总</td><td><code>Q2解析\scenario_summary.md</code></td><td>17 KB</td><td>地点/地域/大气编号/条件组合统计、网格覆盖、物理量范围、异常、<strong>10 类背景可用性判定</strong></td></tr><tr><td>4</td><td>模型与想定参数</td><td><code>模型与想定参数.md</code> + <code>models.json</code></td><td>35 KB + 301 KB</td><td>枚举 tips 原文、默认想定全参数、模型库清单、Config.ini 波段/温度/辐亮度、模型包围盒/尺寸</td></tr><tr><td>5</td><td>传感器说明</td><td><code>sensor_notes.md</code></td><td>15 KB</td><td>默认红外传感器可用参数、派生几何量、缺失参数清单、可复用的导引头参数模板、推荐辐射链路</td></tr><tr><td>6</td><td>解析脚本</td><td><code>scripts\decode_files.py</code>、<code>scripts\parse_q2.py</code>、<code>scripts\summarize_q2.py</code>、<code>scripts\parse_models.py</code>、<code>scripts\to_parquet.py</code></td><td>5 个</td><td>可重复运行（确定性输出）</td></tr><tr><td>7</td><td>中间证据</td><td><code>_decoded\*.utf8.txt</code>、<code>_reports\models_autogen.md</code></td><td>—</td><td>源文件 UTF-8 解码副本（含编码报告）、自动生成附表</td></tr></tbody></table></div>
+<p>辅助文件：<code>Q2解析\condition_combos.csv</code>、<code>Q2解析\grid_summary.csv</code>、<code>Q2解析\parse_report.json</code>、<code>Q2解析\verify_report.json</code>。</p>
+<hr>
+<h2 id="2-复现步骤">2. 复现步骤</h2>
+<pre><code class="language-powershell">cd F:\DeepSeek工作区\软件参数提取
+python scripts\decode_files.py     # 1) 把 D:\XGGDCOSSim2 的配置/XML 解码为 UTF-8 副本到 _decoded\
+python scripts\parse_q2.py         # 2) 解析 Q2_M/Q2_L -&gt; atmosphere_index.csv + atmosphere_data\*.csv
+python scripts\summarize_q2.py     # 3) 回读校验 + 网格/条件统计（verify_report.json）
+python scripts\parse_models.py     # 4) 解析 XML/INI/OSG -&gt; models.json + _reports\models_autogen.md
+python scripts\to_parquet.py       # 5) 合并 6 个 CSV 分块 -&gt; atmosphere_data.parquet（含回读校验）</code></pre>
+<p>依赖：Python 3.11，仅标准库（无第三方包、无联网）。</p>
+<hr>
+<h2 id="3-关键结论速览">3. 关键结论速览</h2>
+<ol><li><strong>Q2 查找表</strong>：<code>Q2_M.csv</code>（中波 3.7~4.8 μm）与 <code>Q2_L.csv</code>（长波 <strong>7.7~10.3 μm</strong>）各含 <strong>1 个数据块</strong>（并非&quot;多块&quot;）、各 22,005 行，合计 <strong>44,010 行</strong>，GB18030 编码，解析后行数/元数据/物理量均回读校验通过。</li><li><strong>场景覆盖极窄</strong>：仅 <strong>1 个地点（洛阳）/ 1 种地域（城市）/ 1 个大气参数编号（01）/ 1 组大气条件（10 ℃、50%、25 m 能见度、1013.25 hPa、沙漠型气溶胶、美国标准大气、无云雨）/ 1 个时刻</strong>；可覆盖 10 类背景中的 <strong>1 类（城市）直接可用</strong>，沙漠/戈壁/荒漠仅能近似其大气路径项，其余 6 类须重算。</li><li><strong>重大异常</strong>：能见度 25 m（疑似应为 25 km）、气溶胶&quot;沙漠型&quot;与城市地点不匹配、视点高度上限 5000 m &lt; 默认传感器 8000 m、长波波长两套口径（8~12 vs 7.7~10.3）、RT 大气卡片文件未随软件交付。</li><li><strong>模型</strong>：6 个目标模型（F16/F22/尼米兹/阿利伯克/悍马/爱国者发射车）+ 1 个背景模型（与那国岛，220 km×220 km）；<strong>全部 7 个模型 Config.ini 的波段/温度/辐亮度参数完全相同</strong>（中波 3.7~4.8、长波 8~12、环境温度 20 ℃、温度范围 0~60 ℃）；中波辐亮度上下限（0.43/3.76）与可见光同值，疑似错误。</li><li><strong>尺寸</strong>：已从 <code>.osg</code> 顶点算出包围盒（F16 9.66×14.85×4.57 m、F22 13.50×18.60×4.00 m、尼米兹 85.73×340.66×75.22 m、悍马 2.81×5.09×3.20 m、阿利伯克 20.27×151.32×47.74 m、爱国者发射车 10.24×22.57×10.98 m、与那国岛 220000×220000×215.66 m）；<code>.flt</code> 为二进制未解析（同源 <code>.osg</code> 已覆盖）。</li><li><strong>传感器</strong>：默认传感器是&quot;中波红外 3.7~4.8 μm / FOV 3.75°×3° / 1024×768 / 50 Hz / 8 bit / 高度 8000 m / 俯仰 -90°&quot;，带 ResCoefficient=1746、ResBias=1733 的显示链路映射；<strong>缺 NETD、口径、焦距、像元尺寸、积分时间、光谱响应、噪声模型</strong>，属渲染/注入参数而非辐射传感器模型；但软件在&quot;光学成像导引头&quot;模板里预留了完整字段（波长/视场/入瞳/焦距/像元数/积分时间/帧频/灰度/四段辐射-灰度响应/噪声方差），默认全 0，可作为升级接口范式。</li><li><strong>编码修正</strong>：<code>ModelDatabase.xml</code> 实测为 <strong>UTF-8</strong>（非线索所称 UTF-16LE）；<code>DefaultPlanFile.xml</code> 为 GB18030；<code>DefaultModelDatabase.xml</code> 为 UTF-8。</li></ol>
+<hr>
+<h2 id="4-数据消费建议给升级仿真模型">4. 数据消费建议（给升级仿真模型）</h2>
+<ul><li>直接可读：<code>models.json</code>（枚举+想定+模型+包围盒一体）、<code>Q2解析\atmosphere_data\*.csv</code>（pandas 直接 concat）。</li><li>大气链路：用 <code>path_transmittance</code> / <code>path_radiance_W_m2sr</code> 作大气修正，<code>background_radiance_W_m2sr</code> 仅限&quot;城市+沙漠型气溶胶&quot;这一组条件；其他背景/地点/季节/能见度必须外部补算（Q2 的 RT 卡片未提供，无法复现）。</li><li>传感器链路：几何（FOV/分辨率/高度/俯仰）与波段可直接沿用；辐射-灰度环节需按 <code>sensor_notes.md</code> §4 补齐参数，建议按 §5 的导引头字段对齐接口、按 §6 的公式重建物理链路。</li></ul></article><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

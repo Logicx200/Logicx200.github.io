@@ -1,0 +1,1688 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>马赫环伪纹影仿真 · 早期项目移植</title>
+<meta name="description" content="拉瓦尔喷管欠膨胀超声速射流的二维欧拉方程仿真：浏览器里用 HLLE 格式求解，密度梯度伪纹影渲染出激波系与马赫环（激波钻石），可切换密度场、调参数、播放与暂停。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/css/site.css">
+<style>
+  .demo-topbar {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    padding-top: 22px; flex-wrap: wrap;
+  }
+  .demo-back-link {
+    display: inline-block; font-size: 13.5px; color: var(--ink-2); text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong); padding-bottom: 2px;
+    transition: color 160ms var(--ease), border-color 160ms var(--ease);
+  }
+  .demo-back-link:hover { color: var(--accent); border-color: var(--accent); }
+  .demo-topbar-note { font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em; color: var(--ink-3); }
+
+  .mr-page-head { padding-top: clamp(24px, 3.4vw, 38px); }
+  .mr-head-meta {
+    display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: baseline;
+    margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--rule);
+    font-size: 12.5px; color: var(--ink-3);
+  }
+  .mr-head-meta b { font-family: var(--font-mono); font-weight: 500; font-size: 12.5px; color: var(--ink); letter-spacing: .03em; }
+
+  .mr-card { border: 1px solid var(--rule); background: var(--paper-2); }
+  .mr-card-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 10px 16px; border-bottom: 1px solid var(--rule); background: var(--paper);
+  }
+  .mr-card-title {
+    margin: 0; font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .16em; color: var(--ink-2); text-transform: uppercase;
+  }
+  .mr-card-note { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .05em; color: var(--ink-3); }
+
+  /* 画布 */
+  .mr-viewer { margin-top: clamp(22px, 3vw, 30px); }
+  .mr-canvas-wrap {
+    position: relative; background: #070906; overflow: hidden;
+    border-bottom: 1px solid var(--rule);
+  }
+  #mrCanvas { display: block; width: 100%; height: clamp(240px, 32vw, 380px); }
+  .mr-overlay {
+    position: absolute; display: flex; align-items: center; gap: 8px;
+    padding: 5px 10px; background: rgba(7, 9, 6, .72); border: 1px solid rgba(130, 185, 165, .28);
+    color: #cfe3da; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .04em;
+    pointer-events: none; white-space: nowrap;
+  }
+  .mr-overlay.is-tl { left: 12px; top: 12px; }
+  .mr-overlay.is-tr { right: 12px; top: 12px; }
+  .mr-overlay b { font-weight: 500; color: #eef5f0; font-variant-numeric: tabular-nums; }
+  .mr-overlay .mr-spin {
+    width: 9px; height: 9px; border: 1px solid #82b9a5; border-top-color: transparent;
+    border-radius: 50%; animation: mr-spin .8s linear infinite;
+  }
+  @keyframes mr-spin { to { transform: rotate(360deg); } }
+  .mr-legend {
+    position: absolute; right: 12px; bottom: 12px; width: 150px;
+    padding: 6px 8px 5px; background: rgba(7, 9, 6, .72);
+    border: 1px solid rgba(130, 185, 165, .28); pointer-events: none;
+  }
+  .mr-legend-bar { height: 8px; width: 100%; }
+  .mr-legend-row { display: flex; justify-content: space-between; margin-top: 3px; font-family: var(--font-mono); font-size: 9px; color: #a9c3b6; }
+  .mr-progress-wrap {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,.08);
+  }
+  .mr-progress-bar { height: 100%; width: 0; background: #82b9a5; transition: width 120ms linear; }
+  .mr-progress-label {
+    position: absolute; left: 12px; top: 46px; padding: 4px 9px;
+    background: rgba(7, 9, 6, .72); border: 1px solid rgba(130, 185, 165, .22);
+    font-family: var(--font-mono); font-size: 10px; color: #a9c3b6;
+    pointer-events: none; display: none; white-space: nowrap;
+  }
+  .mr-progress-label.is-on { display: block; }
+
+  /* 控制条 */
+  .mr-toolbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px;
+    padding: 11px 16px; background: var(--paper);
+  }
+  .mr-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    min-width: 36px; height: 30px; padding: 0 11px;
+    border: 1px solid var(--rule-strong); background: transparent; color: var(--ink-2);
+    font-family: var(--font-sans); font-size: 12.5px; cursor: pointer;
+    transition: color 140ms var(--ease), border-color 140ms var(--ease), background 140ms var(--ease);
+  }
+  .mr-btn svg { width: 14px; height: 14px; }
+  .mr-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-wash); }
+  .mr-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .mr-btn-primary { border-color: var(--accent); color: var(--accent); }
+  .mr-btn-primary:hover { background: var(--accent); color: var(--paper); }
+  .mr-seg { display: inline-flex; border: 1px solid var(--rule-strong); }
+  .mr-seg button {
+    padding: 5px 12px; border: 0; background: transparent; color: var(--ink-3);
+    font-family: var(--font-sans); font-size: 12px; cursor: pointer;
+  }
+  .mr-seg button + button { border-left: 1px solid var(--rule); }
+  .mr-seg button[aria-pressed="true"] { color: var(--accent); background: var(--accent-wash); }
+  .mr-mini { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+  .mr-mini input { accent-color: var(--accent); width: 13px; height: 13px; }
+  .mr-speed { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); }
+  .mr-select {
+    padding: 3px 6px; border: 1px solid var(--rule); background: var(--paper);
+    color: var(--ink); font-family: var(--font-sans); font-size: 12px;
+  }
+  .mr-seek-wrap { display: flex; align-items: center; gap: 10px; flex: 1 1 280px; min-width: 0; }
+  .mr-seek { flex: 1; min-width: 80px; accent-color: var(--accent); }
+  .mr-time { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .mr-toolbar-spacer { flex: 1 1 0; }
+
+  /* 参数区 */
+  .mr-lower {
+    display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: clamp(18px, 2.6vw, 26px); align-items: start;
+    margin-top: 18px;
+  }
+  @media (max-width: 900px) { .mr-lower { grid-template-columns: 1fr; } }
+  .mr-params { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 22px; padding: 6px 16px 14px; }
+  @media (max-width: 620px) { .mr-params { grid-template-columns: 1fr; } }
+  .mr-field { padding: 8px 0 9px; border-bottom: 1px solid var(--rule); }
+  .mr-field:last-child, .mr-field:nth-last-child(2) { border-bottom: 0; }
+  .mr-field-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .mr-field-head label { font-size: 12.5px; color: var(--ink-2); }
+  .mr-field-head output { font-family: var(--font-mono); font-size: 11.5px; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .mr-field input[type="range"] { width: 100%; margin: 5px 0 0; accent-color: var(--accent); height: 16px; }
+  .mr-field-hint { margin: 2px 0 0; font-size: 10.5px; color: var(--ink-3); line-height: 1.5; }
+  .mr-advanced { grid-column: 1 / -1; margin-top: 8px; border-top: 1px solid var(--rule); padding-top: 8px; }
+  .mr-advanced > summary {
+    cursor: pointer; list-style: none; font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: .1em; color: var(--ink-3); padding: 4px 0;
+  }
+  .mr-advanced > summary::-webkit-details-marker { display: none; }
+  .mr-advanced > summary::marker { content: ""; }
+  .mr-advanced > summary::after { content: " +"; color: var(--accent); }
+  .mr-advanced[open] > summary::after { content: " −"; }
+  .mr-advanced .mr-params { padding: 4px 0 0; }
+  .mr-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 0 16px 16px; }
+  .mr-actions-note { font-size: 11.5px; color: var(--ink-3); }
+
+  .mr-readouts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mr-readout { padding: 11px 16px; border-bottom: 1px solid var(--rule); }
+  .mr-readout:nth-child(odd) { border-right: 1px solid var(--rule); }
+  .mr-readout:nth-last-child(-n+2) { border-bottom: 0; }
+  .mr-readout b {
+    display: block; font-family: var(--font-serif); font-size: 18px; font-weight: 500;
+    line-height: 1.2; color: var(--ink); font-variant-numeric: tabular-nums;
+  }
+  .mr-readout span { display: block; margin-top: 2px; font-size: 10.5px; color: var(--ink-3); letter-spacing: .05em; }
+  .mr-status-line {
+    display: flex; align-items: center; gap: 9px; padding: 12px 16px; border-bottom: 1px solid var(--rule);
+  }
+  .mr-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); flex: none; }
+  .mr-dot.is-ok { background: var(--accent); }
+  .mr-dot.is-busy { background: #c08a3e; animation: mr-pulse 1s infinite ease-in-out; }
+  .mr-dot.is-err { background: #b5544c; }
+  @keyframes mr-pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  .mr-status-text { font-size: 13px; color: var(--ink); }
+  .mr-side-note { margin: 0; padding: 12px 16px; font-size: 11.5px; line-height: 1.8; color: var(--ink-3); }
+  .mr-side-note code { font-family: var(--font-mono); font-size: 11px; }
+  .mr-param-list { margin: 0; padding: 10px 16px 14px; list-style: none; }
+  .mr-param-list li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-bottom: 1px dashed var(--rule); font-size: 11.5px; color: var(--ink-2); }
+  .mr-param-list li:last-child { border-bottom: 0; }
+  .mr-param-list code { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); }
+
+  /* 说明 */
+  .mr-notes { margin-top: clamp(34px, 5vw, 50px); }
+  .mr-notes h2 { margin: 0 0 6px; font-family: var(--font-serif); font-size: clamp(19px, 2.4vw, 23px); font-weight: 500; letter-spacing: .06em; }
+  .mr-notes-grid {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 32px;
+    margin-top: 16px; padding-top: 18px; border-top: 1px solid var(--rule);
+  }
+  @media (max-width: 920px) { .mr-notes-grid { grid-template-columns: 1fr; } }
+  .mr-note-block { min-width: 0; }
+  .mr-note-block h3 { margin: 0 0 7px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .14em; color: var(--ink-3); text-transform: uppercase; }
+  .mr-note-block p, .mr-note-block li { font-size: 13px; line-height: 1.85; color: var(--ink-2); margin: 0; }
+  .mr-note-block ul { margin: 0; padding-left: 1.2em; }
+  .mr-note-block li { margin: 3px 0; }
+  .mr-note-block code { font-family: var(--font-mono); font-size: 11.5px; background: var(--paper-2); padding: 1px 4px; }
+  .mr-eq {
+    margin: 8px 0 0; padding: 10px 12px; border-left: 2px solid var(--accent);
+    background: var(--paper-2); font-family: var(--font-mono); font-size: 11.5px;
+    line-height: 1.8; color: var(--ink-2); overflow-x: auto;
+  }
+  .mr-footnote { margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  .mr-toast {
+    position: fixed; left: 50%; bottom: 30px; transform: translate(-50%, 14px); z-index: 120;
+    padding: 9px 18px; background: var(--ink); color: var(--paper); font-size: 13px;
+    opacity: 0; pointer-events: none; transition: opacity 200ms var(--ease), transform 200ms var(--ease);
+  }
+  .mr-toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+  .mr-busy-overlay {
+    position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+    background: rgba(7, 9, 6, .5); color: #cfe3da; font-family: var(--font-mono); font-size: 12px;
+    letter-spacing: .08em; pointer-events: none;
+  }
+  .mr-busy-overlay.is-on { display: flex; }
+</style>
+</head>
+<body class="page-legacy">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../../notes/">文章</a></li><li><a class="nav-link" href="../../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+
+<main id="main">
+<div class="wrap">
+  <div class="demo-topbar">
+    <a class="demo-back-link" href="../">← 返回早期项目</a>
+    <span class="demo-topbar-note">LEGACY TOOL / CFD · UNDerEXPANDED JET</span>
+  </div>
+
+  <header class="page-head mr-page-head">
+    <p class="page-eyebrow">LEGACY · 早期项目 / FLUID DYNAMICS</p>
+    <h1 class="page-title">马赫环的伪纹影仿真</h1>
+    <p class="page-desc">原程序用 NumPy 求解二维可压缩欧拉方程（有限体积 + <strong>HLLE</strong> 近似黎曼通量、CFL 自适应显式时间推进），模拟拉瓦尔喷管的欠膨胀超声速射流，再把密度梯度画成伪纹影视图，并自动标出马赫环（激波钻石）。网页版把求解器整个搬到了浏览器：JavaScript + TypedArray 实时计算，算完自动回放。</p>
+    <div class="mr-head-meta">
+      <span>数值格式 <b>HLLE</b></span>
+      <span>气体 <b>γ = 1.4</b></span>
+      <span>默认工况 <b>NPR = 3.0 · M = 2.4</b></span>
+      <span>原作 <b>2025-11</b></span>
+    </div>
+  </header>
+
+  <!-- 画布 -->
+  <section class="mr-card mr-viewer" aria-label="马赫环仿真画面">
+    <div class="mr-card-head">
+      <h2 class="mr-card-title">欠膨胀射流 · 伪纹影 / 密度场</h2>
+      <span class="mr-card-note" id="mrHeadNote">拉瓦尔喷管 · 2D Euler · HLLE</span>
+    </div>
+    <div class="mr-canvas-wrap" id="mrCanvasWrap">
+      <canvas id="mrCanvas" role="img" aria-label="拉瓦尔喷管欠膨胀射流的伪纹影可视化"></canvas>
+      <div class="mr-overlay is-tl" id="mrStatePill"><span class="mr-spin" id="mrSpinner"></span><span id="mrStateText">初始化流场…</span></div>
+      <div class="mr-overlay is-tr"><span id="mrClockText">t = 0.000</span></div>
+      <div class="mr-legend" id="mrLegend" hidden>
+        <div class="mr-legend-bar" id="mrLegendBar"></div>
+        <div class="mr-legend-row"><span>ρ 低</span><span>密度场</span><span>高</span></div>
+      </div>
+      <div class="mr-progress-wrap"><div class="mr-progress-bar" id="mrProgressBar"></div></div>
+      <div class="mr-progress-label" id="mrProgressLabel"></div>
+    </div>
+    <div class="mr-toolbar">
+      <button class="mr-btn mr-btn-primary" id="mrPlayBtn" type="button" aria-label="播放 / 暂停">
+        <svg id="mrPlayIcon" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5.14v13.72c0 .8.87 1.3 1.55.89l10.5-6.86a1.06 1.06 0 0 0 0-1.78L9.55 4.25A1.06 1.06 0 0 0 8 5.14Z"/></svg>
+        <span id="mrPlayLabel">暂停</span>
+      </button>
+      <button class="mr-btn" id="mrReplayBtn" type="button" title="从第一帧重播">重播</button>
+      <div class="mr-seek-wrap">
+        <input class="mr-seek" id="mrSeek" type="range" min="0" max="0" step="1" value="0" aria-label="回放进度">
+        <span class="mr-time" id="mrTime">0.00 / 0.00 s</span>
+      </div>
+      <div class="mr-seg" role="group" aria-label="显示方式">
+        <button type="button" id="mrModeSchlieren" aria-pressed="true">伪纹影</button>
+        <button type="button" id="mrModeDensity" aria-pressed="false">密度场</button>
+      </div>
+      <label class="mr-mini"><input type="checkbox" id="mrMarkers" checked>马赫环标记</label>
+      <label class="mr-mini"><input type="checkbox" id="mrNozzle" checked>喷管轮廓</label>
+      <label class="mr-speed">速度
+        <select class="mr-select" id="mrSpeed">
+          <option value="0.5">0.5×</option>
+          <option value="1" selected>1×</option>
+          <option value="2">2×</option>
+          <option value="4">4×</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <!-- 参数 + 读数 -->
+  <div class="mr-lower">
+    <section class="mr-card" aria-label="仿真参数">
+      <div class="mr-card-head">
+        <h2 class="mr-card-title">参数面板 · 照原程序默认值</h2>
+        <span class="mr-card-note" id="mrNprNote">NPR = P_JET / P_AMB = 3.00</span>
+      </div>
+      <div class="mr-params">
+        <div class="mr-field">
+          <div class="mr-field-head"><label for="pPjet">射流压力 P_JET</label><output id="pPjetOut">3.0</output></div>
+          <input type="range" id="pPjet" min="1" max="8" step="0.1" value="3">
+          <p class="mr-field-hint">欠膨胀（&gt; P_AMB）；压力比越大，激波越强</p>
+        </div>
+        <div class="mr-field">
+          <div class="mr-field-head"><label for="pPamb">环境压力 P_AMB</label><output id="pPambOut">1.0</output></div>
+          <input type="range" id="pPamb" min="0.3" max="2" step="0.05" value="1">
+          <p class="mr-field-hint">环境压力（无量纲）；与 P_JET 决定 NPR</p>
+        </div>
+        <div class="mr-field">
+          <div class="mr-field-head"><label for="pMjet">射流马赫数 M_JET</label><output id="pMjetOut">2.40</output></div>
+          <input type="range" id="pMjet" min="1.2" max="4" step="0.05" value="2.4">
+          <p class="mr-field-hint">越大激波角越尖、马赫环越密</p>
+        </div>
+        <div class="mr-field">
+          <div class="mr-field-head"><label for="pTjet">射流温度 T_JET</label><output id="pTjetOut">2.0</output></div>
+          <input type="range" id="pTjet" min="1" max="4" step="0.1" value="2">
+          <p class="mr-field-hint">影响声速与射流速度 u = M·a</p>
+        </div>
+        <div class="mr-field">
+          <div class="mr-field-head"><label for="pCfl">CFL 数</label><output id="pCflOut">0.80</output></div>
+          <input type="range" id="pCfl" min="0.3" max="0.9" step="0.05" value="0.8">
+          <p class="mr-field-hint">原程序 0.55；网页版提高到 0.8 以加快计算</p>
+        </div>
+        <div class="mr-field">
+          <div class="mr-field-head"><label for="pGrid">网格分辨率</label><output id="pGridOut">中 240 × 72</output></div>
+          <select class="mr-select" id="pGrid" style="width:100%;margin-top:7px">
+            <option value="low">低 · 192 × 58（最快）</option>
+            <option value="medium" selected>中 · 240 × 72（默认）</option>
+            <option value="high">高 · 300 × 90（最清晰）</option>
+          </select>
+          <p class="mr-field-hint">原程序 720 × 240；受浏览器算力限制已降网格</p>
+        </div>
+        <div class="mr-field">
+          <div class="mr-field-head"><label for="pTend">模拟时长 T_END</label><output id="pTendOut">120</output></div>
+          <select class="mr-select" id="pTend" style="width:100%;margin-top:7px">
+            <option value="60">60（更快）</option>
+            <option value="120" selected>120（原程序默认）</option>
+            <option value="240">240（更久，算得慢）</option>
+          </select>
+          <p class="mr-field-hint">采样间隔 0.5 个物理时间单位</p>
+        </div>
+        <div class="mr-advanced">
+          <details id="mrAdvanced">
+            <summary>喷管几何（原程序默认）</summary>
+            <div class="mr-params">
+              <div class="mr-field">
+                <div class="mr-field-head"><label for="pHin">入口半高 H_IN</label><output id="pHinOut">0.90</output></div>
+                <input type="range" id="pHin" min="0.6" max="1.2" step="0.05" value="0.9">
+              </div>
+              <div class="mr-field">
+                <div class="mr-field-head"><label for="pHth">喉部半高 H_TH</label><output id="pHthOut">0.35</output></div>
+                <input type="range" id="pHth" min="0.2" max="0.55" step="0.01" value="0.35">
+              </div>
+              <div class="mr-field">
+                <div class="mr-field-head"><label for="pHin2">出口半高 H_EX</label><output id="pHin2Out">1.60</output></div>
+                <input type="range" id="pHin2" min="1" max="2.4" step="0.05" value="1.6">
+              </div>
+              <div class="mr-field">
+                <div class="mr-field-head"><label for="pLnoz">喷管长度 L_NOZ</label><output id="pLnozOut">3.0</output></div>
+                <input type="range" id="pLnoz" min="2" max="6" step="0.1" value="3">
+              </div>
+              <div class="mr-field">
+                <div class="mr-field-head"><label for="pXconv">收缩段结束 X_CONV</label><output id="pXconvOut">1.20</output></div>
+                <input type="range" id="pXconv" min="0.6" max="2.5" step="0.05" value="1.2">
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+      <div class="mr-actions">
+        <button class="mr-btn mr-btn-primary" id="mrApply" type="button">应用参数并重新计算</button>
+        <button class="mr-btn" id="mrReset" type="button">恢复源码默认</button>
+        <span class="mr-actions-note" id="mrApplyNote">修改参数后需重新计算</span>
+      </div>
+    </section>
+
+    <aside aria-label="运行状态">
+      <section class="mr-card">
+        <div class="mr-status-line">
+          <span class="mr-dot" id="mrDot"></span>
+          <span class="mr-status-text" id="mrStatusText">准备计算…</span>
+        </div>
+        <div class="mr-readouts">
+          <div class="mr-readout"><b id="roTime">0.000</b><span>物理时间 t</span></div>
+          <div class="mr-readout"><b id="roFrame">0 / 0</b><span>回放帧</span></div>
+          <div class="mr-readout"><b id="roGrid">240 × 72</b><span>网格</span></div>
+          <div class="mr-readout"><b id="roDx">0.667</b><span>Δx · Δy</span></div>
+          <div class="mr-readout"><b id="roDt">—</b><span>当前 Δt</span></div>
+          <div class="mr-readout"><b id="roRings">—</b><span>马赫环标记</span></div>
+        </div>
+        <p class="mr-side-note" id="mrPerfNote">计算中会显示进度与耗时；算完后自动回放。</p>
+      </section>
+      <section class="mr-card" style="margin-top:16px">
+        <div class="mr-card-head"><h2 class="mr-card-title">源码参数对照</h2></div>
+        <ul class="mr-param-list">
+          <li><span>计算域</span><code>Lx=160, Ly=20</code></li>
+          <li><span>网格（原）</span><code>720 × 240</code></li>
+          <li><span>CFL（原）</span><code>0.55</code></li>
+          <li><span>T_END / 采样</span><code>120 s · 20 fps</code></li>
+          <li><span>重建时间步</span><code>逐帧自适应</code></li>
+          <li><span>回放帧率</span><code>约 30 fps</code></li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+
+  <!-- 说明 -->
+  <section class="mr-notes" aria-label="物理原理与移植说明">
+    <h2>它在算什么？</h2>
+    <p class="page-desc" style="margin-top:6px;font-size:13px">拉瓦尔喷管先把气流加速到超音速。如果喷管出口压力高于环境压力（欠膨胀），射流离开喷口后会继续膨胀，并被环境压力挤回，形成交替的膨胀扇与斜激波——沿轴线看就是一串钻石形的“马赫环”。真实流动里这些密度突变会让尾焰明暗交替，伪纹影正是把密度梯度画成黑白画面来复现这种观感。</p>
+    <div class="mr-notes-grid">
+      <div class="mr-note-block">
+        <h3>数值方法（与原程序相同）</h3>
+        <p>求解无量纲二维欧拉方程：</p>
+        <div class="mr-eq">∂U/∂t + ∂F/∂x + ∂G/∂y = 0<br>U = [ρ, ρu, ρv, E]ᵀ</div>
+        <ul style="margin-top:8px">
+          <li>有限体积 + <strong>HLLE</strong> 近似黎曼通量（Einfeldt 1988）</li>
+          <li>显式时间推进，按 CFL 条件逐帧自适应 Δt</li>
+          <li>边界：入口超音速入流、出口/上下无反射透射、喷管内滑移壁</li>
+          <li>上下与右侧加海绵层（sponge）吸收反射波</li>
+          <li>伪纹影：<code>log10(|∇ρ|)</code>，按 5%–99.5% 分位归一化</li>
+          <li>马赫环：中心线伪纹影局部极大值 + 最小间距筛选</li>
+        </ul>
+      </div>
+      <div class="mr-note-block">
+        <h3>网页版与原 Python 版的差异</h3>
+        <ul>
+          <li>计算量：原程序 <code>720 × 240</code>、CFL 0.55；网页版默认 <code>240 × 72</code>、CFL 0.8，用降网格 + 更快时间步换取浏览器里的即时反馈，激波更“厚”、细节更少。</li>
+          <li>工作流：原程序先算完 2400 帧（约 5–15 分钟）再播放；网页版边算边显示进度，算完约 240 帧（每 0.5 个物理时间单位采样一次）自动回放，播放约 30 fps。</li>
+          <li>原程序输出 <code>mach_ring.mp4</code>；网页版用 Canvas 2D 逐帧绘制，可切换伪纹影 / 密度场，可暂停、拖进度、调速度。伪纹影的归一化与源码一致（<code>log10(|∇ρ|)</code> + 5%–99.5% 分位），仅在显示时加了轻微 S 曲线对比度增强以便观察。</li>
+          <li>参数面板沿用源码里的默认值（P_JET=3.0、T_JET=2.0、M_JET=2.4、γ=1.4、Lx=160、Ly=20 等）。</li>
+          <li>局限：网格较粗时马赫环自动检测可能漏掉弱激波；数值解并非工程级 CFD，仅用于教学与可视化。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="mr-footnote"><span>根据原 Python 程序移植，原作 2025-11。</span><span>原程序：马赫环的伪纹影仿真（NumPy + Matplotlib + HLLE 求解器）。</span></p>
+  </section>
+</div>
+</main>
+
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>早期项目网页版</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="../">早期项目</a><a href="../../../works/">作品</a></span></p></div></div></footer>
+
+<div class="mr-toast" id="mrToast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+ *  马赫环伪纹影仿真 —— 浏览器版
+ *  移植自 马赫环.py（2D Euler + HLLE，拉瓦尔喷管欠膨胀射流）
+ * ===================================================================== */
+(function () {
+  const $ = function (sel) { return document.querySelector(sel); };
+  const GAMMA = 1.4;
+  const R_GAS = 1.0;
+  const LX = 160.0;
+  const LY = 20.0;
+  const PLATE_THICK = 0.03;
+  const SAMPLE_DT = 0.5;          // 每 0.5 个物理时间单位记录一帧（原程序 20 fps）
+  const PLAY_FPS = 30;            // 回放帧率
+  const MAX_MARKS = 12;
+  const PEAK_MIN_DIST_FRACTION = 0.04;
+  const PEAK_THR_REL = 0.55;
+  const RHO_RANGE = [0.05, 2.05]; // 密度场固定映射范围
+
+  const DEFAULTS = {
+    P_JET: 3.0, P_AMB: 1.0, T_JET: 2.0, T_AMB: 1.0, M_JET: 2.4, CFL: 0.8,
+    T_END: 120, grid: 'medium',
+    L_NOZ: 3.0, X_CONV: 1.2, H_IN: 0.9, H_TH: 0.35, H_EX: 1.6
+  };
+  const GRIDS = {
+    low: { NX: 192, NY: 58, label: '低 192 × 58' },
+    medium: { NX: 240, NY: 72, label: '中 240 × 72' },
+    high: { NX: 300, NY: 90, label: '高 300 × 90' }
+  };
+
+  /* ============================================================
+   *  一、求解器（2D Euler + HLLE，移植自 NumPy 版本）
+   * ============================================================ */
+  function createSim(p) {
+    const NX = p.NX;
+    const NY = p.NY;
+    const dx = LX / NX;
+    const dy = LY / NY;
+    const yc = LY * 0.5;
+    const W = NX + 2;
+    const Hh = NY + 2;
+    const U = new Float32Array(W * Hh * 4);
+    const FX = new Float32Array(NY * (NX + 1) * 4);
+    const FY = new Float32Array((NY + 1) * NX * 4);
+
+    const P_AMB = p.P_AMB;
+    const T_AMB = p.T_AMB;
+    const P_JET = p.P_JET;
+    const T_JET = p.T_JET;
+    const M_JET = p.M_JET;
+    const CFL = p.CFL;
+    const L_NOZ = p.L_NOZ;
+    const X_CONV = p.X_CONV;
+    const H_IN = p.H_IN;
+    const H_TH = p.H_TH;
+    const H_EX = p.H_EX;
+
+    const RHO_AMB = P_AMB / (R_GAS * T_AMB);
+    const a_amb = Math.sqrt(GAMMA * R_GAS * T_AMB);
+    const a_jet = Math.sqrt(GAMMA * R_GAS * T_JET);
+    const u_jet = M_JET * a_jet;
+    const rho_jet = P_JET / (R_GAS * T_JET);
+    const U_amb = [RHO_AMB, 0, 0, P_AMB / (GAMMA - 1)];
+    const U_in = [rho_jet, rho_jet * u_jet, 0,
+      P_JET / (GAMMA - 1) + 0.5 * rho_jet * u_jet * u_jet];
+    const slot_y0 = yc - H_IN;
+    const slot_y1 = yc + H_IN;
+
+    function nozzleH(xp) {
+      if (xp <= X_CONV) {
+        const s = xp / Math.max(X_CONV, 1e-9);
+        return H_IN - 0.5 * (H_IN - H_TH) * (1 - Math.cos(Math.PI * s));
+      } else if (xp <= L_NOZ) {
+        const s = (xp - X_CONV) / Math.max(L_NOZ - X_CONV, 1e-9);
+        return H_TH + 0.5 * (H_EX - H_TH) * (1 - Math.cos(Math.PI * s));
+      }
+      return H_EX;
+    }
+    const hx = new Float32Array(NX);
+    for (let j = 0; j < NX; j++) hx[j] = nozzleH((j + 0.5) * dx);
+
+    // 海绵层
+    const spongeW = Math.floor(0.18 * Math.min(NX, NY));
+    const smax = 1.0 / Math.max(0.6, 0.2 * (LX / a_amb));
+    const SIG = new Float32Array(NY * NX);
+    if (spongeW >= 2) {
+      for (let i = 0; i < spongeW; i++) {
+        const s = (1 - i / (spongeW - 1)) * smax;
+        for (let j = 0; j < NX; j++) {
+          SIG[i * NX + j] = s;
+          SIG[(NY - 1 - i) * NX + j] = s;
+        }
+      }
+      for (let j = 0; j < spongeW; j++) {
+        const s = (j / (spongeW - 1)) * smax;
+        const col = NX - spongeW + j;
+        for (let i = 0; i < NY; i++) {
+          const k = i * NX + col;
+          if (SIG[k] < s) SIG[k] = s;
+        }
+      }
+    }
+
+    function applyBC() {
+      for (let j = 1; j <= NX; j++) {
+        let a = (1 * W + j) * 4, b = j * 4;
+        U[b] = U[a]; U[b + 1] = U[a + 1]; U[b + 2] = U[a + 2]; U[b + 3] = U[a + 3];
+        a = ((Hh - 2) * W + j) * 4; b = ((Hh - 1) * W + j) * 4;
+        U[b] = U[a]; U[b + 1] = U[a + 1]; U[b + 2] = U[a + 2]; U[b + 3] = U[a + 3];
+      }
+      for (let i = 1; i <= NY; i++) {
+        const a = (i * W + NX) * 4, b = (i * W + NX + 1) * 4;
+        U[b] = U[a]; U[b + 1] = U[a + 1]; U[b + 2] = U[a + 2]; U[b + 3] = U[a + 3];
+      }
+      for (let i = 0; i < Hh; i++) {
+        const ys = (i - 0.5) * dy;
+        const base = (i * W) * 4;
+        if (ys >= slot_y0 && ys <= slot_y1) {
+          U[base] = U_in[0]; U[base + 1] = U_in[1]; U[base + 2] = U_in[2]; U[base + 3] = U_in[3];
+        } else {
+          const src = (i * W + 1) * 4;
+          const rho = U[src];
+          const inv = 1 / Math.max(rho, 1e-12);
+          let u = U[src + 1] * inv;
+          const v = U[src + 2] * inv;
+          const E = U[src + 3];
+          let p = (GAMMA - 1) * (E - 0.5 * rho * (u * u + v * v));
+          if (p < 1e-6) p = 1e-6;
+          u = -u;
+          U[base] = rho;
+          U[base + 1] = rho * u;
+          U[base + 2] = rho * v;
+          U[base + 3] = p / (GAMMA - 1) + 0.5 * rho * (u * u + v * v);
+        }
+      }
+      // 入口内侧的薄竖板（反射 u）
+      const plateCols = Math.max(1, Math.floor(PLATE_THICK / dx));
+      for (let iy = 1; iy <= NY; iy++) {
+        const y = (iy - 0.5) * dy;
+        const inSlot = y >= slot_y0 && y <= slot_y1;
+        if (inSlot) continue;
+        for (let j = 1; j <= plateCols; j++) {
+          const base = (iy * W + j) * 4;
+          const rho = U[base];
+          const inv = 1 / Math.max(rho, 1e-12);
+          const u = U[base + 1] * inv;
+          U[base + 1] = rho * (-u);
+        }
+      }
+    }
+
+    function applyWalls() {
+      const jEnd = Math.min(NX, Math.floor(L_NOZ / dx));
+      for (let j = 0; j < jEnd; j++) {
+        const hj = hx[j];
+        const ytop = yc + hj;
+        const ybot = yc - hj;
+        for (let iy = 1; iy <= NY; iy++) {
+          const y = (iy - 0.5) * dy;
+          if (y > ytop || y < ybot) {
+            const base = (iy * W + (j + 1)) * 4;
+            const rho = U[base];
+            const inv = 1 / Math.max(rho, 1e-12);
+            const u = U[base + 1] * inv;
+            const v = U[base + 2] * inv;
+            const E = U[base + 3];
+            let p = (GAMMA - 1) * (E - 0.5 * rho * (u * u + v * v));
+            if (p < 1e-6) p = 1e-6;
+            const v2 = -v;
+            U[base + 2] = rho * v2;
+            U[base + 3] = p / (GAMMA - 1) + 0.5 * rho * (u * u + v2 * v2);
+          }
+        }
+      }
+    }
+
+    function xFluxes() {
+      let k = 0;
+      for (let iy = 1; iy <= NY; iy++) {
+        for (let j = 0; j <= NX; j++) {
+          const L = (iy * W + j) * 4;
+          const R = L + 4;
+          const rhoL = U[L];
+          const invL = 1 / Math.max(rhoL, 1e-12);
+          const uL = U[L + 1] * invL;
+          const vL = U[L + 2] * invL;
+          const EL = U[L + 3];
+          const pL = Math.max((GAMMA - 1) * (EL - 0.5 * rhoL * (uL * uL + vL * vL)), 1e-6);
+          const aL = Math.sqrt(GAMMA * pL / rhoL);
+          const rhoR = U[R];
+          const invR = 1 / Math.max(rhoR, 1e-12);
+          const uR = U[R + 1] * invR;
+          const vR = U[R + 2] * invR;
+          const ER = U[R + 3];
+          const pR = Math.max((GAMMA - 1) * (ER - 0.5 * rhoR * (uR * uR + vR * vR)), 1e-6);
+          const aR = Math.sqrt(GAMMA * pR / rhoR);
+          const sL = Math.min(uL - aL, uR - aR);
+          const sR = Math.max(uL + aL, uR + aR);
+          let f0, f1, f2, f3;
+          if (sL >= 0) {
+            f0 = rhoL * uL; f1 = rhoL * uL * uL + pL; f2 = rhoL * uL * vL; f3 = (EL + pL) * uL;
+          } else if (sR <= 0) {
+            f0 = rhoR * uR; f1 = rhoR * uR * uR + pR; f2 = rhoR * uR * vR; f3 = (ER + pR) * uR;
+          } else {
+            let den = sR - sL;
+            if (den === 0) den = 1e-12;
+            const FL0 = rhoL * uL, FL1 = rhoL * uL * uL + pL, FL2 = rhoL * uL * vL, FL3 = (EL + pL) * uL;
+            const FR0 = rhoR * uR, FR1 = rhoR * uR * uR + pR, FR2 = rhoR * uR * vR, FR3 = (ER + pR) * uR;
+            const c = sL * sR;
+            f0 = (sR * FL0 - sL * FR0 + c * (rhoR - rhoL)) / den;
+            f1 = (sR * FL1 - sL * FR1 + c * (U[R + 1] - U[L + 1])) / den;
+            f2 = (sR * FL2 - sL * FR2 + c * (U[R + 2] - U[L + 2])) / den;
+            f3 = (sR * FL3 - sL * FR3 + c * (U[R + 3] - U[L + 3])) / den;
+          }
+          FX[k] = f0; FX[k + 1] = f1; FX[k + 2] = f2; FX[k + 3] = f3;
+          k += 4;
+        }
+      }
+    }
+
+    function yFluxes() {
+      let k = 0;
+      for (let iy = 0; iy <= NY; iy++) {
+        for (let j = 0; j < NX; j++) {
+          const L = (iy * W + (j + 1)) * 4;
+          const R = L + W * 4;
+          const rhoL = U[L];
+          const invL = 1 / Math.max(rhoL, 1e-12);
+          const uL = U[L + 1] * invL;
+          const vL = U[L + 2] * invL;
+          const EL = U[L + 3];
+          const pL = Math.max((GAMMA - 1) * (EL - 0.5 * rhoL * (uL * uL + vL * vL)), 1e-6);
+          const aL = Math.sqrt(GAMMA * pL / rhoL);
+          const rhoR = U[R];
+          const invR = 1 / Math.max(rhoR, 1e-12);
+          const uR = U[R + 1] * invR;
+          const vR = U[R + 2] * invR;
+          const ER = U[R + 3];
+          const pR = Math.max((GAMMA - 1) * (ER - 0.5 * rhoR * (uR * uR + vR * vR)), 1e-6);
+          const aR = Math.sqrt(GAMMA * pR / rhoR);
+          const sL = Math.min(vL - aL, vR - aR);
+          const sR = Math.max(vL + aL, vR + aR);
+          let f0, f1, f2, f3;
+          if (sL >= 0) {
+            f0 = rhoL * vL; f1 = rhoL * vL * uL; f2 = rhoL * vL * vL + pL; f3 = (EL + pL) * vL;
+          } else if (sR <= 0) {
+            f0 = rhoR * vR; f1 = rhoR * vR * uR; f2 = rhoR * vR * vR + pR; f3 = (ER + pR) * vR;
+          } else {
+            let den = sR - sL;
+            if (den === 0) den = 1e-12;
+            const FL0 = rhoL * vL, FL1 = rhoL * vL * uL, FL2 = rhoL * vL * vL + pL, FL3 = (EL + pL) * vL;
+            const FR0 = rhoR * vR, FR1 = rhoR * vR * uR, FR2 = rhoR * vR * vR + pR, FR3 = (ER + pR) * vR;
+            const c = sL * sR;
+            f0 = (sR * FL0 - sL * FR0 + c * (rhoR - rhoL)) / den;
+            f1 = (sR * FL1 - sL * FR1 + c * (U[R + 1] - U[L + 1])) / den;
+            f2 = (sR * FL2 - sL * FR2 + c * (U[R + 2] - U[L + 2])) / den;
+            f3 = (sR * FL3 - sL * FR3 + c * (U[R + 3] - U[L + 3])) / den;
+          }
+          FY[k] = f0; FY[k + 1] = f1; FY[k + 2] = f2; FY[k + 3] = f3;
+          k += 4;
+        }
+      }
+    }
+
+    function computeDt() {
+      let sx = 1e-8;
+      let sy = 1e-8;
+      for (let iy = 1; iy <= NY; iy++) {
+        for (let j = 1; j <= NX; j++) {
+          const b = (iy * W + j) * 4;
+          const rho = U[b];
+          const inv = 1 / Math.max(rho, 1e-12);
+          const u = U[b + 1] * inv;
+          const v = U[b + 2] * inv;
+          const E = U[b + 3];
+          const p = Math.max((GAMMA - 1) * (E - 0.5 * rho * (u * u + v * v)), 1e-6);
+          const a = Math.sqrt(GAMMA * p / rho);
+          const ax = Math.abs(u) + a;
+          const ay = Math.abs(v) + a;
+          if (ax > sx) sx = ax;
+          if (ay > sy) sy = ay;
+        }
+      }
+      return CFL * Math.min(dx / sx, dy / sy);
+    }
+
+    function step() {
+      applyBC();
+      applyWalls();
+      const dt = computeDt();
+      xFluxes();
+      yFluxes();
+      const dtx = dt / dx;
+      const dty = dt / dy;
+      for (let iy = 1; iy <= NY; iy++) {
+        const rowF = (iy - 1) * (NX + 1) * 4;
+        for (let j = 1; j <= NX; j++) {
+          const b = (iy * W + j) * 4;
+          const fl = rowF + (j - 1) * 4;
+          const fr = rowF + j * 4;
+          U[b] -= dtx * (FX[fr] - FX[fl]);
+          U[b + 1] -= dtx * (FX[fr + 1] - FX[fl + 1]);
+          U[b + 2] -= dtx * (FX[fr + 2] - FX[fl + 2]);
+          U[b + 3] -= dtx * (FX[fr + 3] - FX[fl + 3]);
+        }
+      }
+      for (let iy = 1; iy <= NY; iy++) {
+        const rowF = (iy - 1) * NX * 4;
+        const rowF2 = iy * NX * 4;
+        for (let j = 1; j <= NX; j++) {
+          const b = (iy * W + j) * 4;
+          const fl = rowF + (j - 1) * 4;
+          const fr = rowF2 + (j - 1) * 4;
+          U[b] -= dty * (FY[fr] - FY[fl]);
+          U[b + 1] -= dty * (FY[fr + 1] - FY[fl + 1]);
+          U[b + 2] -= dty * (FY[fr + 2] - FY[fl + 2]);
+          U[b + 3] -= dty * (FY[fr + 3] - FY[fl + 3]);
+        }
+      }
+      // 内能下限 + 海绵层
+      for (let iy = 1; iy <= NY; iy++) {
+        for (let j = 1; j <= NX; j++) {
+          const b = (iy * W + j) * 4;
+          const rho = U[b];
+          const inv = 1 / Math.max(rho, 1e-12);
+          const u = U[b + 1] * inv;
+          const v = U[b + 2] * inv;
+          const E = U[b + 3];
+          const p = Math.max((GAMMA - 1) * (E - 0.5 * rho * (u * u + v * v)), 1e-6);
+          const Emin = p / (GAMMA - 1) + 0.5 * rho * (u * u + v * v);
+          if (U[b + 3] < Emin) U[b + 3] = Emin;
+          const damp = Math.min(Math.max(SIG[(iy - 1) * NX + (j - 1)] * dt, 0), 0.5);
+          if (damp > 0) {
+            const w = 1 - damp;
+            U[b] = w * U[b] + damp * U_amb[0];
+            U[b + 1] = w * U[b + 1];
+            U[b + 2] = w * U[b + 2];
+            U[b + 3] = w * U[b + 3] + damp * U_amb[3];
+          }
+        }
+      }
+      return dt;
+    }
+
+    function init() {
+      for (let i = 0; i < U.length; i += 4) {
+        U[i] = U_amb[0]; U[i + 1] = 0; U[i + 2] = 0; U[i + 3] = U_amb[3];
+      }
+      applyBC();
+      applyWalls();
+    }
+
+    // 伪纹影（与源码相同：|∇ρ| 的 log 拉伸 + 分位归一化）
+    const rho = new Float32Array(NX * NY);
+    const grad = new Float32Array(NX * NY);
+    const schlierenOut = new Float32Array(NX * NY);
+    function readRho() {
+      for (let iy = 0; iy < NY; iy++) {
+        for (let j = 0; j < NX; j++) {
+          rho[iy * NX + j] = U[((iy + 1) * W + (j + 1)) * 4];
+        }
+      }
+    }
+    function schlieren() {
+      readRho();
+      for (let iy = 0; iy < NY; iy++) {
+        for (let j = 0; j < NX; j++) {
+          const jm = j > 0 ? j - 1 : 0;
+          const jp = j < NX - 1 ? j + 1 : NX - 1;
+          const im = iy > 0 ? iy - 1 : 0;
+          const ip = iy < NY - 1 ? iy + 1 : NY - 1;
+          const drdx = (rho[iy * NX + jp] - rho[iy * NX + jm]) / (2 * dx);
+          const drdy = (rho[ip * NX + j] - rho[im * NX + j]) / (2 * dy);
+          grad[iy * NX + j] = Math.abs(drdx) + Math.abs(drdy);
+        }
+      }
+      // 百分位（采样加速，与源码 5% / 99.5% 对应）
+      const vals = [];
+      for (let i = 0; i < grad.length; i += 5) vals.push(Math.log10(grad[i] + 1e-6));
+      vals.sort(function (a, b) { return a - b; });
+      const lo = vals[Math.floor(vals.length * 0.05)];
+      const hi = vals[Math.floor(vals.length * 0.995)];
+      const span = Math.max(hi - lo, 1e-6);
+      for (let i = 0; i < grad.length; i++) {
+        let v = (Math.log10(grad[i] + 1e-6) - lo) / span;
+        if (v < 0) v = 0; else if (v > 1) v = 1;
+        schlierenOut[i] = v;
+      }
+      return schlierenOut;
+    }
+    function density() {
+      readRho();
+      const out = new Float32Array(NX * NY);
+      for (let i = 0; i < rho.length; i++) out[i] = rho[i];
+      return out;
+    }
+    function primStats() {
+      let maxRho = 0, minRho = 1e9, maxP = 0, minP = 1e9, maxAbsU = 0;
+      for (let iy = 1; iy <= NY; iy++) {
+        for (let j = 1; j <= NX; j++) {
+          const b = (iy * W + j) * 4;
+          const rr = U[b];
+          const inv = 1 / Math.max(rr, 1e-12);
+          const u = U[b + 1] * inv;
+          const v = U[b + 2] * inv;
+          const E = U[b + 3];
+          const pp = Math.max((GAMMA - 1) * (E - 0.5 * rr * (u * u + v * v)), 1e-6);
+          if (rr > maxRho) maxRho = rr;
+          if (rr < minRho) minRho = rr;
+          if (pp > maxP) maxP = pp;
+          if (pp < minP) minP = pp;
+          if (Math.abs(u) > maxAbsU) maxAbsU = Math.abs(u);
+        }
+      }
+      return { maxRho: maxRho, minRho: minRho, maxP: maxP, minP: minP, maxAbsU: maxAbsU };
+    }
+
+    return {
+      NX: NX, NY: NY, dx: dx, dy: dy, LX: LX, LY: LY,
+      U: U, W: W, Hh: Hh,
+      U_in: U_in, U_amb: U_amb, RHO_AMB: RHO_AMB, a_amb: a_amb,
+      u_jet: u_jet, a_jet: a_jet, rho_jet: rho_jet,
+      L_NOZ: L_NOZ, X_CONV: X_CONV, H_IN: H_IN, H_TH: H_TH, H_EX: H_EX,
+      hx: hx, yc: yc, nozzleH: nozzleH,
+      init: init, step: step, schlieren: schlieren, density: density, primStats: primStats
+    };
+  }
+
+  /* ---------------- 中心线马赫环检测（照源码逻辑） ---------------- */
+  function findCenterlinePeaks(s, NX, NY, dx, xMin) {
+    const ycIdx = Math.floor(NY / 2);
+    const line = new Float32Array(NX);
+    for (let j = 0; j < NX; j++) line[j] = s[ycIdx * NX + j];
+    const smooth = new Float32Array(NX);
+    for (let j = 0; j < NX; j++) {
+      let acc = 0;
+      let cnt = 0;
+      for (let q = -2; q <= 2; q++) {
+        const jj = j + q;
+        if (jj >= 0 && jj < NX) { acc += line[jj]; cnt++; }
+      }
+      smooth[j] = acc / cnt;
+    }
+    let maxV = 0;
+    for (let j = 0; j < NX; j++) if (smooth[j] > maxV) maxV = smooth[j];
+    const thr = PEAK_THR_REL * (maxV > 1e-8 ? maxV : 1);
+    const minDist = Math.max(1, Math.floor(PEAK_MIN_DIST_FRACTION * NX));
+    const picked = [];
+    for (let j = 1; j < NX - 1; j++) {
+      if (smooth[j] >= smooth[j - 1] && smooth[j] >= smooth[j + 1] && smooth[j] > thr) {
+        if (!picked.length || (j - picked[picked.length - 1]) >= minDist) picked.push(j);
+      }
+    }
+    const out = [];
+    for (let i = 0; i < picked.length && out.length < MAX_MARKS; i++) {
+      const x = (picked[i] + 0.5) * dx;
+      if (x > xMin + 0.2) out.push(x);
+    }
+    return out;
+  }
+
+  /* ---------------- 颜色表 ---------------- */
+  const PALETTE = (function () {
+    const stops = [
+      [0, [0, 0, 4]], [0.14, [26, 8, 58]], [0.28, [59, 5, 100]], [0.42, [97, 15, 110]],
+      [0.56, [144, 37, 99]], [0.70, [190, 66, 66]], [0.82, [224, 107, 33]],
+      [0.92, [244, 160, 20]], [1, [252, 255, 164]]
+    ];
+    const arr = new Uint8Array(256 * 3);
+    for (let i = 0; i < 256; i++) {
+      const t = i / 255;
+      let k = 0;
+      while (k < stops.length - 2 && t > stops[k + 1][0]) k++;
+      const a = stops[k];
+      const b = stops[k + 1];
+      const u = Math.min(1, Math.max(0, (t - a[0]) / (b[0] - a[0])));
+      arr[i * 3] = Math.round(a[1][0] + (b[1][0] - a[1][0]) * u);
+      arr[i * 3 + 1] = Math.round(a[1][1] + (b[1][1] - a[1][1]) * u);
+      arr[i * 3 + 2] = Math.round(a[1][2] + (b[1][2] - a[1][2]) * u);
+    }
+    return arr;
+  })();
+
+  /* ============================================================
+   *  二、页面状态与计算循环
+   * ============================================================ */
+  const els = {
+    canvas: $('#mrCanvas'),
+    wrap: $('#mrCanvasWrap'),
+    statePill: $('#mrStatePill'),
+    spinner: $('#mrSpinner'),
+    stateText: $('#mrStateText'),
+    clock: $('#mrClockText'),
+    legend: $('#mrLegend'),
+    legendBar: $('#mrLegendBar'),
+    progressBar: $('#mrProgressBar'),
+    progressLabel: $('#mrProgressLabel'),
+    playBtn: $('#mrPlayBtn'),
+    playIcon: $('#mrPlayIcon'),
+    playLabel: $('#mrPlayLabel'),
+    replayBtn: $('#mrReplayBtn'),
+    seek: $('#mrSeek'),
+    time: $('#mrTime'),
+    modeSch: $('#mrModeSchlieren'),
+    modeDen: $('#mrModeDensity'),
+    markers: $('#mrMarkers'),
+    nozzle: $('#mrNozzle'),
+    speed: $('#mrSpeed'),
+    headNote: $('#mrHeadNote'),
+    nprNote: $('#mrNprNote'),
+    dot: $('#mrDot'),
+    statusText: $('#mrStatusText'),
+    apply: $('#mrApply'),
+    reset: $('#mrReset'),
+    applyNote: $('#mrApplyNote'),
+    perfNote: $('#mrPerfNote'),
+    advanced: $('#mrAdvanced'),
+    toast: $('#mrToast')
+  };
+  const ro = {
+    time: $('#roTime'), frame: $('#roFrame'), grid: $('#roGrid'), dx: $('#roDx'),
+    dt: $('#roDt'), rings: $('#roRings')
+  };
+  const fields = {
+    P_JET: { input: $('#pPjet'), out: $('#pPjetOut'), fmt: function (v) { return v.toFixed(2); } },
+    P_AMB: { input: $('#pPamb'), out: $('#pPambOut'), fmt: function (v) { return v.toFixed(2); } },
+    M_JET: { input: $('#pMjet'), out: $('#pMjetOut'), fmt: function (v) { return v.toFixed(2); } },
+    T_JET: { input: $('#pTjet'), out: $('#pTjetOut'), fmt: function (v) { return v.toFixed(1); } },
+    CFL: { input: $('#pCfl'), out: $('#pCflOut'), fmt: function (v) { return v.toFixed(2); } },
+    H_IN: { input: $('#pHin'), out: $('#pHinOut'), fmt: function (v) { return v.toFixed(2); } },
+    H_TH: { input: $('#pHth'), out: $('#pHthOut'), fmt: function (v) { return v.toFixed(2); } },
+    H_EX: { input: $('#pHin2'), out: $('#pHin2Out'), fmt: function (v) { return v.toFixed(2); } },
+    L_NOZ: { input: $('#pLnoz'), out: $('#pLnozOut'), fmt: function (v) { return v.toFixed(1); } },
+    X_CONV: { input: $('#pXconv'), out: $('#pXconvOut'), fmt: function (v) { return v.toFixed(2); } }
+  };
+
+  const state = {
+    sim: null,
+    params: null,
+    mode: 'schlieren',
+    playing: true,
+    dirty: false,
+    computing: false,
+    complete: false,
+    t: 0,
+    steps: 0,
+    nextSample: SAMPLE_DT,
+    frames: [],
+    frameTimes: [],
+    computeStart: 0,
+    lastFrame: null,
+    frameIndex: 0,
+    lastTs: 0,
+    acc: 0,
+    rafId: 0,
+    computeRaf: 0,
+    lastDt: 0,
+    recorded: 0
+  };
+
+  /* 画布尺寸 */
+  const view = { dpr: 1, w: 0, h: 0, plot: { x: 0, y: 0, w: 0, h: 0 } };
+  const fieldCanvas = document.createElement('canvas');
+  let fieldCtx = fieldCanvas.getContext('2d');
+  let fieldImage = null;
+
+  function resizeCanvas() {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const w = els.canvas.clientWidth || 800;
+    const h = els.canvas.clientHeight || 280;
+    if (view.w === w && view.h === h && view.dpr === dpr) return;
+    view.w = w; view.h = h; view.dpr = dpr;
+    els.canvas.width = Math.round(w * dpr);
+    els.canvas.height = Math.round(h * dpr);
+    const margin = { left: 10, right: 10, top: 14, bottom: 24 };
+    view.plot = {
+      x: margin.left,
+      y: margin.top,
+      w: Math.max(10, w - margin.left - margin.right),
+      h: Math.max(10, h - margin.top - margin.bottom)
+    };
+    drawScene();
+  }
+
+  function ensureFieldImage(sim) {
+    if (!sim) return;
+    if (fieldCanvas.width !== sim.NX || fieldCanvas.height !== sim.NY) {
+      fieldCanvas.width = sim.NX;
+      fieldCanvas.height = sim.NY;
+      fieldCtx = fieldCanvas.getContext('2d');
+      fieldImage = fieldCtx.createImageData(sim.NX, sim.NY);
+    }
+  }
+
+  function renderField(frame, mode) {
+    const sim = state.sim;
+    if (!sim || !frame) return;
+    ensureFieldImage(sim);
+    const NX = sim.NX;
+    const NY = sim.NY;
+    const data = fieldImage.data;
+    const s = frame.s;
+    const r = frame.rho;
+    if (mode === 'density') {
+      const lo = RHO_RANGE[0];
+      const span = RHO_RANGE[1] - RHO_RANGE[0];
+      for (let iy = 0; iy < NY; iy++) {
+        for (let ix = 0; ix < NX; ix++) {
+          const src = iy * NX + ix;
+          const dst = ((NY - 1 - iy) * NX + ix) * 4;
+          let t = (r[src] / 255) * span + lo;
+          t = (t - lo) / span;
+          if (t < 0) t = 0; else if (t > 1) t = 1;
+          const ci = (t * 255) | 0;
+          data[dst] = PALETTE[ci * 3];
+          data[dst + 1] = PALETTE[ci * 3 + 1];
+          data[dst + 2] = PALETTE[ci * 3 + 2];
+          data[dst + 3] = 255;
+        }
+      }
+    } else {
+      for (let iy = 0; iy < NY; iy++) {
+        for (let ix = 0; ix < NX; ix++) {
+          const src = iy * NX + ix;
+          const dst = ((NY - 1 - iy) * NX + ix) * 4;
+          // 轻微 S 曲线：让激波边缘更清晰（归一化仍是源码的 5%–99.5% 分位）
+          let v = s[src] / 255;
+          v = v * v * (3 - 2 * v);
+          const g = Math.round(v * 255);
+          data[dst] = g;
+          data[dst + 1] = g;
+          data[dst + 2] = g;
+          data[dst + 3] = 255;
+        }
+      }
+    }
+    fieldCtx.putImageData(fieldImage, 0, 0);
+  }
+
+  function xToPx(x, plot) { return plot.x + (x / LX) * plot.w; }
+  function yToPx(y, plot) { return plot.y + plot.h - (y / LY) * plot.h; }
+
+  function drawNozzle(ctx, plot, sim) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(99, 230, 210, .9)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (let j = 0; j <= sim.NX; j++) {
+      const x = (j + 0.5) * sim.dx;
+      if (x > sim.L_NOZ) break;
+      const h = sim.nozzleH(x);
+      const px = xToPx(x, plot);
+      const py = yToPx(sim.yc + h, plot);
+      if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.beginPath();
+    for (let j = 0; j <= sim.NX; j++) {
+      const x = (j + 0.5) * sim.dx;
+      if (x > sim.L_NOZ) break;
+      const h = sim.nozzleH(x);
+      const px = xToPx(x, plot);
+      const py = yToPx(sim.yc - h, plot);
+      if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    // 入口槽
+    const sx = xToPx(0, plot);
+    ctx.beginPath();
+    ctx.moveTo(sx, yToPx(sim.yc - sim.H_IN, plot));
+    ctx.lineTo(sx, yToPx(sim.yc + sim.H_IN, plot));
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawMarkers(ctx, plot, peaks) {
+    if (!peaks || !peaks.length) return;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(233, 208, 90, .85)';
+    ctx.fillStyle = 'rgba(233, 208, 90, .95)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 3]);
+    ctx.font = '10px "Cascadia Code", Consolas, monospace';
+    ctx.textAlign = 'center';
+    peaks.forEach(function (x, i) {
+      const px = xToPx(x, plot);
+      ctx.beginPath();
+      ctx.moveTo(px, plot.y);
+      ctx.lineTo(px, plot.y + plot.h);
+      ctx.stroke();
+      ctx.fillText('MR' + (i + 1), px, plot.y - 3);
+    });
+    ctx.restore();
+  }
+
+  function drawAxes(ctx, plot) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(150, 166, 156, .8)';
+    ctx.font = '9px "Cascadia Code", Consolas, monospace';
+    ctx.textAlign = 'center';
+    const xTicks = [0, 20, 40, 60, 80, 100, 120, 140, 160];
+    xTicks.forEach(function (x) {
+      const px = xToPx(x, plot);
+      if (px > plot.x + plot.w - 8) return;
+      ctx.fillText(String(x), px, plot.y + plot.h + 12);
+    });
+    ctx.textAlign = 'right';
+    const yTicks = [0, 10, 20];
+    yTicks.forEach(function (y) {
+      const py = yToPx(y, plot);
+      ctx.fillText(String(y), plot.x - 3, py + 3);
+    });
+    ctx.restore();
+  }
+
+  function currentFrame() {
+    if (!state.frames.length) return null;
+    const idx = Math.min(state.frames.length - 1, Math.max(0, state.frameIndex));
+    return state.frames[idx];
+  }
+
+  function drawScene() {
+    const ctx = els.canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
+    ctx.fillStyle = '#070906';
+    ctx.fillRect(0, 0, view.w, view.h);
+    const frame = currentFrame();
+    if (!frame) {
+      // 计算开始前的空画布提示
+      ctx.fillStyle = 'rgba(150, 166, 156, .55)';
+      ctx.font = '12px "Cascadia Code", Consolas, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('正在生成初始流场…', view.w / 2, view.h / 2);
+      return;
+    }
+    renderField(frame, state.mode);
+    ctx.imageSmoothingEnabled = true;
+    try { ctx.imageSmoothingQuality = 'high'; } catch (e) { /* 忽略 */ }
+    ctx.drawImage(fieldCanvas, view.plot.x, view.plot.y, view.plot.w, view.plot.h);
+    const sim = state.sim;
+    if (sim) {
+      if (els.nozzle.checked) drawNozzle(ctx, view.plot, sim);
+      if (els.markers.checked) drawMarkers(ctx, view.plot, frame.peaks);
+      drawAxes(ctx, view.plot);
+    }
+  }
+
+  /* ---------------- 计算循环 ---------------- */
+  function newFramesCapacity(T_END) {
+    return Math.ceil(T_END / SAMPLE_DT) + 2;
+  }
+
+  function startCompute(params) {
+    cancelCompute();
+    if (state.rafId) { cancelAnimationFrame(state.rafId); state.rafId = 0; }
+    state.params = params;
+    state.computing = true;
+    state.complete = false;
+    state.playing = false;
+    state.frames = [];
+    state.frameTimes = [];
+    state.frameIndex = 0;
+    state.t = 0;
+    state.steps = 0;
+    state.nextSample = SAMPLE_DT;
+    state.recorded = 0;
+    state.lastDt = 0;
+    state.lastFrame = null;
+    const grid = GRIDS[params.grid];
+    const simParams = Object.assign({}, params, { NX: grid.NX, NY: grid.NY });
+    try {
+      state.sim = createSim(simParams);
+      state.sim.init();
+    } catch (err) {
+      setComputeError(err);
+      return;
+    }
+    els.progressLabel.classList.add('is-on');
+    els.progressBar.style.width = '0%';
+    els.statePill.style.display = '';
+    els.spinner.style.display = '';
+    setStatus('busy', '计算中…');
+    els.playBtn.disabled = true;
+    els.seek.disabled = true;
+    els.apply.disabled = true;
+    ro.grid.textContent = grid.NX + ' × ' + grid.NY;
+    ro.dx.textContent = (LX / grid.NX).toFixed(3) + ' · ' + (LY / grid.NY).toFixed(3);
+    const T_END = params.T_END;
+    const totalFrames = newFramesCapacity(T_END);
+    state.totalFrames = totalFrames;
+    state.computeStart = performance.now();
+    drawScene();
+    updateFrameReadouts();
+    state.computeRaf = requestAnimationFrame(computeChunk);
+  }
+
+  function cancelCompute() {
+    if (state.computeRaf) { cancelAnimationFrame(state.computeRaf); state.computeRaf = 0; }
+    state.computing = false;
+  }
+
+  function computeChunk() {
+    if (!state.computing) return;
+    const sim = state.sim;
+    const budgetMs = 13;
+    const t0 = performance.now();
+    let stepsThisChunk = 0;
+    while (performance.now() - t0 < budgetMs && state.t < state.params.T_END) {
+      state.lastDt = sim.step();
+      state.t += state.lastDt;
+      state.steps += 1;
+      stepsThisChunk++;
+      if (state.t >= state.nextSample - 1e-12) {
+        recordFrame(state.t);
+        state.nextSample += SAMPLE_DT;
+        // 限制最多记录帧数，防止 T_END 很长时内存过大
+        if (state.frames.length > 1600) break;
+      }
+    }
+    // 数值稳定性检查（发散时明确报错，而不是画出乱码）
+    state.stepCheck = (state.stepCheck || 0) + stepsThisChunk;
+    if (state.stepCheck >= 32) {
+      state.stepCheck = 0;
+      const st = sim.primStats();
+      if (!Number.isFinite(st.maxRho) || !Number.isFinite(st.maxP) || st.maxRho > 20 || st.maxP > 120) {
+        setComputeError(new Error('数值不稳定（CFL 过大或网格过粗）。请把 CFL 调低一档，或改用更高的网格分辨率后重试。'));
+        return;
+      }
+    }
+    // 预览最近一帧
+    if (state.frames.length) {
+      state.frameIndex = state.frames.length - 1;
+      drawScene();
+      updateFrameReadouts();
+    }
+    const progress = Math.min(100, (state.t / state.params.T_END) * 100);
+    els.progressBar.style.width = progress.toFixed(1) + '%';
+    els.progressLabel.textContent = '计算中 ' + progress.toFixed(0) + '% · t = ' + state.t.toFixed(1) + ' / ' + state.params.T_END;
+    setStatus('busy', '计算中 ' + progress.toFixed(0) + '%');
+    if (state.t >= state.params.T_END) {
+      finishCompute();
+      return;
+    }
+    state.computeRaf = requestAnimationFrame(computeChunk);
+  }
+
+  function recordFrame(t) {
+    const sim = state.sim;
+    const sch = sim.schlieren();
+    const den = sim.density();
+    const NX = sim.NX;
+    const NY = sim.NY;
+    const s8 = new Uint8Array(NX * NY);
+    const r8 = new Uint8Array(NX * NY);
+    const lo = RHO_RANGE[0];
+    const span = RHO_RANGE[1] - RHO_RANGE[0];
+    for (let i = 0; i < NX * NY; i++) {
+      s8[i] = Math.round(sch[i] * 255);
+      let v = (den[i] - lo) / span;
+      if (v < 0) v = 0; else if (v > 1) v = 1;
+      r8[i] = Math.round(v * 255);
+    }
+    const peaks = findCenterlinePeaks(sch, NX, NY, sim.dx, sim.L_NOZ);
+    state.frames.push({ t: t, s: s8, rho: r8, peaks: peaks });
+    state.frameTimes.push(t);
+    state.recorded = state.frames.length;
+  }
+
+  function finishCompute() {
+    state.computing = false;
+    state.complete = true;
+    state.totalFrames = state.frames.length;
+    const elapsed = performance.now() - state.computeStart;
+    els.progressBar.style.width = '100%';
+    els.progressLabel.textContent = state.frames.length + ' 帧 · 用时 ' + (elapsed / 1000).toFixed(1) + ' s · 点击「播放」回放';
+    els.statePill.style.display = '';
+    els.spinner.style.display = 'none';
+    els.stateText.textContent = '计算完成';
+    els.playBtn.disabled = false;
+    els.seek.disabled = false;
+    els.apply.disabled = false;
+    els.seek.max = String(Math.max(0, state.frames.length - 1));
+    state.frameIndex = Math.max(0, state.frames.length - 1);
+    state.playing = false;
+    state.lastTs = 0;
+    state.acc = 0;
+    updatePlayButton();
+    setStatus('ok', '计算完成 · 可回放');
+    ro.rings.textContent = (currentFrame() && currentFrame().peaks.length) || 0;
+    els.perfNote.textContent = '计算用时 ' + (elapsed / 1000).toFixed(1) + ' s，生成 ' + state.frames.length +
+      ' 帧（每 ' + SAMPLE_DT + ' 个物理时间单位采样一帧）；回放约 ' + PLAY_FPS + ' fps。';
+    els.headNote.textContent = '网格 ' + GRIDS[state.params.grid].label + ' · ' + state.frames.length + ' 帧 · ' + (elapsed / 1000).toFixed(1) + ' s 算完';
+    if (!state.dirty) {
+      els.applyNote.textContent = '当前参数与画面一致';
+      els.applyNote.style.color = 'var(--ink-3)';
+    }
+    els.legend.hidden = state.mode !== 'density';
+    drawScene();
+    updateFrameReadouts();
+    state.lastTs = performance.now();
+    state.rafId = requestAnimationFrame(playLoop);
+  }
+
+  function setComputeError(err) {
+    state.computing = false;
+    state.complete = false;
+    els.spinner.style.display = 'none';
+    els.stateText.textContent = '计算失败';
+    els.progressLabel.classList.remove('is-on');
+    setStatus('err', '计算失败');
+    els.apply.disabled = false;
+    els.playBtn.disabled = true;
+    els.seek.disabled = true;
+    els.applyNote.textContent = '出错：' + (err && err.message ? err.message : String(err));
+    // 控制台里保留详细堆栈
+    if (window.console && console.error) console.error(err);
+  }
+
+  /* ---------------- 回放循环 ---------------- */
+  function updatePlayButton() {
+    if (state.playing) {
+      els.playIcon.innerHTML = '<rect fill="currentColor" stroke="none" x="7" y="5" width="3.6" height="14" rx="1"/><rect fill="currentColor" stroke="none" x="13.4" y="5" width="3.6" height="14" rx="1"/>';
+      els.playLabel.textContent = '暂停';
+      els.playBtn.setAttribute('aria-label', '暂停回放');
+    } else {
+      els.playIcon.innerHTML = '<path fill="currentColor" stroke="none" d="M8 5.14v13.72c0 .8.87 1.3 1.55.89l10.5-6.86a1.06 1.06 0 0 0 0-1.78L9.55 4.25A1.06 1.06 0 0 0 8 5.14Z"/>';
+      els.playLabel.textContent = '播放';
+      els.playBtn.setAttribute('aria-label', '播放回放');
+    }
+  }
+
+  function playLoop(ts) {
+    if (!state.complete) return;
+    if (!state.lastTs) state.lastTs = ts;
+    const dtMs = Math.min(200, ts - state.lastTs);
+    state.lastTs = ts;
+    if (state.playing && state.frames.length > 1) {
+      const speed = parseFloat(els.speed.value) || 1;
+      state.acc += dtMs * speed;
+      const interval = 1000 / PLAY_FPS;
+      let advanced = 0;
+      while (state.acc >= interval && advanced < 30) {
+        state.acc -= interval;
+        state.frameIndex = (state.frameIndex + 1) % state.frames.length;
+        advanced++;
+      }
+      if (advanced) {
+        drawScene();
+        updateFrameReadouts();
+      }
+    }
+    state.rafId = requestAnimationFrame(playLoop);
+  }
+
+  function updateFrameReadouts() {
+    const frame = currentFrame();
+    if (frame) {
+      const idx = state.frameIndex + 1;
+      els.time.textContent = frame.t.toFixed(2) + ' / ' + state.params.T_END + ' s';
+      els.clock.textContent = 't = ' + frame.t.toFixed(3);
+      els.seek.value = String(state.frameIndex);
+      ro.time.textContent = frame.t.toFixed(3);
+      ro.frame.textContent = idx + ' / ' + state.frames.length;
+      ro.rings.textContent = frame.peaks.length;
+      ro.dt.textContent = state.lastDt ? state.lastDt.toFixed(4) : '—';
+    } else {
+      els.time.textContent = '0.00 / ' + (state.params ? state.params.T_END : 120) + ' s';
+      els.clock.textContent = 't = 0.000';
+      ro.time.textContent = '0.000';
+      ro.frame.textContent = '0 / 0';
+      ro.rings.textContent = '—';
+      ro.dt.textContent = '—';
+    }
+    if (state.computing) {
+      els.stateText.textContent = '计算中';
+    } else if (state.complete) {
+      if (state.playing) els.stateText.textContent = '回放中';
+      else if (state.frameIndex >= state.frames.length - 1) els.stateText.textContent = '计算完成';
+      else els.stateText.textContent = '已暂停';
+    }
+  }
+
+  /* ---------------- 参数读取 / 同步 ---------------- */
+  function readParams() {
+    return {
+      P_JET: parseFloat(fields.P_JET.input.value),
+      P_AMB: parseFloat(fields.P_AMB.input.value),
+      M_JET: parseFloat(fields.M_JET.input.value),
+      T_JET: parseFloat(fields.T_JET.input.value),
+      T_AMB: DEFAULTS.T_AMB,
+      CFL: parseFloat(fields.CFL.input.value),
+      T_END: parseInt($('#pTend').value, 10) || 120,
+      grid: $('#pGrid').value || 'medium',
+      L_NOZ: parseFloat(fields.L_NOZ.input.value),
+      X_CONV: parseFloat(fields.X_CONV.input.value),
+      H_IN: parseFloat(fields.H_IN.input.value),
+      H_TH: parseFloat(fields.H_TH.input.value),
+      H_EX: parseFloat(fields.H_EX.input.value)
+    };
+  }
+  function updateFieldReadouts() {
+    Object.keys(fields).forEach(function (key) {
+      fields[key].out.textContent = fields[key].fmt(parseFloat(fields[key].input.value));
+    });
+    const grid = GRIDS[$('#pGrid').value];
+    $('#pGridOut').textContent = grid.label;
+    $('#pTendOut').textContent = $('#pTend').value;
+    const p = readParams();
+    $('#mrNprNote').textContent = 'NPR = P_JET / P_AMB = ' + (p.P_JET / p.P_AMB).toFixed(2);
+    markDirty();
+  }
+  function markDirty() {
+    state.dirty = true;
+    if (state.computing) {
+      els.applyNote.textContent = '参数已修改：当前仍在计算旧参数，算完后点击「应用参数并重新计算」';
+      els.applyNote.style.color = 'var(--accent)';
+    } else {
+      els.applyNote.textContent = '参数已修改 —— 点击「应用参数并重新计算」生效';
+      els.applyNote.style.color = 'var(--accent)';
+    }
+  }
+  function syncFields(params) {
+    fields.P_JET.input.value = params.P_JET;
+    fields.P_AMB.input.value = params.P_AMB;
+    fields.M_JET.input.value = params.M_JET;
+    fields.T_JET.input.value = params.T_JET;
+    fields.CFL.input.value = params.CFL;
+    fields.H_IN.input.value = params.H_IN;
+    fields.H_TH.input.value = params.H_TH;
+    fields.H_EX.input.value = params.H_EX;
+    fields.L_NOZ.input.value = params.L_NOZ;
+    fields.X_CONV.input.value = params.X_CONV;
+    $('#pGrid').value = params.grid;
+    $('#pTend').value = String(params.T_END);
+    Object.keys(fields).forEach(function (key) {
+      fields[key].out.textContent = fields[key].fmt(parseFloat(fields[key].input.value));
+    });
+    $('#pGridOut').textContent = GRIDS[params.grid].label;
+    $('#pTendOut').textContent = String(params.T_END);
+    $('#mrNprNote').textContent = 'NPR = P_JET / P_AMB = ' + (params.P_JET / params.P_AMB).toFixed(2);
+    state.dirty = false;
+    els.applyNote.textContent = '当前参数与画面一致';
+    els.applyNote.style.color = 'var(--ink-3)';
+  }
+
+  function applyAndRecompute() {
+    if (state.computing) return;
+    const params = readParams();
+    if (params.H_TH >= params.H_IN || params.H_TH >= params.H_EX) {
+      toast('喉部半高需要小于入口与出口半高');
+      return;
+    }
+    if (params.L_NOZ <= params.X_CONV) {
+      toast('收缩段结束位置 X_CONV 必须小于喷管长度 L_NOZ');
+      return;
+    }
+    state.params = params;
+    state.dirty = false;
+    els.applyNote.textContent = '已应用，正在重新计算…';
+    els.applyNote.style.color = 'var(--ink-3)';
+    els.stateText.textContent = '计算中';
+    els.legend.hidden = state.mode !== 'density';
+    startCompute(params);
+  }
+
+  /* ---------------- 其他 UI ---------------- */
+  function setStatus(kind, text) {
+    els.dot.className = 'mr-dot' + (kind ? ' is-' + kind : '');
+    els.statusText.textContent = text;
+  }
+  let toastTimer = null;
+  function toast(msg) {
+    els.toast.textContent = msg;
+    els.toast.classList.add('is-on');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { els.toast.classList.remove('is-on'); }, 2000);
+  }
+  function setMode(mode) {
+    state.mode = mode;
+    const isDen = mode === 'density';
+    els.modeSch.setAttribute('aria-pressed', String(!isDen));
+    els.modeDen.setAttribute('aria-pressed', String(isDen));
+    els.legend.hidden = !isDen || !state.frames.length;
+    drawScene();
+  }
+  function setupLegend() {
+    const grad = [];
+    for (let i = 0; i <= 10; i++) {
+      const t = i / 10;
+      const ci = Math.round(t * 255);
+      grad.push('rgb(' + PALETTE[ci * 3] + ',' + PALETTE[ci * 3 + 1] + ',' + PALETTE[ci * 3 + 2] + ') ' + (t * 100) + '%');
+    }
+    els.legendBar.style.background = 'linear-gradient(90deg,' + grad.join(',') + ')';
+  }
+
+  els.playBtn.addEventListener('click', function () {
+    if (!state.complete) return;
+    if (!state.playing && state.frameIndex >= state.frames.length - 1) {
+      state.frameIndex = 0; // 在最后一帧时点播放：从头回放
+      drawScene();
+      updateFrameReadouts();
+    }
+    state.playing = !state.playing;
+    state.acc = 0;
+    state.lastTs = performance.now();
+    updatePlayButton();
+    updateFrameReadouts();
+  });
+  els.replayBtn.addEventListener('click', function () {
+    if (!state.frames.length) return;
+    state.frameIndex = 0;
+    state.acc = 0;
+    state.playing = true;
+    state.lastTs = performance.now();
+    updatePlayButton();
+    drawScene();
+    updateFrameReadouts();
+  });
+  els.seek.addEventListener('input', function () {
+    if (!state.frames.length) return;
+    state.frameIndex = Math.max(0, Math.min(state.frames.length - 1, parseInt(els.seek.value, 10) || 0));
+    if (state.complete) state.playing = false;
+    updatePlayButton();
+    drawScene();
+    updateFrameReadouts();
+  });
+  els.modeSch.addEventListener('click', function () { setMode('schlieren'); });
+  els.modeDen.addEventListener('click', function () { setMode('density'); });
+  els.markers.addEventListener('change', drawScene);
+  els.nozzle.addEventListener('change', drawScene);
+  els.speed.addEventListener('change', function () { state.acc = 0; });
+  document.addEventListener('keydown', function (e) {
+    if (e.target && /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if (e.code === 'Space') {
+      e.preventDefault();
+      els.playBtn.click();
+    }
+  });
+  Object.keys(fields).forEach(function (key) {
+    fields[key].input.addEventListener('input', updateFieldReadouts);
+  });
+  $('#pGrid').addEventListener('change', updateFieldReadouts);
+  $('#pTend').addEventListener('change', updateFieldReadouts);
+  els.apply.addEventListener('click', applyAndRecompute);
+  els.reset.addEventListener('click', function () {
+    syncFields(DEFAULTS);
+    state.dirty = true;
+    els.applyNote.textContent = '已恢复源码默认值，点击「应用参数并重新计算」生效';
+    els.applyNote.style.color = 'var(--accent)';
+    toast('已恢复源码默认参数');
+  });
+  els.advanced.addEventListener('toggle', function () { /* 占位，保持 details 行为 */ });
+
+  window.addEventListener('resize', function () { resizeCanvas(); });
+  if (window.ResizeObserver) {
+    const ro2 = new ResizeObserver(function () { resizeCanvas(); drawScene(); });
+    ro2.observe(els.canvas);
+  }
+
+  /* 主题切换 */
+  const themeToggle = document.querySelector('[data-theme-toggle]');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function () {
+      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('xz-theme', next); } catch (e) { /* 忽略 */ }
+    });
+  }
+
+  /* 自测钩子 */
+  window.__mach = {
+    state: function () {
+      return {
+        computing: state.computing,
+        complete: state.complete,
+        frames: state.frames.length,
+        t: state.t,
+        steps: state.steps,
+        mode: state.mode,
+        playing: state.playing,
+        frameIndex: state.frameIndex,
+        grid: state.sim ? state.sim.NX + 'x' + state.sim.NY : null,
+        dt: state.lastDt,
+        peaks: currentFrame() ? currentFrame().peaks : []
+      };
+    },
+    finish: async function (timeoutMs) {
+      // 同步跑完剩余计算，返回统计（供无头测试用）
+      if (state.complete) return window.__mach.state();
+      if (!state.computing) return window.__mach.state();
+      cancelAnimationFrame(state.computeRaf);
+      state.computeRaf = 0;
+      const sim = state.sim;
+      const limit = (timeoutMs || 40000);
+      const t0 = performance.now();
+      while (state.t < state.params.T_END && performance.now() - t0 < limit) {
+        state.lastDt = sim.step();
+        state.t += state.lastDt;
+        state.steps += 1;
+        if (state.t >= state.nextSample - 1e-12) {
+          recordFrame(state.t);
+          state.nextSample += SAMPLE_DT;
+        }
+        if (state.steps % 64 === 0) {
+          const st = sim.primStats();
+          if (!Number.isFinite(st.maxRho) || st.maxRho > 20 || st.maxP > 120) {
+            setComputeError(new Error('数值不稳定（CFL 过大或网格过粗）。'));
+            return window.__mach.state();
+          }
+        }
+      }
+      if (state.t >= state.params.T_END) finishCompute();
+      return window.__mach.state();
+    },
+    advance: function (seconds) {
+      // 让物理时间前进若干单位（同步），用于测试
+      if (!state.sim) return null;
+      let target = state.t + seconds;
+      const t0 = performance.now();
+      while (state.t < target && performance.now() - t0 < 20000) {
+        state.lastDt = state.sim.step();
+        state.t += state.lastDt;
+        state.steps += 1;
+        if (state.t >= state.nextSample - 1e-12 && state.computing) {
+          recordFrame(state.t);
+          state.nextSample += SAMPLE_DT;
+        }
+      }
+      return window.__mach.state();
+    },
+    setFrame: function (i) {
+      if (!state.frames.length) return null;
+      state.frameIndex = Math.max(0, Math.min(state.frames.length - 1, i));
+      state.playing = false;
+      updatePlayButton();
+      drawScene();
+      updateFrameReadouts();
+      return window.__mach.state();
+    },
+    setMode: setMode,
+    params: function () { return state.params; }
+  };
+
+  /* 启动 */
+  setupLegend();
+  syncFields(DEFAULTS);
+  resizeCanvas();
+  state.params = DEFAULTS;
+  els.stateText.textContent = '开始计算…';
+  setStatus('busy', '开始计算…');
+  startCompute(DEFAULTS);
+})();
+</script>
+</body>
+</html>

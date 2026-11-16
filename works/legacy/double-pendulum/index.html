@@ -1,0 +1,296 @@
+﻿<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>双摆混沌 · 多轨迹相空间 · 早期项目移植</title>
+<meta name="description" content="把早年的 Python 双摆仿真移植成网页版：100 条微小偏移初值的 RK4 轨迹，物理空间、两幅相空间、构型空间、速度空间四面板同步动画，Canvas 2D 手绘、零依赖。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/css/site.css">
+<style>
+  :root { --demo-wide: 1180px; }
+
+  .demo-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+  .demo-bar .bar-inner {
+    display: flex; align-items: center; gap: 14px;
+    height: 54px;
+  }
+  .demo-bar .demo-back {
+    font-size: 13px; letter-spacing: .04em; color: var(--ink-2);
+    text-decoration: none; white-space: nowrap;
+  }
+  .demo-bar .demo-back:hover { color: var(--accent); }
+  .demo-bar .bar-sep { color: var(--rule-strong); }
+  .demo-bar .bar-title {
+    font-family: var(--font-serif); font-size: 15px; letter-spacing: .07em;
+    color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .demo-bar .bar-spacer { flex: 1; }
+  .demo-bar .theme-toggle { margin-left: 4px; }
+  .demo-bar .theme-toggle svg { width: 14px; height: 14px; }
+  .demo-bar .icon-moon { display: none; }
+  [data-theme="dark"] .demo-bar .icon-sun { display: none; }
+  [data-theme="dark"] .demo-bar .icon-moon { display: block; }
+
+  .demo-wrap {
+    width: 100%; max-width: var(--demo-wide);
+    margin: 0 auto; padding-inline: clamp(18px, 4vw, 34px);
+  }
+  main.demo-main { padding-bottom: 8px; }
+
+  .dp-head { padding: clamp(30px, 5vw, 52px) 0 18px; }
+  .dp-head .page-eyebrow { margin: 0 0 12px; }
+  .dp-head .page-title { margin: 0; }
+  .dp-head .page-desc { margin: 14px 0 0; max-width: 46em; }
+
+  .ctrl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+    gap: 13px 20px;
+    padding: 16px 18px;
+    border: 1px solid var(--rule);
+    background: var(--paper-2);
+  }
+  .field {
+    display: flex; flex-direction: column; gap: 5px;
+    font-size: 11.5px; letter-spacing: .05em; color: var(--ink-3);
+    min-width: 0;
+  }
+  .field .ctl { display: flex; align-items: center; gap: 8px; }
+  .field input[type="range"] { flex: 1; min-width: 0; accent-color: var(--accent); cursor: pointer; }
+  .field output {
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--ink);
+    min-width: 52px; text-align: right; font-variant-numeric: tabular-nums;
+  }
+  .field select {
+    width: 100%; font: inherit; font-size: 12.5px; color: var(--ink);
+    background: var(--paper); border: 1px solid var(--rule-strong);
+    border-radius: 2px; padding: 4px 6px;
+  }
+  .field select:focus { outline: 1px solid var(--accent); outline-offset: 1px; }
+
+  .actions {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 9px;
+    margin-top: 13px;
+  }
+  .demo-btn {
+    font: inherit; font-size: 12.5px; letter-spacing: .04em;
+    padding: 6px 15px; border-radius: 2px;
+    border: 1px solid var(--rule-strong); background: transparent;
+    color: var(--ink); cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .demo-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .demo-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  .demo-btn.primary:hover { background: var(--accent-deep); color: var(--paper); }
+  .actions .spacer { flex: 1; }
+
+  .statusbar {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 26px;
+    padding: 13px 2px 11px;
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-2);
+    border-bottom: 1px solid var(--rule); margin-bottom: 14px;
+  }
+  .statusbar b { color: var(--ink); font-weight: 600; }
+  .statusbar .demo-tag {
+    font-family: var(--font-sans); font-size: 11px; letter-spacing: .1em;
+    color: var(--accent); border: 1px solid var(--accent-underline);
+    padding: 1px 7px; border-radius: 2px;
+  }
+
+  .dp-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.28fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+  }
+  .panel {
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    display: flex; flex-direction: column; min-width: 0;
+  }
+  .panel > header {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    padding: 7px 11px 6px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 11px; color: var(--ink-3); letter-spacing: .06em;
+  }
+  .panel > header h2 {
+    margin: 0; font-family: var(--font-serif); font-size: 13px;
+    font-weight: 500; letter-spacing: .05em; color: var(--ink);
+    white-space: nowrap;
+  }
+  .panel > header .hint {
+    font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3);
+    white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
+  .panel-canvas { position: relative; flex: 1; min-height: 0; }
+  .panel-canvas canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+  .dp-panel-narrow .panel-canvas { aspect-ratio: 4 / 3; flex: none; }
+  .panel-physical { grid-row: span 2; }
+  .panel-physical .panel-canvas { min-height: 340px; }
+
+  .dp-note {
+    margin: clamp(30px, 5vw, 48px) 0 0;
+    color: var(--ink-3); font-size: 12.5px; line-height: 1.9;
+  }
+  .dp-note details {
+    margin-top: 12px; border-top: 1px solid var(--rule); padding-top: 10px;
+    color: var(--ink-2);
+  }
+  .dp-note summary { cursor: pointer; color: var(--ink-2); font-size: 12.5px; }
+  .dp-note details p { margin: 8px 0 0; }
+  .dp-note code {
+    font-family: var(--font-mono); font-size: 11.5px;
+    background: var(--paper-2); padding: 1px 5px;
+  }
+
+  @media (max-width: 980px) {
+    .dp-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .panel-physical { grid-row: span 2; }
+  }
+  @media (max-width: 680px) {
+    .dp-grid { grid-template-columns: minmax(0, 1fr); }
+    .panel-physical { grid-row: auto; }
+    .dp-panel-narrow .panel-canvas { aspect-ratio: 3 / 2; }
+    .demo-bar .bar-title { font-size: 13.5px; }
+  }
+</style>
+</head>
+<body class="page-legacy" data-page="legacy-double-pendulum">
+<a class="skip-link" href="#main">跳到正文</a>
+
+<header class="demo-bar">
+  <div class="demo-wrap bar-inner">
+    <a class="demo-back" href="../">← 返回早期项目</a>
+    <span class="bar-sep" aria-hidden="true">/</span>
+    <span class="bar-title">双摆混沌 · 多轨迹相空间</span>
+    <span class="bar-spacer"></span>
+    <button class="theme-toggle" type="button" id="themeToggle" aria-label="切换明暗主题" title="切换明暗主题">
+      <svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg>
+      <svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main" class="demo-main">
+  <div class="demo-wrap">
+    <header class="dp-head page-head">
+      <p class="page-eyebrow">LEGACY · PYTHON → WEB</p>
+      <h1 class="page-title">双摆混沌 · 多轨迹相空间</h1>
+      <p class="page-desc">同一副双摆，一百组只差千分之几弧度的初始条件。它们先像一条线，再在几十秒内彻底分开——这就是对初始条件的敏感依赖。左图是物理空间里的小球轨迹，右侧四幅是相空间、构型空间与速度空间；颜色对应初始偏移量的大小。</p>
+    </header>
+
+    <section aria-label="参数与动画">
+      <div class="ctrl-grid">
+        <label class="field" for="mode">初值模式
+          <span class="ctl"><select id="mode">
+            <option value="perturb">微扰（基准角 ± 小偏移）</option>
+            <option value="wide">大角度（宽范围散布）</option>
+          </select></span>
+        </label>
+        <label class="field" for="base1">基准角 θ₁
+          <span class="ctl"><input type="range" id="base1" min="-180" max="180" step="1" value="90"><output id="base1Out">90°</output></span>
+        </label>
+        <label class="field" for="base2">基准角 θ₂
+          <span class="ctl"><input type="range" id="base2" min="-180" max="180" step="1" value="90"><output id="base2Out">90°</output></span>
+        </label>
+        <label class="field" id="deltaField" for="delta">微扰幅度（±）
+          <span class="ctl"><input type="range" id="delta" min="0.02" max="10" step="0.01" value="0.573"><output id="deltaOut">0.57°</output></span>
+        </label>
+        <label class="field" id="spreadField" for="spread" hidden>大角度散布（±）
+          <span class="ctl"><input type="range" id="spread" min="10" max="180" step="1" value="150"><output id="spreadOut">150°</output></span>
+        </label>
+        <label class="field" for="L1">摆长 L₁
+          <span class="ctl"><input type="range" id="L1" min="0.4" max="1.6" step="0.05" value="1"><output id="L1Out">1.00 m</output></span>
+        </label>
+        <label class="field" for="L2">摆长 L₂
+          <span class="ctl"><input type="range" id="L2" min="0.4" max="1.6" step="0.05" value="1"><output id="L2Out">1.00 m</output></span>
+        </label>
+        <label class="field" for="ratio">质量比 m₂/m₁
+          <span class="ctl"><input type="range" id="ratio" min="0.2" max="3" step="0.05" value="1"><output id="ratioOut">1.00</output></span>
+        </label>
+        <label class="field" for="gamma">阻尼 γ
+          <span class="ctl"><input type="range" id="gamma" min="0" max="0.6" step="0.01" value="0"><output id="gammaOut">0.00</output></span>
+        </label>
+        <label class="field" for="count">轨迹条数
+          <span class="ctl"><input type="range" id="count" min="10" max="100" step="1" value="100"><output id="countOut">100</output></span>
+        </label>
+        <label class="field" for="speed">动画速度
+          <span class="ctl"><input type="range" id="speed" min="0.25" max="2" step="0.05" value="1"><output id="speedOut">1.00×</output></span>
+        </label>
+        <label class="field" for="tEnd">模拟时长
+          <span class="ctl"><input type="range" id="tEnd" min="10" max="60" step="1" value="30"><output id="tEndOut">30 s</output></span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="demo-btn primary" type="button" id="btnPlay">暂停</button>
+        <button class="demo-btn" type="button" id="btnReset">重新开始</button>
+        <button class="demo-btn" type="button" id="btnReseed">换一组初值</button>
+        <span class="spacer"></span>
+        <span class="statusbar" style="border:0;margin:0;padding:0">
+          <span>状态 <b id="stStatus">运行中</b></span>
+          <span>t <b id="stTime">0.0</b> / <b id="stEnd">30.0</b> s</span>
+          <span>轨迹 <b id="stCount">100</b></span>
+          <span>种子 <b id="stSeed">42</b></span>
+        </span>
+      </div>
+
+      <div class="statusbar">
+        <span class="demo-tag">RK4</span>
+        <span>初始条件 <b id="stMode">微扰模式</b></span>
+        <span>θ₁ 偏移范围 <b id="stOff1">—</b></span>
+        <span>θ₂ 偏移范围 <b id="stOff2">—</b></span>
+        <span>当前速度上限 |ω| <b id="stOmega">—</b></span>
+      </div>
+
+      <div class="dp-grid">
+        <section class="panel panel-physical">
+          <header><h2>物理空间</h2><span class="hint" id="physHint">t = 0.0 s</span></header>
+          <div class="panel-canvas"><canvas id="cvPhys" aria-label="双摆物理空间动画"></canvas></div>
+        </section>
+        <section class="panel dp-panel-narrow">
+          <header><h2>相空间 θ₁–ω₁</h2><span class="hint">ω 范围 ±20</span></header>
+          <div class="panel-canvas"><canvas id="cvP1" aria-label="θ1-ω1 相空间"></canvas></div>
+        </section>
+        <section class="panel dp-panel-narrow">
+          <header><h2>相空间 θ₂–ω₂</h2><span class="hint">ω 范围 ±20</span></header>
+          <div class="panel-canvas"><canvas id="cvP2" aria-label="θ2-ω2 相空间"></canvas></div>
+        </section>
+        <section class="panel dp-panel-narrow">
+          <header><h2>构型空间 θ₁–θ₂</h2><span class="hint">θ 范围 ±π</span></header>
+          <div class="panel-canvas"><canvas id="cvTheta" aria-label="θ1-θ2 构型空间"></canvas></div>
+        </section>
+        <section class="panel dp-panel-narrow">
+          <header><h2>速度空间 ω₁–ω₂</h2><span class="hint">ω 范围 ±20</span></header>
+          <div class="panel-canvas"><canvas id="cvOmega" aria-label="ω1-ω2 速度空间"></canvas></div>
+        </section>
+      </div>
+    </section>
+
+    <p class="dp-note">
+      根据 <code>F:\Project\双摆.py</code> 里的原始 Python 程序移植，原作 2025-03（仿真代码最后修订 2025-10）。
+      原版以 SciPy <code>solve_ivp(RK45)</code> 积分 100 条轨迹、用 Matplotlib 导出 GIF；网页版改用固定步长 RK4 与 Canvas 2D 实时绘制，因此画面构成一致，但步长与配色为适配浏览器做了调整。
+    </p>
+    <details class="dp-note">
+      <summary>模型与移植说明</summary>
+      <p>运动方程与源码逐项一致（θ 为相对竖直向下的摆角，δ = θ₂ − θ₁）：<br>
+      θ̈₁ = [ m₂L₁θ̇₁²sinδcosδ + m₂g sinθ₂cosδ + m₂L₂θ̇₂²sinδ − (m₁+m₂)g sinθ₁ ] / [ (m₁+m₂)L₁ − m₂L₁cos²δ ]<br>
+      θ̈₂ = [ −m₂L₂θ̇₂²sinδcosδ + (m₁+m₂)( g sinθ₁cosδ − L₁θ̇₁²sinδ − g sinθ₂ ) ] / [ (L₂/L₁)·((m₁+m₂)L₁ − m₂L₁cos²δ) ]<br>
+      位置换算同样取自源码：x₁ = L₁sinθ₁，y₁ = −L₁cosθ₁，x₂ = x₁ + L₂sinθ₂，y₂ = y₁ − L₂cosθ₂。</p>
+      <p>网页版新增：① 可选的速度阻尼项 −γθ̇（原版为无阻尼理想模型，默认 γ = 0 与源码等价）；② 大角度宽散布初值模式；③ 颜色按 matplotlib plasma 色带映射初始偏移量大小，与源码一致。</p>
+    </details>
+  </div>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

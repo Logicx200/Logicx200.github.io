@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>Python 侧仿真结果报告 v1.0 · 说明 · 学哲玩</title>
+<meta name="description" content="相图、临界曲线与敏感性分析">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 红外 · 大气仿真</p><h1 class="work-doc-title">Python 侧仿真结果报告 v1.0</h1><p class="work-doc-sub">相图、临界曲线与敏感性分析</p><div class="work-doc-meta"><span>红外 · 大气仿真</span><span>23 个文件</span><span>3.3 MB</span><span class="tag">红外探测</span><span class="tag">敏感性分析</span><span class="tag">Sobol</span><span class="tag">仿真报告</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/sim-results" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="仿真结果报告-v1.0.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="复杂大气环境红外目标探测仿真python-侧仿真结果报告v10">复杂大气环境红外目标探测仿真——Python 侧仿真结果报告（v1.0）</h2>
+<blockquote><p>运行环境：Python 3.11 / numpy / scipy / matplotlib；一次完整运行约 20 s。 代码：<code>run_sim.py</code> + <code>irsim/</code>；数据：<code>sim_results/data/*.csv</code>；图：<code>sim_results/figures/*.png</code>。 <strong>重要说明</strong>：本报告基于简化物理模型（非逐线/带模型），结论用于<strong>方法验证、趋势判断与临界边界设计</strong>，绝对作用距离需用 COSSIM/libRadtran 复核（见第 10 节）。</p></blockquote>
+<hr>
+<h2 id="1-摘要">1. 摘要</h2>
+<p>在参考系统（100 mm 口径、f=250 mm、F/2.5、15 μm 像元、IFOV=0.06 mrad、NETD=30 mK）与目标（等效尺寸 2.3 m、ΔT=10 K）下，得到：</p>
+<div class="table-container"><table><thead><tr><th>结论</th><th>数值</th></tr></thead><tbody><tr><td>识别任务（N50=8）基准 R50</td><td><strong>2.62 km</strong>（R90=0.89 km）</td></tr><tr><td>识别距离的物理上限（衍射极限）</td><td><strong>2.87 km</strong> → 识别距离由口径/波段决定，大气只在雾/雨时显著</td></tr><tr><td>探测任务（N50=2）基准距离 Rdet</td><td><strong>9.66 km</strong></td></tr><tr><td>浓雾（MOR=0.8 km, α=0）</td><td>Rdet <strong>0.95 km</strong>（−90%），R50 0.84 km</td></tr><tr><td>雨等效（MOR=8 km, α=0）</td><td>Rdet <strong>5.64 km</strong>（−42%）</td></tr><tr><td>强湍流（Cn²=1e-13）</td><td>Rdet <strong>6.43 km</strong>（−33%），R50 2.25 km</td></tr><tr><td>沙尘 + MWIR（MOR=4, α=0.3）</td><td>Rdet <strong>4.73 km</strong>，R50 2.65 km</td></tr><tr><td>MWIR 基准</td><td>Rdet 8.22 km（比 LWIR 短 15%），R50 3.20 km（比 LWIR 长 22%）</td></tr><tr><td>主导大气参数（LWIR 探测距离 Sobol ST）</td><td>α <strong>0.60</strong>、MOR <strong>0.46</strong>、Cn² 0.10、w 0.01、ΔT 0.02</td></tr></tbody></table></div>
+<p>此外还生成了 <strong>4 张天气因子两两组合热力图（图 8–11）</strong>：把 MOR、α、w、Cn² 两两组合成 6 个切片，用于展示任意两个天气参数共同作用下的性能边界（见 5.4 节）。</p>
+<p>三条核心发现：</p>
+<ol><li><strong>识别距离被衍射极限“锁死”</strong>：100 mm 口径、8 μm–12 μm 下识别 2.3 m 目标的物理上限约 2.87 km，基准 R50=2.62 km 已接近该上限；复杂大气对识别距离的影响主要发生在 MOR&lt;1 km 的雾/雨，其余天气下差异在 0.5 km 以内。</li><li><strong>探测距离才是“复杂大气”的主战场</strong>：同一系统探测距离 9.66 km，浓雾降到 0.95 km、雨降到 5.64 km、强湍流降到 6.43 km；相图与临界曲线（第 6 节）都建立在这个任务上。</li><li><strong>LWIR 对霾“免疫”、对灰消光“致命”</strong>：同样 MOR=2 km，α=0（雾/雨灰消光）时 Rdet=2.27 km，α=1.3（霾）时 Rdet=9.33 km，相差 4.1 倍；MWIR 对 MOR/α 更敏感（沙尘 MWIR 的 Rdet 4.73 km 仅为基准的 49%）。</li></ol>
+<hr>
+<h2 id="2-模型与方法">2. 模型与方法</h2>
+<h3 id="21-链路">2.1 链路</h3>
+<pre><code>大气状态 (MOR, α, w, Cn²)
+   │
+   ├─► 消光谱 β(λ) = β_aer(λ) + β_H2O(λ) + β_CO2(λ)  ──► τ_band（波段加权）
+   │
+   ├─► 视在温差 ΔT_app = τ_band · ΔT
+   │
+   ├─► 传感器 MTF 链：衍射 · 像元 sinc · 湍流 · 抖动 · 电子学
+   │        └─► MRTD(f) = k·NETD / MTF_sys(f)
+   │
+   ├─► 由 MRTD(f)=ΔT_app 求最高可分辨频率 f_max
+   │
+   ├─► N = f_max · θ_target（θ = 目标尺寸/距离）
+   │
+   └─► P_d(N) = (N/N50)^E / [1+(N/N50)^E] ──► R50 / R90（求根）与 Rdet</code></pre>
+<h3 id="22-关键参数">2.2 关键参数</h3>
+<div class="table-container"><table><thead><tr><th>项目</th><th>取值</th><th>说明</th></tr></thead><tbody><tr><td>口径/焦距/F#</td><td>100 mm / 250 mm / <strong>F2.5</strong></td><td>设计文档基线写 F#=2.0 与 f/D 不符，本报告按实际 2.5 计算，需统一</td></tr><tr><td>像元/IFOV</td><td>15 μm / 0.06 mrad</td><td>p/f</td></tr><tr><td>NETD</td><td>30 mK</td><td>制冷型假设</td></tr><tr><td>目标</td><td>2.3 m，ΔT=10 K（低对比 3 K）</td><td>等效临界尺寸</td></tr><tr><td>N50</td><td>识别 8.0；探测 2.0</td><td>Johnson/NVThermIP 经验值，须绑定来源</td></tr><tr><td>TTPF 指数 E</td><td>2.0</td><td>需按数据集标定</td></tr><tr><td>MRTD 系数 k</td><td>2.5</td><td>MRTD(0)=2.5·NETD，需实测标定</td></tr><tr><td>湍流</td><td>Cn² 1e-16–1e-13，r0=0.185λ^{6/5}(Cn²L)^{-3/5}</td><td>Fried 1966；ITU-R P.1817</td></tr><tr><td>大气</td><td>β_aer=3.912/MOR·(0.55/λ)^α；水汽/CO2 参数化</td><td>Koschmieder、Ångström、OPAC/HITRAN 简化</td></tr></tbody></table></div>
+<h3 id="23-假设与局限必须在正式报告中声明">2.3 假设与局限（必须在正式报告中声明）</h3>
+<ol><li><strong>大气是非逐线参数化模型</strong>：水汽连续吸收与 CO2 4.3 μm 带用标定系数近似，未含 O₃/N₂O/CH₄、多次散射、气溶胶散射相函数与 veiling 光；正式版由 libRadtran/MODTRAN 提供 τ(λ)、L_path(λ)。</li><li><strong>水平均匀、局地热平衡</strong>；未含斜程、云、温度廓线、逆温。</li><li><strong>MRTD 为工程近似</strong>（k·NETD/MTF），未含 3D 噪声（光子/读出/1/f/FPN）、NUC、人眼 CTF 与 TTP 链；MRTD 系数 k 与 TTPF 指数 E 未用实测数据标定。</li><li><strong>目标为均匀面源</strong>，无纹理、无运动模糊；识别判据基于周期数 N，未做图像级观察者实验。</li><li>因此：<strong>趋势、相对量级、临界边界可信；绝对距离需 COSSIM 锚点校验</strong>。</li></ol>
+<h3 id="24-自检v1-层">2.4 自检（V1 层）</h3>
+<div class="table-container"><table><thead><tr><th>检查</th><th>结果</th></tr></thead><tbody><tr><td>透过率极限：MOR=1000 km、w=0.01 cm</td><td>τ_band=0.9984 → 合理</td></tr><tr><td>P_d(R) 随距离单调下降</td><td>图 4 通过</td></tr><tr><td>R50 求根区间与单调性</td><td>全部 24 个确定性工况收敛</td></tr><tr><td>与衍射极限一致</td><td>R50=2.62 km vs 上限 2.87 km，自洽</td></tr><tr><td>GP 代理模型 5 折 CV R²</td><td>0.992–0.999</td></tr></tbody></table></div>
+<hr>
+<h2 id="3-确定性工况结果">3. 确定性工况结果</h2>
+<p>完整表见 <code>data/cases_metrics.csv</code>，关键工况：</p>
+<div class="table-container"><table><thead><tr><th>工况</th><th>波段</th><th>τ_band</th><th>ΔT_app (K)</th><th>N（@4 km）</th><th>P_d@4 km</th><th>R50 (km)</th><th>Rdet (km)</th></tr></thead><tbody><tr><td>A0 基准</td><td>LWIR</td><td>0.816</td><td>8.16</td><td>5.17</td><td>0.294</td><td>2.62</td><td><strong>9.66</strong></td></tr><tr><td>B3 中等霾 MOR=5</td><td>LWIR</td><td>0.769</td><td>7.69</td><td>5.15</td><td>0.293</td><td>2.61</td><td>9.55</td></tr><tr><td>B10 w=0.5 cm</td><td>LWIR</td><td>0.924</td><td>9.24</td><td>5.21</td><td>0.298</td><td>2.63</td><td>9.89</td></tr><tr><td>B12 w=5 cm</td><td>LWIR</td><td>0.531</td><td>5.31</td><td>5.00</td><td>0.281</td><td>2.57</td><td>8.83</td></tr><tr><td>B15 强湍流 Cn²=1e-13</td><td>LWIR</td><td>0.816</td><td>8.16</td><td>3.86</td><td>0.189</td><td>2.25</td><td>6.43</td></tr><tr><td>B16 低对比 ΔT=3 K</td><td>LWIR</td><td>0.816</td><td>2.45</td><td>4.62</td><td>0.250</td><td>2.37</td><td>8.52</td></tr><tr><td>B17 MWIR 基准</td><td>MWIR</td><td>0.179</td><td>1.79</td><td>6.02</td><td>0.361</td><td>3.20</td><td>8.22</td></tr><tr><td>C1 浓雾 MOR=0.8</td><td>LWIR</td><td>≈0</td><td>≈0</td><td>0</td><td>0</td><td>0.84</td><td>0.95</td></tr><tr><td>C3 沙尘+MWIR</td><td>MWIR</td><td>0.026</td><td>0.26</td><td>3.53</td><td>0.163</td><td>2.65</td><td>4.73</td></tr><tr><td>C4 雨等效 MOR=8, α=0</td><td>LWIR</td><td>0.086</td><td>0.86</td><td>3.90</td><td>0.192</td><td>2.34</td><td>5.64</td></tr><tr><td>C5 晴空+强湍流</td><td>LWIR</td><td>0.816</td><td>8.16</td><td>3.86</td><td>0.189</td><td>2.25</td><td>6.43</td></tr><tr><td>C6 干冷 ΔT=3 K</td><td>LWIR</td><td>0.872</td><td>2.62</td><td>4.85</td><td>0.269</td><td>2.44</td><td>9.49</td></tr></tbody></table></div>
+<p><strong>读表结论</strong></p>
+<ul><li>R50 几乎不随 MOR/α 变化（2.25–2.66 km），因为识别距离接近衍射极限（2.87 km），大气再差也只是把上限往下压一点；</li><li>Rdet 对大气敏感：浓雾 −90%、雨 −42%、强湍流 −33%、沙尘 MWIR −51%、MWIR 基准 −15%；</li><li>水汽 w 从 0.5→5 cm，Rdet 9.89→8.83 km（−10.7%）；低对比 ΔT=3 K 使 Rdet −11.8%。</li></ul>
+<hr>
+<h2 id="4-波段透过率谱">4. 波段透过率谱</h2>
+<p><img src="figures/fig01_spectra.png" alt="图1 典型工况谱" loading="lazy" decoding="async"></p>
+<ul><li>MWIR：CO2 4.3 μm 带在 3.9–4.55 μm 形成深谷；沙尘（MOR=4, α=0.3）使 3–5 μm 整体透过率降到 ~0.03；</li><li>LWIR：8–12 μm 窗区在基准下 5 km 平均透过率 0.82，水汽使边缘（8.0、12.0 μm）下降更快；</li><li>灰消光（雾、雨、α→0）在 LWIR 依然致命：C1 浓雾 5 km 透过率≈0，而同等 MOR 的霾（α=1.3）仍有约 0.77。</li></ul>
+<hr>
+<h2 id="5-参数相图">5. 参数相图</h2>
+<p><strong>LWIR 探测距离相图</strong>（w=1.5 cm, Cn²=1e-14, ΔT=10 K）：</p>
+<p><img src="figures/fig02_Rdet_phase_LWIR.png" alt="图2 LWIR Rdet 相图" loading="lazy" decoding="async"></p>
+<p><strong>MWIR 探测距离相图</strong>（同参数）：</p>
+<p><img src="figures/fig02_Rdet_phase_MWIR.png" alt="图2 MWIR Rdet 相图" loading="lazy" decoding="async"></p>
+<p>读图要点：</p>
+<ol><li>白色 8 km 等值线把相图分成&quot;满足/不满足&quot;两区；LWIR 的等值线在 α≈0 时延伸到 MOR≈19 km，α=1.3 时收缩到 MOR≈0.44 km；MWIR 的等值线整体左移，说明对同一天气更敏感；</li><li><strong>同 MOR 不同 α 的差异极大</strong>：MOR=2 km 时，LWIR 在 α=0→2.27 km、α=1.3→9.33 km（4.1 倍）；这就是&quot;只用一个能见度参数不够&quot;的直接证据；</li><li>相图右上角（大 MOR、大 α）为&quot;性能饱和区&quot;，此时限制来自衍射/MTF 而非大气；左下角为&quot;大气失效区&quot;。</li></ol>
+<p><strong>识别距离相图</strong>（LWIR，N50=8）：</p>
+<p><img src="figures/fig02b_R50_phase_LWIR.png" alt="图2b LWIR R50 相图" loading="lazy" decoding="async"></p>
+<p>识别距离在绝大多数 (MOR, α) 上处于 2.6 km 的平台（黄色），仅在浓雾/灰消光角落塌缩——与&quot;识别受衍射极限约束&quot;的结论一致。</p>
+<h3 id="54-天气因子两两组合热力图图-811">5.4 天气因子两两组合热力图（图 8–11）</h3>
+<p>把四个天气参数（MOR、α、w、Cn²）两两组合成 6 个二维切片；未在坐标轴上的参数取标称值（MOR=5 km、α=1.3、w=1.5 cm、Cn²=1e-14、ΔT=10 K）。颜色为探测距离 Rdet，白线为 4/6/8 km 等值线。</p>
+<p><strong>图 8 LWIR 六个两两组合面板</strong>：</p>
+<p><img src="figures/fig08_weather_matrix_LWIR_Rdet.png" alt="图8 LWIR 天气因子矩阵" loading="lazy" decoding="async"></p>
+<p><strong>图 9 MWIR 六个两两组合面板</strong>：</p>
+<p><img src="figures/fig09_weather_matrix_MWIR_Rdet.png" alt="图9 MWIR 天气因子矩阵" loading="lazy" decoding="async"></p>
+<p><strong>图 10 LWIR 识别距离矩阵</strong>：</p>
+<p><img src="figures/fig10_weather_matrix_LWIR_R50.png" alt="图10 LWIR 识别距离矩阵" loading="lazy" decoding="async"></p>
+<p><strong>图 11 波段对比（MOR × α）</strong>：</p>
+<p><img src="figures/fig11_band_compare_Rdet.png" alt="图11 波段对比" loading="lazy" decoding="async"></p>
+<p>逐面板读图要点：</p>
+<ol><li><strong>MOR×α</strong>：等值线沿对角带分布；α 从 1.3 降到 0，维持 8 km 所需的 MOR 从 0.44 km 抬升到 19 km——α 是&quot;同一能见度下性能差异&quot;的总开关；MWIR 等值线整体左下移，对 MOR/α 更敏感。</li><li><strong>MOR×w</strong>：水汽单独作用弱，8 km 线仅在 MOR&lt;1 且 w&gt;4 cm 时略上翘，与 Sobol 中 w 的 ST≈0.01 一致。</li><li><strong>MOR×Cn²</strong>：8 km 线在 Cn²≈2e-14 附近近似水平，说明<strong>湍流容限基本由 Cn² 单独决定</strong>；强湍流（&gt;5e-14）时等值线略弯，二者弱叠加。</li><li><strong>α×w、α×Cn²</strong>：形状与 MOR×α 类似（α 主导）；α 低时对 w/Cn² 更敏感。</li><li><strong>w×Cn²</strong>：8 km 线呈对角，水汽与湍流存在弱补偿（w 大→吸收强→可容忍 Cn² 略低）。</li><li><strong>识别矩阵（图 10）</strong>：几乎全部处于 2.5 km 平台，仅左下角（α&lt;0.2 且 MOR&lt;1）塌缩——识别任务由衍射极限主导，天气只在极端条件起作用。</li><li><strong>波段差（图 11）</strong>：MWIR−LWIR 在大部分区域为负（MWIR 探测距离更短，最多约 −4 km）；在 α≈0 且 MOR 低时两者都失效、差值趋于 0。LWIR 适合远距探测，MWIR 因衍射极限小更适合识别（R50：3.20 vs 2.62 km）。</li></ol>
+<blockquote><p>注意：热力图是二维切片，固定值改变时等值线会移动；正式报告建议附 2–3 个固定值切片（基准/最不利）并用临界值法（实验设计方案 5.9 节）校核。</p></blockquote>
+<hr>
+<h2 id="6-等性能边界临界曲线">6. 等性能边界（临界曲线）</h2>
+<p><img src="figures/fig03_critical_curves.png" alt="图3 临界曲线" loading="lazy" decoding="async"></p>
+<p>以&quot;探测任务 Rdet=8 km&quot;为阈值：</p>
+<div class="table-container"><table><thead><tr><th>曲线</th><th>结果</th></tr></thead><tbody><tr><td>临界能见度 MOR*(α)</td><td>α=0 时 <strong>18.6 km</strong>；α=0.2 时 10.4 km；α=1.0 时 1.04 km；α=1.3 时 <strong>0.44 km</strong></td></tr><tr><td>湍流容限 Cn²*(MOR)</td><td>1.84e-14（MOR=0.6）→ 4.05e-14（MOR=23），随能见度提高而放宽</td></tr><tr><td>水汽容限 w*(MOR)</td><td>3.39 cm（MOR=0.6）→ 7.94 cm（MOR=4.2）；MOR&gt;4 时 w≤8 cm 不再构成限制</td></tr></tbody></table></div>
+<p>使用方式：给定天气（MOR, α），查 MOR*(α) 判断是否满足 8 km 探测；若 MOR 不足，查 Cn²*(MOR) 得到允许的湍流上限；LWIR 下水汽通常不是限制项（与 Sobol 结果一致）。</p>
+<blockquote><p>说明：α&gt;1.3 时 MOR*(α) 落出搜索区间（0.4 km 以下），表示该天气下 8 km 探测仍可满足；这是等性能分析的&quot;饱和&quot;表现，报告时应标注搜索范围。</p></blockquote>
+<hr>
+<h2 id="7-探测概率曲线">7. 探测概率曲线</h2>
+<p><img src="figures/fig04_pd_curves.png" alt="图4 P_d(R)" loading="lazy" decoding="async"></p>
+<ul><li>基准 A0 与中等霾 B3 的 P_d(R) 曲线几乎重合（LWIR 对霾不敏感），P_d=0.5 在 9.5–9.7 km；</li><li>强湍流 C5（红）与雨等效 C4（绿）在 6–8 km 明显下压；</li><li>浓雾 C1（点线）在 1 km 内即跌破 0.5；</li><li>沙尘 MWIR C3（紫）在 3–5 km 快速下降，是&quot;波段选择&quot;最典型的反例。</li></ul>
+<hr>
+<h2 id="8-全局敏感性morris--sobol">8. 全局敏感性（Morris + Sobol）</h2>
+<p><img src="figures/fig05_sobol.png" alt="图5 Sobol" loading="lazy" decoding="async"></p>
+<ul><li>代理模型：每个波段 150 点 LHS + GP（RBF 核，逐维长度尺度最大化边际似然），5 折 CV R²≥0.99；</li><li>LWIR 探测距离：α（ST=0.60）&gt; MOR（0.46）&gt;&gt; Cn²（0.10）&gt; ΔT（0.02）&gt; w（0.01）；</li><li>MWIR 探测距离：MOR（0.56）&gt; α（0.39）&gt; w（0.07）≈ Cn²（0.07）&gt; ΔT（0.04）。</li></ul>
+<p><strong>重要提醒</strong>：LWIR 中 α 与 MOR 的 ST 之和为 1.07（MWIR 为 0.95），且两者一阶指数都显著——这说明 <strong>MOR 与 α 在单波段内高度共线</strong>（β(λ) ≈ β₅₅₀·(0.55/λ)^α，在 λ_eff 附近二者近似可互换）。因此：</p>
+<ul><li>单波段数据<strong>无法唯一分离</strong>&quot;能见度&quot;和&quot;气溶胶类型&quot;的贡献；</li><li>要解耦，需多波段/光谱信息（如 MWIR+LWIR 联立）或固定 β(λ_eff) 做条件敏感性分析；</li><li>报告里不能把 MOR 与 α 的主效应当成独立结论，必须说明共线性。</li></ul>
+<hr>
+<h2 id="9-湍流的影响">9. 湍流的影响</h2>
+<p><img src="figures/fig06_turbulence.png" alt="图6 湍流" loading="lazy" decoding="async"></p>
+<ul><li>Cn² 从 1e-16 增到 1e-12，Rdet 从约 10.3 km 单调降到 3.0 km；</li><li>拐点在 Cn²≈1e-14：更强的湍流使 MTF 在低中频就下降，探测距离快速损失；</li><li>在弱湍流端（Cn²≤1e-15）Rdet 饱和于 10.3 km，说明此时限制来自口径/衍射与大气吸收，而不是湍流。</li></ul>
+<hr>
+<h2 id="10-讨论">10. 讨论</h2>
+<h3 id="101-为什么复杂大气在本系统上体现为探测任务而非识别任务">10.1 为什么&quot;复杂大气&quot;在本系统上体现为探测任务而非识别任务？</h3>
+<p>识别要求 N=8 个周期跨过目标，几何关系要求 R ≤ D·Dₜ/(N·λ) = 0.1×2.3/(8×10⁻⁵) ≈ 2.87 km（衍射极限）。在 2.6 km 附近，即使 MOR=2 km 的霾，τ 仍有约 0.89，大气损失不足以显著改变识别距离；只有雾/雨（α≈0）才会把 τ 压到 0.1 以下。而探测只需 N=2，作用距离推到 9–10 km，此时大气累积衰减、湍流 MTF、水汽/CO2 吸收都开始起作用——所以<strong>&quot;复杂大气&quot;的敏感性随任务难度（N50）和距离增加而放大</strong>。</p>
+<h3 id="102-对方案设计的启示">10.2 对方案设计的启示</h3>
+<ol><li><strong>任务定义决定大气参数的重要性</strong>：识别任务下 Sobol 的 α/MOR 贡献主要来自低 MOR 角落；探测任务下它们是全局主导。报告应分别给出两类任务的结论。</li><li><strong>MOR–α 共线</strong>：单波段内不可分离，建议用 MWIR/LWIR 双波段或光谱数据解耦；这也支持&quot;把 α 作为连续参数、用多波段约束&quot;的设计。</li><li><strong>口径与波段是&quot;大气敏感性&quot;的开关</strong>：100 mm 下识别被衍射锁死；若换 150–200 mm 口径，识别距离上限升到 4.3–5.7 km，大气参数的作用会显著增强——这是&quot;方案优化&quot;环节很好的切入点。</li><li><strong>等性能边界比热力图更适合答辩</strong>：图 3 的三条临界曲线直接回答&quot;什么天气下还能保证 8 km 探测&quot;，比单纯的颜色图更有结论性。</li></ol>
+<h3 id="103-与-cossim-的衔接待执行">10.3 与 COSSIM 的衔接（待执行）</h3>
+<p>本报告的 Python 链路与 COSSIM 的分工：</p>
+<div class="table-container"><table><thead><tr><th>对比项</th><th>Python</th><th>COSSIM</th></tr></thead><tbody><tr><td>τ_band / 谱形</td><td>简化参数化（待替换 libRadtran）</td><td>大气模块输出/图像反演</td></tr><tr><td>图像对比度/SNR</td><td>由 ΔT_app 计算</td><td>图像灰度/辐射值</td></tr><tr><td>识别距离 R50</td><td>MRTD→N→TTPF</td><td>需用同一指标模型作用于 COSSIM 图像</td></tr><tr><td>探测距离 Rdet</td><td>同上</td><td>同上</td></tr></tbody></table></div>
+<p>锚点建议：A0、B3、C1、C3、C5 五个工况（覆盖基准/中等霾/浓雾/沙尘/强湍流）——与本报告第 3 节编号一致。对比判据沿用设计文档 6.3：逐层比较，最终指标偏差 ≤15% 且落入 U(k=2)。</p>
+<hr>
+<h2 id="11-可复现性">11. 可复现性</h2>
+<div class="table-container"><table><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody><tr><td>运行命令</td><td><code>python run_sim.py</code>（约 20 s）</td></tr><tr><td>代码</td><td><code>run_sim.py</code>、<code>irsim/model.py</code>、<code>irsim/experiments.py</code>、<code>irsim/plots.py</code></td></tr><tr><td>数据</td><td><code>sim_results/data/cases_metrics.csv</code>、<code>lhs_metrics.csv</code>、<code>sobol_indices.csv</code>、<code>morris_indices.csv</code>、<code>critical_curves_Rdet8.csv</code>、<code>phase_Rdet_grid.csv</code>、<code>weather_matrix.csv</code></td></tr><tr><td>图件</td><td><code>sim_results/figures/fig01–fig11</code></td></tr><tr><td>汇总</td><td><code>sim_results/summary.json</code></td></tr></tbody></table></div>
+<hr>
+<h2 id="12-下一步">12. 下一步</h2>
+<ol><li><strong>替换大气模块</strong>：用 libRadtran 输出 τ(λ)、L_path(λ)，按波段积分替换参数化模型（接口已按 <code>band_state</code> 预留）；</li><li><strong>升级性能模型</strong>：TTP/NVThermIP + 3D 噪声 + NUC，替换 <code>MRTD=k·NETD/MTF</code> 的工程近似；</li><li><strong>COSSIM 锚点对比</strong>：5 个锚点做图像级与指标级双重对比，形成第 10.3 节的对比表；</li><li><strong>解耦 MOR–α</strong>：用 MWIR+LWIR 双波段联合反演或条件敏感性分析；</li><li><strong>方案优化</strong>：以口径、波段、F#、NETD 为设计变量，做&quot;成本–探测距离&quot;帕累托（对应竞赛&quot;方案优化&quot;环节）；</li><li><strong>补充图像级仿真</strong>：若时间允许，加气溶胶前向散射 MTF/veiling 模型，使图像退化更真实。</li></ol></article><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

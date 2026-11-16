@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>817《光学》× Python 仿真 · 说明 · 学哲玩</title>
+<meta name="description" content="考研光学 12 个分章仿真 + 79 项公式互验">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 光学 · 量子 · 物理仿真</p><h1 class="work-doc-title">817《光学》× Python 仿真</h1><p class="work-doc-sub">考研光学 12 个分章仿真 + 79 项公式互验</p><div class="work-doc-meta"><span>光学 · 量子 · 物理仿真</span><span>38 个文件</span><span>3.7 MB</span><span class="tag">考研817</span><span class="tag">光学仿真</span><span class="tag">Python</span><span class="tag">学习指南</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/817-optics" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="817光学-python-仿真-学习指南">817《光学》× Python 仿真 学习指南</h2>
+<blockquote><p>一份把「考研光学」和「能跑起来的代码」绑在一起的学习方案。 每背一个公式，就让程序把它算一遍；算不出来的地方，就是你的漏洞。</p></blockquote>
+<hr>
+<h2 id="目录">目录</h2>
+<ol><li><a href="#0-30-秒上手">30 秒上手</a></li><li><a href="#1-为什么要用-python-学光学">为什么要用 Python 学光学</a></li><li><a href="#2-817-考纲全景--仿真映射表">817 考纲全景 × 仿真映射表</a></li><li><a href="#3-环境搭建">环境搭建</a></li><li><a href="#4-四个必须会的-python-工具">四个必须会的 Python 工具</a></li><li><a href="#5-16-周学习路线">16 周学习路线</a></li><li><a href="#6-分章精讲公式--仿真--考点">分章精讲：公式 → 仿真 → 考点</a></li><li><a href="#7-三种核心学习方法">三种核心学习方法</a></li><li><a href="#8-应试技巧">应试技巧</a></li><li><a href="#9-常见错误清单">常见错误清单</a></li><li><a href="#10-工程文件清单与扩展">工程文件清单与扩展</a></li></ol>
+<ul><li><a href="#附录-a公式速查">附录 A：公式速查</a></li><li><a href="#附录-b参考书目与在线资源">附录 B：参考书目与在线资源</a></li></ul>
+<hr>
+<h2 id="0-30-秒上手">0. 30 秒上手</h2>
+<pre><code class="language-powershell">cd &quot;817光学-Python仿真&quot;
+
+# 1) 装依赖（numpy / scipy / matplotlib / sympy，四个库）
+pip install -r requirements.txt
+
+# 2) 跑物理自检：79 项公式与仿真互验，全绿说明环境没问题
+python selfcheck.py
+
+# 3) 一键跑完全部 12 个仿真实验，图存到 outputs/
+python run_all.py
+
+# 4) 只看某一章
+python run_all.py d07 d08</code></pre>
+<p>跑完 <code>outputs/</code> 里会出现 12 张图。<strong>先看图，再看第六章对应的小节</strong>，比按顺序读效率高得多。</p>
+<hr>
+<h2 id="1-为什么要用-python-学光学">1. 为什么要用 Python 学光学</h2>
+<p>考研复习的三大痛点，仿真恰好都能治：</p>
+<div class="table-container"><table><thead><tr><th>痛点</th><th>传统做法</th><th>仿真做法</th></tr></thead><tbody><tr><td><strong>公式记混</strong></td><td>反复抄写、靠&quot;感觉&quot;</td><td>让程序算一遍，与课本数值对不上就是记错了</td></tr><tr><td><strong>物理图像模糊</strong></td><td>盯着一张静态插图想象</td><td>调参数看曲线怎么变（这就是&quot;参数地图&quot;）</td></tr><tr><td><strong>不会估数量级</strong></td><td>算完了也不知道对不对</td><td>用数量级是否合理反向检验自己的答案</td></tr><tr><td><strong>抽象概念（相位、频谱、光瞳）</strong></td><td>死记定义</td><td>画出来看，反而不用背</td></tr></tbody></table></div>
+<p>但要<strong>先说清楚边界</strong>：</p>
+<ul><li>仿真<strong>不能替代</strong>推导。考研大题考的是&quot;从公式 A 推到结果 B&quot;，程序只能验证结果。</li><li>仿真<strong>不能替代</strong>做题。它的定位是<strong>校验器</strong>和<strong>直觉来源</strong>。</li><li>本指南的建议比例：<strong>推导与做题 70%，仿真 30%</strong>。仿真省下来的时间应该还给刷题。</li></ul>
+<hr>
+<h2 id="2-817-考纲全景--仿真映射表">2. 817 考纲全景 × 仿真映射表</h2>
+<p>本工程按<strong>中国科学院大学 817《光学》</strong>考纲搭建（<a href="https://admission.ucas.ac.cn/Content/Upload/2025/7/817%20%e5%85%89%e5%ad%a6.pdf" target="_blank" rel="noopener noreferrer">考纲原文</a>，<a href="https://m.koolearn.com/kaoyan/20250902/1870285.html" target="_blank" rel="noopener noreferrer">整理版</a>）：</p>
+<ul><li>总分 <strong>150 分</strong>，考试时间 <strong>180 分钟</strong>，闭卷笔试</li><li><strong>物理光学约 60%</strong>、<strong>应用光学约 40%</strong></li><li>基本概念与理论 60%、综合与实际应用 40%</li><li>主要题型：<strong>简答题、计算题</strong></li><li>参考书：石顺祥等《物理光学与应用光学（第二版）》；郁道银等《工程光学（第二版）》</li></ul>
+<blockquote><p>若你的目标院校用的是别的大纲（如北理工、长理工的 817），第一章到第三章内容基本重合， 直接按下面的表格对照增删即可，工程代码不用改。</p></blockquote>
+<div class="table-container"><table><thead><tr><th>考纲条目</th><th>核心公式</th><th>对应仿真</th><th>一定要看到的结论</th></tr></thead><tbody><tr><td>光波特性、频谱</td><td>$E=A\cos(kz-\omega t)$，$\lambda_n=\lambda_0/n$</td><td><code>wave.plane_wave</code> <code>group_velocity</code></td><td>相速度 ≠ 群速度（色散介质）</td></tr><tr><td>反射折射、菲涅耳公式</td><td>$r_s,r_p,t_s,t_p$</td><td><code>demos/d01</code></td><td>正入射 $R=((n_1-n_2)/(n_1+n_2))^2$；$r_s&lt;0$ 即半波损失</td></tr><tr><td>布儒斯特角</td><td>$\tan i_B=n_2/n_1$</td><td><code>wave.brewster_angle</code></td><td>此处 $r_p=0$，反射光全偏振</td></tr><tr><td>全反射、相移</td><td>$\sin i_C=n_2/n_1$；$\tan\frac{\delta_s}{2}$</td><td><code>wave.tir_phase_shifts</code></td><td>$\delta_p-\delta_s$ 最大约 45°→ 菲涅耳菱体</td></tr><tr><td>偏振态表示</td><td>琼斯矢量、斯托克斯参量</td><td><code>demos/d02</code></td><td>波片改偏振态不改光强</td></tr><tr><td>双光束干涉</td><td>$\Delta=d\sin\theta$，$\Delta x=\lambda D/d$</td><td><code>demos/d03</code></td><td>条纹间距 ∝ λ、∝ D、∝ 1/d</td></tr><tr><td>平行平板多光束</td><td>爱里公式 $T=\frac{1}{1+F\sin^2(\delta/2)}$</td><td><code>demos/d04</code></td><td>$F^*=\pi\sqrt R/(1-R)$；多光束条纹极锐</td></tr><tr><td>光学薄膜</td><td>$R=\left(\frac{n_0n_s-n^2}{n_0n_s+n^2}\right)^2$</td><td><code>demos/d05</code></td><td>增透条件 $n=\sqrt{n_0n_s}$，$d=\lambda_0/4n$</td></tr><tr><td>干涉仪</td><td>牛顿环 $r_m=\sqrt{m\lambda R}$；F-P $FSR=\lambda^2/2nd$</td><td><code>demos/d06</code></td><td>迈克尔逊移 $\lambda/2$ 移一条条纹</td></tr><tr><td>夫琅禾费单缝</td><td>$a\sin\theta=k\lambda$</td><td><code>demos/d07</code></td><td>中央亮纹半角宽 $\lambda/a$</td></tr><tr><td>圆孔、分辨本领</td><td>$\theta=1.22\lambda/D$</td><td><code>diffraction.airy_radius</code></td><td>艾里斑，瑞利判据</td></tr><tr><td>光栅</td><td>$d\sin\theta=m\lambda$；$R=mN$；缺级 $d/a=m/k$</td><td><code>demos/d07</code></td><td>位置由 d 定、锐度由 N 定、包络由 a 定</td></tr><tr><td>菲涅耳衍射</td><td>$I/I_0=4\sin^2(\pi N/2)$，$N=a^2/\lambda z$</td><td><code>demos/d08</code></td><td>$N=1$ 亮 4 倍；波带片 $f_m=a^2/m\lambda$</td></tr><tr><td>直边衍射</td><td>$v=x\sqrt{2/\lambda z}$</td><td><code>diffraction.fresnel_edge_intensity</code></td><td>阴影边界 $I=I_0/4$，极大 1.37$I_0$</td></tr><tr><td>傅里叶光学</td><td>后焦面 = 物函数的频谱</td><td><code>demos/d09</code></td><td>CTF 与 OTF 截止频率差 2 倍</td></tr><tr><td>单轴晶体</td><td>$\frac{1}{n_e^2}=\frac{\cos^2\theta}{n_o^2}+\frac{\sin^2\theta}{n_e^2}$</td><td><code>demos/d12</code></td><td>沿光轴无双折射；方解石走离角 ≈6.2°</td></tr><tr><td>波片、偏振棱镜</td><td>$\delta=2\pi</td><td>n_o-n_e</td><td>d/\lambda$</td><td><code>polarization.waveplate_thickness</code></td><td>1/4 波片：线偏振→圆偏振</td></tr><tr><td>偏光干涉</td><td>$T=\sin^22\varphi\sin^2(\delta/2)$</td><td><code>polarization.polarization_interference_transmission</code></td><td>$\varphi=0$ 时永远消光</td></tr><tr><td>电光/声光/法拉第</td><td>$V_\pi=\lambda/(2n_o^3r_{63})$；$\sin\theta_B=\lambda/2\Lambda$</td><td><code>polarization.pockels_half_wave_voltage</code></td><td>KDP 纵向 $V_\pi\approx7.5$ kV</td></tr><tr><td>折射球面成像</td><td>$n'/l'-n/l=(n'-n)/r$</td><td><code>geometrical.refraction_sphere</code></td><td>与近轴矩阵结果必须完全一致</td></tr><tr><td>理想光学系统</td><td>基点基面、双光组组合</td><td><code>demos/d10</code></td><td>公式和矩阵两条路必须给出同一答案</td></tr><tr><td>光路计算、球差</td><td>$y$- $u$ 递推；实际光线追迹</td><td><code>geometrical.paraxial_trace</code> <code>refract_sphere_real</code></td><td>球差 = 实际交点 − 近轴交点</td></tr><tr><td>光阑</td><td>物方孔径角 $u_i=(D_i/2)/</td><td>B_i</td><td>$</td><td><code>demos/d11</code></td><td>最小者即孔径光阑；其像为入瞳/出瞳</td></tr><tr><td>光学仪器</td><td>$\Gamma_{望远镜}=f_o'/f_e'$；$d=0.61\lambda/NA$</td><td><code>instruments.*</code></td><td>分辨本领由口径/NA 决定，不由放大率决定</td></tr></tbody></table></div>
+<hr>
+<h2 id="3-环境搭建">3. 环境搭建</h2>
+<h3 id="31-最小环境推荐">3.1 最小环境（推荐）</h3>
+<p>需要 <strong>Python ≥ 3.9</strong>（本工程在 3.11.5 + numpy 2.2.6 上验证通过）。</p>
+<pre><code class="language-powershell"># 建虚拟环境（强烈建议，避免污染系统 Python）
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+pip install -r requirements.txt
+python selfcheck.py     # 期望输出：全部 79 项自检通过</code></pre>
+<p><code>requirements.txt</code> 只装四个纯数值库：<code>numpy</code>、<code>scipy</code>、<code>matplotlib</code>、<code>sympy</code>。装得快、坑少。</p>
+<h3 id="32-可选增强">3.2 可选增强</h3>
+<div class="table-container"><table><thead><tr><th>用途</th><th>包</th><th>什么时候值得装</th></tr></thead><tbody><tr><td>交互式笔记本</td><td><code>jupyterlab</code></td><td>想边推公式边出图时</td></tr><tr><td>滑块调参</td><td><code>ipywidgets</code></td><td>做&quot;参数地图&quot;最爽</td></tr><tr><td>三维光场、可缩放图</td><td><code>plotly</code></td><td>想看二维光场立体图</td></tr><tr><td>动画讲解</td><td><code>manim</code></td><td>想录视频/讲给别人听</td></tr><tr><td>专业光学库</td><td><code>prysm</code>、<code>LightPipes</code>、<code>diffractio</code>、<code>rayoptics</code></td><td><strong>学有余力再看</strong>，考研不必依赖</td></tr></tbody></table></div>
+<blockquote><p><strong>建议</strong>：前 8 周只用本工程的四个库。过早引入大而全的光学库，会让你在&quot;调库 API&quot;上耗掉本该做题的时间。</p></blockquote>
+<h3 id="33-中文字体重要">3.3 中文字体（重要）</h3>
+<p>matplotlib 默认字体画不出中文，会显示成方框。本工程在 <code>optics817/plotstyle.py</code> 里自动挑选可用中文字体（微软雅黑 / 黑体 / 思源黑体 …）。函数末尾有：</p>
+<pre><code class="language-python">use_chinese_font()   # 导入 optics817 时自动执行</code></pre>
+<p>如果你自己新建绘图脚本，记得 <code>import optics817</code> 或显式调用一次。</p>
+<hr>
+<h2 id="4-四个必须会的-python-工具">4. 四个必须会的 Python 工具</h2>
+<h3 id="41-numpy广播与网格">4.1 numpy：广播与网格</h3>
+<p>光学仿真 90% 的工作量是「在一个网格上算一个公式」。</p>
+<pre><code class="language-python">import numpy as np
+x = np.linspace(-1e-3, 1e-3, 2000)          # 一维屏坐标
+X, Y = np.meshgrid(x, x)                     # 二维网格
+r = np.hypot(X, Y)                           # 对每个点求半径（广播）</code></pre>
+<p>记住三条：</p>
+<ol><li><strong>一切用数组，不要写循环</strong> —— 循环慢 100 倍，且容易写错。</li><li><code>np.sinc(x)</code> 的定义是 $\sin(\pi x)/(\pi x)$，<strong>带 π</strong>！所以 $\sin\beta/\beta = \texttt{np.sinc}(\beta/\pi)$。这是最容易踩的坑。</li><li>复数就是光学：<code>np.abs(U)**2</code> 得强度，<code>np.angle(U)</code> 得相位。</li></ol>
+<h3 id="42-matplotlib三行出图">4.2 matplotlib：三行出图</h3>
+<pre><code class="language-python">import matplotlib; matplotlib.use(&quot;Agg&quot;)   # 只存图不弹窗，脚本里更快
+import matplotlib.pyplot as plt
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+axes[0, 0].plot(x*1e3, I)
+axes[0, 0].set_xlabel(&quot;屏坐标 x / mm&quot;)
+fig.savefig(&quot;out.png&quot;, dpi=140, bbox_inches=&quot;tight&quot;)</code></pre>
+<h3 id="43-sympy符号推导第-71-节的主角">4.3 sympy：符号推导（第 7.1 节的主角）</h3>
+<p>用来验证你自己推的解析式，而不是代替你推。</p>
+<pre><code class="language-python">import sympy as sp
+n1, n2, i, t = sp.symbols(&quot;n1 n2 i t&quot;, positive=True)
+# 斯涅尔定律 + 菲涅耳 rp，验证布儒斯特角
+rp = (n2*sp.cos(i) - n1*sp.cos(t)) / (n2*sp.cos(i) + n1*sp.cos(t))
+sol = sp.solve(sp.Eq(n1*sp.sin(i), n2*sp.sin(t)), t)[0]
+print(sp.simplify(rp.subs(t, sol)))        # 观察什么条件下为 0
+print(sp.solve(sp.tan(i) - n2/n1, i))      # 得出 i_B</code></pre>
+<h3 id="44-scipy特殊函数与-fft">4.4 scipy：特殊函数与 FFT</h3>
+<pre><code class="language-python">from scipy.special import j1, fresnel   # 贝塞尔函数、菲涅尔积分
+S, C = fresnel(v)          # 注意！scipy 返回的顺序是 (S, C)，别写反
+from scipy.fft import fft2, ifft2, fftshift, ifftshift</code></pre>
+<p><strong>FFT 是仿真利器</strong>：菲涅耳衍射、夫琅禾费衍射、4f 系统、光栅，全都是一两个 FFT。</p>
+<hr>
+<h2 id="5-16-周学习路线">5. 16 周学习路线</h2>
+<p>假设每周有效学习 12–16 小时。<strong>仿真是配角，每周只占 2–3 小时。</strong></p>
+<div class="table-container"><table><thead><tr><th>周</th><th>内容</th><th>仿真任务</th><th>本周产出（可检验）</th></tr></thead><tbody><tr><td>1</td><td>第一章：光波、菲涅耳公式</td><td><code>python run_all.py d01</code></td><td>手推 $R$ 公式并解释两个偏振分量差异</td></tr><tr><td>2</td><td>布儒斯特角、全反射、偏振态</td><td><code>d02</code> + 用 sympy 验证</td><td>说清为什么反射光能全偏振</td></tr><tr><td>3</td><td>第二章：相干性、双光束干涉</td><td><code>d03</code></td><td>独立算出 3 种装置的条纹间距</td></tr><tr><td>4</td><td>多光束干涉、F-P</td><td><code>d04</code></td><td>推导精细度与分辨本领</td></tr><tr><td>5</td><td>光学薄膜</td><td><code>d05</code></td><td>设计一个双面增透膜方案</td></tr><tr><td>6</td><td>干涉仪综合</td><td><code>d06</code></td><td>牛顿环测曲率半径完整解题</td></tr><tr><td>7</td><td><strong>阶段复习 + 第一次自测</strong></td><td>重跑 <code>selfcheck.py</code></td><td>错题本第一版</td></tr><tr><td>8</td><td>第三章：夫琅禾费衍射</td><td><code>d07</code></td><td>单缝/圆孔/光栅三类题全会</td></tr><tr><td>9</td><td>菲涅耳衍射、波带片</td><td><code>d08</code></td><td>半波带法完整推导</td></tr><tr><td>10</td><td>傅里叶光学</td><td><code>d09</code></td><td>解释阿贝成像与空间滤波</td></tr><tr><td>11</td><td>第四章：晶体光学</td><td><code>d12</code></td><td>会画折射率面、会算波片</td></tr><tr><td>12</td><td>第五章：电光/声光/法拉第</td><td><code>d12</code></td><td>会算 $V_\pi$、布喇格角</td></tr><tr><td>13</td><td>第七、八章：几何光学、理想系统</td><td><code>d10</code></td><td>图解法与解析法都能做</td></tr><tr><td>14</td><td>第九章：像差与光阑</td><td><code>d11</code></td><td>光阑判定流程能背下来</td></tr><tr><td>15</td><td>第十章：光学仪器 + 吸收色散散射</td><td><code>instruments</code></td><td>显微镜/望远镜全参数题</td></tr><tr><td>16</td><td><strong>全真模拟 + 查漏</strong></td><td>重跑全部 demo</td><td>每章能自己出 3 道题</td></tr></tbody></table></div>
+<p><strong>每周固定动作</strong>：</p>
+<ol><li>先通读教材该章，把公式自己推一遍（不看书）；</li><li>跑对应 demo，<strong>先猜曲线形状再看图</strong>；</li><li>做课后题 + 真题，错的题记进错题本；</li><li>把错题涉及的量用仿真算一遍，确认自己的答案错在哪一步。</li></ol>
+<hr>
+<h2 id="6-分章精讲公式--仿真--考点">6. 分章精讲：公式 → 仿真 → 考点</h2>
+<h3 id="61-第一章-光的电磁理论基础">6.1 第一章 光的电磁理论基础</h3>
+<p><strong>考点</strong>：光波表示、频谱、菲涅耳公式、布儒斯特角、全反射、偏振态。</p>
+<p><strong>必背公式</strong></p>
+<p>$$r_s=\frac{n_1\cos i-n_2\cos t}{n_1\cos i+n_2\cos t},\qquad r_p=\frac{n_2\cos i-n_1\cos t}{n_2\cos i+n_1\cos t}$$</p>
+<p>$$R_s=|r_s|^2,\quad R_p=|r_p|^2,\quad \tan i_B=\frac{n_2}{n_1},\quad \sin i_C=\frac{n_2}{n_1}\ (n_1&gt;n_2)$$</p>
+<p><strong>跑这个</strong>：<code>python demos/d01_fresnel.py</code></p>
+<p><strong>应该看到</strong></p>
+<ul><li>正入射 $R=0.04$（空气→$n=1.5$ 玻璃），所以未镀膜镜片双面反射损失约 8%；</li><li>$r_p$ 在某角降为 0 —— 那就是布儒斯特角；此处反射光是<strong>完全线偏振</strong>的；</li><li>全反射区 $R\equiv1$，但<strong>相位在变</strong>，且 $\delta_p\neq\delta_s$，最大差约 45°；</li><li>部分反射区 $r_s$ 恒有 π 相位跃变，$r_p$ 在布儒斯特角处从 0 翻到 π（穿过零点）。</li></ul>
+<p><strong>易错点</strong></p>
+<ul><li>&quot;半波损失&quot;只对<strong>反射光</strong>、且是<strong>光疏→光密</strong>时才有（$n_1&lt;n_2$）；</li><li>$r_p$ 与 $r_s$ 的定义里 $\cos i$ 与 $\cos t$ 谁配 $n_1$ 谁配 $n_2$，不同教材符号约定不同，<strong>做题时先写出你用的约定</strong>；</li><li>全反射时折射角是虚数，不能写 $\sin t&gt;1$ 就完事，要说明&quot;折射波沿界面传播、振幅指数衰减（隐失波）&quot;。</li></ul>
+<hr>
+<h3 id="62-第二章-光的干涉">6.2 第二章 光的干涉</h3>
+<p><strong>考点</strong>：相干条件、双光束、多光束、薄膜、干涉仪。</p>
+<p><strong>必背公式</strong></p>
+<p>$$\Delta x=\frac{\lambda D}{d}\quad(\text{双缝}),\qquad T=\frac{1}{1+F\sin^2(\delta/2)},\ F=\frac{4R}{(1-R)^2}$$</p>
+<p>$$F^*=\frac{\pi\sqrt R}{1-R},\qquad FSR=\frac{\lambda^2}{2nd},\qquad r_m=\sqrt{m\lambda R}\ (\text{牛顿环暗环})$$</p>
+<p><strong>跑这个</strong>：<code>d03</code> <code>d04</code> <code>d05</code> <code>d06</code></p>
+<p><strong>应该看到</strong></p>
+<ul><li>双缝条纹间距与 λ、D 成正比、与 d 成反比；单缝包络会&quot;削掉&quot;某些级次；</li><li>多光束干涉条纹随 R 增大迅速变尖，$T_{\min}/T_{\max}=1/(1+F)$；</li><li>1/4 波长增透膜在设计波长处 $R=0$，偏离 50 nm 就明显退化；</li><li>牛顿环中心是<strong>暗</strong>斑（反射光），亮环半径 $\sqrt{(m+\tfrac12)\lambda R}$。</li></ul>
+<p><strong>易错点</strong></p>
+<ul><li>牛顿环反射光中心暗、透射光中心亮，<strong>别写反</strong>；</li><li>迈克尔逊干涉仪&quot;移动 $\lambda/2$ 条纹过一条&quot;，$d$ 与条纹移动数 $N$ 关系是 $d=N\lambda/2$；</li><li>多光束干涉的相位差是 $\delta=\frac{4\pi}{\lambda}nd\cos\theta$（有<strong>两倍</strong>）；</li><li>薄膜干涉要同时考虑<strong>两个界面的半波损失是否抵消</strong>。</li></ul>
+<hr>
+<h3 id="63-第三章-光的衍射">6.3 第三章 光的衍射</h3>
+<p><strong>考点</strong>：夫琅禾费（单缝、圆孔、多缝、巴俾涅）、菲涅耳（圆孔、直边）、光栅、波带片。</p>
+<p><strong>必背公式</strong></p>
+<p>$$a\sin\theta=k\lambda,\qquad \theta_{\text{中央}}=\frac{\lambda}{a},\qquad \theta_{\text{艾里}}=1.22\frac{\lambda}{D}$$</p>
+<p>$$d\sin\theta=m\lambda,\qquad R=\frac{\lambda}{\Delta\lambda}=mN,\qquad \text{缺级}:\ \frac{d}{a}=\frac{m}{k}$$</p>
+<p>$$N=\frac{a^2}{\lambda z},\qquad \frac{I}{I_0}=4\sin^2\frac{\pi N}{2},\qquad f_m=\frac{a^2}{m\lambda}$$</p>
+<p><strong>跑这个</strong>：<code>d07</code> <code>d08</code></p>
+<p><strong>应该看到</strong></p>
+<ul><li>单缝缝越窄，中央亮纹越宽（衍射越显著）；</li><li>圆孔第一个暗环在 $u=3.832$，对应角半径 $1.22\lambda/D$；</li><li>多缝条纹位置由 $d$ 定、尖锐程度由 $N$ 定、强度包络由 $a$ 定；</li><li>菲涅耳圆孔轴上强度随距离振荡：$N=1$ 亮 4 倍，$N=2$ 全暗；</li><li>直边阴影边界恰好 $I=I_0/4$，照明区第一极大 $1.37I_0$。</li></ul>
+<p><strong>易错点</strong></p>
+<ul><li>光栅题里 $d$ 是<strong>光栅常数</strong>（相邻缝距），$a$ 是<strong>缝宽</strong>，两者别混；</li><li>分辨本领 $R=mN$ 中的 $N$ 是<strong>参与衍射的总缝数</strong>，不是刻线密度；</li><li>菲涅耳半波带：$N$ 可以是小数，&quot;奇数亮、偶数暗&quot;只对整数成立；</li><li>巴俾涅原理说的是<strong>振幅</strong>互补相加等于自由场，不是强度相减。</li></ul>
+<hr>
+<h3 id="64-第三章第-5-节-傅里叶光学">6.4 第三章第 5 节 傅里叶光学</h3>
+<p><strong>考点</strong>：频谱、阿贝成像、空间滤波、传递函数。</p>
+<p><strong>必背结论</strong></p>
+<p>$$\text{谱面坐标}\ x_f=\lambda f\cdot f_x,\qquad \text{截止频率}\ f_c=\frac{D}{2\lambda f},\qquad OTF\ \text{截止}=2f_c$$</p>
+<p><strong>跑这个</strong>：<code>python demos/d09_fourier_optics.py</code></p>
+<p><strong>应该看到</strong></p>
+<ul><li>透镜后焦面上出现的是物的<strong>傅里叶频谱</strong>（低频在中心）；</li><li>挡掉高频 → 图像变模糊；只留高频 → 勾边；</li><li>相干照明用 CTF（0/1 型），非相干照明用 OTF（三角形/圆型），后者截止频率是前者的 2 倍。</li></ul>
+<p><strong>易错点</strong></p>
+<ul><li>物面空间频率与谱面<strong>坐标</strong>不是一回事，换算要乘 $\lambda f$；</li><li>相干成像系统对<strong>振幅</strong>线性，非相干对<strong>强度</strong>线性——卷积的对象不同。</li></ul>
+<hr>
+<h3 id="65-第四五章-各向异性介质与感应双折射">6.5 第四、五章 各向异性介质与感应双折射</h3>
+<p><strong>考点</strong>：单轴晶体、双折射、波片、偏振棱镜、偏光干涉、旋光、电光、声光、法拉第。</p>
+<p><strong>必背公式</strong></p>
+<p>$$\frac{1}{n_e^2(\theta)}=\frac{\cos^2\theta}{n_o^2}+\frac{\sin^2\theta}{n_e^2},\qquad \delta=\frac{2\pi}{\lambda}|n_o-n_e|d$$</p>
+<p>$$T=\sin^2 2\varphi\cdot\sin^2\frac{\delta}{2}\ (\text{正交偏振器}),\qquad V_\pi=\frac{\lambda}{2n_o^3r_{63}},\qquad \sin\theta_B=\frac{\lambda}{2\Lambda}$$</p>
+<p><strong>跑这个</strong>：<code>python demos/d12_crystal_optics.py</code></p>
+<p><strong>应该看到</strong></p>
+<ul><li>沿光轴（$\theta=0$）传播时 $n_e(\theta)=n_o$，<strong>没有双折射</strong>；</li><li>方解石（负晶体）e 光走离角在 45° 附近最大，约 6.2°；</li><li>波片只改变偏振态，正交偏振器 + 波片才把相位变成强度；</li><li>KDP 纵向半波电压约 7.5 kV（550 nm）。</li></ul>
+<p><strong>易错点</strong></p>
+<ul><li>正负晶体判据是 $n_e$ 与 $n_o$ 谁大，<strong>石英是正晶体</strong>（$n_e&gt;n_o$）；</li><li>&quot;1/4 波片&quot;是对<strong>特定波长</strong>成立的，换波长就变成其他延迟量；</li><li>偏光干涉 $\varphi=0$ 或 90° 时无论相位延迟多少都消光（这是常考的&quot;陷阱&quot;选项）；</li><li>自然旋光与法拉第旋光的<strong>方向性</strong>不同：法拉第旋转方向由磁场定，与光传播方向无关（光隔离器的原理）。</li></ul>
+<hr>
+<h3 id="66-第七八章-几何光学与理想光学系统">6.6 第七、八章 几何光学与理想光学系统</h3>
+<p><strong>考点</strong>：符号规则、单球面、平板棱镜、基点基面、双光组组合。</p>
+<p><strong>必背公式</strong></p>
+<p>$$\frac{n'}{l'}-\frac{n}{l}=\frac{n'-n}{r},\qquad \beta=\frac{nl'}{n'l},\qquad \frac{1}{l'}-\frac{1}{l}=\frac{1}{f'},\qquad xx'=ff'$$</p>
+<p>$$\Delta=d-f_1'+f_2,\qquad f'=-\frac{f_1'f_2'}{\Delta},\qquad l_F'=f'\left(1-\frac{d}{f_1'}\right)$$</p>
+<p><strong>跑这个</strong>：<code>python demos/d10_geometrical.py</code></p>
+<p><strong>应该看到</strong></p>
+<ul><li>单球面 $l=-300,r=100,1\to1.5$ 时 $l'=900$、$\beta=-2$；</li><li>双光组组合公式与近轴矩阵给出的结果<strong>逐位相同</strong>（我把它做成了自检项）；</li><li>物在 2F 处像在 2F'，$\beta=-1$。</li></ul>
+<p><strong>易错点</strong></p>
+<ul><li>符号规则必须先声明：$l$、$y$、$u$ 的正负方向；</li><li>双光组组合里 $f_2$ 是<strong>物方</strong>焦距，与 $f_2'$ 差一个负号，这是最常见的翻车点；</li><li>当 $d=f_1'+f_2$ 时 $\Delta=0$，系统<strong>无焦</strong>（望远镜），不能直接套焦距公式。</li></ul>
+<hr>
+<h3 id="67-第九章-像差与光路计算光阑">6.7 第九章 像差与光路计算、光阑</h3>
+<p><strong>考点</strong>：$y$-$u$ 递推、子午面实际光线、球差、孔径光阑/视场光阑/光瞳/窗。</p>
+<p><strong>核心判据</strong></p>
+<p>$$u_i=\frac{D_i/2}{|B_i|}\ \xrightarrow{\ \min\ }\ \text{孔径光阑}$$</p>
+<p>其中 $B_i$ 是「物面 → 第 $i$ 个光阑所在面」的累计近轴矩阵的 $(0,1)$ 元素。</p>
+<p><strong>跑这个</strong>：<code>python demos/d11_aperture_stop.py</code></p>
+<p><strong>应该看到</strong></p>
+<ul><li>各光阑按物方孔径角排序，最小者就是孔径光阑；</li><li>入射光瞳 = 孔径光阑经<strong>前面</strong>系统的像，出射光瞳 = 经<strong>后面</strong>系统的像；</li><li>球差曲线：边缘光线交点比近轴焦点更近（正透镜球差为负）。</li></ul>
+<p><strong>易错点</strong></p>
+<ul><li>入射光瞳是<strong>虚像</strong>时位置可以是负的（在物面右侧），不要以为算错了；</li><li>视场光阑用<strong>主光线</strong>（过入射光瞳中心）判定，不要用边缘光线；</li><li>近轴光路计算和实际光线追迹是两套算法，球差就是两者之差——这个理解比背公式更重要。</li></ul>
+<hr>
+<h3 id="68-第十章-光学仪器">6.8 第十章 光学仪器</h3>
+<p><strong>考点</strong>：眼睛、放大镜、显微镜、望远镜。</p>
+<p><strong>必背公式</strong></p>
+<p>$$\Gamma_{\text{放大镜}}=\frac{250}{f},\qquad \Gamma_{\text{显微镜}}=\left|\beta_{obj}\right|\cdot\frac{250}{f_e'},\qquad \Gamma_{\text{望远镜}}=\frac{f_o'}{f_e'}$$</p>
+<p>$$d_{\min}=\frac{0.61\lambda}{NA},\qquad \theta_{\min}=1.22\frac{\lambda}{D}$$</p>
+<p><strong>跑这个</strong>（无图，直接算）：</p>
+<pre><code class="language-python">from optics817 import instruments as ins
+print(ins.microscope_resolution(550e-9, 0.9))         # 显微镜最小分辨距离
+print(ins.telescope_resolution_arcsec(550e-9, 0.1))   # 望远镜最小分辨角(角秒)
+print(ins.telescope_magnification(1.0, 0.02))         # 望远镜放大率</code></pre>
+<p><strong>易错点</strong></p>
+<ul><li>显微镜<strong>放大率与分辨本领无关</strong>：NA 决定能分辨多细，放大率只决定看起来多大；</li><li>望远镜物镜口径决定分辨本领，放大率只决定出瞳直径匹配人眼；</li><li>明视距离是 <strong>250 mm</strong>，别记成 25 cm 以外的数。</li></ul>
+<hr>
+<h3 id="69-第六章-光的吸收色散散射">6.9 第六章 光的吸收、色散、散射</h3>
+<p>考纲要求&quot;了解&quot;，做简答题准备即可：</p>
+<ul><li><strong>吸收</strong>：$I=I_0e^{-\alpha l}$（朗伯定律），$\alpha$ 与波长有关 → 选择吸收；</li><li><strong>色散</strong>：$n=n(\lambda)$，正常色散 $dn/d\lambda&lt;0$；用 $n=A+\frac{B}{\lambda^2}+\frac{C}{\lambda^4}$；</li><li><strong>散射</strong>：瑞利散射 $I\propto1/\lambda^4$（天空蓝、夕阳红）；米氏散射（颗粒尺寸接近波长）；拉曼散射（频率改变）。</li></ul>
+<hr>
+<h2 id="7-三种核心学习方法">7. 三种核心学习方法</h2>
+<h3 id="71-方法一公式仿真互验最重要">7.1 方法一：公式—仿真互验（最重要）</h3>
+<p><code>selfcheck.py</code> 里有 <strong>79 项</strong>断言，每一项都是&quot;课本公式 vs 数值计算&quot;的正面对撞。它就是你复习时的<strong>裁判</strong>。</p>
+<pre><code class="language-python"># 例：验证爱里公式的两个极值
+r = 0.5
+F = 4 * r**2 / (1 - r**2) ** 2
+assert np.isclose(itf.airy_transmission(0.0, r), 1.0)          # Tmax = 1
+assert np.isclose(itf.airy_transmission(np.pi, r), 1/(1+F))    # Tmin = 1/(1+F)</code></pre>
+<p><strong>你要养成的习惯</strong>：每学完一节，自己往 <code>selfcheck.py</code> 里加 3–5 条断言。加不出来的地方，就是你没学懂的地方。</p>
+<p>一条好的自检断言长这样：</p>
+<pre><code class="language-python">check(&quot;光栅方程 d sin(theta) = m lambda&quot;,
+      d * np.sin(dif.grating_angle(m, 550e-9, d)), m * 550e-9)</code></pre>
+<p>它把公式的<strong>两边分别用不同代码路径</strong>算出来，任何一边写错都会报错。</p>
+<h3 id="72-方法二参数地图">7.2 方法二：参数地图</h3>
+<p>不要只算一组数。把参数扫一遍，看<strong>趋势</strong>和<strong>临界行为</strong>：</p>
+<pre><code class="language-python">import numpy as np
+from optics817 import interference as itf
+
+# 缝宽 a 从 0.02 mm 扫到 0.5 mm，看条纹可见度如何变化
+for a in np.linspace(0.02e-3, 0.5e-3, 10):
+    I = itf.double_slit_intensity(np.linspace(-6e-3, 6e-3, 4001),
+                                 600e-9, 0.5e-3, a=a, z=1.0)
+    print(f&quot;a={a*1e3:.3f} mm  可见度 V={(I.max()-I.min())/(I.max()+I.min()):.3f}&quot;)</code></pre>
+<p><strong>考场上你没法跑程序，但趋势已经在你脑子里了</strong>： &quot;缝越宽、包络越窄、可见度越低&quot; —— 这句话能帮你秒判选择题。</p>
+<h3 id="73-方法三错题反演">7.3 方法三：错题反演</h3>
+<p>错题不要只抄一遍答案，要做<strong>反演</strong>：</p>
+<ol><li>写下你的错误答案；</li><li>用仿真算出正确答案；</li><li><strong>找出你的错误对应哪个物理量的偏差</strong>（少乘 2？用了 $\sin$ 而不是 $\tan$？漏了半波损失？）；</li><li>把这条经验写成一句话，加进 <code>selfcheck.py</code>。</li></ol>
+<p>例如，如果你做牛顿环时忘了半波损失：</p>
+<pre><code class="language-python"># 错误模型：I = cos²(πr²/(λR))  →  中心是亮的（错！）
+# 正确模型：I = sin²(πr²/(λR))  →  中心是暗的
+check(&quot;牛顿环中心必须为暗斑（反射光）&quot;,
+      itf.newton_rings_intensity(0.0, 600e-9, 1.0), 0.0)</code></pre>
+<p><strong>这条断言会永远替你记住这个坑。</strong></p>
+<hr>
+<h2 id="8-应试技巧">8. 应试技巧</h2>
+<h3 id="81-时间分配180-分钟--150-分">8.1 时间分配（180 分钟 / 150 分）</h3>
+<div class="table-container"><table><thead><tr><th>阶段</th><th>时间</th><th>做什么</th></tr></thead><tbody><tr><td>第 1 遍</td><td>5 min</td><td>通览全卷，把题按&quot;会/半会/不会&quot;标记</td></tr><tr><td>第 2 遍</td><td>120 min</td><td>先做会的，简答题先写定义和公式</td></tr><tr><td>第 3 遍</td><td>35 min</td><td>攻克半会的，写出关键步骤拿步骤分</td></tr><tr><td>检查</td><td>20 min</td><td>量纲、数量级、单位、正负号</td></tr></tbody></table></div>
+<h3 id="82-简答题模板">8.2 简答题模板</h3>
+<p><strong>问&quot;为什么&quot;</strong>：现象 → 原理（写公式）→ 结论。</p>
+<blockquote><p>例：为什么反射光在布儒斯特角完全偏振？ 答：自然光可分解为 $s$、$p$ 两个分量。由菲涅耳公式 $r_p=(n_2\cos i-n_1\cos t)/(n_2\cos i+n_1\cos t)$，当 $i+t=90°$ 时分子为零，即 $r_p=0$，故反射光中只剩 $s$ 分量，成为完全线偏振光。</p></blockquote>
+<p><strong>问&quot;区别与联系&quot;</strong>：列表对比 + 一句话总结。</p>
+<blockquote><p>例：菲涅耳衍射与夫琅禾费衍射的区别 → 从&quot;光源/观察屏是否在有限远&quot;&quot;能否用半波带法&quot;&quot;数学上是积分还是变换&quot;三点对比。</p></blockquote>
+<h3 id="83-计算题模板万能的五步">8.3 计算题模板（万能的五步）</h3>
+<ol><li><strong>画图</strong>，标出所有已知量和未知量；</li><li><strong>写公式</strong>（原式，不要直接代数）；</li><li><strong>统一单位</strong>（全部换 SI，或全部用 mm）；</li><li><strong>代入计算</strong>，保留 4 位有效数字；</li><li><strong>检验</strong>：量纲对不对？数量级合不合理？（比如可见光波长必然是几百 nm 量级）</li></ol>
+<h3 id="84-单位与有效数字">8.4 单位与有效数字</h3>
+<ul><li>波长：$550\,\text{nm}=5.5\times10^{-7}\,\text{m}$；换算时<strong>先化成米</strong>再代入公式，最不容易错；</li><li>角度：公式里的 $\sin\theta\approx\theta$ 只在<strong>弧度</strong>下成立；</li><li>答案一般保留 <strong>4 位有效数字</strong>；角度用度或弧度都写清单位。</li></ul>
+<h3 id="85-高频考点清单考前一周只看这个">8.5 高频考点清单（考前一周只看这个）</h3>
+<ol><li>菲涅耳公式 + 布儒斯特角 + 全反射相移</li><li>杨氏双缝 / 薄膜干涉 / 牛顿环 的条纹条件</li><li>多光束干涉爱里公式 + F-P 分辨本领</li><li>增透膜设计（$n=\sqrt{n_0n_s}$、$d=\lambda_0/4n$）</li><li>单缝 / 圆孔 / 光栅 三件套 + 缺级 + 分辨本领</li><li>菲涅耳半波带法（$N$ 为奇数偶数）</li><li>单轴晶体双折射 + 波片设计</li><li>偏光干涉 $T=\sin^22\varphi\sin^2(\delta/2)$</li><li>单球面近轴成像 + 双光组组合</li><li>孔径光阑 / 入射光瞳 / 出射光瞳的判定流程</li></ol>
+<hr>
+<h2 id="9-常见错误清单">9. 常见错误清单</h2>
+<p><strong>第一章</strong></p>
+<ol><li>把 $R=|r|$ 当成反射率（应为 $|r|^2$）</li><li>忘记正入射时 $R_s=R_p$、斜入射时 $R_s&gt;R_p$</li><li>认为全反射没有波进入第二介质（有隐失波）</li><li>半波损失适用条件搞错（只对反射光、光疏→光密）</li></ol>
+<p><strong>第二章</strong></p>
+<ol><li>牛顿环反射光中心记成亮斑</li><li>多光束相位差漏掉因子 2（应为 $4\pi nd\cos\theta/\lambda$）</li><li>迈克尔逊 $d$ 与条纹数的关系少乘 $1/2$</li><li>增透膜条件写成 $n=n_0n_s$（应为平方根）</li><li>条纹可见度公式写成 $I_{\max}/I_{\min}$</li></ol>
+<p><strong>第三章</strong></p>
+<ol><li><code>np.sinc</code> 的定义里自带 π，直接传 $\beta$ 会错</li><li>光栅的 $d$ 与 $a$ 混用</li><li>分辨本领 $R=mN$ 中的 $N$ 用成刻线密度</li><li>艾里斑角半径系数写成 1.0（应为 1.22）</li><li>菲涅耳圆孔轴上强度直接写 $I_0$（实际随 $N$ 振荡）</li><li>单缝衍射极小条件写成 $a\sin\theta=(k+\tfrac12)\lambda$</li></ol>
+<p><strong>第四章、第五章</strong></p>
+<ol><li>正负晶体的判据记反</li><li>认为沿光轴也有双折射</li><li>波片厚度公式漏掉 $|n_o-n_e|$</li><li>偏光干涉中 $\varphi=0$ 时以为仍有调制</li><li>法拉第旋转方向与光传播方向有关（实际无关）</li></ol>
+<p><strong>第七~九章</strong></p>
+<ol><li>$1/l'-1/l=1/f'$ 的符号写错</li><li>双光组组合里 $f_2$ 与 $f_2'$ 混用</li><li>入射光瞳位置算成负的就以为错了（虚像很正常）</li><li>用边缘光线而不是主光线判定视场光阑</li><li>球差正负号记反</li></ol>
+<p><strong>通用</strong></p>
+<ol><li>小角近似 $\sin\theta\approx\theta$ 在度数下使用</li><li>nm 没换算成 m 直接代入</li><li>结果不检查量纲</li><li>复数振幅直接相加却忘了取模平方</li><li>只算数值不写公式，步骤分全丢</li></ol>
+<hr>
+<h2 id="10-工程文件清单与扩展">10. 工程文件清单与扩展</h2>
+<pre><code>817光学-Python仿真/
+├── README.md                  ← 本文档（学习指南）
+├── 公式速查卡.md               ← 可打印的一页公式表
+├── requirements.txt
+├── selfcheck.py               ← 79 项公式自检（最重要！请自己往里加）
+├── run_all.py                 ← 一键跑全部实验
+├── optics817/                 ← 仿真库（按考纲分模块）
+│   ├── wave.py                ← 第一章：菲涅耳、全反射、琼斯矩阵、多层膜
+│   ├── interference.py        ← 第二章：双光束、多光束、薄膜、干涉仪
+│   ├── diffraction.py         ← 第三章：夫琅禾费、菲涅耳、光栅、波带片
+│   ├── fourier_optics.py      ← 第三章第 5 节：传播、4f、CTF/OTF
+│   ├── polarization.py        ← 第四、五章：晶体、波片、电光、声光
+│   ├── geometrical.py         ← 第七~九章：近轴矩阵、光路、光阑、球差
+│   ├── instruments.py         ← 第十章：眼睛、显微镜、望远镜
+│   └── plotstyle.py           ← 中文字体与出图工具
+├── demos/                     ← 12 个分章实验（每个都能单独运行）
+└── outputs/                   ← 生成的图</code></pre>
+<h3 id="怎么扩展成你自己的版本">怎么扩展成你自己的版本</h3>
+<ol><li><strong>加断言</strong>：<code>selfcheck.py</code> 里按章节加，把自己错的每一道题变成一条断言；</li><li><strong>加参数扫描</strong>：仿照 7.2 节，把每章的关键参数扫一遍，记录趋势；</li><li><strong>加真题</strong>：把真题里的数值直接代进 <code>optics817</code> 的函数，与标准答案对照；</li><li><strong>改成 Notebook</strong>：<code>jupyter lab</code>，把每个 demo 拆成单元格，方便边改边看；</li><li><strong>进阶库</strong>：学有余力时试 <code>prysm</code>（物理光学全能）或 <code>rayoptics</code>（几何光学设计）。</li></ol>
+<blockquote><p><strong>最后一句提醒</strong>：这套工程最大的价值不是那 12 张图，而是 <code>selfcheck.py</code> 这个习惯 —— <strong>每一个你背下来的公式，都应该有一条能在半分钟内跑完的验证。</strong></p></blockquote>
+<hr>
+<h2 id="附录-a公式速查">附录 A：公式速查</h2>
+<div class="table-container"><table><thead><tr><th>名称</th><th>公式</th></tr></thead><tbody><tr><td>介质中波长/相速</td><td>$\lambda_n=\lambda_0/n$，$v=c/n$</td></tr><tr><td>菲涅耳振幅系数</td><td>$r_s=\dfrac{n_1\cos i-n_2\cos t}{n_1\cos i+n_2\cos t}$，$r_p=\dfrac{n_2\cos i-n_1\cos t}{n_2\cos i+n_1\cos t}$</td></tr><tr><td>正入射反射率</td><td>$R=\left(\dfrac{n_1-n_2}{n_1+n_2}\right)^2$</td></tr><tr><td>布儒斯特角</td><td>$\tan i_B=n_2/n_1$</td></tr><tr><td>临界角</td><td>$\sin i_C=n_2/n_1$</td></tr><tr><td>全反射相移</td><td>$\tan\dfrac{\delta_s}{2}=-\dfrac{\sqrt{\sin^2i-n^2}}{\cos i}$，$\tan\dfrac{\delta_p}{2}=-\dfrac{\sqrt{\sin^2i-n^2}}{n^2\cos i}$，$n=n_2/n_1$</td></tr><tr><td>马吕斯定律</td><td>$I=I_0\cos^2\theta$</td></tr><tr><td>双缝条纹间距</td><td>$\Delta x=\lambda D/d$</td></tr><tr><td>爱里公式</td><td>$T=\dfrac{1}{1+F\sin^2(\delta/2)}$，$F=\dfrac{4R}{(1-R)^2}$</td></tr><tr><td>精细度</td><td>$F^<em>=\dfrac{\pi\sqrt R}{1-R}$，$\dfrac{\lambda}{\Delta\lambda}=mF^</em>$</td></tr><tr><td>F-P 自由光谱范围</td><td>$FSR=\dfrac{\lambda^2}{2nd}$</td></tr><tr><td>单层增透膜</td><td>$n=\sqrt{n_0n_s}$，$d=\dfrac{\lambda_0}{4n}$</td></tr><tr><td>牛顿环</td><td>暗环 $r_m=\sqrt{m\lambda R}$，亮环 $r_m=\sqrt{(m+\frac12)\lambda R}$</td></tr><tr><td>劈尖条纹间距</td><td>$\Delta x=\dfrac{\lambda}{2n\alpha}$</td></tr><tr><td>单缝衍射</td><td>$a\sin\theta=k\lambda$（暗），中央半角宽 $\lambda/a$</td></tr><tr><td>圆孔衍射</td><td>艾里斑角半径 $1.22\lambda/D$</td></tr><tr><td>光栅方程</td><td>$d\sin\theta=m\lambda$；缺级 $d/a=m/k$</td></tr><tr><td>光栅分辨本领</td><td>$R=\lambda/\Delta\lambda=mN$</td></tr><tr><td>菲涅耳数</td><td>$N=a^2/(\lambda z)$；$I/I_0=4\sin^2(\pi N/2)$</td></tr><tr><td>波带片焦距</td><td>$f_m=a^2/(m\lambda)$，$m$ 为奇数</td></tr><tr><td>直边衍射</td><td>$v=x\sqrt{2/(\lambda z)}$；边界 $I=I_0/4$</td></tr><tr><td>单轴晶体 e 光</td><td>$\dfrac{1}{n_e^2}=\dfrac{\cos^2\theta}{n_o^2}+\dfrac{\sin^2\theta}{n_e^2}$</td></tr><tr><td>波片相位延迟</td><td>$\delta=\dfrac{2\pi}{\lambda}</td><td>n_o-n_e</td><td>d$</td></tr><tr><td>偏光干涉</td><td>$T=\sin^22\varphi\sin^2(\delta/2)$</td></tr><tr><td>电光半波电压</td><td>$V_\pi=\dfrac{\lambda}{2n_o^3r_{63}}$</td></tr><tr><td>声光布喇格</td><td>$\sin\theta_B=\dfrac{\lambda}{2\Lambda}=\dfrac{\lambda f}{2v}$</td></tr><tr><td>法拉第效应</td><td>$\theta=VBd$</td></tr><tr><td>单球面成像</td><td>$\dfrac{n'}{l'}-\dfrac{n}{l}=\dfrac{n'-n}{r}$，$\beta=\dfrac{nl'}{n'l}$</td></tr><tr><td>高斯公式</td><td>$\dfrac{1}{l'}-\dfrac{1}{l}=\dfrac{1}{f'}$，$\dfrac{1}{v}+\dfrac{1}{u}=\dfrac{1}{f}$</td></tr><tr><td>牛顿公式</td><td>$xx'=ff'$</td></tr><tr><td>双光组组合</td><td>$\Delta=d-f_1'+f_2$，$f'=-\dfrac{f_1'f_2'}{\Delta}$</td></tr><tr><td>显微镜</td><td>$\Gamma=\left</td><td>\beta_{obj}\right</td><td>\dfrac{250}{f_e'}$，$d_{\min}=\dfrac{0.61\lambda}{NA}$</td></tr><tr><td>望远镜</td><td>$\Gamma=\dfrac{f_o'}{f_e'}$，$\theta_{\min}=1.22\dfrac{\lambda}{D}$</td></tr></tbody></table></div>
+<hr>
+<h2 id="附录-b参考书目与在线资源">附录 B：参考书目与在线资源</h2>
+<p><strong>指定参考书</strong></p>
+<ol><li>石顺祥、王学恩、刘劲松，《物理光学与应用光学（第二版）》，西安电子科技大学出版社，2008</li><li>郁道银、谈恒英，《工程光学（第二版）》，机械工业出版社，2006</li></ol>
+<p><strong>考纲来源</strong></p>
+<ul><li><a href="https://admission.ucas.ac.cn/Content/Upload/2025/7/817%20%e5%85%89%e5%ad%a6.pdf" target="_blank" rel="noopener noreferrer">中国科学院大学硕士研究生入学考试《光学》考试大纲（817）</a></li><li><a href="https://m.koolearn.com/kaoyan/20250902/1870285.html" target="_blank" rel="noopener noreferrer">817 光学考研大纲整理版（新东方在线）</a></li></ul>
+<p><strong>Python 资源</strong></p>
+<ul><li>NumPy 官方教程：<a href="https://numpy.org/doc/stable/user/quickstart.html" target="_blank" rel="noopener noreferrer">https://numpy.org/doc/stable/user/quickstart.html</a></li><li>Matplotlib 图库：<a href="https://matplotlib.org/stable/gallery/index.html" target="_blank" rel="noopener noreferrer">https://matplotlib.org/stable/gallery/index.html</a></li><li>SciPy 特殊函数：<a href="https://docs.scipy.org/doc/scipy/reference/special.html" target="_blank" rel="noopener noreferrer">https://docs.scipy.org/doc/scipy/reference/special.html</a></li><li>SymPy 符号计算：<a href="https://docs.sympy.org/latest/tutorials/intro-tutorial/index.html" target="_blank" rel="noopener noreferrer">https://docs.sympy.org/latest/tutorials/intro-tutorial/index.html</a></li></ul>
+<p><strong>进阶光学仿真库（选学）</strong></p>
+<ul><li><code>prysm</code>：物理光学、偏振、传播，功能最全</li><li><code>LightPipes</code>：波动光学传播，接口极简</li><li><code>diffractio</code>：衍射/干涉/偏振专用，含大量案例</li><li><code>rayoptics</code> / <code>popoff</code>：几何光学系统设计</li></ul>
+<hr>
+<p><em>本工程在 Windows + Python 3.11.5 + numpy 2.2.6 环境验证：<code>selfcheck.py</code> 全部 79 项通过，12 个 demo 全部正常出图。</em></p></article><section class="work-gallery" aria-labelledby="work-gallery-title"><h2 class="work-gallery-title" id="work-gallery-title">图集</h2><p class="work-gallery-note">正文配图较少，以下从项目目录挑选了 8 张图片。</p><div class="work-gallery-grid"><figure class="work-gallery-item"><a href="outputs/d06_interferometers.png"><img src="outputs/d06_interferometers.png" alt="d06_interferometers.png" loading="lazy" decoding="async"></a><figcaption>d06_interferometers.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="outputs/d09_fourier_optics.png"><img src="outputs/d09_fourier_optics.png" alt="d09_fourier_optics.png" loading="lazy" decoding="async"></a><figcaption>d09_fourier_optics.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="outputs/d03_two_beam.png"><img src="outputs/d03_two_beam.png" alt="d03_two_beam.png" loading="lazy" decoding="async"></a><figcaption>d03_two_beam.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="outputs/d04_multibeam_fp.png"><img src="outputs/d04_multibeam_fp.png" alt="d04_multibeam_fp.png" loading="lazy" decoding="async"></a><figcaption>d04_multibeam_fp.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="outputs/d02_polarization_jones.png"><img src="outputs/d02_polarization_jones.png" alt="d02_polarization_jones.png" loading="lazy" decoding="async"></a><figcaption>d02_polarization_jones.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="outputs/d05_thin_film.png"><img src="outputs/d05_thin_film.png" alt="d05_thin_film.png" loading="lazy" decoding="async"></a><figcaption>d05_thin_film.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="outputs/d08_fresnel_diffraction.png"><img src="outputs/d08_fresnel_diffraction.png" alt="d08_fresnel_diffraction.png" loading="lazy" decoding="async"></a><figcaption>d08_fresnel_diffraction.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="outputs/d12_crystal_optics.png"><img src="outputs/d12_crystal_optics.png" alt="d12_crystal_optics.png" loading="lazy" decoding="async"></a><figcaption>d12_crystal_optics.png</figcaption></figure></div></section><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

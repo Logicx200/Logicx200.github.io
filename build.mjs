@@ -19,6 +19,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const SITE = path.dirname(fileURLToPath(import.meta.url));
@@ -334,12 +335,15 @@ function loadWorksData() {
       : (categories[0] ? categories[0].id : 'misc');
     return {
       slug,
+      dir: dir || ('works/' + slug),
       title: trim(project.title) || slug,
       subtitle: trim(project.subtitle),
       summary: trim(project.summary),
       category,
       categoryName: categoryMap[category] ? categoryMap[category].name : category,
       tags: (Array.isArray(project.tags) ? project.tags : []).map(trim).filter(Boolean),
+      highlights: (Array.isArray(project.highlights) ? project.highlights : []).map(trim).filter(Boolean),
+      tech: (Array.isArray(project.tech) ? project.tech : []).map(trim).filter(Boolean),
       cover: stripWorksPrefix(project.cover),
       demo: stripWorksPrefix(project.demo),
       entry: stripWorksPrefix(project.entry),
@@ -392,10 +396,15 @@ function loadLegacyData() {
   if (raw) {
     return {
       intro: trim(raw.intro),
+      repo: trim(raw.repo),
+      repoName: trim(raw.repoName),
       tools: (Array.isArray(raw.tools) ? raw.tools : []).map((tool, index) => ({
         name: trim(tool.name) || '未命名项目',
         slug: trim(tool.slug) || 'legacy-' + (index + 1),
         desc: trim(tool.desc),
+        tech: trim(tool.tech),
+        source: trim(tool.source),
+        demo: trim(tool.demo),
         images: (Array.isArray(tool.images) ? tool.images : []).map((image) => trim(image).replace(/^\/+/, '')).filter(Boolean)
       })),
       stats: raw.stats || {},
@@ -403,7 +412,7 @@ function loadLegacyData() {
     };
   }
   warn('data/legacy.json 不存在，早期项目页将显示空列表。');
-  return { intro: '', tools: [], stats: {}, contact: {} };
+  return { intro: '', repo: '', repoName: '', tools: [], stats: {}, contact: {} };
 }
 
 /* ---------- 作品卡片 ---------- */
@@ -435,8 +444,8 @@ function workCardHtml(project, repo, options) {
   const prefix = opts.prefix || '';
   const id = opts.anchorId ? ' id="' + esc(project.slug) + '"' : '';
   const demo = project.demo && fileExistsInSite('works/' + project.demo) ? project.demo : '';
-  const entry = project.entry && fileExistsInSite('works/' + project.entry) ? project.entry : '';
-  const primary = demo || entry;
+  const docPath = project.slug + '/README.html';
+  const primary = demo || docPath;
   const searchText = normalizeText([project.title, project.subtitle, project.summary, project.tags.join(' ')].join(' '));
 
   const cover = coverHtml(project, prefix);
@@ -458,7 +467,7 @@ function workCardHtml(project, repo, options) {
   if (demo) links.push('<a class="is-demo" href="' + esc(prefix + demo) + '">在线试玩 ▶</a>');
   const sourceUrl = repoTreeUrl(repo, 'works/' + project.slug);
   if (sourceUrl) links.push('<a href="' + esc(sourceUrl) + '" target="_blank" rel="noopener noreferrer">源码 ↗</a>');
-  if (entry) links.push('<a href="' + esc(prefix + entry) + '">说明文档</a>');
+  links.push('<a href="' + esc(prefix + docPath) + '">说明文档</a>');
 
   return '<article class="work-card"' + id +
     ' data-search="' + esc(searchText) + '"' +
@@ -472,6 +481,823 @@ function workCardHtml(project, repo, options) {
     '<div class="work-meta">' + meta.join('') + '</div>' +
     (links.length ? '<div class="work-links">' + links.join('') + '</div>' : '') +
     '</article>';
+}
+
+/* ==========================================================================
+   零依赖 Markdown 渲染器（README → HTML）
+   - 支持：ATX/Setext 标题、段落、粗体/斜体/删除线、行内代码、围栏代码块、
+     有序/无序列表（含嵌套）、表格（含对齐）、引用、分隔线、链接、图片、
+     自动链接 <https://…>、行内 HTML 白名单透传
+   - 安全：转义原始文本；行内 HTML 走白名单 + 属性过滤；URL 过滤 javascript: 等
+   ========================================================================== */
+
+const INLINE_HTML_TAGS = new Set([
+  'a', 'abbr', 'b', 'br', 'code', 'del', 'em', 'i', 'img', 'ins', 'kbd',
+  'mark', 's', 'small', 'span', 'strong', 'sub', 'sup', 'u', 'details', 'summary'
+]);
+const INLINE_HTML_ATTRS = new Set([
+  'href', 'src', 'alt', 'title', 'class', 'width', 'height', 'align',
+  'colspan', 'rowspan', 'id', 'name'
+]);
+
+function sanitizeMarkdownUrl(raw) {
+  const url = trim(raw);
+  if (!url) return '';
+  if (/^(?:javascript|vbscript|data:text\/html)/i.test(url)) return '';
+  return url;
+}
+
+function sanitizeRawHtmlTag(tag) {
+  const match = String(tag).match(/^<\s*(\/?)\s*([a-zA-Z][a-zA-Z0-9]*)((?:\s[^<>]*)?)\s*\/?>$/);
+  if (!match) return null;
+  const closing = match[1] === '/';
+  const name = match[2].toLowerCase();
+  if (!INLINE_HTML_TAGS.has(name)) return null;
+  if (closing) return '</' + name + '>';
+  if (name === 'br') return '<br>';
+
+  const attributes = [];
+  const attrRe = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
+  let attrMatch;
+  while ((attrMatch = attrRe.exec(match[3] || ''))) {
+    const attribute = attrMatch[1].toLowerCase();
+    const value = attrMatch[2] !== undefined ? attrMatch[2]
+      : (attrMatch[3] !== undefined ? attrMatch[3]
+        : (attrMatch[4] !== undefined ? attrMatch[4] : ''));
+    if (/^on/.test(attribute) || attribute === 'style') continue;
+    if (!INLINE_HTML_ATTRS.has(attribute)) continue;
+    if (attribute === 'href' || attribute === 'src') {
+      const safe = sanitizeMarkdownUrl(decodeEntities(value));
+      if (!safe) continue;
+      attributes.push(attribute + '="' + esc(safe) + '"');
+    } else {
+      attributes.push(attribute + '="' + esc(decodeEntities(value)) + '"');
+    }
+  }
+  const suffix = attributes.length ? ' ' + attributes.join(' ') : '';
+  if (name === 'img') return '<img' + suffix + ' loading="lazy" decoding="async">';
+  return '<' + name + suffix + '>';
+}
+
+function applyEmphasis(text) {
+  let value = text;
+  value = value.replace(/\*\*\*([^*\n]+)\*\*\*/g, '<strong><em>$1</em></strong>');
+  value = value.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  value = value.replace(/__([^_\n]+)__/g, '<strong>$1</strong>');
+  value = value.replace(/~~([^~\n]+)~~/g, '<del>$1</del>');
+  value = value.replace(/(^|[^\w*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+  value = value.replace(/(^|[^\w_])_([^_\n]+)_(?![\w_])/g, '$1<em>$2</em>');
+  return value;
+}
+
+function renderInline(raw) {
+  const tokens = [];
+  function token(html) {
+    tokens.push(html);
+    return '\u0000T' + (tokens.length - 1) + '\u0000';
+  }
+
+  let text = String(raw === null || raw === undefined ? '' : raw);
+
+  /* 硬换行：行尾两个空格或反斜杠 */
+  text = text.replace(/[ \t]{2,}\n/g, function () { return token('<br>') + '\n'; });
+  text = text.replace(/\\\n/g, function () { return token('<br>') + '\n'; });
+
+  /* 行内代码 */
+  text = text.replace(/`([^`\n]+)`/g, function (match, code) {
+    return token('<code>' + esc(code) + '</code>');
+  });
+
+  /* 行内 HTML（白名单） */
+  text = text.replace(/<\/?[a-zA-Z][^<>]*>/g, function (tag) {
+    const sanitized = sanitizeRawHtmlTag(tag);
+    return sanitized === null ? tag : token(sanitized);
+  });
+
+  /* 自动链接 <https://…> */
+  text = text.replace(/<((?:https?:\/\/|mailto:)[^<>\s]+)>/g, function (match, url) {
+    const safe = sanitizeMarkdownUrl(url);
+    if (!safe) return match;
+    return token('<a href="' + esc(safe) + '" target="_blank" rel="noopener noreferrer">' + esc(url) + '</a>');
+  });
+
+  /* 转义剩余文本 */
+  text = esc(text);
+
+  /* 反斜杠转义 */
+  text = text.replace(/\\([\\`*_{}\[\]()#+\-.!~>|])/g, function (match, character) {
+    return token(esc(character));
+  });
+
+  /* 图片 */
+  text = text.replace(
+    /!\[([^\]]*)\]\(\s*([^)\s]+)(?:\s+&quot;([^&]*)&quot;)?\s*\)/g,
+    function (match, alt, source, title) {
+      const safe = sanitizeMarkdownUrl(decodeEntities(source));
+      if (!safe) return match;
+      const image = '<img src="' + esc(safe) + '" alt="' + esc(decodeEntities(alt)) + '"' +
+        (title ? ' title="' + esc(decodeEntities(title)) + '"' : '') +
+        ' loading="lazy" decoding="async">';
+      return token(image);
+    }
+  );
+
+  /* 链接 */
+  text = text.replace(
+    /\[([^\]]+)\]\(\s*([^)\s]+)(?:\s+&quot;([^&]*)&quot;)?\s*\)/g,
+    function (match, label, href, title) {
+      const safe = sanitizeMarkdownUrl(decodeEntities(href));
+      if (!safe) return match;
+      const external = /^(?:https?:\/\/|mailto:)/i.test(safe);
+      const attributes = ' href="' + esc(safe) + '"' +
+        (title ? ' title="' + esc(decodeEntities(title)) + '"' : '') +
+        (external ? ' target="_blank" rel="noopener noreferrer"' : '');
+      return token('<a' + attributes + '>' + applyEmphasis(label) + '</a>');
+    }
+  );
+
+  /* 其余强调 */
+  text = applyEmphasis(text);
+
+  /* 段内换行 → 空格 */
+  text = text.replace(/\n+/g, ' ');
+
+  /* 还原 token（允许嵌套） */
+  let guard = 0;
+  while (/\u0000T\d+\u0000/.test(text) && guard < 20) {
+    text = text.replace(/\u0000T(\d+)\u0000/g, function (match, index) {
+      return tokens[Number(index)] || '';
+    });
+    guard += 1;
+  }
+  return text;
+}
+
+function isAtxHeading(line) {
+  return /^\s{0,3}#{1,6}\s+\S/.test(line);
+}
+
+function isFenceStart(line) {
+  return /^\s{0,3}```+|^\s{0,3}~~~+/.test(line);
+}
+
+function isHorizontalRule(line) {
+  return /^\s{0,3}(?:(?:\*\s*){3,}|(?:-\s*){3,}|(?:_\s*){3,})$/.test(line);
+}
+
+function isBlockquoteLine(line) {
+  return /^\s{0,3}>/.test(line);
+}
+
+function isListLine(line) {
+  return /^\s{0,3}(?:[-*+]|\d+[.)])\s+\S/.test(line);
+}
+
+function isSetextUnderline(line) {
+  return /^\s{0,3}(?:=+|-+)\s*$/.test(line) && line.trim().length >= 2;
+}
+
+function splitTableRow(row) {
+  let value = String(row).trim();
+  if (value.startsWith('|')) value = value.slice(1);
+  if (value.endsWith('|')) value = value.slice(0, -1);
+  return value.split('|').map(function (cell) { return cell.trim(); });
+}
+
+function isTableStart(lines, index) {
+  if (index + 1 >= lines.length) return false;
+  if (lines[index].indexOf('|') === -1) return false;
+  return /^\s{0,3}\|?\s*:?-{2,}:?\s*(?:\|\s*:?-{2,}:?\s*)+\|?\s*$/.test(lines[index + 1]);
+}
+
+function renderTable(lines, start) {
+  const header = splitTableRow(lines[start]);
+  const alignments = splitTableRow(lines[start + 1]).map(function (cell) {
+    const left = cell.startsWith(':');
+    const right = cell.endsWith(':');
+    if (left && right) return 'center';
+    if (right) return 'right';
+    if (left) return 'left';
+    return '';
+  });
+  let index = start + 2;
+  const rows = [];
+  while (index < lines.length && lines[index].trim() !== '' && lines[index].indexOf('|') !== -1) {
+    rows.push(splitTableRow(lines[index]));
+    index += 1;
+  }
+  function renderRow(cells, tag) {
+    return '<tr>' + cells.map(function (cell, cellIndex) {
+      const align = alignments[cellIndex];
+      return '<' + tag + (align ? ' style="text-align:' + align + '"' : '') + '>' +
+        renderInline(cell) + '</' + tag + '>';
+    }).join('') + '</tr>';
+  }
+  const head = renderRow(header, 'th');
+  const body = rows.map(function (row) { return renderRow(row, 'td'); }).join('');
+  return {
+    html: '<div class="table-container"><table><thead>' + head + '</thead>' +
+      (body ? '<tbody>' + body + '</tbody>' : '') + '</table></div>',
+    consumed: index - start
+  };
+}
+
+function parseList(lines, start) {
+  const first = String(lines[start]).match(/^(\s*)([-*+]|\d+[.)])\s+([\s\S]*)$/);
+  const baseIndent = first[1].length;
+  const ordered = /^\d/.test(first[2]);
+  const items = [];
+  let index = start;
+
+  while (index < lines.length) {
+    const heading = String(lines[index]).match(/^(\s*)([-*+]|\d+[.)])\s+([\s\S]*)$/);
+    if (!heading) break;
+    if (heading[1].length !== baseIndent) break;
+    if (/^\d/.test(heading[2]) !== ordered) break;
+
+    const itemLines = [heading[3]];
+    index += 1;
+
+    while (index < lines.length) {
+      const line = lines[index];
+      if (line.trim() === '') {
+        let lookahead = index + 1;
+        while (lookahead < lines.length && lines[lookahead].trim() === '') lookahead += 1;
+        if (lookahead >= lines.length) break;
+        const nextMatch = String(lines[lookahead]).match(/^(\s*)([-*+]|\d+[.)])\s+/);
+        if (nextMatch && nextMatch[1].length >= baseIndent) {
+          itemLines.push('');
+          index += 1;
+          continue;
+        }
+        break;
+      }
+      const nested = String(line).match(/^(\s*)([-*+]|\d+[.)])\s+/);
+      if (nested) {
+        if (nested[1].length > baseIndent) {
+          itemLines.push(line);
+          index += 1;
+          continue;
+        }
+        break;
+      }
+      if (/^\s{2,}\S/.test(line)) {
+        itemLines.push(line.trim());
+        index += 1;
+        continue;
+      }
+      itemLines.push(line.trim());
+      index += 1;
+    }
+    items.push(itemLines);
+  }
+
+  const rendered = items.map(function (itemLines) {
+    let splitIndex = -1;
+    for (let lineIndex = 0; lineIndex < itemLines.length; lineIndex += 1) {
+      const nested = String(itemLines[lineIndex]).match(/^(\s*)([-*+]|\d+[.)])\s+/);
+      if (nested && nested[1].length > baseIndent) { splitIndex = lineIndex; break; }
+    }
+    const textLines = splitIndex === -1 ? itemLines : itemLines.slice(0, splitIndex);
+    const nestedLines = splitIndex === -1 ? [] : itemLines.slice(splitIndex);
+    const paragraphs = textLines.join('\n').split(/\n{2,}/).map(function (part) {
+      return part.trim();
+    }).filter(Boolean);
+    let inner = '';
+    if (nestedLines.length) {
+      inner = parseList(nestedLines, 0).html;
+    }
+    let body;
+    if (paragraphs.length > 1) {
+      body = paragraphs.map(function (part) { return '<p>' + renderInline(part) + '</p>'; }).join('');
+    } else {
+      body = renderInline(paragraphs[0] || '');
+    }
+    return '<li>' + body + inner + '</li>';
+  });
+
+  return {
+    html: (ordered ? '<ol>' : '<ul>') + rendered.join('') + (ordered ? '</ol>' : '</ul>'),
+    consumed: index - start
+  };
+}
+
+function renderMarkdown(source) {
+  const lines = String(source === null || source === undefined ? '' : source)
+    .replace(/\r\n?/g, '\n')
+    .split('\n');
+  const output = [];
+  const usedHeadingIds = Object.create(null);
+  let index = 0;
+
+  /* GitHub 风格 heading id：保留字母/数字/下划线/连字符，空格转连字符 */
+  function headingId(text) {
+    let base = plainText(renderInline(text)).toLowerCase()
+      .replace(/[^\p{L}\p{N}\s_-]/gu, '')
+      .replace(/\s/g, '-');
+    if (!base) base = 'section';
+    let id = base;
+    let counter = 1;
+    while (usedHeadingIds[id]) {
+      id = base + '-' + counter;
+      counter += 1;
+    }
+    usedHeadingIds[id] = true;
+    return id;
+  }
+
+  while (index < lines.length) {
+    const line = lines[index];
+    if (line.trim() === '') { index += 1; continue; }
+
+    /* 围栏代码块 */
+    const fence = line.match(/^\s{0,3}(```+|~~~+)\s*([^\s`]*)\s*$/);
+    if (fence) {
+      const marker = fence[1][0];
+      const markerLength = fence[1].length;
+      const lang = fence[2] || '';
+      const codeLines = [];
+      index += 1;
+      while (index < lines.length) {
+        const closed = String(lines[index]).match(/^\s{0,3}(```+|~~~+)\s*$/);
+        if (closed && closed[1][0] === marker && closed[1].length >= markerLength) { index += 1; break; }
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      const langClass = lang ? ' class="language-' + esc(lang.replace(/[^\w#+.-]/g, '')) + '"' : '';
+      output.push('<pre><code' + langClass + '>' + esc(codeLines.join('\n')) + '</code></pre>');
+      continue;
+    }
+
+    /* ATX 标题 */
+    const atx = line.match(/^\s{0,3}(#{1,6})\s+(.*?)\s*#*\s*$/);
+    if (atx) {
+      const level = atx[1].length;
+      output.push('<h' + level + ' id="' + esc(headingId(atx[2])) + '">' + renderInline(atx[2]) + '</h' + level + '>');
+      index += 1;
+      continue;
+    }
+
+    /* Setext 标题 */
+    if (index + 1 < lines.length && isSetextUnderline(lines[index + 1]) && !isListLine(line) &&
+      !isBlockquoteLine(line) && !isHorizontalRule(line)) {
+      const level = lines[index + 1].trim().charAt(0) === '=' ? 1 : 2;
+      output.push('<h' + level + ' id="' + esc(headingId(line.trim())) + '">' + renderInline(line.trim()) + '</h' + level + '>');
+      index += 2;
+      continue;
+    }
+
+    /* 分隔线 */
+    if (isHorizontalRule(line)) { output.push('<hr>'); index += 1; continue; }
+
+    /* 表格 */
+    if (isTableStart(lines, index)) {
+      const table = renderTable(lines, index);
+      output.push(table.html);
+      index += table.consumed;
+      continue;
+    }
+
+    /* 引用 */
+    if (isBlockquoteLine(line)) {
+      const inner = [];
+      while (index < lines.length) {
+        const quoted = String(lines[index]).match(/^\s{0,3}>\s?([\s\S]*)$/);
+        if (quoted) { inner.push(quoted[1]); index += 1; continue; }
+        if (lines[index].trim() === '' && index + 1 < lines.length && isBlockquoteLine(lines[index + 1])) {
+          inner.push('');
+          index += 1;
+          continue;
+        }
+        break;
+      }
+      output.push('<blockquote>' + renderMarkdown(inner.join('\n')) + '</blockquote>');
+      continue;
+    }
+
+    /* 列表 */
+    if (isListLine(line)) {
+      const list = parseList(lines, index);
+      output.push(list.html);
+      index += list.consumed;
+      continue;
+    }
+
+    /* 段落 */
+    const paragraph = [line];
+    index += 1;
+    while (index < lines.length) {
+      const next = lines[index];
+      if (next.trim() === '') break;
+      if (isAtxHeading(next) || isFenceStart(next) || isHorizontalRule(next) ||
+        isTableStart(lines, index) || isBlockquoteLine(next) || isListLine(next)) break;
+      paragraph.push(next);
+      index += 1;
+    }
+    output.push('<p>' + renderInline(paragraph.join('\n')) + '</p>');
+  }
+
+  return output.join('\n');
+}
+
+/* README 标题处理：页头已有 h1。第一个 h1 与作品标题相同则去掉；
+   其余情况把正文第一个 h1 降为 h2，保证页面只有一个 h1。 */
+function normalizeReadmeTitle(markdown, title) {
+  const lines = String(markdown).replace(/\r\n?/g, '\n').split('\n');
+  let first = -1;
+  for (let index = 0; index < lines.length; index += 1) {
+    if (lines[index].trim() !== '') { first = index; break; }
+  }
+  if (first === -1) return markdown;
+  const heading = lines[first].match(/^\s{0,3}#\s+(.*?)\s*#*\s*$/);
+  if (!heading) return markdown;
+  const headingText = normalizeText(plainText(renderInline(heading[1])).replace(/[*_`~]/g, ''));
+  if (headingText && headingText === normalizeText(title)) {
+    lines.splice(first, 1);
+    return lines.join('\n');
+  }
+  lines[first] = lines[first].replace(/^(\s{0,3})#\s+/, '$1## ');
+  return lines.join('\n');
+}
+
+/* ---------- 图片尺寸解析（PNG / JPEG / GIF / WebP / SVG） ---------- */
+
+function parseImageSize(buffer, ext) {
+  try {
+    if (ext === '.png' && buffer.length > 24 &&
+      buffer.readUInt32BE(0) === 0x89504e47 && buffer.readUInt32BE(4) === 0x0d0a1a0a) {
+      return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
+    }
+    if (ext === '.gif' && buffer.length > 10) {
+      return { width: buffer.readUInt16LE(6), height: buffer.readUInt16LE(8) };
+    }
+    if (ext === '.jpg' || ext === '.jpeg') {
+      let offset = 2;
+      while (offset + 9 < buffer.length) {
+        if (buffer[offset] !== 0xff) { offset += 1; continue; }
+        const marker = buffer[offset + 1];
+        if (marker >= 0xc0 && marker <= 0xcf &&
+          marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc) {
+          return {
+            height: buffer.readUInt16BE(offset + 5),
+            width: buffer.readUInt16BE(offset + 7)
+          };
+        }
+        const length = buffer.readUInt16BE(offset + 2);
+        if (!length) break;
+        offset += 2 + length;
+      }
+    }
+    if (ext === '.webp' && buffer.length > 30) {
+      const chunk = buffer.toString('ascii', 12, 16);
+      if (chunk === 'VP8X') {
+        return {
+          width: 1 + (buffer[24] | (buffer[25] << 8) | (buffer[26] << 16)),
+          height: 1 + (buffer[27] | (buffer[28] << 8) | (buffer[29] << 16))
+        };
+      }
+    }
+    if (ext === '.svg') {
+      const head = buffer.toString('utf8', 0, Math.min(buffer.length, 4096));
+      const width = head.match(/\bwidth\s*=\s*["']?\s*([\d.]+)/i);
+      const height = head.match(/\bheight\s*=\s*["']?\s*([\d.]+)/i);
+      if (width && height) return { width: parseFloat(width[1]), height: parseFloat(height[1]) };
+      const viewBox = head.match(/viewBox\s*=\s*["']\s*([-\d.]+)[\s,]+([-\d.]+)[\s,]+([-\d.]+)[\s,]+([-\d.]+)/i);
+      if (viewBox) return { width: parseFloat(viewBox[3]), height: parseFloat(viewBox[4]) };
+    }
+  } catch (error) { /* 解析失败按未知处理 */ }
+  return null;
+}
+
+/* ---------- 作品说明页 / 图集 ---------- */
+
+const README_NAMES = ['README.md', 'readme.md', 'Readme.md', 'README.MD', 'README_交付说明.md', 'README.txt', 'readme.txt'];
+const GALLERY_EXTS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg']);
+const GALLERY_SKIP_DIRS = new Set([
+  'node_modules', '__pycache__', '.git', '.cache', '.npm-cache', '.venv', 'venv',
+  '.pytest_cache', '.mypy_cache', 'dist', 'build', 'site-packages', '.idea', '.vscode'
+]);
+const GALLERY_ICON_RE = /icon|logo|favicon|sprite|badge|avatar|emoji|thumb/i;
+const GALLERY_GOOD_RE = /fig|figure|图|result|preview|效果|曲线|对比|output|plot|chart|demo|screen|screenshot|cover/i;
+
+function findReadmeFile(projectDir, entry) {
+  const entryPath = trim(entry);
+  if (entryPath && /\.(?:md|txt)$/i.test(entryPath)) {
+    const relative = entryPath.replace(/^(?:works|projects)\//i, '');
+    const absolute = path.join(SITE, 'works', relative.replace(/^\/+/, ''));
+    if (fs.existsSync(absolute) && fs.statSync(absolute).isFile()) {
+      return { absolute, name: path.basename(absolute) };
+    }
+  }
+  for (const name of README_NAMES) {
+    const absolute = path.join(projectDir, name);
+    if (fs.existsSync(absolute) && fs.statSync(absolute).isFile()) {
+      return { absolute, name };
+    }
+  }
+  return null;
+}
+
+/* 正文配图少于 3 张时，从作品目录挑最多 8 张「有意义」的图 */
+function collectGalleryImages(projectDir, referencePaths) {
+  const referenced = new Set((referencePaths || []).map(function (item) {
+    return String(item).replace(/^\.\//, '').split('#')[0].replace(/\\/g, '/');
+  }));
+  const seen = new Set();
+  const candidates = [];
+
+  function walk(directory, depth) {
+    let entries;
+    try {
+      entries = fs.readdirSync(directory, { withFileTypes: true });
+    } catch (error) {
+      return;
+    }
+    entries.sort(function (a, b) { return a.name.localeCompare(b.name, 'zh-CN'); });
+    for (const entry of entries) {
+      const full = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        if (!GALLERY_SKIP_DIRS.has(entry.name)) walk(full, depth + 1);
+        continue;
+      }
+      const ext = path.extname(entry.name).toLowerCase();
+      if (!GALLERY_EXTS.has(ext)) continue;
+      if (GALLERY_ICON_RE.test(entry.name)) continue;
+      let stat;
+      try { stat = fs.statSync(full); } catch (error) { continue; }
+      if (!stat.isFile() || stat.size < 20 * 1024 || stat.size > 3 * 1024 * 1024) continue;
+      const relative = path.relative(projectDir, full).split(path.sep).join('/');
+      if (referenced.has(relative)) continue;
+
+      let buffer;
+      try { buffer = fs.readFileSync(full); } catch (error) { continue; }
+      const size = parseImageSize(buffer, ext);
+      if (size && (size.width < 300 || size.height < 160)) continue;
+      if (size && (size.width / size.height < 0.35 || size.width / size.height > 3.6)) continue;
+      const digest = crypto.createHash('sha1').update(buffer).digest('hex');
+      if (seen.has(digest)) continue;
+      seen.add(digest);
+
+      const named = GALLERY_GOOD_RE.test(relative);
+      const sizePreference = stat.size >= 60 * 1024 && stat.size <= 1.6 * 1024 * 1024 ? 1 : 0;
+      const depthPreference = depth === 0 ? 3 : (depth === 1 ? 2 : (depth === 2 ? 1 : 0));
+      candidates.push({
+        relative,
+        name: entry.name,
+        size: stat.size,
+        score: (named ? 4 : 0) + sizePreference * 2 + depthPreference
+      });
+    }
+  }
+
+  walk(projectDir, 0);
+  candidates.sort(function (a, b) {
+    return b.score - a.score || b.size - a.size || a.relative.localeCompare(b.relative, 'zh-CN');
+  });
+  return candidates.slice(0, 8);
+}
+
+function buildFallbackDocBody(project) {
+  const parts = [];
+  if (project.summary) parts.push('<p>' + esc(project.summary) + '</p>');
+  if (project.highlights.length) {
+    parts.push('<h2>要点</h2><ul>' + project.highlights.map(function (item) {
+      return '<li>' + renderInline(item) + '</li>';
+    }).join('') + '</ul>');
+  }
+  if (project.tech.length) {
+    parts.push('<h2>技术栈</h2><p>' + project.tech.map(function (item) {
+      return '<span class="tag">' + esc(item) + '</span>';
+    }).join(' ') + '</p>');
+  }
+  if (!parts.length) parts.push('<p>这个作品暂时没有更详细的文字说明。</p>');
+  return parts.join('\n');
+}
+
+function workDocDemoHref(project) {
+  if (!project.demo || !fileExistsInSite('works/' + project.demo)) return '';
+  const relative = path.posix.relative(project.slug, project.demo);
+  if (!relative || relative.startsWith('..')) return project.demo;
+  return relative;
+}
+
+function renderGallery(images) {
+  if (!images.length) return '';
+  const items = images.map(function (image) {
+    return '<figure class="work-gallery-item">' +
+      '<a href="' + esc(image.relative) + '"><img src="' + esc(image.relative) + '" alt="' +
+      esc(image.name) + '" loading="lazy" decoding="async"></a>' +
+      '<figcaption>' + esc(image.name) + '</figcaption>' +
+      '</figure>';
+  }).join('\n');
+  return '<section class="work-gallery" aria-labelledby="work-gallery-title">' +
+    '<h2 class="work-gallery-title" id="work-gallery-title">图集</h2>' +
+    '<p class="work-gallery-note">正文配图较少，以下从项目目录挑选了 ' + images.length + ' 张图片。</p>' +
+    '<div class="work-gallery-grid">' + items + '</div>' +
+    '</section>';
+}
+
+/* README 里指向发布副本中不存在的本地文件时，降级为不可点击的说明文字，避免死链 */
+function sanitizeDocTargets(html, projectDir) {
+  let missing = 0;
+
+  function localTargetExists(url) {
+    const raw = decodeEntities(url).split('#')[0].split('?')[0];
+    if (!raw || /^(?:https?:\/\/|mailto:|data:|javascript:)/i.test(raw) || raw.startsWith('#')) return true;
+    const candidates = [raw];
+    try { candidates.push(decodeURIComponent(raw)); } catch (error) { /* 非法编码忽略 */ }
+    return candidates.some(function (candidate) {
+      if (!candidate || candidate.startsWith('/')) return false;
+      const absolute = path.join(projectDir, candidate.replace(/^\.\//, ''));
+      return fs.existsSync(absolute);
+    });
+  }
+
+  let result = html.replace(/<a\s+([^>]*?)href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g,
+    function (match, before, href, after, label) {
+      if (localTargetExists(href)) return match;
+      missing += 1;
+      return '<span class="doc-link-missing" title="该文件未随发布副本保留">' + label + '</span>';
+    });
+
+  result = result.replace(/<img\b([^>]*?)src="([^"]+)"([^>]*?)>/g,
+    function (match, before, source) {
+      if (localTargetExists(source)) return match;
+      missing += 1;
+      const name = decodeEntities(source).split('/').pop() || source;
+      return '<span class="doc-media-missing">[图片未随发布副本保留：' + esc(name) + ']</span>';
+    });
+
+  return { html: result, missing };
+}
+
+function buildWorkDocPage(site, project, works, stats) {
+  const projectDir = path.join(SITE, 'works', project.slug);
+  const readme = findReadmeFile(projectDir, project.entry);
+  let hasReadme = false;
+  let bodyHtml = '';
+  let missingTargets = 0;
+  const referenceImages = [];
+
+  if (readme) {
+    hasReadme = true;
+    const markdown = fs.readFileSync(readme.absolute, 'utf8');
+    for (const match of markdown.matchAll(/!\[[^\]]*\]\(\s*([^)\s]+)/g)) {
+      referenceImages.push(match[1]);
+    }
+    for (const match of markdown.matchAll(/<img[^>]+src=["']([^"']+)["']/gi)) {
+      referenceImages.push(match[1]);
+    }
+    bodyHtml = renderMarkdown(normalizeReadmeTitle(markdown, project.title));
+    const sanitized = sanitizeDocTargets(bodyHtml, projectDir);
+    bodyHtml = sanitized.html;
+    missingTargets = sanitized.missing;
+  } else {
+    bodyHtml = buildFallbackDocBody(project);
+  }
+
+  const bodyImageCount = (bodyHtml.match(/<img\b/g) || []).length;
+  const gallery = bodyImageCount < 3 ? collectGalleryImages(projectDir, referenceImages) : [];
+
+  const demoHref = workDocDemoHref(project);
+  const sourceUrl = repoTreeUrl(works.repo, 'works/' + project.slug);
+  const metaParts = ['<span>' + esc(project.categoryName) + '</span>'];
+  if (Number.isFinite(project.publishedFiles)) {
+    metaParts.push('<span>' + formatNumber(project.publishedFiles) + ' 个文件</span>');
+  }
+  if (Number.isFinite(project.publishedBytes)) {
+    metaParts.push('<span>' + formatBytes(project.publishedBytes) + '</span>');
+  }
+  project.tags.slice(0, 6).forEach(function (tag) {
+    metaParts.push('<span class="tag">' + esc(tag) + '</span>');
+  });
+
+  const actions = ['<a href="../../works/">← 返回作品列表</a>'];
+  if (demoHref) actions.push('<a class="is-demo" href="' + esc(demoHref) + '">在线试玩 ▶</a>');
+  if (sourceUrl) {
+    actions.push('<a href="' + esc(sourceUrl) + '" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a>');
+  }
+  if (readme) {
+    actions.push('<a href="' + esc(readme.name) + '">原始 Markdown</a>');
+  }
+
+  const content =
+    '<div class="wrap-narrow work-doc">' +
+    '<header class="work-doc-head">' +
+    '<p class="work-doc-kicker">说明 · ' + esc(project.categoryName) + '</p>' +
+    '<h1 class="work-doc-title">' + esc(project.title) + '</h1>' +
+    (project.subtitle ? '<p class="work-doc-sub">' + esc(project.subtitle) + '</p>' : '') +
+    '<div class="work-doc-meta">' + metaParts.join('') + '</div>' +
+    '<div class="work-doc-actions">' + actions.join('') + '</div>' +
+    '</header>' +
+    '<article class="prose work-doc-body">' + bodyHtml + '</article>' +
+    renderGallery(gallery) +
+    '<p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p>' +
+    '</div>';
+
+  return {
+    html: renderPage({
+      site, stats, depth: 2, current: 'works', page: 'work-doc', bodyClass: 'page-work-doc',
+      title: project.title + ' · 说明 · ' + site.title,
+      description: project.subtitle || project.summary || project.title,
+      content
+    }),
+    hasReadme,
+    galleryCount: gallery.length,
+    bodyImageCount,
+    missingTargets,
+    readmeName: readme ? readme.name : ''
+  };
+}
+
+/* ---------- 维护：作品筛选页 /curate/ ---------- */
+
+function buildCuratePage(site, works, stats) {
+  const published = works.published;
+  const totalBytes = published.reduce(function (sum, project) {
+    return sum + (Number.isFinite(project.publishedBytes) ? project.publishedBytes : 0);
+  }, 0);
+
+  const rows = published.map(function (project, index) {
+    const searchText = normalizeText([
+      project.title, project.subtitle, project.categoryName, project.tags.join(' ')
+    ].join(' '));
+    return '<li class="curate-row" data-slug="' + esc(project.slug) + '"' +
+      ' data-dir="' + esc(project.dir) + '"' +
+      ' data-category="' + esc(project.category) + '"' +
+      ' data-bytes="' + (Number.isFinite(project.publishedBytes) ? project.publishedBytes : 0) + '"' +
+      ' data-files="' + (Number.isFinite(project.publishedFiles) ? project.publishedFiles : 0) + '"' +
+      ' data-search="' + esc(searchText) + '">' +
+      '<input type="checkbox" class="curate-check" value="' + esc(project.slug) + '" checked' +
+      ' aria-label="保留 ' + esc(project.title) + '">' +
+      '<span class="curate-title">' + esc(project.title) + '</span>' +
+      '<span class="curate-cat">' + esc(project.categoryName) + '</span>' +
+      '<span class="curate-files">' + formatNumber(project.publishedFiles) + ' 个文件</span>' +
+      '<span class="curate-size">' + formatBytes(project.publishedBytes) + '</span>' +
+      '</li>';
+  }).join('\n');
+
+  const counts = {};
+  works.categories.forEach(function (category) { counts[category.id] = 0; });
+  published.forEach(function (project) {
+    if (!(project.category in counts)) counts[project.category] = 0;
+    counts[project.category] += 1;
+  });
+  const options = works.categories.filter(function (category) {
+    return counts[category.id] > 0;
+  }).map(function (category) {
+    return '<option value="' + esc(category.id) + '">' + esc(category.name) +
+      '（' + counts[category.id] + '）</option>';
+  }).join('');
+
+  const content =
+    '<div class="wrap curate" data-site-url="' + esc(site.baseUrl || 'https://logicx200.github.io/') + '">' +
+    '<header class="page-head">' +
+    '<p class="page-eyebrow">MAINTENANCE · 维护</p>' +
+    '<h1 class="page-title">筛选保留哪些作品</h1>' +
+    '<p class="page-desc">默认全部保留。取消勾选的作品会进入排除清单；清单可复制或下载为 JSON，交给 AI 即可从站点和仓库里删掉它们。选择会保存在本机浏览器。</p>' +
+    '</header>' +
+    '<div class="curate-stats" aria-live="polite">' +
+    '<span>保留 <span class="stat-value" id="curate-keep-count">' + formatNumber(published.length) + '</span> 个</span>' +
+    '<span>排除 <span class="stat-value" id="curate-exclude-count">0</span> 个</span>' +
+    '<span>排除体积 <span class="stat-value" id="curate-exclude-bytes">0 B</span></span>' +
+    '<span>全部体积 <span class="stat-value">' + formatBytes(totalBytes) + '</span></span>' +
+    '</div>' +
+    '<div class="curate-controls">' +
+    '<div class="search-field">' +
+    '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.3"></circle><path d="M10.3 10.3 14 14"></path></svg>' +
+    '<label class="sr-only" for="curate-search">搜索作品</label>' +
+    '<input class="search-input" id="curate-search" type="search" placeholder="搜索标题、分类或标签…" autocomplete="off" spellcheck="false">' +
+    '</div>' +
+    '<div class="curate-buttons">' +
+    '<button class="curate-button" type="button" id="curate-select-all">全选</button>' +
+    '<button class="curate-button" type="button" id="curate-select-none">全不选</button>' +
+    '<button class="curate-button" type="button" id="curate-reset">重置</button>' +
+    '</div>' +
+    '<select class="curate-select" id="curate-category" aria-label="按分类批量操作">' + options + '</select>' +
+    '<button class="curate-button" type="button" id="curate-category-select">全选该分类</button>' +
+    '<button class="curate-button" type="button" id="curate-category-unselect">全不选该分类</button>' +
+    '</div>' +
+    '<ul class="curate-list" id="curate-list">' + rows + '</ul>' +
+    '<div class="curate-empty" id="curate-empty" hidden>没有匹配的作品</div>' +
+    '<div class="curate-actions">' +
+    '<button class="curate-button curate-button-primary" type="button" id="curate-copy">复制排除清单</button>' +
+    '<button class="curate-button curate-button-primary" type="button" id="curate-download">下载 curate-exclude.json</button>' +
+    '<span class="curate-status" id="curate-status" role="status"></span>' +
+    '</div>' +
+    '<p class="curate-note">把这份 JSON 交给 AI，即可从站点和仓库中删除这些作品。选择保存在本机浏览器（localStorage），清除浏览器数据或点「重置」即可恢复。</p>' +
+    '<details class="curate-preview">' +
+    '<summary>查看排除清单 JSON</summary>' +
+    '<textarea class="curate-output" id="curate-output" readonly rows="14" aria-label="排除清单 JSON"></textarea>' +
+    '</details>' +
+    '</div>';
+
+  return renderPage({
+    site, stats, depth: 1, current: '', page: 'curate', bodyClass: 'page-curate',
+    title: '作品筛选 · ' + site.title,
+    description: '学哲玩作品集维护页：勾选要保留的作品，导出排除清单 JSON。',
+    content
+  });
 }
 
 /* ---------- 页面骨架 ---------- */
@@ -861,6 +1687,7 @@ function buildWorksIndex(site, works, stats) {
         '<ul class="unpublished-list">' + unpublishedItems + '</ul>' +
         '</details>'
       : '') +
+    '<p class="works-maintenance"><a href="../curate/">维护：筛选保留哪些作品 →</a></p>' +
     '</div>';
 
   return renderPage({
@@ -875,7 +1702,23 @@ function buildWorksIndex(site, works, stats) {
 
 function buildLegacyPage(site, legacy, stats) {
   const prefix = relPrefix(2);
+
+  /* 预留：legacy.json 里的 tool.demo 存在且文件存在时，显示「在线试玩」 */
+  function legacyDemoHref(tool) {
+    const demo = trim(tool.demo);
+    if (!demo) return '';
+    const normalized = demo.replace(/^\.?\//, '').replace(/^\/+/, '');
+    if (fileExistsInSite('works/legacy/' + normalized)) return normalized;
+    const sitePath = stripWorksPrefix(demo);
+    if (sitePath && fileExistsInSite('works/' + sitePath)) {
+      const relative = path.posix.relative('legacy', sitePath);
+      return relative && !relative.startsWith('..') ? relative : '';
+    }
+    return '';
+  }
+
   const tools = legacy.tools.map((tool) => {
+    const demoHref = legacyDemoHref(tool);
     const images = tool.images
       .map((image) => image.replace(/^\/+/, ''))
       .filter((image) => fileExistsInSite(image));
@@ -889,20 +1732,38 @@ function buildLegacyPage(site, legacy, stats) {
     } else {
       media = '<div class="legacy-media"><div class="legacy-placeholder" aria-hidden="true"></div></div>';
     }
-    return '<article class="legacy-card">' + media +
-      '<h2 class="legacy-name">' + esc(tool.name) + '</h2>' +
+    const tech = tool.tech ? '<p class="legacy-tech">' + esc(tool.tech) + '</p>' : '';
+    const badge = demoHref
+      ? '<span class="legacy-badge">网页版可玩</span>'
+      : '<span class="legacy-era">原程序 · 未移植</span>';
+    const demoLink = demoHref
+      ? '<a class="legacy-demo" href="' + esc(demoHref) + '">在线试玩 ▶</a>'
+      : '';
+    const sourceLink = tool.source
+      ? '<a class="legacy-source" href="' + esc(tool.source) + '" target="_blank" rel="noopener noreferrer">源码 ↗</a>'
+      : '';
+    return '<article class="legacy-card">' +
+      '<div class="legacy-head"><h2 class="legacy-name">' + esc(tool.name) + '</h2>' + badge + '</div>' +
       (tool.desc ? '<p class="legacy-desc">' + esc(tool.desc) + '</p>' : '') +
-      '<span class="legacy-era">早期项目（Hexo 时期）</span>' +
+      tech +
+      media +
+      (demoLink || sourceLink ? '<div class="legacy-links">' + demoLink + sourceLink + '</div>' : '') +
       '</article>';
   }).join('\n');
 
   const statItems = [
     ['项目', legacy.stats.projects],
+    ['已移植网页版', legacy.stats.webVersions],
     ['代码行数', legacy.stats.loc],
     ['技术栈', legacy.stats.stacks]
   ].filter((item) => item[1] !== undefined && item[1] !== null && item[1] !== '')
     .map((item) => '<span class="stat-item">' + esc(item[0]) + ' <span class="stat-value">' + esc(item[1]) + '</span></span>')
     .join('');
+
+  const repoLine = legacy.repo
+    ? '<p class="legacy-repo">源码仓库：<a href="' + esc(legacy.repo) + '" target="_blank" rel="noopener noreferrer">' +
+      esc(legacy.repoName || legacy.repo) + '</a></p>'
+    : '';
 
   const contact = [];
   if (legacy.contact.email) contact.push('邮箱：<a href="mailto:' + esc(legacy.contact.email) + '">' + esc(legacy.contact.email) + '</a>');
@@ -914,6 +1775,7 @@ function buildLegacyPage(site, legacy, stats) {
     '<p class="page-eyebrow">LEGACY · 早期项目</p>' +
     '<h1 class="page-title">早期项目</h1>' +
     '<p class="legacy-intro">' + esc(legacy.intro || 'Hexo 时期写下的 Python 工具箱，保留截图与说明。') + '</p>' +
+    repoLine +
     '</header>' +
     (statItems ? '<div class="legacy-stats" aria-label="旧项目统计">' + statItems + '</div>' : '') +
     (legacy.stats.note ? '<p class="legacy-note">' + esc(legacy.stats.note) + '</p>' : '') +
@@ -1103,8 +1965,30 @@ function main() {
   });
   writeFile('works/index.html', buildWorksIndex(notes.site, works, stats), written);
   writeFile('works/legacy/index.html', buildLegacyPage(notes.site, legacy, stats), written);
+
+  /* 作品说明页：works/<slug>/README.html（README 渲染 / summary 兜底 + 图集） */
+  const docStats = { readme: 0, fallback: 0, galleryPages: 0, galleryImages: 0, missingTargets: 0 };
+  works.published.forEach((project) => {
+    const doc = buildWorkDocPage(notes.site, project, works, stats);
+    writeFile('works/' + project.slug + '/README.html', doc.html, written);
+    if (doc.hasReadme) docStats.readme += 1;
+    else docStats.fallback += 1;
+    if (doc.galleryCount > 0) {
+      docStats.galleryPages += 1;
+      docStats.galleryImages += doc.galleryCount;
+    }
+    docStats.missingTargets += doc.missingTargets || 0;
+  });
+  writeFile('curate/index.html', buildCuratePage(notes.site, works, stats), written);
   writeFile('about/index.html', buildAboutPage(notes.site, about, stats), written);
   writeFile('404.html', build404(notes.site, stats), written);
+
+  console.log('\n作品说明页：' + works.published.length + ' 个（README 渲染 ' + docStats.readme +
+    ' 个，summary 兜底 ' + docStats.fallback + ' 个）');
+  console.log('图集：' + docStats.galleryPages + ' 个说明页补充了 ' + docStats.galleryImages + ' 张图片');
+  if (docStats.missingTargets) {
+    console.log('说明页降级：' + docStats.missingTargets + ' 个 README 本地链接/图片目标未随发布副本保留，已降级为纯文字。');
+  }
 
   const audit = auditHtml(written);
   if (audit.rootAbsolute.length) {
@@ -1128,4 +2012,23 @@ function main() {
   }
 }
 
-main();
+/* 作为脚本直接运行时才构建；被测试脚本 import 时只导出渲染函数 */
+const isDirectRun = (() => {
+  try {
+    return Boolean(process.argv[1]) &&
+      path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+  } catch (error) {
+    return false;
+  }
+})();
+
+if (isDirectRun) main();
+
+export {
+  renderMarkdown,
+  renderInline,
+  parseImageSize,
+  collectGalleryImages,
+  buildWorkDocPage,
+  buildCuratePage
+};

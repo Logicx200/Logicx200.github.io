@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>弹簧-磁铁-线圈 · 电磁阻尼谐振子 · 早期项目移植</title>
+<meta name="description" content="把早年的 Spring-Magnet-Coil Simulator（Python/Tkinter）移植成网页版：质量-弹簧振子、磁偶极子穿过线圈的感应电动势与反向磁场阻尼，RK4 实时动画与 y(t)/v(t)/I(t)/EMF(t) 曲线，零依赖。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../../assets/css/site.css">
+<style>
+  :root { --demo-wide: 1220px; }
+
+  .demo-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+  .demo-bar .bar-inner {
+    display: flex; align-items: center; gap: 14px;
+    height: 54px;
+  }
+  .demo-bar .demo-back {
+    display: inline-flex; align-items: center;
+    font-size: 13px; letter-spacing: .04em; color: var(--ink-2);
+    text-decoration: none; white-space: nowrap;
+  }
+  .demo-bar .demo-back:hover { color: var(--accent); }
+  .demo-bar .bar-sep { color: var(--rule-strong); }
+  .demo-bar .bar-title {
+    font-family: var(--font-serif); font-size: 15px; letter-spacing: .07em;
+    color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .demo-bar .bar-spacer { flex: 1; }
+  .demo-bar .theme-toggle svg { width: 14px; height: 14px; }
+  .demo-bar .icon-moon { display: none; }
+  [data-theme="dark"] .demo-bar .icon-sun { display: none; }
+  [data-theme="dark"] .demo-bar .icon-moon { display: block; }
+
+  .demo-wrap {
+    width: 100%; max-width: var(--demo-wide);
+    margin: 0 auto; padding-inline: clamp(18px, 4vw, 34px);
+  }
+  main.demo-main { padding-bottom: 8px; }
+  .dp-head { padding: clamp(28px, 4.5vw, 46px) 0 16px; }
+  .dp-head .page-eyebrow { margin: 0 0 12px; }
+  .dp-head .page-title { margin: 0; }
+  .dp-head .page-desc { margin: 13px 0 0; max-width: 50em; }
+
+  .demo-btn {
+    font: inherit; font-size: 12.5px; letter-spacing: .04em;
+    padding: 6px 14px; border-radius: 2px;
+    border: 1px solid var(--rule-strong); background: transparent;
+    color: var(--ink); cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .demo-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .demo-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  .demo-btn.primary:hover { background: var(--accent-deep); color: var(--paper); }
+
+  .coil-grid {
+    display: grid;
+    grid-template-columns: 302px minmax(0, 1fr) 428px;
+    gap: 12px;
+    align-items: stretch;
+    margin-top: 12px;
+  }
+  .panel {
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    display: flex; flex-direction: column; min-width: 0;
+  }
+  .panel > header {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    padding: 7px 11px 6px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 11px; color: var(--ink-3); letter-spacing: .06em;
+  }
+  .panel > header h2 {
+    margin: 0; font-family: var(--font-serif); font-size: 13px;
+    font-weight: 500; letter-spacing: .05em; color: var(--ink);
+    white-space: nowrap;
+  }
+  .panel > header .hint {
+    font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3);
+    white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
+  .panel-canvas { position: relative; flex: 1; min-height: 0; }
+  .panel-canvas canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+  .panel-scene .panel-canvas { min-height: 520px; }
+
+  .param-body { padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 9px; }
+  .param-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px;
+  }
+  .param-grid label {
+    display: flex; flex-direction: column; gap: 2px;
+    font-size: 10.5px; letter-spacing: .03em; color: var(--ink-3);
+  }
+  .param-grid input[type="number"] {
+    width: 100%; font: inherit; font-family: var(--font-mono); font-size: 11.5px;
+    color: var(--ink); background: var(--paper-2);
+    border: 1px solid var(--rule-strong); border-radius: 2px; padding: 3px 6px;
+  }
+  .param-grid input[type="number"]:focus { outline: 1px solid var(--accent); outline-offset: 1px; }
+  .param-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    font-size: 11px; color: var(--ink-3);
+  }
+  .param-row select {
+    flex: 1; font: inherit; font-size: 11.5px; color: var(--ink);
+    background: var(--paper-2); border: 1px solid var(--rule-strong);
+    border-radius: 2px; padding: 3px 5px; max-width: 190px;
+  }
+  .param-toggles { display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; color: var(--ink-2); }
+  .param-toggles label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  .param-toggles input { accent-color: var(--accent); margin: 0; }
+
+  .param-actions { display: flex; gap: 8px; }
+  .param-actions .demo-btn { flex: 1; }
+
+  .readouts {
+    margin: 4px 0 0; padding: 8px 0 0;
+    border-top: 1px solid var(--rule);
+    display: grid; grid-template-columns: 1fr auto; gap: 3px 10px;
+    font-size: 11px; color: var(--ink-3);
+  }
+  .readouts dt { margin: 0; }
+  .readouts dd {
+    margin: 0; text-align: right;
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .readouts dd.hl { color: var(--accent); font-weight: 600; }
+
+  .playbar {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    padding: 8px 11px; border-top: 1px solid var(--rule);
+    font-size: 11px; color: var(--ink-3);
+  }
+  .playbar .spacer { flex: 1; }
+  .playbar select {
+    font: inherit; font-size: 11px; color: var(--ink); background: var(--paper-2);
+    border: 1px solid var(--rule-strong); border-radius: 2px; padding: 3px 4px;
+  }
+
+  .charts { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .chart { display: flex; flex-direction: column; flex: 1; min-height: 104px; border-bottom: 1px solid var(--rule); }
+  .chart:last-child { border-bottom: 0; }
+  .chart > .c-head {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    padding: 5px 10px 0; font-size: 11px; color: var(--ink-2); letter-spacing: .04em;
+  }
+  .chart > .c-head b { font-family: var(--font-mono); font-size: 11px; color: var(--ink); font-weight: 600; }
+  .chart > .c-head .unit { font-size: 10px; color: var(--ink-3); }
+  .chart-canvas { position: relative; flex: 1; min-height: 0; }
+  .chart-canvas canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+
+  .case-legend {
+    display: flex; flex-wrap: wrap; gap: 4px 14px;
+    padding: 7px 11px; border-top: 1px solid var(--rule);
+    font-size: 10.5px; color: var(--ink-3);
+  }
+  .case-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .case-legend i { width: 14px; height: 2px; display: inline-block; }
+
+  .dp-note {
+    margin: clamp(26px, 4vw, 40px) 0 0;
+    color: var(--ink-3); font-size: 12.5px; line-height: 1.9;
+  }
+  .dp-note details {
+    margin-top: 12px; border-top: 1px solid var(--rule); padding-top: 10px;
+    color: var(--ink-2);
+  }
+  .dp-note summary { cursor: pointer; color: var(--ink-2); font-size: 12.5px; }
+  .dp-note details p { margin: 8px 0 0; }
+  .dp-note code {
+    font-family: var(--font-mono); font-size: 11.5px;
+    background: var(--paper-2); padding: 1px 5px;
+  }
+  .dp-note .eq {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-2);
+    background: var(--paper-2); border-left: 2px solid var(--accent);
+    padding: 8px 12px; margin: 8px 0 0; overflow-x: auto; white-space: pre;
+  }
+
+  @media (max-width: 1120px) {
+    .coil-grid {
+      grid-template-columns: 292px minmax(0, 1fr);
+      grid-template-areas: "params scene" "charts charts";
+    }
+    .panel-params { grid-area: params; }
+    .panel-scene { grid-area: scene; }
+    .panel-charts { grid-area: charts; }
+    .panel-charts .charts { min-height: 420px; }
+  }
+  @media (max-width: 720px) {
+    .coil-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "scene" "params" "charts"; }
+    .panel-scene .panel-canvas { min-height: 400px; }
+    .panel-charts .charts { min-height: 380px; }
+  }
+</style>
+</head>
+<body class="page-legacy" data-page="legacy-coil-oscillator">
+<a class="skip-link" href="#main">跳到正文</a>
+
+<header class="demo-bar">
+  <div class="demo-wrap bar-inner">
+    <a class="demo-back" href="../">← 返回早期项目</a>
+    <span class="bar-sep" aria-hidden="true">/</span>
+    <span class="bar-title">弹簧-磁铁-线圈 · 电磁阻尼</span>
+    <span class="bar-spacer"></span>
+    <button class="theme-toggle" type="button" id="themeToggle" aria-label="切换明暗主题" title="切换明暗主题">
+      <svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg>
+      <svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main" class="demo-main">
+  <div class="demo-wrap">
+    <header class="dp-head page-head">
+      <p class="page-eyebrow">LEGACY · PYTHON → WEB</p>
+      <h1 class="page-title">弹簧-磁铁-线圈 · 电磁阻尼谐振子</h1>
+      <p class="page-desc">竖直弹簧下挂着磁铁，磁铁在线圈（套管）里上下穿过：磁通量变化产生感应电动势，驱动线圈电流，电流又给磁铁一个反向的磁场力——电磁阻尼就来自这里。左侧可改全部参数，中间是磁铁穿线圈的动画，右侧是 y(t)、v(t)、I(t)、EMF(t) 四条实时曲线，并同时给出三种外部电阻工况的对比。</p>
+    </header>
+
+    <div class="coil-grid">
+      <section class="panel panel-params">
+        <header><h2>参数</h2><span class="hint">默认 = 源码默认值</span></header>
+        <div class="param-body">
+          <div class="param-grid">
+            <label>质量 m (kg)<input type="number" id="p_m" value="0.05" step="0.01" min="0.005" max="2"></label>
+            <label>弹簧常数 k (N/m)<input type="number" id="p_k" value="20" step="1" min="1" max="500"></label>
+            <label>磁偶极矩 m_dip (A·m²)<input type="number" id="p_md" value="0.3" step="0.05" min="0.01" max="5"></label>
+            <label>线圈匝数 N<input type="number" id="p_N" value="500" step="50" min="10" max="5000"></label>
+            <label>线圈半径 a (m)<input type="number" id="p_a" value="0.01" step="0.001" min="0.002" max="0.05"></label>
+            <label>电感 L (H)<input type="number" id="p_L" value="0.001" step="0.0005" min="0.0001" max="0.1"></label>
+            <label>线圈电阻 R_coil (Ω)<input type="number" id="p_Rc" value="2" step="0.5" min="0.1" max="50"></label>
+            <label>初始位移 y0 (m)<input type="number" id="p_y0" value="0.03" step="0.005" min="0.002" max="0.05"></label>
+            <label>初始速度 v0 (m/s)<input type="number" id="p_v0" value="0" step="0.05" min="-5" max="5"></label>
+            <label>模拟时长 t_end (s)<input type="number" id="p_tend" value="8" step="1" min="1" max="20"></label>
+          </div>
+          <div class="param-row"><span>外部电阻 R_ext</span>
+            <select id="p_rext">
+              <option value="5">5 Ω（R_tot = 7 Ω）</option>
+              <option value="0.5">0.5 Ω（R_tot = 2.5 Ω）</option>
+              <option value="open">断路 open（i = 0）</option>
+            </select>
+          </div>
+          <div class="param-toggles">
+            <label><input type="checkbox" id="optB" checked> 显示磁场线 / 磁通箭头</label>
+            <label><input type="checkbox" id="optI" checked> 显示感应电流方向</label>
+            <label><input type="checkbox" id="optCompare" checked> 曲线叠加其它工况对比</label>
+          </div>
+          <div class="param-actions">
+            <button class="demo-btn primary" type="button" id="btnApply">应用参数并重算</button>
+          </div>
+          <dl class="readouts">
+            <dt>等效阻尼比 ζ</dt><dd class="hl" id="roZeta">—</dd>
+            <dt>机械能 / 初值</dt><dd id="roEmech">—</dd>
+            <dt>焦耳热 / 初值</dt><dd id="roHeat">—</dd>
+            <dt>总能量漂移</dt><dd id="roDrift">—</dd>
+            <dt>y(t)</dt><dd id="roY">—</dd>
+            <dt>v(t)</dt><dd id="roV">—</dd>
+            <dt>i(t)</dt><dd id="roI">—</dd>
+            <dt>EMF(t)</dt><dd id="roEmf">—</dd>
+            <dt>ω₀ = √(k/m)</dt><dd id="roWn">—</dd>
+            <dt>τ_e = L/R_tot 最小值</dt><dd id="roTau">—</dd>
+          </dl>
+        </div>
+      </section>
+
+      <section class="panel panel-scene">
+        <header><h2>磁铁在线圈中振荡</h2><span class="hint" id="sceneHint">t = 0.00 s</span></header>
+        <div class="panel-canvas"><canvas id="cvScene" aria-label="弹簧磁铁线圈动画"></canvas></div>
+        <div class="playbar">
+          <button class="demo-btn primary" type="button" id="btnPlay">暂停</button>
+          <button class="demo-btn" type="button" id="btnReplay">重播</button>
+          <span class="spacer"></span>
+          <span>速度</span>
+          <select id="playSpeed">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="2">2×</option>
+          </select>
+          <span id="playState">就绪</span>
+        </div>
+      </section>
+
+      <section class="panel panel-charts">
+        <header><h2>实时曲线</h2><span class="hint" id="chartsHint">t = 0.00 s / 8.00 s</span></header>
+        <div class="charts">
+          <div class="chart">
+            <div class="c-head"><span>位移 y(t)</span><span><b id="valY">—</b> <span class="unit">mm</span></span></div>
+            <div class="chart-canvas"><canvas id="chY" aria-label="y-t 曲线"></canvas></div>
+          </div>
+          <div class="chart">
+            <div class="c-head"><span>速度 v(t)</span><span><b id="valV">—</b> <span class="unit">m/s</span></span></div>
+            <div class="chart-canvas"><canvas id="chV" aria-label="v-t 曲线"></canvas></div>
+          </div>
+          <div class="chart">
+            <div class="c-head"><span>线圈电流 I(t)</span><span><b id="valI">—</b> <span class="unit">A</span></span></div>
+            <div class="chart-canvas"><canvas id="chI" aria-label="I-t 曲线"></canvas></div>
+          </div>
+          <div class="chart">
+            <div class="c-head"><span>感应电动势 EMF(t)</span><span><b id="valEMF">—</b> <span class="unit">V</span></span></div>
+            <div class="chart-canvas"><canvas id="chEMF" aria-label="EMF-t 曲线"></canvas></div>
+          </div>
+        </div>
+        <div class="case-legend" id="caseLegend"></div>
+      </section>
+    </div>
+
+    <p class="dp-note">
+      根据 <code>F:\Project\电磁阻尼.py</code> 里的原始 Python 程序移植，原作 2025-10（代码最后修订 2025-11）。
+      原版是 Tkinter 参数面板 + Matplotlib 求解并导出 GIF 的桌面程序，默认参数与三条 Rext 工况与源码一致；网页版把数值积分、动画与曲线都搬进浏览器实时完成，ODE 与磁通耦合项逐项照搬，未做模型简化。
+    </p>
+    <details class="dp-note">
+      <summary>模型与移植说明（ODE、磁通耦合项、与原版的差异）</summary>
+      <p>源码中的状态方程（y 为磁铁偏离线圈中心的位移，i 为线圈电流，z_coil 为线圈中心位置）：</p>
+      <div class="eq">y'   = v
+v'   = ( -k·y + N·i·dΦ/dz(y − z_coil) ) / m
+i'   = ( -R_tot·i − N·dΦ/dz(y − z_coil)·v ) / L
+R_tot = R_coil + R_ext,  R_ext = 5 Ω / 0.5 Ω / ∞（断路，i ≡ 0）
+dΦ/dz(z) = −3·μ0·m_dip·a²·z / [ 2·(a² + z²)^(5/2) ],  μ0 = 4e-7·π</div>
+      <p>能量记账与源码一致：机械能 = ½mv² + ½ky²，磁能 = ½Li²，焦耳热 = ∫i²R_tot dt（梯形积分），总能量 ≈ 常数。感应电动势按源码动画中的定义计算：EMF = −N·(dΦ/dz)·v。</p>
+      <p>与原版差异：① 原版用 Matplotlib 逐帧导出 GIF，网页版用 requestAnimationFrame 实时播放，可在任意时刻暂停/重播、切换显示工况；② 原版一次跑完 5 Ω、0.5 Ω、断路三种工况后只对其中一个出动画，网页版三条曲线同时叠加显示（可关闭）；③ 原版“快速模式”会减小步长上限换取速度，网页版固定 h = 5×10⁻⁵ s 的 RK4（已与 h = 2×10⁻⁶ s 的参考解核对，末态能量偏差 < 0.01%）；④ 等效阻尼比 ζ 与包络拟合是网页版为读图方便新增的量，原版没有。</p>
+    </details>
+  </div>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

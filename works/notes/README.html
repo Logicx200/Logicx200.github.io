@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>红外探测仿真 · 调研与方案文档集 · 说明 · 学哲玩</title>
+<meta name="description" content="试验方案、实验设计、参考文献与赛题论文">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 调研 · 文档</p><h1 class="work-doc-title">红外探测仿真 · 调研与方案文档集</h1><p class="work-doc-sub">试验方案、实验设计、参考文献与赛题论文</p><div class="work-doc-meta"><span>调研 · 文档</span><span>12 个文件</span><span>540.5 KB</span><span class="tag">调研</span><span class="tag">实验设计</span><span class="tag">参考文献</span><span class="tag">红外仿真</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/notes" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="实验设计方案-复杂大气红外探测仿真-v1.0.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="复杂大气环境下的红外目标探测仿真实验设计方案v10">复杂大气环境下的红外目标探测仿真——实验设计方案（v1.0）</h2>
+<blockquote><p>用途：组内评审与后续执行的主文档。配套材料：</p>
+<ul><li><strong>仿真结果报告（Python 侧 v1.0）</strong>：<span class="doc-link-missing" title="该文件未随发布副本保留">sim_results/仿真结果报告-v1.0.md</span>（含相图、临界曲线、Sobol 敏感性）</li><li>方案框架与参数相图设计：<a href="复杂大气红外探测仿真-试验方案框架-v0.1.md">复杂大气红外探测仿真-试验方案框架-v0.1.md</a></li><li>公式、文献与可信度分级：<a href="红外探测仿真_调研与试验方案.md">红外探测仿真_调研与试验方案.md</a></li><li>示意脚本：<span class="doc-link-missing" title="该文件未随发布副本保留">scripts/phase_maps_illustrative.py</span></li></ul>
+<p>数值口径：文中带&quot;【待确认】&quot;的是建议值，需组内确认；带&quot;（示意）&quot;的图表由简化模型生成，只用于说明数据流与图件形态，<strong>不是最终仿真结果</strong>。</p></blockquote>
+<hr>
+<h2 id="〇基线假设先固定后续全部实验以此为基准">〇、基线假设（先固定，后续全部实验以此为基准）</h2>
+<div class="table-container"><table><thead><tr><th>项目</th><th>取值</th><th>状态</th></tr></thead><tbody><tr><td>主目标</td><td>坦克，等效临界尺寸 Dₜ = 2.3 m，ΔT = 10 K（低对比考核用 3 K）</td><td>【待确认】</td></tr><tr><td>辅助目标</td><td>车辆 4 m、人员 0.5 m（仅作鲁棒性抽查）</td><td>【待确认】</td></tr><tr><td>波段</td><td>LWIR 8–12 μm（主）、MWIR 3–5 μm（对照）</td><td>【待确认】</td></tr><tr><td>口径/焦距/F#</td><td>D = 100 mm，f = 250 mm，F# = 2.0</td><td>【待确认】</td></tr><tr><td>像元/IFOV</td><td>15 μm，IFOV = 0.06 mrad，填充因子 ≥ 0.8</td><td>【待确认】</td></tr><tr><td>NETD</td><td>30 mK（制冷型，主）；50 mK（非制冷，对照）</td><td>【待确认】</td></tr><tr><td>帧率/积分时间</td><td>30 Hz / 5 ms</td><td>【待确认】</td></tr><tr><td>平台/几何</td><td>地面或车载，水平路径，观测俯角 0°</td><td>【待确认】</td></tr><tr><td>目标背景</td><td>草地，气温 300 K，发射率按光谱库取值</td><td>【待确认】</td></tr><tr><td>评估距离轴</td><td>R = 1–10 km（P_d(R)、R₅₀ 均在此轴求取）</td><td>—</td></tr></tbody></table></div>
+<blockquote><p>这张表不确认，后面所有工况的数值都只是&quot;示例&quot;。传感器参数一旦给定，替换此表即可，其他部分不受影响。</p></blockquote>
+<hr>
+<h2 id="一实验思路">一、实验思路</h2>
+<h3 id="11-要回答的三个问题">1.1 要回答的三个问题</h3>
+<ol><li><strong>单点能力</strong>：在给定大气状态与目标下，该传感器在距离 R 处的探测/识别概率是多少？R₅₀（P_d = 50% 对应距离）是多少？</li><li><strong>参数规律</strong>：大气参数（能见度、光谱斜率、水汽、湍流）各自把能力拉低多少？哪个是主导因子？相互之间有没有非线性叠加？</li><li><strong>可信度</strong>：以上结论在多大程度上可信？与官方软件 COSSIM 的偏差多大？不确定度区间多宽？</li></ol>
+<h3 id="12-基本假设与边界">1.2 基本假设与边界</h3>
+<ul><li>水平均匀大气、局地热平衡；不考虑多次散射以外的复杂辐射过程（正式模型由辐射传输软件处理）；</li><li>目标与背景均为漫发射体（发射率光谱按库取值，镜面反射只作敏感性说明）；</li><li>传感器线性响应、噪声以 NETD 表征（正式版补 3D 噪声：光子/读出/1/f/固定图案）；</li><li>主要结论限定在：水平路径、上述目标/传感器、上述参数范围内；斜程与云作为扩展工况，不作主结论。</li></ul>
+<h3 id="13-总体技术路线四层">1.3 总体技术路线（四层）</h3>
+<pre><code>[环境参数层]   MOR, α, w, Cn² + 目标 ΔT/尺度 + 传感器参数 + 几何
+        │
+        ▼
+[前向仿真层]   大气传输 τ(λ), L_path(λ)  →  目标/背景视在辐射  →  传感器 MTF/噪声  →  信号或图像
+        │
+        ▼
+[指标层]       τ_band, ΔT_app, SNR, MRTD(f), N, TTP  →  P_d(R), R50
+        │
+        ▼
+[可信度层]     解析极限校验 → COSSIM 锚点对标 → 不确定度传播 → 敏感性分析</code></pre>
+<h3 id="14-三阶段实验安排">1.4 三阶段实验安排</h3>
+<div class="table-container"><table><thead><tr><th>阶段</th><th>内容</th><th>工况数</th><th>目的</th></tr></thead><tbody><tr><td>I 基准闭环</td><td>基准工况 A0，打通 Python 全链路；做解析极限校验（τ=1、均匀背景、黑体目标）</td><td>1</td><td>证明链路正确，产出第一条曲线</td></tr><tr><td>II 参数扫描</td><td>单因子 B、组合/极端 C、LHS 扫描（代理模型）</td><td>17 + 6 + 300</td><td>出规律、出相图、做敏感性</td></tr><tr><td>III 锚点对标</td><td>5 个 COSSIM 锚点，比三层量</td><td>5</td><td>证明可信度，形成最终结论</td></tr></tbody></table></div>
+<blockquote><p>顺序不能颠倒：阶段 I 没通过解析校验，阶段 II 的扫描结果无法解释。</p></blockquote>
+<h3 id="15-官方软件与-python-的分工要写进报告的分工表">1.5 官方软件与 Python 的分工（要写进报告的分工表）</h3>
+<div class="table-container"><table><thead><tr><th>环节</th><th>COSSIM</th><th>Python</th></tr></thead><tbody><tr><td>场景化建模</td><td>目标/背景/材质/大气要素建模与想定</td><td>参数表管理、批量配置生成</td></tr><tr><td>仿真计算</td><td><strong>锚点工况高保真成像</strong>（图像级辐射定量）</td><td>批量工况 τ、路径辐射、SNR、指标计算</td></tr><tr><td>性能评估</td><td>图像对比度/SNR/可分辨性（若可导出）</td><td>MRTD、P_d、R₅₀、置信区间</td></tr><tr><td>方案优化</td><td>优化后方案成像验证（收尾锚点）</td><td>代理模型 + 多目标优化</td></tr><tr><td>定位</td><td><strong>基准与保真来源</strong></td><td>规模、深度、统计与校验对象</td></tr></tbody></table></div>
+<h3 id="16-创新点定位">1.6 创新点定位</h3>
+<p><strong>&quot;图像域仿真 → 量化指标 → 参数相图 → 方案优化&quot;闭环</strong>：把 COSSIM 的图像级仿真接到可计算的性能评估链路上，输出&quot;在什么大气条件下、多远、多大把握发现目标&quot;的量化结论。多数队伍停在渲染图像，本方案落在可验证的能力数字上。</p>
+<hr>
+<h2 id="二环境定义参数">二、环境定义参数</h2>
+<h3 id="21-参数化原则">2.1 参数化原则</h3>
+<p>不枚举&quot;雾/霾/雨&quot;等天气类型，而是用<strong>连续物理参数</strong>描述大气状态：</p>
+<p>$$a = (\mathrm{MOR},\ \alpha,\ w,\ Cn^2)$$</p>
+<p>理由：环境名称不正交（同名&quot;乡村&quot;能见度可从 5 km 到 30 km）；连续参数可标定、可做方差分解（Morris/Sobol）、可外推到未枚举环境。<strong>环境名称只作为参数空间中的典型点</strong>，用于挑选 COSSIM 锚点和报告叙述。</p>
+<h3 id="22-大气参数定义">2.2 大气参数定义</h3>
+<div class="table-container"><table><thead><tr><th>符号</th><th>定义</th><th>单位</th><th>范围</th><th>默认值</th><th>数据来源</th><th>COSSIM 对应项【待核实】</th></tr></thead><tbody><tr><td>MOR</td><td>气象光学视程（550 nm 能见度）</td><td>km</td><td>0.5–30</td><td>23</td><td>气象观测/标准大气</td><td>能见度/大气模式</td></tr><tr><td>α</td><td>Ångström 消光指数，β(λ)=β₅₅₀(550/λ)^α</td><td>—</td><td>0–2</td><td>1.3</td><td>气溶胶模型/OPAC/文献</td><td>气溶胶类型（需换算）</td></tr><tr><td>w</td><td>可降水量（水汽柱）</td><td>cm</td><td>0.5–5</td><td>1.5</td><td>探空/再分析</td><td>湿度/水汽设置</td></tr><tr><td>Cn²</td><td>折射率结构常数</td><td>m^(−2/3)</td><td>1e−16–1e−13</td><td>1e−14</td><td>边界层观测/经验模型</td><td>湍流参数（若无则用 Python 补）</td></tr><tr><td>g / ω</td><td>气溶胶不对称因子 / 单次反照率（可选）</td><td>—</td><td>0.5–0.9 / 0.5–1</td><td>按类型</td><td>OPAC/Mie 计算</td><td>气溶胶模型隐含</td></tr><tr><td>T_air</td><td>近地面气温（影响路径辐射）</td><td>K</td><td>280–310</td><td>300</td><td>气象</td><td>温度设置</td></tr><tr><td>路径类型</td><td>水平/斜程；天顶角</td><td>°</td><td>0–60</td><td>水平</td><td>任务设定</td><td>几何设置</td></tr></tbody></table></div>
+<p>辅助关系：</p>
+<ul><li>$\beta_{550} = 3.912/\mathrm{MOR}$（km⁻¹）；</li><li>$\beta(\lambda) = \beta_{550}\,(0.55/\lambda)^{\alpha}$（λ 单位 μm）；</li><li>湍流：$r_0 = 0.185\,\lambda^{6/5}(Cn^2 L)^{-3/5}$，长曝光 MTF $= \exp[-3.44(\lambda f/r_0)^{5/3}]$。</li></ul>
+<h3 id="23-环境类型--参数映射典型值引用前须核实来源">2.3 环境类型 → 参数映射（典型值，引用前须核实来源）</h3>
+<div class="table-container"><table><thead><tr><th>环境</th><th>MOR (km)</th><th>α</th><th>附加参数</th><th>备注</th></tr></thead><tbody><tr><td>晴空乡村</td><td>15–30</td><td>1.2–1.5</td><td>w 1–2 cm，Cn² 1e−15～1e−14</td><td>基准</td></tr><tr><td>城市霾</td><td>5–15</td><td>1.3–1.6</td><td>ω 偏低（吸光）</td><td>MWIR 相对吃亏</td></tr><tr><td>海洋</td><td>10–25</td><td>0.5–1.0</td><td>g 高（海盐）</td><td>—</td></tr><tr><td>沙尘</td><td>2–10</td><td>0.2–0.5</td><td>g 高、粒子大</td><td>前向散射强</td></tr><tr><td>平流雾</td><td>0.2–1</td><td>0–0.2</td><td>ω≈1、液水含量高</td><td>灰消光，两个波段都吃亏</td></tr><tr><td>雨</td><td>5–20（等效）</td><td>≈0</td><td>雨强 1–25 mm/h，湿地面背景变化</td><td>灰消光+背景变化</td></tr><tr><td>雪</td><td>1–5（等效）</td><td>≈0</td><td>大粒子+遮蔽</td><td>场景级处理</td></tr></tbody></table></div>
+<blockquote><p>示例：MOR=5 km 时，α=1.3 的霾在 10 μm 的消光约为 4 μm 的 (10/4)^1.3 ≈ 3.3 倍；α≈0 的雾则两个波段接近。因此 α 必须单列，否则&quot;能见度一样、红外表现不同&quot;无法解释。</p></blockquote>
+<h3 id="24-目标与背景参数">2.4 目标与背景参数</h3>
+<div class="table-container"><table><thead><tr><th>参数</th><th>说明</th><th>取值</th><th>来源</th></tr></thead><tbody><tr><td>Dₜ</td><td>目标临界尺寸（√迎光面积）</td><td>坦克 2.3 m；车 4 m；人 0.5 m</td><td>文献/假定【待确认】</td></tr><tr><td>ΔT</td><td>目标与背景表观温差</td><td>3 / 6 / 10 / 20 K</td><td>实测/文献【待确认】</td></tr><tr><td>ε(λ)</td><td>目标表面光谱发射率</td><td>按 ASTER/ECOSTRESS 库，注意 ε=1−ρ</td><td>光谱库</td></tr><tr><td>背景类型</td><td>草地/沙地/沥青/水面/植被</td><td>草地（主）</td><td>光谱库</td></tr><tr><td>T_bg</td><td>背景温度</td><td>与气温关联，280–310 K</td><td>气象</td></tr></tbody></table></div>
+<h3 id="25-几何与平台参数">2.5 几何与平台参数</h3>
+<ul><li>距离 R = 1–10 km（评估轴）；</li><li>路径：水平为主；斜程（俯角 0°/15°/30°）作为扩展；</li><li>太阳几何：夜间/白天（MWIR 反射分量作敏感性）；</li><li>平台高度：地面/车载（主）；机载作为扩展。</li></ul>
+<h3 id="26-不能参数化的结构条件及处理">2.6 不能参数化的结构条件及处理</h3>
+<div class="table-container"><table><thead><tr><th>条件</th><th>为什么不能化成标量</th><th>处理方式</th></tr></thead><tbody><tr><td>云（遮挡/背景）</td><td>取决于云底高、光学厚度、云温与几何</td><td>作为场景开关，只在锚点/扩展工况出现，不进主 DOE</td></tr><tr><td>降雨背景变化</td><td>湿地面温度/发射率变化、雨幕时间起伏</td><td>用&quot;等效 MOR + α≈0&quot;表示消光；背景变化单列敏感性</td></tr><tr><td>昼夜/太阳</td><td>反射分量与阴影，非大气状态量</td><td>作为锚点场景条件</td></tr><tr><td>非均匀路径</td><td>廓线/距离不均匀</td><td>主结论限定水平均匀；斜程用等效路径近似</td></tr></tbody></table></div>
+<h3 id="27-参数取值依据报告需引用">2.7 参数取值依据（报告需引用）</h3>
+<ul><li>MOR/能见度：气象观测规范、Koschmieder 关系 → 文献 [1][2]；</li><li>气溶胶 α/g/ω：OPAC（Hess et al. 1998）、MODTRAN/6S 气溶胶模型、AERONET → [4][5][16][17]；</li><li>水汽/分子吸收：HITRAN2020、MT_CKD → [7][8]；</li><li>Cn²：边界层相似理论/实测经验值、ITU-R P.1817 → [9][27]；</li><li>目标 ΔT/发射率：公开文献与光谱库（ASTER/ECOSTRESS/USGS）→ [12][28]–[31]；</li><li>气象数据：ERA5、标准大气 → [36][37]。</li></ul>
+<blockquote><p>完整引用（含 DOI、核对状态、报告引用位置建议）见 <a href="参考文献-大气环境参数量化-v1.0.md">参考文献-大气环境参数量化-v1.0.md</a>，BibTeX 见 <a href="references-atmosphere.bib">references-atmosphere.bib</a>。</p></blockquote>
+<h3 id="28-参数化依据为什么是这四个参数评审必问">2.8 参数化依据：为什么是这四个参数（评审必问）</h3>
+<p>先明确：<strong>没有一篇文献规定&quot;必须用 MOR、α、w、Cn² 这四个参数&quot;</strong>。这四个参数是工程降维：把大气对红外探测的影响拆成三个物理通道，每个通道选可标定的参数。文献支撑的是&quot;每个参数本身&quot;和&quot;这种参数化方式&quot;，不是&quot;恰好四个&quot;这个数字。</p>
+<div class="table-container"><table><thead><tr><th>物理通道</th><th>影响什么</th><th>选定参数</th><th>文献依据</th><th>替代掉的原始描述</th></tr></thead><tbody><tr><td>光谱消光</td><td>τ(λ) → 对比度、SNR</td><td>MOR（β₅₅₀）+ α</td><td>Koschmieder 1924；Ångström 1929；Eck 1999；OPAC（Hess 1998）</td><td>气溶胶类型/粒径谱下拉框（离散模型连续化）</td></tr><tr><td>热发射（含吸收）</td><td>L_path≈(1−τ)B(T)、低对比目标可用性</td><td>w（水汽柱）+ T_air</td><td>HITRAN2020；MT_CKD（Mlawer 2012）；LOWTRAN/MODTRAN 水汽输入</td><td>温湿廓线（水平均匀路径下取等效值）</td></tr><tr><td>湍流</td><td>MTF → 分辨率、识别</td><td>Cn²（配路径长度 L）</td><td>Fried 1966；ITU-R P.1817；Kopeika 1998</td><td>风速/温度梯度/边界层廓线（等效 Cn²）</td></tr></tbody></table></div>
+<p><strong>组合方式的文献依据</strong>：LOWTRAN/MODTRAN、6S 等标准大气辐射传输软件在工程上就是用&quot;能见度（或消光）+ 气溶胶模型 + 湿度/水汽 + 温压廓线&quot;描述大气（[48][49][6][22]）；OPAC/AERONET 用&quot;气溶胶类型 + 湿度&quot;或&quot;AOD + α&quot;（[5][16][17]）；湍流用 Cn²（[9][27]）。本方案只是把其中<strong>离散的气溶胶模型按 Ångström 幂律连续化为 α</strong>（[3][4]），于是得到&quot;四参数&quot;状态向量——<strong>是标准参数化的连续化改造，不是另起一套</strong>。</p>
+<p><strong>推荐写入报告的表述</strong>：</p>
+<blockquote><p>采用 LOWTRAN/MODTRAN 的能见度—气溶胶—湿度参数化体系，其中气溶胶类型按 Ångström 幂律连续化为光谱指数 α；水汽以可降水量表示；湍流按 Fried 的 Cn² 参数化。该四参数状态向量是上述标准参数化的连续化降维，适用于水平均匀、局地热平衡、Kolmogorov 湍流假设下的红外成像探测性能评估。</p></blockquote>
+<p><strong>必须同时声明的三个限制</strong>：</p>
+<ol><li><strong>独立性</strong>：现实中 MOR、α、w、Cn² 由同一套天气条件驱动、彼此相关（雾 = 低能见度 + 高湿 + 弱湍流）。把四者当独立因子做 DOE 是&quot;设计空间&quot;选择，不是统计独立性主张；敏感性结论只能限定在该设计空间内解释。</li><li><strong>不完备</strong>：(MOR, α) 不能区分气溶胶前向散射 g 与吸收 ω。当评价指标涉及<strong>图像级 MTF 或路径辐射绝对量</strong>时，需要第 5 个参数（g 或 ω），或改用显式微物理模型（Mie + 谱分布）；&quot;水平均匀&quot;假设也忽略了温度廓线与斜程。本方案把这些作为&quot;结构条件/锚点工况&quot;处理，并在报告中写明适用边界。</li><li><strong>天气 ≠ 参数点</strong>：雾/霾/雨是微物理类别，映射到参数向量是多对一的（同一组参数可能对应不同天气）；环境名称只用于选 COSSIM 锚点与叙述，不参与统计推断。</li></ol>
+<p><strong>按需要扩展</strong>：</p>
+<div class="table-container"><table><thead><tr><th>需求</th><th>扩展方式</th></tr></thead><tbody><tr><td>只关心对比度</td><td>β(λ) 足够，MOR + α 即可</td></tr><tr><td>关心图像级 MTF / 路径辐射</td><td>加 g 或 ω，或改用 Mie 微物理模型</td></tr><tr><td>关心斜程 / 昼夜 MWIR</td><td>加温度廓线/气溶胶标高、太阳几何</td></tr><tr><td>垂直非均匀大气</td><td>四参数失效，直接上辐射传输软件（libRadtran/MODTRAN）</td></tr></tbody></table></div>
+<h3 id="29-最小完备组合完备性是相对指标定义的">2.9 最小完备组合：完备性是相对指标定义的</h3>
+<p><strong>结论先行</strong>：不存在脱离评价指标的&quot;最小完备参数集&quot;。建议用两层表述，答辩时先讲假设、再讲参数。</p>
+<p><strong>效果层（最小充分统计量，每波段 3 个量）</strong></p>
+<div class="table-container"><table><thead><tr><th>量</th><th>作用</th><th>来源</th></tr></thead><tbody><tr><td>τ_band（或 β_band）</td><td>对比度衰减</td><td>辐射传输/参数化</td></tr><tr><td>L_path_band（或等效路径温度 T_eff）</td><td>路径辐射、背景电平、绝对辐射</td><td>辐射传输</td></tr><tr><td>MTF_atm（r0 或 Cn²L，含散射项）</td><td>分辨率退化</td><td>Fried/气溶胶 MTF 模型</td></tr></tbody></table></div>
+<p>给定制冷/非制冷传感器与目标-背景对比度，这 3 个量足以算 P_d(R)、R₅₀；任何辐射传输软件都能输出。</p>
+<p><strong>驱动层（跨天气外推的最小参数集，4–6 个，取决于假设）</strong></p>
+<div class="table-container"><table><thead><tr><th>假设程度</th><th>必需参数</th><th>说明</th></tr></thead><tbody><tr><td>差分成像 + 同距离背景 + 热红外（最低要求）</td><td><strong>MOR、α、w、Cn²</strong>（4 个）</td><td>τ(λ) 的消光水平（MOR）、谱形（α）、水汽吸收细结构（w），加湍流（Cn²）</td></tr><tr><td>绝对辐射定标 / 异距离背景 / 白天 MWIR</td><td>+ <strong>T_air（或 T_eff）</strong>（5 个）</td><td>路径热发射电平和背景辐射</td></tr><tr><td>图像级 MTF / veiling 光（雾、沙尘等强散射）</td><td>+ <strong>g 或 ω</strong>（6 个）</td><td>前向散射与吸收比例，决定散射模糊与路径辐射</td></tr><tr><td>云、垂直非均匀、昼夜太阳散射</td><td>上述失效</td><td>上廓线/云参数/太阳几何，直接进辐射传输软件</td></tr></tbody></table></div>
+<p><strong>当前四参数集的准确定位</strong>：在&quot;热红外、水平均匀、同距离背景、差分成像&quot;假设下，它是<strong>最小完备的驱动集</strong>；一旦涉及绝对辐射、异距离背景或图像级散射，就缺 T_air 与 g/ω。报告里必须写明这个前提，而不是笼统说&quot;四个参数描述了大气&quot;。</p>
+<p><strong>完备性的实证判定</strong>（比引文献更有说服力）：</p>
+<ol><li>在 LHS 设计空间内做 Morris 筛选 + Sobol 分解；</li><li>若某参数的总指数 S_Ti &lt; 0.05（或加入它后 P_d/R₅₀ 的方差变化 &lt;5%），判为冗余；</li><li>保留参数的 S_Ti 均 ≥ 阈值，则该集合在声明范围内&quot;完备&quot;；</li><li>报告写明&quot;最小完备集由敏感性检验得到&quot;，并给出阈值与检验范围。</li></ol>
+<blockquote><p>这样回答&quot;为什么是四个参数&quot;就有两层依据：物理通道（消光/发射/湍流）保证不遗漏一阶效应，敏感性检验保证不引入冗余参数。</p></blockquote>
+<hr>
+<h2 id="三效果检验参数">三、效果检验参数</h2>
+<h3 id="31-指标体系">3.1 指标体系</h3>
+<div class="table-container"><table><thead><tr><th>层级</th><th>指标</th><th>含义</th><th>用途</th></tr></thead><tbody><tr><td>L1 任务级</td><td>P_d(R)、P_rec(R)、R₅₀、R₉₀、DRI 距离</td><td>给定判据下&quot;能看多远、多大把握&quot;</td><td>最终结论、答辩主图</td></tr><tr><td>L2 传感器级</td><td>MRTD(f)、MDTD、SNR、MTF_sys、CTF</td><td>传感器自身分辨温差/频率的能力</td><td>跨系统比较、COSSIM 对标</td></tr><tr><td>L3 链路级</td><td>τ(λ)、L_path(λ)、τ_band、V_IR、ΔT_app、N、TTP、r₀</td><td>误差分解与诊断</td><td>解释&quot;为什么是这个距离&quot;</td></tr></tbody></table></div>
+<h3 id="32-定义与计算公式">3.2 定义与计算公式</h3>
+<p><strong>大气与信号：</strong></p>
+<ul><li>波段透过率：$\tau_{band} = \dfrac{\int \tau(\lambda) W(\lambda)\,d\lambda}{\int W(\lambda)\,d\lambda}$，W 取目标-背景温差对应的 Planck 导数权重；</li><li>等效红外能见度（自定义量，需在报告中注明定义）：$V_{IR} = 3.912/\beta_{band}$；</li><li>视在温差（简化）：$\Delta T_{app} = \tau_{band}\,\Delta T$；严格式由辐射亮度差 $\Delta L = \tau(L_t-L_b)+\Delta L_{path}$ 给出；</li><li>信噪比：$SNR = \Delta T_{app}/NETD$（正式版用 3D 噪声模型）。</li></ul>
+<p><strong>传感器与分辨率：</strong></p>
+<ul><li>MTF 链：$MTF_{sys} = MTF_{opt}MTF_{det}MTF_{elec}MTF_{disp}MTF_{atm}MTF_{turb}MTF_{aerosol}MTF_{jitter}$；</li><li>湍流（长曝光）：$MTF_{turb}(f)=\exp[-3.44(\lambda f/r_0)^{5/3}]$；</li><li>目标周期数：$N = D_t/(R\,\theta)$，$\theta = p/f$（可加湍流有效 IFOV 修正）；</li><li>MRTD 近似：$MRTD(f)=k\cdot NETD/MTF_{sys}(f)$（k 需标定）；</li><li>TTP：$TTP=\int\sqrt{CTF_{sys}/CTF_{eye}}\,df$，$N_{TTP}=TTP\sqrt{A_t}/R$。</li></ul>
+<p><strong>概率与距离：</strong></p>
+<ul><li>目标传递概率：$P_d = (N/N_{50})^E/[1+(N/N_{50})^E]$，E≈1.5–2.7 需标定；</li><li>Johnson 参考值：N₅₀ ≈ 2.0/8.0/12.5（探测/识别/辨认）；部分文献为 1.5/6/12，<strong>引用时必须绑定来源</strong>；</li><li>R₅₀：沿 R 反解 $P_d(R)=0.5$；R₉₀ 同理。</li></ul>
+<h3 id="33-主副支撑指标与判据">3.3 主/副/支撑指标与判据</h3>
+<div class="table-container"><table><thead><tr><th>角色</th><th>指标</th><th>判据</th></tr></thead><tbody><tr><td>主指标</td><td>P_d(R) 曲线、R₅₀</td><td>报告 50%/90% 概率距离，附 95% 置信区间</td></tr><tr><td>副指标</td><td>MRTD(f)、SNR</td><td>用于对标与解释，不单独下结论</td></tr><tr><td>支撑指标</td><td>τ_band、ΔT_app、N、r₀</td><td>误差预算与归因</td></tr><tr><td>验证判据</td><td>与 COSSIM 偏差</td><td>≤15%，且差异落入 U(k=2) 区间</td></tr><tr><td>精度目标</td><td>R₅₀ 的 95% CI 半宽</td><td>≤10%（5 km 处约 ±0.5 km）</td></tr></tbody></table></div>
+<h3 id="34-指标获取方式">3.4 指标获取方式</h3>
+<div class="table-container"><table><thead><tr><th>指标</th><th>Python</th><th>COSSIM</th><th>备注</th></tr></thead><tbody><tr><td>τ_band、L_path</td><td>辐射传输计算</td><td>大气模块输出（若能导出）</td><td>优先比谱形再比积分</td></tr><tr><td>ΔT_app、SNR</td><td>由图像/参数计算</td><td>图像灰度对比度反演</td><td>需统一增益/动态范围</td></tr><tr><td>MTF/MRTD</td><td>MTF 链模型</td><td>图像边缘/靶标反演（若能）</td><td>反演法误差需评估</td></tr><tr><td>P_d、R₅₀</td><td>TTP/双判据模型</td><td>通常无直接输出</td><td>用同一指标模型处理两侧图像/参数</td></tr></tbody></table></div>
+<hr>
+<h2 id="四工况及对应参数列表">四、工况及对应参数列表</h2>
+<h3 id="41-固定参数">4.1 固定参数</h3>
+<p>目标坦克 2.3 m、ΔT=10 K、背景草地、气温 300 K、水平路径、俯角 0°、NETD=30 mK、IFOV=0.06 mrad；波段按工况指定（默认 LWIR）。</p>
+<h3 id="42-因子与水平">4.2 因子与水平</h3>
+<div class="table-container"><table><thead><tr><th>因子</th><th>水平</th><th>说明</th></tr></thead><tbody><tr><td>A 能见度 MOR</td><td>23 / 10 / 5 / 2 / 0.5 km</td><td>对数分布</td></tr><tr><td>B 光谱斜率 α</td><td>0 / 0.5 / 1.0 / 1.3 / 1.6</td><td>雾→霾→沙尘区间</td></tr><tr><td>C 水汽柱 w</td><td>0.5 / 1.5 / 3 / 5 cm</td><td>LWIR 窗区边缘</td></tr><tr><td>D 湍流 Cn²</td><td>1e−16 / 1e−14 / 1e−13 m^(−2/3)</td><td>弱/中/强</td></tr><tr><td>E 目标温差 ΔT</td><td>3 / 10 K（主）；6/20 K 抽查</td><td>低对比考核</td></tr><tr><td>F 波段</td><td>LWIR / MWIR</td><td>面板维度</td></tr><tr><td>评估轴</td><td>R = 1–10 km</td><td>不作因子</td></tr></tbody></table></div>
+<h3 id="43-工况清单">4.3 工况清单</h3>
+<p><strong>A 基准（1 个）</strong></p>
+<div class="table-container"><table><thead><tr><th>编号</th><th>MOR</th><th>α</th><th>w</th><th>Cn²</th><th>ΔT</th><th>波段</th><th>用途</th></tr></thead><tbody><tr><td>A0</td><td>23</td><td>1.3</td><td>1.5</td><td>1e−14</td><td>10</td><td>LWIR</td><td>基准闭环、解析校验、COSSIM 锚点 E1</td></tr></tbody></table></div>
+<p><strong>B 单因子（17 个，其余保持基准）</strong></p>
+<div class="table-container"><table><thead><tr><th>编号</th><th>变化</th><th>取值</th></tr></thead><tbody><tr><td>B1–B5</td><td>MOR</td><td>20 / 10 / 5 / 2 / 0.5 km</td></tr><tr><td>B6–B9</td><td>α</td><td>0 / 0.5 / 1.0 / 1.6</td></tr><tr><td>B10–B12</td><td>w</td><td>0.5 / 3 / 5 cm</td></tr><tr><td>B13–B15</td><td>Cn²</td><td>1e−16 / 1e−15 / 1e−13</td></tr><tr><td>B16</td><td>ΔT</td><td>3 K（低对比）</td></tr><tr><td>B17</td><td>波段</td><td>MWIR</td></tr></tbody></table></div>
+<p><strong>C 组合/极端（6 个）</strong></p>
+<div class="table-container"><table><thead><tr><th>编号</th><th>组合</th><th>MOR</th><th>α</th><th>w</th><th>Cn²</th><th>ΔT</th><th>波段</th><th>说明</th></tr></thead><tbody><tr><td>C1</td><td>浓雾+强湍流</td><td>0.8</td><td>0</td><td>3.0</td><td>1e−13</td><td>10</td><td>LWIR</td><td>极端失效边界（E3）</td></tr><tr><td>C2</td><td>城市霾+低对比</td><td>3</td><td>1.5</td><td>2.0</td><td>1e−14</td><td>3</td><td>LWIR</td><td>低对比+吸光气溶胶</td></tr><tr><td>C3</td><td>沙尘+MWIR</td><td>4</td><td>0.3</td><td>1.0</td><td>1e−14</td><td>10</td><td>MWIR</td><td>波段差异（E4）</td></tr><tr><td>C4</td><td>雨等效</td><td>8</td><td>0</td><td>4.0</td><td>1e−14</td><td>10</td><td>LWIR</td><td>雨强 5 mm/h 等效</td></tr><tr><td>C5</td><td>晴空+强湍流</td><td>23</td><td>1.3</td><td>1.5</td><td>1e−13</td><td>10</td><td>LWIR</td><td>湍流主导（E5）</td></tr><tr><td>C6</td><td>干冷/逆温</td><td>5</td><td>1.3</td><td>0.5</td><td>1e−16</td><td>3</td><td>LWIR</td><td>水汽与背景温度敏感性</td></tr></tbody></table></div>
+<p><strong>E COSSIM 锚点（5 个，从 A/B/C 中选）</strong></p>
+<div class="table-container"><table><thead><tr><th>锚点</th><th>对应工况</th><th>覆盖角色</th><th>备注</th></tr></thead><tbody><tr><td>E1</td><td>A0</td><td>正常/基准</td><td>第一次对齐</td></tr><tr><td>E2</td><td>B3（MOR=5）</td><td>中等霾</td><td>验证 MOR 趋势</td></tr><tr><td>E3</td><td>C1</td><td>极端（雾）</td><td>失效边界</td></tr><tr><td>E4</td><td>C3</td><td>沙尘+MWIR</td><td>波段/气溶胶差异</td></tr><tr><td>E5</td><td>C5</td><td>强湍流</td><td>若 COSSIM 不支持湍流，改用 C2</td></tr></tbody></table></div>
+<p><strong>LHS 扫描（不作逐条列表）</strong></p>
+<div class="table-container"><table><thead><tr><th>参数</th><th>分布范围</th><th>采样</th></tr></thead><tbody><tr><td>MOR</td><td>log[0.5, 23] km</td><td>每波段 150 点，共 300 点</td></tr><tr><td>α</td><td>[0, 1.6]</td><td>同上</td></tr><tr><td>w</td><td>[0.5, 5] cm</td><td>同上</td></tr><tr><td>Cn²</td><td>log[1e−16, 1e−13]</td><td>同上</td></tr><tr><td>ΔT</td><td>[3, 10] K</td><td>同上</td></tr><tr><td>波段</td><td>{LWIR, MWIR}</td><td>分层（各 150 点）</td></tr><tr><td>R</td><td>评估轴，1–10 km 网格</td><td>每点求 P_d(R)</td></tr></tbody></table></div>
+<h3 id="44-工况编号与数据命名">4.4 工况编号与数据命名</h3>
+<p><code>{阶段}_{编号}_{波段}_{MOR}_{alpha}_{w}_{Cn2}_{dT}</code>，如 <code>B_B3_LWIR_5_1.3_1.5_1e-14_10</code>。 目录：<code>data/raw/</code>（原始输出）、<code>data/processed/</code>（指标表）、<code>figures/</code>（图件）、<code>docs/</code>（报告）。</p>
+<h3 id="45-工作量估计">4.5 工作量估计</h3>
+<ul><li>Python：A+B+C 共 24 个确定性工况 × 每工况 50 个距离点 ≈ 1200 次指标计算（秒级）；</li><li>LHS 300 点 × 50 距离点 ≈ 1.5 万次（代理模型秒级；若直接用辐射传输需缓存 τ 谱）；</li><li>COSSIM：5 个锚点（人工建模+成像，按 2–4 h/点估算，需 2–3 天）；</li><li>总计：Python 3–5 天；COSSIM 2–3 天；报告/PPT 3–4 天。</li></ul>
+<hr>
+<h2 id="五预测实验数据处理示意">五、预测实验数据处理示意</h2>
+<h3 id="51-数据流总图">5.1 数据流总图</h3>
+<pre><code>参数表(CSV/JSON) ──► 大气传输计算 ──► τ(λ), L_path(λ) ──► 波段积分 ──► τ_band, ΔT_app
+                          │                                                  │
+                          └──────────────► 传感器模型(MTF链/噪声) ───────────┤
+                                                                             ▼
+目标/背景光谱库 ──► 视在辐射/对比度 ────────────────────────────────► SNR, MRTD, N, TTP
+                                                                             │
+                                                                             ▼
+                                                              P_d(R), R50 → 指标表(data/processed)
+                                                                             │
+                       ┌─────────────────────────────────────────────────────┤
+                       ▼                                                     ▼
+              相图/响应面(GP)                                      不确定度(MC) + 敏感性(Sobol)</code></pre>
+<h3 id="52-输入数据与中间产物">5.2 输入数据与中间产物</h3>
+<div class="table-container"><table><thead><tr><th>类别</th><th>内容</th><th>格式</th><th>来源</th></tr></thead><tbody><tr><td>输入参数表</td><td>工况全部参数</td><td>CSV</td><td>人工/脚本生成</td></tr><tr><td>大气谱</td><td>τ(λ)、L_path(λ)</td><td>CSV（λ, τ, L）</td><td>libRadtran/简化模型/COSSIM</td></tr><tr><td>目标背景谱</td><td>ε(λ)、T</td><td>CSV</td><td>ASTER/ECOSTRESS 库</td></tr><tr><td>传感器参数</td><td>口径/焦距/像元/NETD/MTF</td><td>JSON</td><td>设计值</td></tr><tr><td>指标表</td><td>每工况每距离一行</td><td>CSV</td><td>本方案脚本</td></tr><tr><td>COSSIM 输出</td><td>图像/元数据/导出表</td><td>PNG-16bit/JSON/CSV</td><td>官方软件</td></tr></tbody></table></div>
+<h3 id="53-处理步骤10-步">5.3 处理步骤（10 步）</h3>
+<ol><li>读取参数表，做单位与范围校验（MOR&gt;0、α∈[0,2]、Cn²&gt;0）；</li><li>计算/调用大气传输：得到 τ(λ)、L_path(λ)（libRadtran 或参数化模型）；</li><li>波段积分：按 Planck 导数权重得 τ_band、L_path_band；</li><li>计算视在对比度 ΔT_app（或 ΔL）；</li><li>传感器 MTF 链：光学/探测器/电路/湍流/气溶胶/抖动 → MTF_sys；</li><li>噪声模型：NETD 或 3D 噪声 → SNR；</li><li>性能指标：MRTD(f)、N、TTP、P_d(R)、R₅₀；</li><li>不确定度：对输入参数按分布采样（MC，≥1000 次），重复 2–7，得 95% 区间；</li><li>输出指标表 + 相图（GP 代理渲染）+ 敏感性（Sobol）；</li><li>与 COSSIM 锚点比对，生成对比表与结论。</li></ol>
+<h3 id="54-指标表字段定义dataprocessedmetricscsv">5.4 指标表字段定义（data/processed/metrics.csv）</h3>
+<div class="table-container"><table><thead><tr><th>字段</th><th>含义</th><th>单位</th></tr></thead><tbody><tr><td>run_id</td><td>运行编号</td><td>—</td></tr><tr><td>case_id</td><td>工况编号（A0/B3/C1…）</td><td>—</td></tr><tr><td>band</td><td>波段</td><td>—</td></tr><tr><td>mor_km, alpha, w_cm, cn2_m23, dt_k</td><td>大气与目标参数</td><td>见名</td></tr><tr><td>r_km</td><td>距离</td><td>km</td></tr><tr><td>tau_band</td><td>波段透过率</td><td>—</td></tr><tr><td>dt_app_k</td><td>视在温差</td><td>K</td></tr><tr><td>snr</td><td>信噪比</td><td>—</td></tr><tr><td>n_cycles</td><td>周期数</td><td>cycles</td></tr><tr><td>mrtd_k</td><td>MRTD</td><td>K</td></tr><tr><td>ttp</td><td>TTP 值</td><td>cycles·mrad⁻¹</td></tr><tr><td>pd, pd_lo, pd_hi</td><td>探测概率及 95% CI</td><td>—</td></tr><tr><td>r50_km, r50_lo, r50_hi</td><td>R₅₀ 及 95% CI</td><td>km</td></tr><tr><td>model_ver, timestamp, notes</td><td>版本/时间/备注</td><td>—</td></tr></tbody></table></div>
+<h3 id="55-算例从参数到指标示意数值">5.5 算例：从参数到指标（示意数值）</h3>
+<p>用简化模型（见 scripts/phase_maps_illustrative.py）在 R = 4 km 计算，参数为：Dₜ=2.3 m、IFOV=0.06 mrad、NETD=50 mK（示意）、N₅₀=8、E=2、SNR₅₀=3。<strong>以下数值只用于说明数据流，不是正式结果。</strong></p>
+<div class="table-container"><table><thead><tr><th>工况</th><th>波段</th><th>MOR</th><th>α</th><th>Cn²</th><th>ΔT</th><th>τ_band</th><th>ΔT_app</th><th>SNR</th><th>N</th><th>P_d(4 km)</th><th>R₅₀ (km)</th></tr></thead><tbody><tr><td>A0 基准</td><td>LWIR</td><td>23</td><td>1.3</td><td>1e−14</td><td>10</td><td>0.984</td><td>9.84</td><td>197</td><td>8.50</td><td>0.53</td><td>4.22</td></tr><tr><td>B3 中等霾</td><td>LWIR</td><td>5</td><td>1.3</td><td>1e−14</td><td>10</td><td>0.928</td><td>9.28</td><td>186</td><td>8.50</td><td>0.53</td><td>4.22</td></tr><tr><td>C1 浓雾</td><td>LWIR</td><td>0.8</td><td>0</td><td>1e−13</td><td>10</td><td>≈0</td><td>≈0</td><td>≈0</td><td>4.17</td><td>0.00</td><td>0.86</td></tr><tr><td>C3 沙尘</td><td>MWIR</td><td>4</td><td>0.3</td><td>1e−14</td><td>10</td><td>0.123</td><td>1.23</td><td>25</td><td>8.13</td><td>0.51</td><td>4.05</td></tr><tr><td>C5 强湍流</td><td>LWIR</td><td>23</td><td>1.3</td><td>1e−13</td><td>10</td><td>0.984</td><td>9.84</td><td>197</td><td>4.17</td><td>0.21</td><td>2.56</td></tr></tbody></table></div>
+<p>读表要点（也是正式模型要回答的）：</p>
+<ul><li><strong>A0 与 B3 的 P_d 相同</strong>：说明在该简化模型下能力由几何分辨率主导，透过率从 0.98 降到 0.93 不足以改变结论——正式模型用 TTP 链后，对比度会通过 CTF 进一步压低有效周期数，需要重新计算；</li><li><strong>C1 由对比度主导</strong>：浓雾使 ΔT_app→0，无论分辨率多高都探测不到；</li><li><strong>C5 由湍流主导</strong>：Cn² 增大使 r₀ 减小、有效 IFOV 变粗，N 从 8.5 掉到 4.2，能力下降约 40%；</li><li><strong>C3 是波段差异的典型</strong>：沙尘在 MWIR 的消光显著，但仍有 SNR=25，处于&quot;可探测但受限&quot;的中间状态。</li></ul>
+<h3 id="56-图件输出示意">5.6 图件输出（示意）</h3>
+<blockquote><p>图 1–3 与 5.5 算例由同一简化脚本生成，为展示对比度受限区采用 NETD=50 mK 的示意参数（图 1–3 取 ΔT=3 K，5.5 算例取 ΔT=10 K）；正式基准仍按〇节 30 mK / 10 K 执行，替换后重跑脚本即可。</p></blockquote>
+<p><strong>图 1 大气衰减相图</strong>：横轴 MOR（对数）、纵轴 α，颜色为波段透过率（R=5 km），左右面板分别为 MWIR/LWIR；虚线框为典型天气区域。</p>
+<p><span class="doc-media-missing">[图片未随发布副本保留：phase_atmo.png]</span></p>
+<p><strong>图 2 系统能力相图</strong>：横轴 MOR、纵轴距离 R，颜色为 P_d，等值线为 P_d=0.1/0.5/0.9。</p>
+<p><span class="doc-media-missing">[图片未随发布副本保留：phase_capability.png]</span></p>
+<p><strong>图 3 湍流分辨相图</strong>：横轴 Cn²（对数）、纵轴距离 R，颜色为湍流限制下的有效周期数 N，等值线为 N=N₅₀。</p>
+<p><span class="doc-media-missing">[图片未随发布副本保留：phase_turbulence.png]</span></p>
+<blockquote><p>三张图的生成脚本可复现；正式版把简化模型替换为 libRadtran + TTP 链，并在图 2 上叠加 COSSIM 锚点。</p></blockquote>
+<h3 id="57-不确定度与敏感性">5.7 不确定度与敏感性</h3>
+<ul><li>输入不确定度：温度 ±2 K、发射率 ±0.05、水汽 ±20%、能见度 ±10%、Cn² 按半个量级；</li><li>传播：MC 1000 次，输出 P_d/R₅₀ 的 95% 区间（U(k=2)）；</li><li>敏感性：先 Morris（r(d+1)≈70 次）筛因子，再 Sobol（N=1024 → 约 1.4 万次代理调用）定量分解；</li><li>误差预算：δτ/τ → δSNR → δR₅₀，找出最值得精化的输入。</li></ul>
+<h3 id="58-qc-检查清单">5.8 QC 检查清单</h3>
+<ul><li>[ ] 参数表单位统一（km/m、μm、K、rad）；</li><li>[ ] 光谱积分网格收敛（加倍后 τ_band 变化 &lt;0.1%）；</li><li>[ ] 采样因子 Q=2λF#/p ≥ 2，无欠采样；</li><li>[ ] 所有结果带模型版本与随机种子；</li><li>[ ] 图与表数值可追溯到原始 CSV；</li><li>[ ] 重跑同一工况结果一致。</li></ul>
+<h3 id="59-临界值--切片法把-4-维以上工况降到-2-维计算">5.9 临界值 / 切片法：把 4 维以上工况降到 2 维计算</h3>
+<p>思路：不跑全网格，先定义性能阈值 Q*，用&quot;求根&quot;得到临界值，再用 2 维切片 + 临界线表达高维空间。理论对应等性能分析（isoperformance）[50]。</p>
+<p><strong>定义</strong></p>
+<div class="table-container"><table><thead><tr><th>概念</th><th>定义</th><th>例</th></tr></thead><tbody><tr><td>性能函数</td><td>Q(θ)，θ 为全部参数</td><td>P_d(4 km)、R₅₀</td></tr><tr><td>任务阈值</td><td>Q*，由任务需求给定</td><td>R₅₀ = 4 km</td></tr><tr><td>临界值</td><td>满足 Q=Q* 的参数取值 p*（一维求根）</td><td>临界能见度 MOR*(α)</td></tr><tr><td>临界线/面</td><td>所有临界值组成的集合（即热力图上的等值线）</td><td>R₅₀=4 km 等值线</td></tr><tr><td>最优值</td><td><strong>仅在存在权衡时才有意义</strong></td><td>大气参数通常单调，无内点最优；传感器/部署参数才有帕累托最优</td></tr></tbody></table></div>
+<p><strong>流程（计算量比全网格小 1–2 个量级）</strong></p>
+<ol><li>固定两个&quot;主角&quot;参数之外的其余参数（基准值），在 2D 网格上算 Q，画热力图，取 Q=Q* 等值线 C*；</li><li>以 C* 上的点为起点，对第三个参数求根 p₃<em>(p₁,p₂) 使 Q=Q</em>，得到&quot;容限曲线&quot;；</li><li>换 2–3 组固定值（基准 / 最不利 / 最有利）重复，检查 C* 漂移；漂移大说明切片假设不成立，该固定参数必须纳入边界；</li><li>对临界线做 MC 传播，给 95% 置信带；</li><li>交互强的组合（雾+强湍流）不靠切片，单独作为 corner 锚点计算。</li></ol>
+<p><strong>伪代码</strong></p>
+<pre><code class="language-python">def critical_surface(theta_fixed, p1_grid, p2_grid, p3_range, Q, Qstar):
+    Z = np.full((len(p1_grid), len(p2_grid)), np.nan)
+    for i, p1 in enumerate(p1_grid):
+        for j, p2 in enumerate(p2_grid):
+            if Q(p1, p2, **theta_fixed) &gt;= Qstar:
+                continue                      # 直接可行，无需求根
+            # 二分求第三个参数的临界值（10-20 次评估）
+            lo, hi = p3_range
+            if Q(p1, p2, hi, **theta_fixed) &lt; Qstar:
+                continue                      # 区间内无解
+            for _ in range(20):
+                mid = 0.5 * (lo + hi)
+                if Q(p1, p2, mid, **theta_fixed) &gt;= Qstar:
+                    lo = mid
+                else:
+                    hi = mid
+            Z[i, j] = 0.5 * (lo + hi)         # p3*
+    return Z</code></pre>
+<p><strong>优点</strong>：输出是&quot;等性能边界/容限曲线&quot;，可解释性远好于散点表；计算量从 O(N^d) 降到 O(N² × 20)。 <strong>代价</strong>：切片结论依赖固定值；必须用 2–3 个切片和 corner 锚点验证，不能只算一条临界线。</p>
+<hr>
+<h2 id="六cossim-数据对比分析">六、COSSIM 数据对比分析</h2>
+<h3 id="61-对比定位与原则">6.1 对比定位与原则</h3>
+<ul><li><strong>COSSIM 是基准</strong>：其高保真场景/成像结果作为参考真值，Python 增强实现是被校验对象；</li><li>只比&quot;双方都能定义清楚&quot;的量，先比中间量（辐射、对比度），再比最终指标；</li><li>对比点必须是锚点工况，参数设置逐项对齐并留档（截图/导出配置）；</li><li>差异必须解释，不允许只报&quot;吻合&quot;或&quot;不吻合&quot;。</li></ul>
+<h3 id="62-锚点设置对齐清单">6.2 锚点设置对齐清单</h3>
+<div class="table-container"><table><thead><tr><th>项目</th><th>对齐内容</th><th>记录方式</th></tr></thead><tbody><tr><td>场景</td><td>目标尺寸/姿态/材质发射率、背景类型、地形</td><td>工程文件+截图</td></tr><tr><td>大气</td><td>MOR（或能见度输入）、气溶胶类型/α、温湿度、水汽、湍流（如有）</td><td>参数截图+COSSIM 内部值</td></tr><tr><td>传感器</td><td>波段、口径、F#、像元、积分时间、NETD、光谱响应</td><td>参数截图</td></tr><tr><td>几何</td><td>距离、俯角、方位、太阳几何/时间</td><td>想定截图</td></tr><tr><td>输出</td><td>图像格式、位深、增益/动态范围、元数据字段</td><td>导出文件</td></tr><tr><td>版本</td><td>COSSIM 版本、场景/材质库版本</td><td>记录</td></tr></tbody></table></div>
+<h3 id="63-对比量方法与判据">6.3 对比量、方法与判据</h3>
+<div class="table-container"><table><thead><tr><th>层级</th><th>对比量</th><th>Python 侧</th><th>COSSIM 侧</th><th>判据</th></tr></thead><tbody><tr><td>中间量-大气</td><td>τ_band（谱形+积分）</td><td>辐射传输计算</td><td>大气模块导出/黑体标定反演</td><td>相对偏差 ≤15%</td></tr><tr><td>中间量-图像</td><td>目标-背景对比度、SNR</td><td>由 ΔT_app 计算</td><td>图像灰度/辐射值反演</td><td>相对偏差 ≤15%</td></tr><tr><td>中间量-传感器</td><td>MTF、MRTD（若可得）</td><td>MTF 链模型</td><td>图像边缘/靶标反演</td><td>趋势一致，偏差 ≤20%</td></tr><tr><td>最终指标</td><td>P_d、R₅₀</td><td>统一指标模型</td><td>同模型作用于 COSSIM 数据</td><td>偏差 ≤15% 且落入 U(k=2)</td></tr></tbody></table></div>
+<p>方法：相对偏差 = (X_py − X_cos)/X_cos；同时给 RMSE 与 Bland–Altman 一致性界限；样本仅 5 点时以&quot;偏差方向与量级&quot;为主，不强行做统计检验。</p>
+<h3 id="64-预期差异来源与处置">6.4 预期差异来源与处置</h3>
+<div class="table-container"><table><thead><tr><th>差异来源</th><th>预期表现</th><th>处置</th></tr></thead><tbody><tr><td>大气模型不同（内置 vs libRadtran）</td><td>τ 谱在吸收带边缘差异大</td><td>比谱形；必要时用 COSSIM 大气参数反标定</td></tr><tr><td>气溶胶参数化</td><td>α、g、ω 不一致 → 路径辐射/散射差异</td><td>用同一 MOR+α 输入；记录 COSSIM 内部气溶胶模型</td></tr><tr><td>路径辐射/多次散射</td><td>低能见度时背景电平差异</td><td>分项输出 L_path，单独比</td></tr><tr><td>目标热模型/发射率</td><td>目标辐射差异</td><td>用同一温度/发射率输入</td></tr><tr><td>传感器噪声/响应</td><td>SNR、对比度差异</td><td>统一 NETD/响应度/动态范围</td></tr><tr><td>离散化/采样</td><td>MTF、边缘差异</td><td>检查采样因子与图像分辨率</td></tr><tr><td>图像反演误差</td><td>对比度/MTF 提取偏差</td><td>固定提取算法与窗口，报告不确定度</td></tr></tbody></table></div>
+<h3 id="65-对比结果表模板">6.5 对比结果表模板</h3>
+<div class="table-container"><table><thead><tr><th>锚点</th><th>工况</th><th>对比量</th><th>Python</th><th>COSSIM</th><th>相对偏差</th><th>允许偏差</th><th>U(k=2) 重叠</th><th>结论</th></tr></thead><tbody><tr><td>E1</td><td>A0 基准</td><td>τ_band (LWIR)</td><td>待填</td><td>待填</td><td>待填</td><td>≤15%</td><td>待填</td><td>待填</td></tr><tr><td>E2</td><td>B3 中等霾</td><td>ΔT_app</td><td>待填</td><td>待填</td><td>待填</td><td>≤15%</td><td>待填</td><td>待填</td></tr><tr><td>E3</td><td>C1 浓雾</td><td>ΔT_app / 可探测性</td><td>待填</td><td>待填</td><td>待填</td><td>≤15%</td><td>待填</td><td>待填</td></tr><tr><td>E4</td><td>C3 沙尘 MWIR</td><td>τ_band / SNR</td><td>待填</td><td>待填</td><td>待填</td><td>≤15%</td><td>待填</td><td>待填</td></tr><tr><td>E5</td><td>C5 强湍流</td><td>N_eff / R₅₀</td><td>待填</td><td>待填</td><td>待填</td><td>≤15%</td><td>待填</td><td>待填</td></tr></tbody></table></div>
+<p><strong>结论写法示例</strong>（正式数值待填）：</p>
+<blockquote><p>在基准、中等霾、浓雾、沙尘、强湍流五个锚点工况上，Python 增强模型与 COSSIM 的波段透过率偏差 ≤ 9%，图像对比度偏差 ≤ 12%，R₅₀ 偏差 ≤ 14%，且全部落入 U(k=2) 区间。差异主要来自气溶胶前向散射参数化与路径辐射处理，属于可解释范围。</p></blockquote>
+<h3 id="66-降级方案按-cossim-可导出能力分级">6.6 降级方案（按 COSSIM 可导出能力分级）</h3>
+<div class="table-container"><table><thead><tr><th>COSSIM 能力</th><th>可做的对比</th><th>结论强度</th></tr></thead><tbody><tr><td>仅图像（无元数据导出）</td><td>图像对比度、SNR、边缘/MTF 反演</td><td>中：能证明趋势一致</td></tr><tr><td>图像+场景参数导出</td><td>加 τ、几何、传感器参数对齐</td><td>较高</td></tr><tr><td>可导出辐射/光谱数据</td><td>全量三层对比</td><td>高：可做正式 V&amp;V</td></tr><tr><td>有脚本/批处理接口</td><td>可扩到 10–20 个锚点</td><td>最高：统计意义更强</td></tr></tbody></table></div>
+<h3 id="67-在报告答辩中的呈现">6.7 在报告/答辩中的呈现</h3>
+<ul><li>报告结构：先给 COSSIM 主结果（场景/图像/参数），再给 Python 增强与交叉验证，最后给相图与方案优化；</li><li>答辩主图：图 2（能力相图）+ COSSIM 锚点标记 + 偏差标注；</li><li>必答问题预备：为什么用 Python？→ 因为要批量扫描、UQ、敏感性、优化，COSSIM 不便做；为什么可信？→ 锚点对标 + 解析校验 + 误差预算。</li></ul>
+<hr>
+<h2 id="附录-a-公式汇总">附录 A 公式汇总</h2>
+<p>见 3.2 节；补充：</p>
+<ul><li>Koschmieder：V = 3.912/β(0.55 μm)；</li><li>光谱换算：β(λ) = β₅₅₀(550/λ)^α；</li><li>Fried：r₀ = 0.185 λ^{6/5}(Cn²L)^{−3/5}；</li><li>湍流 MTF：exp[−3.44(λf/r₀)^{5/3}]；</li><li>Johnson：N₅₀ ≈ 2.0/8.0/12.5（版本差异须标源）；</li><li>TTPF：P_d = (N/N₅₀)^E/[1+(N/N₅₀)^E]。</li></ul>
+<h2 id="附录-b-待确认问题">附录 B 待确认问题</h2>
+<ol><li>传感器参数是否已给定？若无，是否采用〇节基线假设？</li><li>目标类型与 ΔT 的实测/文献依据？</li><li>COSSIM 版本、大气与湍流参数可设置项、可导出数据格式、有无脚本接口？</li><li>是否具备外场/文献实测数据用于 Validation？</li><li>报告与 PPT 的模板、页数、提交格式要求？</li></ol>
+<h2 id="附录-c-三周排期按-11-20-1700-截止倒排">附录 C 三周排期（按 11-20 17:00 截止倒排）</h2>
+<div class="table-container"><table><thead><tr><th>时间</th><th>任务</th><th>产出</th></tr></thead><tbody><tr><td>10-27–11-02</td><td>COSSIM 上手、接口摸底；确定基线参数；Python 基准链路+解析校验</td><td>基准结果、接口清单</td></tr><tr><td>11-03–11-09</td><td>B 单因子扫描、LHS、代理模型；第一次锚点对标</td><td>指标表、初步相图</td></tr><tr><td>11-10–11-16</td><td>C 组合/极端、UQ、Sobol、方案优化；二次对标</td><td>正式相图、置信区间、帕累托</td></tr><tr><td>11-17–11-19</td><td>报告、PPT、工程文件包整理；按评分权重自查、预答辩</td><td>全套提交材料</td></tr><tr><td>11-20</td><td>提交</td><td>—</td></tr></tbody></table></div></article><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

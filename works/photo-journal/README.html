@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>摄影归档网站 Photo Journal · 说明 · 学哲玩</title>
+<meta name="description" content="本地优先的照片归档 · 点云首页 · 地图时间轴">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 网页 · 创意工具</p><h1 class="work-doc-title">摄影归档网站 Photo Journal</h1><p class="work-doc-sub">本地优先的照片归档 · 点云首页 · 地图时间轴</p><div class="work-doc-meta"><span>网页 · 创意工具</span><span>1,784 个文件</span><span>15 MB</span><span class="tag">相册</span><span class="tag">EXIF</span><span class="tag">点云</span><span class="tag">本地优先</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/photo-journal" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="整体使用说明">整体使用说明</h2>
+<h2 id="这套东西是什么">这套东西是什么</h2>
+<p>一个<strong>本地优先</strong>的摄影归档网站。打开就是首页：随机一张照片变成可交互的三维点云， 旁边写着这张的拍摄参数；导入照片有两种方式，结果完全一样：</p>
+<p><strong>方式一（推荐，最直观）：把文件夹拖进网页</strong></p>
+<pre><code class="language-powershell">npm run serve        # 打开 http://127.0.0.1:4173</code></pre>
+<p>然后切到顶部的 <strong>「导入」</strong> 标签，把你的照片文件夹<strong>整个拖进去</strong>：</p>
+<ul><li>浏览器当场读取 EXIF 拍摄参数、解析&quot;几月几日何处拍摄&quot;式文件夹名、用 Canvas 生成缩略图；</li><li>全程在本机完成，<strong>照片不会被上传到任何地方</strong>；</li><li>处理完会列出一张结果表：日期、地点、相机、参数，识别不对的可以<strong>当场改</strong>（改动会存成 <code>overrides</code>，下次导入自动沿用）；</li><li>点「写入站点目录…」，在弹出的选择框里选 <strong>本项目里的 <code>public</code> 目录</strong> （也就是 <code>photo-journal\public</code>，里面有 <code>index.html</code> 的那个）。 导入器会先校验这个目录确实是本站目录，<strong>选错会直接报错并告诉你该选哪个，绝不会在你别的文件夹里乱建目录</strong>；</li><li>写入完成后页面会<strong>自动切回相册</strong>，新导入的照片带绿色&quot;刚刚导入&quot;角标，顶部统计、时间轴、地图、统计页同步更新。</li></ul>
+<blockquote><p>写入过一次后浏览器会记住这个目录，以后点一下就行；换电脑或清空浏览器数据后需要重新选一次。 如果浏览器不支持写目录（Safari/Firefox），会自动改成「下载 zip」，解压后覆盖仓库里的 <code>public/</code> 即可。</p></blockquote>
+<p><strong>方式二：命令行</strong></p>
+<pre><code class="language-powershell">npm run import -- --src &quot;D:\照片归档&quot;        # 生成索引 + 缩略图
+npm run import -- --src &quot;D:\照片归档&quot; --copy  # 连原图一起进仓库</code></pre>
+<p>两种方式产出的文件格式一致，可以混用。整个站点是纯静态文件，不需要数据库、不需要常驻服务器， 可以放 GitHub Pages、Cloudflare Pages、对象存储，甚至 U 盘。</p>
+<pre><code>你的照片文件夹（命名很乱也没关系）
+        │
+        │  拖进网页 / npm run import
+        ▼
+public/data/*.json  +  public/media/{thumbs,previews}
+        │
+        │  npm run serve（本地看） · npm run build（发布）
+        ▼
+首页点云 + 时间轴 / 地图 / 参数筛选 / 统计 / 重复检测 / 待确认</code></pre>
+<hr>
+<h2 id="1-环境准备">1. 环境准备</h2>
+<p>只需要 Node 20 以上（推荐 22/24）。</p>
+<pre><code class="language-powershell">node -v          # 需要 &gt;= 20
+cd photo-journal
+npm install      # 装 exifr（读 EXIF）与 sharp（生成缩略图，可选但强烈建议）</code></pre>
+<blockquote><p>如果你所在网络访问 npm 较慢，可以先设置镜像： <code>npm config set registry https://registry.npmmirror.com</code></p></blockquote>
+<hr>
+<h2 id="2-先看演示效果可选">2. 先看演示效果（可选）</h2>
+<p>仓库里<strong>不包含</strong>演示照片（<code>demo-archive/</code> 是生成物，已被 .gitignore 忽略），需要时自己造一份：</p>
+<pre><code class="language-powershell">npm run demo        # 生成 16 张带真实 EXIF 的示例照片到 demo-archive/
+npm run import -- --src demo-archive --copy
+npm run serve       # 打开 http://127.0.0.1:4173</code></pre>
+<p>想清空重新开始就用 <code>npm run import -- --src &lt;目录&gt; --clean</code>（先删掉 <code>public/data</code> 与 <code>public/media</code> 再导入）。</p>
+<p>演示归档故意包含了各种&quot;不规范&quot;命名：<code>2024年/10月3日 杭州西湖</code>、<code>2024-12-31 上海外滩 跨年</code>、 <code>2022年/国庆</code>、<code>2022年/扫街/10-06 成都宽窄巷子</code>、<code>未整理/手机照片</code> 等等，可以直接看到解析效果。</p>
+<hr>
+<h2 id="3-导入你自己的照片">3. 导入你自己的照片</h2>
+<h3 id="31-拖进网页最直观">3.1 拖进网页（最直观）</h3>
+<pre><code class="language-powershell">npm run serve</code></pre>
+<p>打开页面 → 点顶部 <strong>「导入」</strong> → 把文件夹拖到虚线框里（也可以点「选择文件夹」）。 支持的浏览器：Chrome / Edge / 其他 Chromium 内核浏览器（拖文件夹、写目录）。 Safari / Firefox 也能用，只是&quot;写入站点目录&quot;会退化成&quot;下载 zip&quot;。</p>
+<p>导入页上还有两个选项：</p>
+<ul><li><strong>轻量</strong>（默认）：只保存缩略图 + 1600px 预览图，约 0.3 MB/张，适合放 GitHub；</li><li><strong>完整</strong>：连原图一起写进 <code>media/originals/</code>，照片库会很大，超过 2GB 不建议提交到 GitHub。</li></ul>
+<p>处理过程中可以直接看到每张照片的识别结果，表格里点「修正」能改日期/地点/标签； 改过的内容会保存成 <code>public/data/archives.json</code>，命令行下次导入会自动套用。</p>
+<p><strong>关于&quot;会不会把已有的照片冲掉&quot;</strong>：不会。写入时会把本次导入的照片与站点上已有的照片 <strong>按 id 合并</strong>（同一张照片重新导入算&quot;更新&quot;），页面上会先告诉你&quot;新增几、更新几、保留原有几、合计几张&quot;。 想彻底重来就勾掉数据目录重新导入，或命令行加 <code>--clean</code>。</p>
+<h3 id="32-命令行">3.2 命令行</h3>
+<pre><code class="language-powershell">npm run import -- --src &quot;D:\照片归档&quot;
+
+# 连原图一起复制进 public/media/originals（仓库会变大，见存储方案）
+npm run import -- --src &quot;D:\照片归档&quot; --copy
+
+# 先看看它怎么理解你的文件夹名，不写任何文件
+npm run import -- --src &quot;D:\照片归档&quot; --dry-run</code></pre>
+<p>常用参数：</p>
+<div class="table-container"><table><thead><tr><th>参数</th><th>说明</th></tr></thead><tbody><tr><td><code>--src &lt;目录&gt;</code></td><td>照片根目录（递归扫描）</td></tr><tr><td><code>--copy</code></td><td>把原图复制进 <code>public/media/originals/</code></td></tr><tr><td><code>--origin-base &lt;URL&gt;</code></td><td>原图托管在对象存储/CDN 时的前缀，灯箱即可下载原图（见 <code>docs/存储方案.md</code> 方案 B）</td></tr><tr><td><code>--no-previews</code></td><td>不生成 WebP 缩略图（仓库最省空间，但浏览慢）</td></tr><tr><td><code>--force</code></td><td>重建已存在的缩略图</td></tr><tr><td><code>--clean</code></td><td>先清空 <code>public/data</code> 与 <code>public/media</code> 再导入（彻底重来）</td></tr><tr><td><code>--duplicates</code></td><td>额外打印检测到的重复照片分组</td></tr><tr><td><code>--dry-run</code></td><td>只打印识别结果</td></tr><tr><td><code>--limit 50</code></td><td>只处理前 50 张（调试）</td></tr><tr><td><code>--concurrency 8</code></td><td>并发数（机械硬盘建议 2~4）</td></tr><tr><td><code>--include-video</code></td><td>顺带索引 mp4/mov</td></tr></tbody></table></div>
+<p>也可以把参数写进 <code>photojournal.config.json</code>（复制 <code>photojournal.config.example.json</code> 改名即可）， 之后直接 <code>npm run import</code>。</p>
+<hr>
+<h2 id="4-本地预览--部署">4. 本地预览 / 部署</h2>
+<pre><code class="language-powershell">npm run serve                 # http://127.0.0.1:4173
+npm run build                 # 产出 dist/（含 .nojekyll）</code></pre>
+<p>部署到 GitHub Pages 有两条路：</p>
+<ul><li><strong>A. 简单</strong>：直接提交 <code>public/</code>，仓库 Settings → Pages → Source 选 <code>main</code> 分支的 <code>/public</code> 目录。</li><li><strong>B. 标准</strong>：用仓库里已经写好的 <code>.github/workflows/deploy.yml</code>， 它会跑 <code>npm run build</code> 并把 <code>dist/</code> 发布到 Pages（Settings → Pages → Source 选 <strong>GitHub Actions</strong>）。</li></ul>
+<p>两种方式都要求已经提交了 <code>public/data</code> 与 <code>public/media</code>（它们就是站点内容本身）。</p>
+<p>首次推送：</p>
+<pre><code class="language-powershell">git init
+git add .
+git commit -m &quot;摄影记录站点：首次导入&quot;
+git branch -M main
+git remote add origin https://github.com/&lt;你的用户名&gt;/&lt;仓库名&gt;.git
+git push -u origin main</code></pre>
+<blockquote><p>站点默认标题是&quot;我的摄影记录&quot;，改 <code>photojournal.config.json</code> 里的 <code>title</code> / <code>subtitle</code> 后重新导入即可。</p></blockquote>
+<hr>
+<h2 id="5-它到底能从照片里读到什么">5. 它到底能从照片里读到什么</h2>
+<h3 id="51-相机拍摄参数exif--xmp">5.1 相机拍摄参数（EXIF / XMP）</h3>
+<div class="table-container"><table><thead><tr><th>字段</th><th>来源标签</th><th>说明</th></tr></thead><tbody><tr><td>拍摄时间</td><td><code>DateTimeOriginal</code></td><td>EXIF 里最权威的拍摄时刻</td></tr><tr><td>备用时间</td><td><code>CreateDate</code> / <code>DateTimeDigitized</code></td><td>有些导出图只有这个</td></tr><tr><td>相机</td><td><code>Make</code> + <code>Model</code></td><td>自动去掉重复的品牌前缀</td></tr><tr><td>镜头</td><td><code>LensModel</code> / <code>Lens</code> / <code>LensInfo</code></td><td></td></tr><tr><td>光圈</td><td><code>FNumber</code>（无则用 <code>ApertureValue</code> 换算）</td><td>显示成 <code>f/2.8</code></td></tr><tr><td>快门</td><td><code>ExposureTime</code>（无则用 <code>ShutterSpeedValue</code>）</td><td>显示成 <code>1/250</code> 或 <code>8s</code></td></tr><tr><td>感光度</td><td><code>ISO</code> / <code>ISOSpeedRatings</code></td><td></td></tr><tr><td>焦距</td><td><code>FocalLength</code> + <code>FocalLengthIn35mmFormat</code></td><td>显示成 <code>35mm (52mm eq.)</code></td></tr><tr><td>曝光补偿</td><td><code>ExposureCompensation</code></td><td></td></tr><tr><td>曝光模式</td><td><code>ExposureProgram</code></td><td>手动 / 光圈优先 / 快门优先…</td></tr><tr><td>测光 / 闪光 / 白平衡</td><td><code>MeteringMode</code> / <code>Flash</code> / <code>WhiteBalance</code></td><td></td></tr><tr><td>GPS</td><td><code>GPSLatitude</code> / <code>GPSLongitude</code> / <code>GPSAltitude</code></td><td>转成十进制度数</td></tr><tr><td>星级 / 色标 / 关键词</td><td><code>Rating</code> / <code>Label</code> / <code>Keywords</code>（XMP、IPTC）</td><td>Lightroom 的评级会带出来</td></tr><tr><td>后期软件</td><td><code>Software</code> / <code>CreatorTool</code></td><td>判断是否 Lightroom / Photoshop / Capture One 导出</td></tr><tr><td>版权 / 作者 / 描述</td><td><code>Copyright</code> / <code>Artist</code> / <code>ImageDescription</code></td><td>有就显示在详情里</td></tr></tbody></table></div>
+<p>拍摄时间刻意<strong>保留相机本地时间</strong>（不做 UTC 换算），否则跨时区旅行拍的照片会整体偏移几小时。</p>
+<h3 id="52-lightroom-导出的照片能不能读参数">5.2 Lightroom 导出的照片能不能读参数？</h3>
+<p><strong>能，而且和相机直出图一样完整。</strong> 关键点：</p>
+<ul><li>Lightroom 导出 JPEG/TIFF 时<strong>默认保留 EXIF</strong>，&quot;元数据&quot;里如果选了&quot;全部&quot;就什么都不会丢。 导出对话框里如果选了&quot;移除位置信息&quot;或&quot;仅版权&quot;，那 GPS / 部分字段才会没有。</li><li>用&quot;导出为 DNG&quot;或&quot;在 Lightroom 里编辑原图&quot;时，参数同样在文件里。</li><li>能额外读到的是 XMP 里的 <strong>星级、色标、关键词</strong>（<code>Rating</code> / <code>Label</code> / <code>Keywords</code>）， 站点会拿来做筛选。</li><li><strong>读不到的是&quot;调整参数&quot;</strong>：曝光度、色温、曲线、蒙版、局部调整这些只存在于 Lightroom 目录（<code>.lrcat</code>）或同名 <code>.xmp</code> 附属文件里，导出的 JPEG 里没有。 站点能判断的只是&quot;这张是被 Lightroom 处理过的&quot;（通过 <code>Software</code> 字段）。</li></ul>
+<blockquote><p><strong>虚拟副本 / 堆叠 / 收藏夹</strong> 这些 Lightroom 内部组织信息也在目录里， 不会跟着导出文件走。如果你希望按 Lightroom 的评级/收藏夹浏览， 建议在 Lightroom 里先&quot;导出为文件夹结构&quot;，再让本工具导入。</p></blockquote>
+<h3 id="53-手机照片">5.3 手机照片</h3>
+<p>iPhone/安卓照片同样带 EXIF 与 GPS，没问题。HEIC 也能读， 但 sharp 对 HEIC 的支持取决于系统解码器，失败时会自动回退（见下）。</p>
+<h3 id="54-rawdngcr2nefarw">5.4 RAW（.dng/.cr2/.nef/.arw…）</h3>
+<p>索引和 EXIF 都能读；<strong>缩略图可能生成不了</strong>（依赖 libvips 是否带 RAW 解码）。 遇到读不了的情况：</p>
+<ul><li>站点会退回到&quot;直接使用原图&quot;（能看，只是加载慢）；</li><li>或者先在 Lightroom 里导出成 JPEG 再入库——这也更符合&quot;归档成品&quot;的思路。</li></ul>
+<hr>
+<h2 id="6-文件夹名自动识别详见-docs文件夹名解析说明md-">6. 文件夹名自动识别（详见 <code>docs/文件夹名解析说明.md</code>）</h2>
+<p>支持这些写法（可以混搭）：</p>
+<pre><code>2024年/10月3日 杭州西湖/DSC01234.JPG
+2024年/10月4日 西溪湿地 晨雾/
+2024-12-31 上海外滩 跨年/IMG_20241231_231805.jpg
+2023/10/1日 国庆 北京/
+2022年/国庆/                       ← 只有节日，年份取父目录
+2022年/扫街/10-06 成都宽窄巷子/      ← 年份取父目录
+2023/精选 原片 归档/                ← 没有地点，退化为&quot;未识别&quot;
+未整理/手机照片/IMG_20210405_090001.jpg  ← 日期从文件名取</code></pre>
+<p>识别顺序：<strong>文件名/文件夹里的完整日期 → 父目录年份 + 月日 → 节日 → EXIF → 文件修改时间</strong>。 每个结果都带&quot;来源&quot;和&quot;置信度&quot;，识别不出来的会在<strong>「待确认」</strong>标签页列出来， 你可以在 <code>photojournal.config.json</code> 的 <code>overrides</code> 里手动纠正后重新导入：</p>
+<pre><code class="language-json">{
+  &quot;overrides&quot;: {
+    &quot;2023/精选 原片 归档&quot;: { &quot;date&quot;: &quot;2023-08-12&quot;, &quot;location&quot;: &quot;杭州&quot;, &quot;tags&quot;: [&quot;夜景&quot;] },
+    &quot;/扫街\\/.*2022/&quot;:      { &quot;location&quot;: &quot;杭州 湖滨&quot; }
+  }
+}</code></pre>
+<p>键可以用路径片段（包含即命中），也可以写成 <code>/正则/</code>。</p>
+<hr>
+<h2 id="7-站点功能">7. 站点功能</h2>
+<div class="table-container"><table><thead><tr><th>视图</th><th>内容</th></tr></thead><tbody><tr><td><strong>首页</strong></td><td>随机挑一张照片变成<strong>三维点云</strong>，鼠标拖动旋转、滚轮缩放，旁边列出这张的拍摄参数（详见第 7.4 节）</td></tr><tr><td><strong>导入</strong></td><td>把照片文件夹拖进网页，当场读 EXIF、识别文件夹名、生成缩略图，可逐张人工修正，然后写回仓库目录或导出 zip</td></tr><tr><td><strong>相册</strong></td><td>等高行式瀑布流，悬停显示日期与地点，支持大图/紧凑两档；点击进灯箱</td></tr><tr><td><strong>时间轴</strong></td><td>年 → 月 → 缩略图，点击月份直接筛出该月</td></tr><tr><td><strong>地图</strong></td><td>内嵌 Natural Earth 海岸线（离线，不请求任何地图服务），GPS 光点聚合、缩放平移、点击按地点筛选</td></tr><tr><td><strong>统计</strong></td><td>照片数/地点数/跨度、逐月柱状图、相机/镜头/光圈/焦距/ISO/地点排行、日期来源质量</td></tr><tr><td><strong>重复</strong></td><td>感知哈希找出内容相同/几乎一样的照片（重复导出、改尺寸、修图前后、连拍），给出建议保留项与可省空间</td></tr><tr><td><strong>待确认</strong></td><td>日期或地点没识别出来的照片列表，方便人工补</td></tr><tr><td>侧栏筛选</td><td>年份、月份、地点、相机、镜头、标签、星级、日期来源、是否有 GPS，可组合</td></tr><tr><td>搜索</td><td>地点、说明、相机、镜头、光圈…全字段模糊搜索（按空格分词）</td></tr><tr><td>灯箱</td><td>大图 + 完整参数 + 下载原图 + 在地图上查看；<code>←/→</code> 切换、<code>Esc</code> 关闭、<code>I</code> 隐藏信息</td></tr><tr><td>分享</td><td>筛选条件与当前照片会写进地址栏（<code>?y=2024&amp;l=西湖#p=&lt;id&gt;</code>）</td></tr><tr><td>导出</td><td>一键导出当前筛选结果为 JSON</td></tr></tbody></table></div>
+<blockquote><p>页面任意位置拖入文件夹都会弹出「松手即可导入」的遮罩，不用先切到导入页。</p></blockquote>
+<hr>
+<h2 id="74-首页照片点云">7.4 首页：照片点云</h2>
+<p>打开站点默认停在首页：<strong>随机挑一张照片，把它的像素变成上万个三维点</strong>， 鼠标移上去会有视差，按住可以旋转，滚轮缩放，旁边实时列出这张照片的拍摄参数。</p>
+<p><strong>怎么做的</strong>（<code>public/assets/pointcloud.js</code>）：</p>
+<ol><li>把照片缩到 ~440px 宽读像素；</li><li><strong>细节优先采样</strong>：与相邻像素差异大的地方（结构、暗部）多取点，避免变成一团均匀噪点；</li><li><strong>深度 = 亮度</strong>：亮的地方朝观察者凸出来、暗的地方往后沉，再叠一点随机噪声，形成真正的立体感；</li><li>透视投影 + 深度排序（远的先画），近处的点更大更亮，远处更小更暗；</li><li><strong>自适应亮度曲线</strong>：先看整张图的平均亮度，夜空这类很暗的照片会自动提亮 gamma， 否则点云黑成一片。实测夜景（ISO 1600 / 10s）也能看出云层与星点结构。</li></ol>
+<p><strong>交互</strong>：</p>
+<div class="table-container"><table><thead><tr><th>操作</th><th>效果</th></tr></thead><tbody><tr><td>移动鼠标</td><td>轻微视差旋转（不点也能看出立体）</td></tr><tr><td>按住拖动</td><td>自由旋转（上下限位，不会转丢）</td></tr><tr><td>滚轮</td><td>缩放</td></tr><tr><td>点击画面 / 「换一张」</td><td>换一张随机的照片</td></tr><tr><td>「进入相册」</td><td>跳到相册</td></tr><tr><td>「看原图」</td><td>打开灯箱看这张的完整信息</td></tr></tbody></table></div>
+<p>点云只在首页可见时才渲染（切到别的页会暂停，不空烧 CPU）；系统开了&quot;减少动态效果&quot;时不再自转。</p>
+<p><strong>设计风格</strong>参考 DeepSeek Harness：中性偏蓝的深色阶（<code>#151517</code> 底、<code>#0f1115</code> 主文字）、 单一品牌蓝 <code>#4176e6</code> 作点缀、参数用等宽字体、细边框卡片、克制的圆角与留白。 这些颜色令牌定义在 <code>public/assets/style.css</code> 顶部的 <code>--dsw-*</code> 变量里。</p>
+<hr>
+<h2 id="75-重复照片检测怎么用">7.5 重复照片检测怎么用</h2>
+<p>「重复」标签页会自动分组，并给出<strong>建议保留</strong>的那一张（像素最多 → 星级最高 → 文件最大）。</p>
+<p><strong>它是怎么判断的</strong>（<code>src/dup.js</code>）：</p>
+<ol><li><strong>结构指纹（dHash）</strong>：把图缩到 9×8 灰度、逐行比较相邻像素明暗，得到 64 位指纹。 缩放、重压缩、亮度微调都不改变它。</li><li><strong>颜色特征（色度）</strong>：去掉亮度后统计 2×2×2 的色度分布。 专门用来挡掉&quot;结构撞车&quot;的误报——实测中&quot;杭州西湖&quot;和&quot;青岛海边&quot;两张渐变图结构距离只有 3， 但色度差异把它们分开了。<strong>故意用去亮度的色度</strong>，这样&quot;同一张照片调亮 6%~12%&quot;依然算重复。</li></ol>
+<p><strong>置信度分级</strong>（页面上有标签）：</p>
+<div class="table-container"><table><thead><tr><th>标签</th><th>含义</th><th>典型情况</th></tr></thead><tbody><tr><td>内容完全相同</td><td>结构距离 0</td><td>同一文件导了两遍、直接复制副本</td></tr><tr><td>高度相似</td><td>结构距离 ≤ 3</td><td>重复导出、改过尺寸、调过亮度、连拍</td></tr><tr><td>可能重复 · 请自己确认</td><td>结构距离 4~5</td><td>相似构图的不同照片，建议自己看一眼</td></tr></tbody></table></div>
+<p>两个滑块可以现场调整严格程度（结构 ≤ 5、颜色 ≤ 7 是默认值，改完会记住）：</p>
+<ul><li>误报多 → 把<strong>结构</strong>调到 3；</li><li>漏检多（比如同一张照片裁切过）→ 把<strong>结构</strong>调到 8~12，此时误报会明显增多。</li></ul>
+<p><strong>怎么处理</strong>：每组里点「保留这张」，其余会被记入&quot;忽略&quot;（存在浏览器里，刷新仍在）， 「清除忽略记录」可以撤销。注意：<strong>这个页面只做标记，不会删除任何文件</strong> —— 你确认之后自己去相册目录删冗余文件即可。真正省空间的是 <code>--copy</code> 时不要把原图放进仓库。</p>
+<p>命令行也能看到统计：<code>npm run import -- --src &quot;目录&quot; --duplicates</code>， 分组明细会同时写到 <code>public/data/duplicates.json</code>。</p>
+<hr>
+<h2 id="8-项目结构">8. 项目结构</h2>
+<pre><code>photo-journal/
+├─ src/                      共享模块（Node 与浏览器通用）
+│  ├─ parse.js               文件夹名 / 文件名 → 日期 + 地点 + 标签
+│  ├─ locationHints.js       地名表（可自由增删，含近似坐标）
+│  ├─ exif.js                EXIF/XMP/IPTC/GPS 的归一化与格式化（不依赖 exifr，浏览器可直接用）
+│  ├─ exif-parse.js          真正调用 exifr 解析文件（Node 用；浏览器由 build-vendor 打包）
+│  ├─ exif-write.js          最小 EXIF 写入器（纯 Uint8Array，Node/浏览器通用）
+│  ├─ record.js              解析结果 + EXIF → 一条照片记录
+│  ├─ filters.js             筛选逻辑（纯函数，有单元测试）
+│  ├─ dup.js                 重复照片检测：感知指纹 + 分组（纯函数，有单元测试）
+│  ├─ site-root.js           写入前的站点目录校验（选错就报错）
+│  ├─ merge.js               导入合并规则（不冲掉已有照片）
+│  ├─ util.js                小工具 + 忽略列表
+│  ├─ zip.js                 最小 ZIP 打包器（store 模式）
+│  ├─ media-node.js          Node 端缩略图（sharp）+ 感知指纹
+│  └─ media-browser.js       浏览器端缩略图（Canvas）+ 感知指纹
+├─ scripts/
+│  ├─ import.mjs             命令行导入：扫描 → 解析 → 生成索引
+│  ├─ build.mjs              同步共享模块 + 打包 vendor + 产出 dist/
+│  ├─ build-vendor.mjs       把 exif-parse 打给浏览器用（public/vendor/）
+│  ├─ serve.mjs              零依赖本地服务器
+│  ├─ make-demo.mjs          生成演示照片
+│  ├─ build-atlas.mjs        烘焙世界海岸线到 public/assets/mapatlas.js
+│  ├─ migrate-index.mjs      索引字段迁移（例如 src → ds），只改 JSON 不动照片
+│  ├─ e2e.mjs                首页点云 + 相册各视图的端到端自检
+│  ├─ e2e-import.mjs         拖拽导入链路端到端自检
+│  ├─ e2e-write.mjs          写入目录后各视图同步的端到端自检
+│  └─ e2e-pickdir.mjs        选错目录必须报错、且提示真的看得见
+├─ public/                   站点本体（导入后会多出 data/ 与 media/）
+│  ├─ index.html
+│  ├─ assets/                app.js / home.js / pointcloud.js / import.js / grid.js / map.js …
+│  ├─ src/                   build 时从 src/ 同步过来的共享模块
+│  └─ vendor/                build 时生成的 exifr bundle
+├─ tests/
+│  ├─ parse.test.mjs         文件夹名解析（26 项）
+│  ├─ merge.test.mjs         导入合并：不冲掉已有照片（6 项）
+│  ├─ site-root.test.mjs     站点目录校验：选错就报错（7 项）
+│  └─ dup.test.mjs           重复检测：指纹、阈值、亮度不变性、置信度（20 项）
+├─ docs/                     详细文档
+└─ photojournal.config.example.json</code></pre>
+<hr>
+<h2 id="9-常见问题">9. 常见问题</h2>
+<p><strong>Q：点了「写入站点目录…」，站点里却什么都没出现？</strong> 看页面顶部有没有<strong>橙色横幅</strong>。现在只要写入失败，横幅会常驻显示——切到任何页面、甚至刷新之后都还在，并写清原因。 最常见的原因是<strong>目录选错了</strong>：</p>
+<ul><li>必须选 <strong><code>photo-journal\public</code></strong>（里面有 <code>index.html</code> 的那个）。选成照片文件夹会提示&quot;目录里没有 index.html，看起来不是站点根目录&quot;。</li><li>选到 <code>photo-journal</code> 项目根目录也可以，导入器会自动用里面的 <code>public</code>。</li><li>写入成功时是<strong>绿色横幅</strong>，并自动切回相册、给新照片打绿色&quot;刚刚导入&quot;角标。</li></ul>
+<p><strong>Q：怎么确认到底写进了哪个目录？</strong> 导入过程中会逐条记录（形如 <code>写入中 12/40：media/thumbs/xxxx.webp</code>），写在导入页下方，也保存在浏览器里。 导入页右下角有<strong>「诊断」</strong>按钮，点一下会输出环境、模块、数据链路的完整报告——把那段发我即可定位。 <strong>兜底办法</strong>：改点「下载 zip」，解压后把 <code>data/</code> 与 <code>media/</code> 覆盖进 <code>photo-journal\public\</code>，效果完全一样。</p>
+<p><strong>Q：导入后统计/时间轴的数字没变？</strong> 先看有没有绿色&quot;刚刚导入&quot;角标和绿色横幅。若写入成功但界面没更新，按 <code>Ctrl+R</code> 刷新一次 （正常情况下页面会自动重新读取索引，不需要手动刷新）。</p>
+<p><strong>Q：首页点云是黑的 / 看不清？</strong> 如果那张照片本身是大面积纯黑（比如长曝光夜空），点云自然偏暗——点云的颜色就是原照片的像素颜色。 程序已经按平均亮度自动提亮过一档；想更亮可以把 <code>public/assets/pointcloud.js</code> 里 <code>buildPoints()</code> 的 <code>gamma</code> 再调小一点（越小越亮）。换一张明亮些的照片对比一下就很明显。</p>
+<p><strong>Q：点云卡顿？</strong> 点的数量按画布面积自动定（9000~34000）。窗口越小点越少；也可以在 <code>home.js</code> 里给 <code>cloud.load(url, { maxPoints: 15000 })</code> 传个上限。</p>
+<p><strong>Q：刚克隆下来打开站点，看到&quot;站点里还没有照片&quot;？</strong> 这是正常的：<code>public/data</code> 与 <code>public/media</code> 是导入生成的，仓库里默认不带任何照片。 切到顶部「导入」标签，把文件夹拖进去即可；也可以先用 <code>npm run demo</code> 造一批示例照片试试。</p>
+<p><strong>Q：拖进网页后按钮点了没反应 / 提示&quot;没有发现可导入的文件&quot;？</strong> 确认拖的是<strong>文件夹</strong>而不是文件夹里的图片（两种都支持，但文件夹会递归扫描子目录）。 如果拖的是 <code>.zip</code>、<code>.lrdata</code>、<code>.xmp</code> 这类文件，会被自动跳过。 确认拖的是<strong>文件夹</strong>而不是文件夹里的图片（两种都支持，但文件夹会递归扫描子目录）。 如果拖的是 <code>.zip</code>、<code>.lrdata</code>、<code>.xmp</code> 这类文件，会被自动跳过。</p>
+<p><strong>Q：网页里点「写入站点目录」报权限错误？</strong> 浏览器要求每次写入都重新确认一次目录权限，弹窗里选&quot;允许&quot;即可。 也可以直接点「下载 zip」，解压后覆盖仓库里的 <code>public/</code> 目录——效果一样。</p>
+<p><strong>Q：缩略图没生成 / 日志里报 <code>sharp 未安装</code>？</strong> 命令行导入时 <code>npm install</code> 可能因网络没装上 sharp，重试 <code>npm install sharp</code> 即可； 确实装不上也能用（站点直接加载原图），只是慢。网页导入用的是浏览器自己的 Canvas，与此无关。</p>
+<p><strong>Q：网页里的「导入」页不出现？</strong> 它需要 <code>public/vendor/exif-parse.js</code>（把 exifr 打包给浏览器用）。 如果 <code>npm run build</code> 时提示无法生成，说明 esbuild 没装好：执行 <code>npm install</code> 然后 <code>npm run vendor</code>。 其余功能（浏览已导入的照片、命令行导入）不受影响。</p>
+<p><strong>Q：我在照片文件夹里加了几张新照片，要重新导入吗？</strong> 要。两种方式都可以重复运行：命令行会按内容哈希复用已有缩略图，只处理新增/变更的文件； 网页导入会跳过已经存在的缩略图（用同一份内容哈希）。</p>
+<p><strong>Q：照片被重命名或移动了会怎样？</strong> 记录 id 由&quot;相对路径 + 文件大小&quot;哈希得出，移动后会被当成新照片（旧记录会消失，重新生成）。</p>
+<p><strong>Q：支持 HEIC / RAW 吗？</strong> 命令行（sharp）与网页（浏览器解码器）能力不同： 命令行的索引总能读，缩略图取决于 libvips；网页里 <code>.heic/.tif/.dng/.cr2/.nef...</code> 会<strong>读取拍摄参数但不生成缩略图</strong>（浏览器解不了），这时建议先在 Lightroom 里导出 JPEG 再入库。</p>
+<p><strong>Q：支持多人/多设备浏览吗？</strong> 支持。部署后就是普通网页；数据库、账号体系一概没有（这也是它简单、不泄露数据的原因）。 注意：写回目录只发生在本机浏览器里，不会上传任何照片。</p>
+<p><strong>Q：照片里有隐私（家庭住址、GPS）怎么办？</strong> 三种做法：① 网页导入时对单张点「修正」改掉地点，或命令行用 <code>overrides</code>； ② 设置 <code>previews: false</code> + 不放原图，站上只有缩略图；③ 导入后在 <code>public/data/search.json</code> 里手工删掉 <code>g</code> 字段 （或在 <code>src/exif.js</code> 的 <code>pickGPS</code> 里直接返回 <code>null</code>，一次性全部不显示坐标）。</p>
+<p><strong>Q：地图能不能换成高德/Google 那种真实底图？</strong> 可以，但要自己申请 Key：把 <code>public/assets/map.js</code> 里的 canvas 绘制换成瓦片图层即可。 默认方案故意选择&quot;离线海岸线&quot;，因为它零成本、零授权风险、不向外泄露你的拍摄位置。</p></article><section class="work-gallery" aria-labelledby="work-gallery-title"><h2 class="work-gallery-title" id="work-gallery-title">图集</h2><p class="work-gallery-note">正文配图较少，以下从项目目录挑选了 8 张图片。</p><div class="work-gallery-grid"><figure class="work-gallery-item"><a href="public/media/previews/5d56efb82b2401757a8b.webp"><img src="public/media/previews/5d56efb82b2401757a8b.webp" alt="5d56efb82b2401757a8b.webp" loading="lazy" decoding="async"></a><figcaption>5d56efb82b2401757a8b.webp</figcaption></figure>
+<figure class="work-gallery-item"><a href="public/media/previews/3c204524936ada24424d.webp"><img src="public/media/previews/3c204524936ada24424d.webp" alt="3c204524936ada24424d.webp" loading="lazy" decoding="async"></a><figcaption>3c204524936ada24424d.webp</figcaption></figure>
+<figure class="work-gallery-item"><a href="public/media/previews/adc989473b48a6dd5cba.webp"><img src="public/media/previews/adc989473b48a6dd5cba.webp" alt="adc989473b48a6dd5cba.webp" loading="lazy" decoding="async"></a><figcaption>adc989473b48a6dd5cba.webp</figcaption></figure>
+<figure class="work-gallery-item"><a href="public/media/previews/c6653ee9a2130ff0fe82.webp"><img src="public/media/previews/c6653ee9a2130ff0fe82.webp" alt="c6653ee9a2130ff0fe82.webp" loading="lazy" decoding="async"></a><figcaption>c6653ee9a2130ff0fe82.webp</figcaption></figure>
+<figure class="work-gallery-item"><a href="public/media/previews/71fb9eb0c80d3a551c8e.webp"><img src="public/media/previews/71fb9eb0c80d3a551c8e.webp" alt="71fb9eb0c80d3a551c8e.webp" loading="lazy" decoding="async"></a><figcaption>71fb9eb0c80d3a551c8e.webp</figcaption></figure>
+<figure class="work-gallery-item"><a href="public/media/previews/8bb9196f545f257a6fcb.webp"><img src="public/media/previews/8bb9196f545f257a6fcb.webp" alt="8bb9196f545f257a6fcb.webp" loading="lazy" decoding="async"></a><figcaption>8bb9196f545f257a6fcb.webp</figcaption></figure>
+<figure class="work-gallery-item"><a href="public/media/previews/e1ec47384189adfe7a36.webp"><img src="public/media/previews/e1ec47384189adfe7a36.webp" alt="e1ec47384189adfe7a36.webp" loading="lazy" decoding="async"></a><figcaption>e1ec47384189adfe7a36.webp</figcaption></figure>
+<figure class="work-gallery-item"><a href="public/media/previews/803d21460f155b6534c0.webp"><img src="public/media/previews/803d21460f155b6534c0.webp" alt="803d21460f155b6534c0.webp" loading="lazy" decoding="async"></a><figcaption>803d21460f155b6534c0.webp</figcaption></figure></div></section><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

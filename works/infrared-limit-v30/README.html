@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>红外识别极限与临界状态仿真 V3.0 · 说明 · 学哲玩</title>
+<meta name="description" content="能识别多远、极限由什么决定、临界状态是什么">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 红外 · 大气仿真</p><h1 class="work-doc-title">红外识别极限与临界状态仿真 V3.0</h1><p class="work-doc-sub">能识别多远、极限由什么决定、临界状态是什么</p><div class="work-doc-meta"><span>红外 · 大气仿真</span><span>124 个文件</span><span>16.8 MB</span><span class="tag">红外识别</span><span class="tag">MRTD</span><span class="tag">临界距离</span><span class="tag">参数敏感性</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/infrared-limit-v30" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README_交付说明.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="红外目标识别概率极限与临界状态仿真--交付说明">红外目标识别概率极限与临界状态仿真 · 交付说明</h2>
+<ul><li><strong>交付日期</strong>：2026 年 11 月</li><li><strong>运行环境</strong>：Python 3.11（numpy / scipy / pandas / matplotlib / python-docx / openpyxl / HAPI 1.3.0）</li><li><strong>定位</strong>：回答一个工程问题——在给定红外传感器与真实大气条件下，对某类目标<strong>能识别多远</strong>、<strong>极限由什么决定</strong>、<strong>临界状态是什么</strong>，并给出<strong>可单变量对比</strong>的全套数据与图件。</li></ul>
+<hr>
+<h2 id="一这份交付解决什么问题">一、这份交付解决什么问题</h2>
+<ol><li><strong>识别概率极限</strong>：给出 6 个软件实测目标在各工况下的 P_rec(R) 完整曲线，以及三条边界——分辨率天花板 R_res、对比度地板 τ_opt·ΔT_app≤k·NETD、湍流边界（Cn² 决定的 f_max 下调）。</li><li><strong>临界状态</strong>：反解给定工况下的临界距离 R50/R90/R10（含截断标记）、热交叉识别盲区、临界 AOD、临界 Cn²、临界口径、临界 NETD。</li><li><strong>单变量对比</strong>：15 组严格 OFAT 扫描（每组只改一个因子），每组一份独立 CSV；真实气候 8 环境 × p10/中位/p90 × 6 目标矩阵；MWIR/LWIR 波段对比；AOD×Cn² 与 ΔT×AOD 相图。</li><li><strong>可复现性与可审计</strong>：参数唯一真值源 + 参数登记表 + 逐公式校准记录 + 自动 V&amp;V 检查 + 一键重建脚本。</li></ol>
+<h2 id="二关键结论基线工况">二、关键结论（基线工况）</h2>
+<p>基线：MWIR 3.7–4.8 μm、识别通道 RECOG（IFOV 12.5 μrad / D=0.30 m / NETD 25 mK）、平台 8 km、背景 20 ℃、目标 40 ℃、AOD₅₅₀=0.587、α=1.30、PWV=1.28 cm、Cn²=1×10⁻¹⁵、NVESD 判据。</p>
+<div class="table-container"><table><thead><tr><th>目标</th><th style="text-align:right">D_eff (m)</th><th style="text-align:right">R50 (km)</th><th style="text-align:right">R90 (km)</th><th style="text-align:right">分辨率天花板 R_res (km)</th><th style="text-align:right">η=R50/R_res</th><th>主导机制</th></tr></thead><tbody><tr><td>悍马车</td><td style="text-align:right">4.04</td><td style="text-align:right">5.7</td><td style="text-align:right">—</td><td style="text-align:right">5.7</td><td style="text-align:right">1.00</td><td>分辨率锁死</td></tr><tr><td>F16</td><td style="text-align:right">8.24</td><td style="text-align:right">17.8</td><td style="text-align:right">—</td><td style="text-align:right">18.5</td><td style="text-align:right">0.96</td><td>分辨率锁死</td></tr><tr><td>F22</td><td style="text-align:right">8.62</td><td style="text-align:right">18.5</td><td style="text-align:right">—</td><td style="text-align:right">19.5</td><td style="text-align:right">0.95</td><td>分辨率锁死</td></tr><tr><td>爱国者发射车</td><td style="text-align:right">15.81</td><td style="text-align:right">29.4</td><td style="text-align:right">10.0</td><td style="text-align:right">37.5</td><td style="text-align:right">0.78</td><td>过渡区</td></tr><tr><td>阿利伯克驱逐舰</td><td style="text-align:right">85.00</td><td style="text-align:right">89.8</td><td style="text-align:right">44.3</td><td style="text-align:right">205.8</td><td style="text-align:right">0.44</td><td>大气/湍流折减</td></tr><tr><td>尼米兹航母</td><td style="text-align:right">160.08</td><td style="text-align:right">130.8</td><td style="text-align:right">67.2</td><td style="text-align:right">387.8</td><td style="text-align:right">0.34</td><td>大气/湍流折减</td></tr></tbody></table></div>
+<blockquote><p>注：R90 为 — 表示该目标在 0.2 km 处 P_rec 已低于 0.9（近距离阈值不存在，属截断）；η=R50/R_res，R_res 为忽略大气/湍流的纯分辨率天花板。</p></blockquote>
+<p>与直觉不同、但可复现的结论（数值与 <code>03_数据</code> 同源计算）：</p>
+<ul><li><strong>小目标被分辨率锁死、大目标被大气锁死</strong>：特征尺寸较小的目标 η=R50/R_res ≈0.95–1.00；大型舰船的 η ≈0.34–0.44，识别极限改由大气透过率接管。基线工况下 6 个目标的 R50 跨度约 5.7–130.8 km；两类机制的交接点随 AOD、Cn²、平台高度移动。</li><li><strong>气溶胶对中小目标几乎无影响、对远距大型目标显著</strong>：MWIR 窗内气溶胶消光比 550 nm 弱约一个量级，小目标 R50 对 AOD 不敏感；但大型舰船的识别距离已推到百 km 量级，AOD 从 0.6 增至 4.0 可使其 R50 下降约 19%（阿利伯克）/28%（尼米兹）（以 S04 扫描数据为准）。</li><li><strong>湍流是第三边界</strong>：Cn² 增大使 Fried 直径 r0 减小、湍流 MTF 压缩高频，是唯一能让&quot;干净大气 + 近距离&quot;仍然识别失败的因子；基线 Cn²=1e−15 下已不可忽略，对中小目标 Cn²≳3×10⁻¹⁵ 后成为主控（对大型舰船约 10⁻¹⁶ 即开始显著）；1×10⁻¹³ 时小目标（悍马车、F16、F22、爱国者发射车）完全不可识别，舰船 R50 降至约 16–25 km。</li><li><strong>存在热交叉识别盲区</strong>：反射项校准后，视在温差在 ΔT=0 时严格为零；使 P_rec&lt;0.5 的固有温差是一个以 ΔT≈0 为中心的连续区间，其宽度随参考距离变化（基线 F16 约 1.8 K @10 km、1.3 K @ r_ref=0.5·R50，以 <code>03_数据/临界状态/临界状态汇总.csv</code> 为准）。</li><li><strong>波段选择看匹配而非&quot;长波更好&quot;</strong>：MWIR 识别通道为采样受限（Nyquist 40 &lt; 衍射截止 68.6 cyc/mrad），LWIR 为衍射受限（衍射截止 30.4 &lt; Nyquist 40）；MWIR 窗内还有 N₂O 4.5 μm、CO 4.6 μm、CO₂ 4.3 μm 等强吸收带（完整截面补齐后 MWIR 不再是&quot;偏透明&quot;波段）。MWIR 与 LWIR 的 R50 对比：F16 MWIR 17.8 / LWIR 11.9 km，尼米兹 MWIR 130.8 / LWIR 143.1 km（悍马 LWIR 低于几何地平线、不可识别；其余见 S02/图12）。长波更适合探测，但不自动更适合识别。</li></ul>
+<h2 id="三目录与文件">三、目录与文件</h2>
+<div class="table-container"><table><thead><tr><th>路径</th><th>内容</th></tr></thead><tbody><tr><td><code>01_正式报告/</code></td><td>正式仿真报告 DOCX + PDF（数值运行时读自 <code>03_数据</code>，图引用与 <code>02_图表</code> 编号一一对应）</td></tr><tr><td><code>02_图表/</code></td><td>图01–图17（链路、工况空间、光谱大气、MTF/MRTD、概率曲线、单变量族、波段对比、包络、相图、环境热力图、敏感性）+ 图00 项目思维导图（标准版与横版）</td></tr><tr><td><code>03_数据/</code></td><td>全工况长表、S00–S15 单变量汇总、临界状态表、真实气候工况表、波段对比表、相图表、汇总 XLSX</td></tr><tr><td><code>04_模型代码/irrecog/</code></td><td>模型包：params / radiometry / atmosphere / sensor / target / probability / chain / critical / experiments / plots / plots_atmo / report</td></tr><tr><td><code>05_参数依据/</code></td><td>参数真值源说明、参数登记表（由 <code>params.py</code> 导出）、参数释义手册、争议与不确定清单</td></tr><tr><td><code>06_校验/</code></td><td>V&amp;V 自动检查脚本与校验报告、光谱大气校验、公式校准报告</td></tr><tr><td><code>07_光谱数据/</code></td><td>HITRAN2020 逐线吸收截面（多温度 × 多气压，<code>xsect_mwir.npz</code> / <code>xsect_lwir.npz</code>）</td></tr><tr><td><code>00_构建脚本/</code></td><td>接口约定（开发实施摘要）、大气截面生成脚本、思维导图脚本、PDF 导出脚本</td></tr><tr><td><code>run_all.py</code></td><td>一键重建：数据 → 图件 → XLSX → 报告</td></tr><tr><td><code>文件清单.csv</code></td><td>交付文件清单（交付时按实际文件重建）</td></tr></tbody></table></div>
+<h2 id="四快速使用">四、快速使用</h2>
+<pre><code class="language-powershell"># 只看报告
+start .\01_正式报告\*.pdf
+
+# 全量重建（数据 → 图件 → XLSX → 报告，约数分钟）
+python .\run_all.py
+
+# 分步执行
+python .\run_all.py --data      # 只重算数据
+python .\run_all.py --plots     # 只重画图件
+python .\run_all.py --xlsx      # 只重建汇总表
+python .\run_all.py --report    # 只重建报告
+
+# 质量校验（V&amp;V）
+python .\06_校验\qa_checks.py
+
+# 只重画思维导图（标准版 + 横版）
+python .\00_构建脚本\make_mindmap.py</code></pre>
+<p>数据读取示例（pandas）：</p>
+<pre><code class="language-python">import pandas as pd
+long = pd.read_csv(r&quot;03_数据\全工况长表\eval_long.csv.gz&quot;, encoding=&quot;utf-8-sig&quot;)
+# 单变量对比：固定 sweep_id 与其余因子，只比 sweep_value
+sub = long[(long.sweep_id == &quot;S04&quot;) &amp; (long.target == &quot;F16&quot;)]
+piv = sub.pivot_table(index=&quot;r_ground_km&quot;, columns=&quot;sweep_value&quot;, values=&quot;P_rec&quot;)</code></pre>
+<h2 id="五模型与数据口径简述">五、模型与数据口径（简述）</h2>
+<ul><li><strong>输入（软件实测）</strong>：6 个目标包围盒（F16、F22、尼米兹级航母、阿利伯克级驱逐舰、悍马车、爱国者导弹发射车）；背景&quot;与那国岛&quot;20 ℃；软件默认气象（15 ℃/50%RH/1013 hPa/能见度 10 km）；两档传感器——软件实测搜索通道（FOV 3.75°×3.0°、IFOV 63.9 μrad）与参考识别通道（FOV 0.7334°×0.5500°、IFOV 12.5 μrad）。</li><li><strong>光谱大气</strong>：HITRAN2020 逐线 Voigt 截面（H₂O/CO₂/CH₄/O₃/N₂O/CO，温度 220/250/280/300 K × 气压 1.0/0.6/0.36/0.2 atm，层内双线性）；气溶胶 Koschmieder→AOD 与 Ångström 外消光；Rayleigh 垂直光学厚度口径；ISO 2533 温压廓线；球面地球弦长斜程几何；路径辐射用累计光学厚度的发射-吸收积分。</li><li><strong>辐射与传感器</strong>：Planck + 对比度加权（权重参考温度取背景温度）；不透明表面发射 + 反射项，对比度严格化简为 ε_t·ΔB；MTF 链（衍射/探测器 sinc/抖动/湍流/电子学）→ MRTD=k·NETD/MTF → f_max（Nyquist/衍射/对比度三重限）。</li><li><strong>判据与临界</strong>：N=f_max·θ；TTPF P=(N/N50)^E/(1+(N/N50)^E)，E=2；双 N50 口径并列（NVESD 主 / Johnson 备）；R50 等临界量用对数域求解器（相对精度约 0.1%），截断返回 NaN 并注明原因。</li></ul>
+<h2 id="六参数依据与可复现性">六、参数依据与可复现性</h2>
+<ul><li><code>04_模型代码/irrecog/params.py</code> 是<strong>唯一参数真值源</strong>，每个参数标注四类之一：软件实测 / 文献 / 推导 / 设定；<code>参数依据登记表.csv</code> 由其自动导出，修改参数后重跑 <code>python -m irrecog.params</code> 即可再生。</li><li><code>05_参数依据/参数依据说明.md</code> 给出每个参数的取值、依据类别、来源、敏感性、替换方式与不确定度；<code>参数释义手册.md</code> 提供逐参数物理释义。</li><li><code>06_校验/公式校准报告.md</code> 逐条登记全项目公式的&quot;原式 → 校准式 → 依据 → 数值核验 → 影响量级 → 状态&quot;；<code>06_校验/光谱大气校验.md</code> 记录光谱数据生成与大气模型专项校核。</li><li><code>06_校验/qa_checks.py</code> 覆盖物理极限、单调性、解析-数值一致、数据一致性、完整性、公式自检、可复现性与交付红线（无版本字样）。</li><li>本报告中的相对排序与临界阈值稳健；绝对距离依赖已登记的设定参数与几何未标定项，需实测替换后复算。</li></ul>
+<h2 id="七已知限制必读">七、已知限制（必读）</h2>
+<ol><li><strong>判据口径是最大单项不确定度</strong>：NVESD/TTP 与经典 Johnson 两套 N50 相差约 2 倍，报告并列给出、不合并。</li><li><strong>目标包围盒未做几何标定</strong>：<code>√(max(W,L)·H)</code> 与 <code>max(W,L,H)</code> 两种口径使 R50 相差 1.26–2.16 倍；爱国者模型疑为多车组合。</li><li><strong>传感器辐射参数为参考系统设定值</strong>（NETD、τ_opt、抖动、MRTD 系数 k、RECOG 的焦距/口径/像元间距）：必须用实测值替换后再用于定型结论。</li><li><strong>大气模型缺口</strong>：水汽连续吸收 MT_CKD 未含（LWIR 透过率偏高 2–8%）；气溶胶相函数/多次散射未含（白天路径辐亮度低估 5–15%）；弱吸收物种 O₃/N₂O/CO 缺多气压节点（贡献 &lt;1%）；大气折射未含。</li><li><strong>热模型简化</strong>：灰体发射率（未含 ε(λ) 光谱变化）、背景温度均一、Cn² 均匀且长曝光、湍流外尺度未建模。</li><li><strong>结论适用范围</strong>：相对排序与临界阈值稳健；绝对距离需在实测传感器参数、目标几何标定与完整大气数据到位后重新计算，不作为装备定型依据。</li></ol>
+<h2 id="八文件清单">八、文件清单</h2>
+<p>完整的文件级清单见同目录 <code>文件清单.csv</code>（交付时按实际文件自动重建，包含相对路径与大小）。分目录说明见本文第三节。</p></article><section class="work-gallery" aria-labelledby="work-gallery-title"><h2 class="work-gallery-title" id="work-gallery-title">图集</h2><p class="work-gallery-note">正文配图较少，以下从项目目录挑选了 8 张图片。</p><div class="work-gallery-grid"><figure class="work-gallery-item"><a href="06_校验/Validation_大气模型对比.png"><img src="06_校验/Validation_大气模型对比.png" alt="Validation_大气模型对比.png" loading="lazy" decoding="async"></a><figcaption>Validation_大气模型对比.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="02_图表/图04_MTF链与MRTD.png"><img src="02_图表/图04_MTF链与MRTD.png" alt="图04_MTF链与MRTD.png" loading="lazy" decoding="async"></a><figcaption>图04_MTF链与MRTD.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="02_图表/图05_基线任务概率曲线.png"><img src="02_图表/图05_基线任务概率曲线.png" alt="图05_基线任务概率曲线.png" loading="lazy" decoding="async"></a><figcaption>图05_基线任务概率曲线.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="02_图表/图14_相图_AODxCn2.png"><img src="02_图表/图14_相图_AODxCn2.png" alt="图14_相图_AODxCn2.png" loading="lazy" decoding="async"></a><figcaption>图14_相图_AODxCn2.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="02_图表/图16_真实气候工况热力图.png"><img src="02_图表/图16_真实气候工况热力图.png" alt="图16_真实气候工况热力图.png" loading="lazy" decoding="async"></a><figcaption>图16_真实气候工况热力图.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="02_图表/图02_工况空间与默认工况定位.png"><img src="02_图表/图02_工况空间与默认工况定位.png" alt="图02_工况空间与默认工况定位.png" loading="lazy" decoding="async"></a><figcaption>图02_工况空间与默认工况定位.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="02_图表/图12_波段对比.png"><img src="02_图表/图12_波段对比.png" alt="图12_波段对比.png" loading="lazy" decoding="async"></a><figcaption>图12_波段对比.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="02_图表/图01_模型链路与三类极限.png"><img src="02_图表/图01_模型链路与三类极限.png" alt="图01_模型链路与三类极限.png" loading="lazy" decoding="async"></a><figcaption>图01_模型链路与三类极限.png</figcaption></figure></div></section><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

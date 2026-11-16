@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>激光雷达点云仿真 · 说明 · 学哲玩</title>
+<meta name="description" content="射线求交 + 混合像素的一帧点云">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 雷达 · 地理 · 导航</p><h1 class="work-doc-title">激光雷达点云仿真</h1><p class="work-doc-sub">射线求交 + 混合像素的一帧点云</p><div class="work-doc-meta"><span>雷达 · 地理 · 导航</span><span>6 个文件</span><span>1.7 MB</span><span class="tag">激光雷达</span><span class="tag">点云</span><span class="tag">射线求交</span><span class="tag">Python</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/lidar-sim" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><h2 id="lidar-sim--最小可运行的激光雷达点云仿真">lidar-sim —— 最小可运行的激光雷达点云仿真</h2>
+<p>只依赖 <code>numpy</code>（画图额外需要 <code>matplotlib</code>），用几百行代码演示一帧点云是怎么「算」出来的。</p>
+<h2 id="运行">运行</h2>
+<pre><code class="language-bash">cd lidar-sim
+python run.py</code></pre>
+<p>输出到 <code>outputs/</code>：</p>
+<div class="table-container"><table><thead><tr><th>文件</th><th>内容</th></tr></thead><tbody><tr><td><code>pointcloud.csv</code></td><td>点云，每行 <code>x,y,z,intensity,is_mixed</code></td></tr><tr><td><code>fig_3d.png</code></td><td>三维点云（按距离着色，红=混合像素）+ 俯视图（按强度着色，青×=混合像素）</td></tr><tr><td><code>fig_range_image.png</code></td><td>距离图 + 强度图（像相机一样看雷达）</td></tr></tbody></table></div>
+<h2 id="这个仿真实现了什么">这个仿真实现了什么</h2>
+<ol><li><strong>射线求交</strong>：<code>lidar_sim.py</code> 里的 <code>ray_box_hit</code>（ray-AABB slab 法）和 <code>ray_ground_hit</code>（无限平面），全部 numpy 向量化，一条指令同时算几万条射线。</li><li><strong>光束足迹 + 混合像素</strong>：每个扫描方向用 5×5 束子射线模拟有限发散角的光斑。 当子射线命中不同距离的面（如物体边缘 vs 背景墙）时，取<strong>功率加权平均距离</strong>， 这正是真实雷达「边缘悬浮点」的来源。这类点在图里标红/标青×。</li><li><strong>测距噪声</strong>：高斯噪声 <code>σ = σ0 + k·R</code>，远端信噪比低、噪声更大。</li><li><strong>强度 / 丢点</strong>：<code>强度 = 反射率 × cos(入射角) × (R_ref/R)² × 斑点</code>； 强度过低（黑色目标、镜面、超量程）→ 丢点，形成点云里的「黑洞」。</li></ol>
+<h2 id="关键文件">关键文件</h2>
+<ul><li><code>lidar_sim.py</code>：核心库（场景、求交、传感器模型、单帧仿真）。</li><li><code>run.py</code>：示例场景 + 可视化 + 保存 CSV。</li></ul>
+<h2 id="想改点什么">想改点什么</h2>
+<ul><li>场景在 <code>run.py</code> 的 <code>build_scene()</code>：加一个 <code>ls.AABB(lo, hi, reflectance)</code> 就是加一个盒子， 把 <code>reflectance</code> 调低（如 0.05）就能看到丢点黑洞。</li><li>传感器在 <code>run.py</code> 的 <code>LidarSensor(...)</code>：改 <code>beam_div</code>（光斑大小）看混合像素变多变少， 改 <code>range_noise</code> 看噪声，改 <code>H/V</code> 看分辨率。</li><li>混合像素判据是 <code>simulate_frame(..., mixed_threshold=0.5)</code> 里的距离极差阈值。</li></ul>
+<blockquote><p>想理解背后的物理，见对话里的《激光雷达仿真原理讲解》：飞行时间测距、 LIDAR 测距方程（扩展目标 <code>1/R²</code>、点目标 <code>1/R⁴</code>）、三级保真度模型等。</p></blockquote></article><section class="work-gallery" aria-labelledby="work-gallery-title"><h2 class="work-gallery-title" id="work-gallery-title">图集</h2><p class="work-gallery-note">正文配图较少，以下从项目目录挑选了 2 张图片。</p><div class="work-gallery-grid"><figure class="work-gallery-item"><a href="outputs/fig_range_image.png"><img src="outputs/fig_range_image.png" alt="fig_range_image.png" loading="lazy" decoding="async"></a><figcaption>fig_range_image.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="outputs/fig_3d.png"><img src="outputs/fig_3d.png" alt="fig_3d.png" loading="lazy" decoding="async"></a><figcaption>fig_3d.png</figcaption></figure></div></section><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>36 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

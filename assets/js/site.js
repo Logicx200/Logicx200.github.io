@@ -134,6 +134,14 @@
         image.style.display = 'none';
       });
     });
+
+    /* 说明页图集：图片失效时整块隐藏，避免破图 */
+    $all('.work-gallery-item img').forEach(function (image) {
+      image.addEventListener('error', function () {
+        var figure = image.closest('.work-gallery-item');
+        if (figure) figure.hidden = true;
+      });
+    });
   }
 
   /* ----------------------------------------------------------------------
@@ -414,6 +422,281 @@
   }
 
   /* ----------------------------------------------------------------------
+     维护：作品筛选页 /curate/（勾选保留、统计、复制/下载排除清单）
+     ---------------------------------------------------------------------- */
+
+  function initCurate() {
+    var root = $('[data-page="curate"]');
+    if (!root) return;
+    var list = $('#curate-list');
+    if (!list) return;
+
+    var STORAGE_KEY = 'xz-curate-excluded';
+    var rows = $all('.curate-row', list);
+    var search = $('#curate-search');
+    var keepCount = $('#curate-keep-count');
+    var excludeCount = $('#curate-exclude-count');
+    var excludeBytes = $('#curate-exclude-bytes');
+    var status = $('#curate-status');
+    var output = $('#curate-output');
+    var preview = $('.curate-preview');
+    var categorySelect = $('#curate-category');
+    var empty = $('#curate-empty');
+
+    function formatCount(value) {
+      try { return new Intl.NumberFormat('zh-CN').format(value); }
+      catch (error) { return String(value); }
+    }
+
+    function formatSize(value) {
+      var number = Number(value) || 0;
+      if (number < 1024) return Math.round(number) + ' B';
+      var units = ['KB', 'MB', 'GB', 'TB'];
+      var size = number / 1024;
+      var index = 0;
+      while (size >= 1024 && index < units.length - 1) { size /= 1024; index += 1; }
+      var rounded = Math.round(size * 10) / 10;
+      return (rounded % 1 === 0 ? String(rounded) : rounded.toFixed(1)) + ' ' + units[index];
+    }
+
+    function readExcluded() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        var parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed.filter(function (item) { return typeof item === 'string'; }) : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    var excluded = {};
+    readExcluded().forEach(function (slug) { excluded[slug] = true; });
+
+    function rowSlug(row) { return row.getAttribute('data-slug') || ''; }
+    function rowInput(row) { return $('.curate-check', row); }
+    function rowBytes(row) { return Number(row.getAttribute('data-bytes')) || 0; }
+    function rowFiles(row) { return Number(row.getAttribute('data-files')) || 0; }
+    function isKept(row) { return Boolean(rowInput(row) && rowInput(row).checked); }
+
+    function syncRows() {
+      rows.forEach(function (row) {
+        var input = rowInput(row);
+        if (!input) return;
+        input.checked = !excluded[rowSlug(row)];
+        row.classList.toggle('is-excluded', !input.checked);
+      });
+    }
+
+    function excludedEntries() {
+      var entries = [];
+      var totalBytes = 0;
+      var totalFiles = 0;
+      rows.forEach(function (row) {
+        if (isKept(row)) return;
+        var bytes = rowBytes(row);
+        var files = rowFiles(row);
+        totalBytes += bytes;
+        totalFiles += files;
+        entries.push({
+          id: rowSlug(row),
+          title: ($('.curate-title', row) || {}).textContent ? $('.curate-title', row).textContent.trim() : rowSlug(row),
+          dir: row.getAttribute('data-dir') || '',
+          category: row.getAttribute('data-category') || '',
+          files: files,
+          bytes: bytes
+        });
+      });
+      return { entries: entries, bytes: totalBytes, files: totalFiles };
+    }
+
+    function buildJson() {
+      var result = excludedEntries();
+      var siteUrl = (root && root.getAttribute('data-site-url')) || 'https://logicx200.github.io/';
+      return {
+        generatedAt: new Date().toISOString(),
+        site: siteUrl,
+        excludedCount: result.entries.length,
+        excludedFiles: result.files,
+        excludedBytes: result.bytes,
+        excluded: result.entries,
+        instructions: '把这份 JSON 交给 AI，即可从站点和仓库中删除这些作品。'
+      };
+    }
+
+    function update(save) {
+      var excludedData = { bytes: 0, files: 0 };
+      var kept = 0;
+      rows.forEach(function (row) {
+        var input = rowInput(row);
+        if (!input) return;
+        if (input.checked) {
+          kept += 1;
+          delete excluded[rowSlug(row)];
+        } else {
+          excluded[rowSlug(row)] = true;
+          excludedData.bytes += rowBytes(row);
+          excludedData.files += rowFiles(row);
+        }
+        row.classList.toggle('is-excluded', !input.checked);
+      });
+      var excludedTotal = rows.length - kept;
+      if (keepCount) keepCount.textContent = formatCount(kept);
+      if (excludeCount) excludeCount.textContent = formatCount(excludedTotal);
+      if (excludeBytes) excludeBytes.textContent = formatSize(excludedData.bytes);
+      if (save) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(Object.keys(excluded)));
+        } catch (error) { /* 隐私模式等场景忽略 */ }
+      }
+      if (output) output.value = JSON.stringify(buildJson(), null, 2);
+    }
+
+    function setStatus(message) {
+      if (status) status.textContent = message;
+    }
+
+    function filterRows() {
+      var query = normalize(search ? search.value.trim() : '');
+      var visible = 0;
+      rows.forEach(function (row) {
+        var matched = !query || (row.getAttribute('data-search') || '').indexOf(query) !== -1;
+        row.hidden = !matched;
+        if (matched) visible += 1;
+      });
+      if (empty) empty.hidden = visible > 0;
+    }
+
+    function fallbackCopy(text) {
+      if (!output) return false;
+      if (preview) preview.open = true;
+      output.value = text;
+      output.focus();
+      output.select();
+      try {
+        return document.execCommand('copy');
+      } catch (error) {
+        return false;
+      }
+    }
+
+    list.addEventListener('change', function (event) {
+      if (event.target && event.target.classList && event.target.classList.contains('curate-check')) {
+        update(true);
+        setStatus('');
+      }
+    });
+
+    /* 点击行文字也能切换勾选状态 */
+    list.addEventListener('click', function (event) {
+      var row = event.target && event.target.closest ? event.target.closest('.curate-row') : null;
+      if (!row) return;
+      if (event.target.classList && event.target.classList.contains('curate-check')) return;
+      var input = rowInput(row);
+      if (!input) return;
+      input.checked = !input.checked;
+      update(true);
+      setStatus('');
+    });
+
+    if (search) {
+      search.addEventListener('input', filterRows);
+    }
+
+    $all('#curate-select-all').forEach(function (button) {
+      button.addEventListener('click', function () {
+        rows.forEach(function (row) { var input = rowInput(row); if (input) input.checked = true; });
+        update(true);
+        setStatus('已全部保留');
+      });
+    });
+    $all('#curate-select-none').forEach(function (button) {
+      button.addEventListener('click', function () {
+        rows.forEach(function (row) { var input = rowInput(row); if (input) input.checked = false; });
+        update(true);
+        setStatus('已全部排除');
+      });
+    });
+    $all('#curate-reset').forEach(function (button) {
+      button.addEventListener('click', function () {
+        excluded = {};
+        syncRows();
+        update(true);
+        setStatus('已重置为全部保留');
+      });
+    });
+    $all('#curate-category-select').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var category = categorySelect ? categorySelect.value : '';
+        if (!category) return;
+        rows.forEach(function (row) {
+          var input = rowInput(row);
+          if (input && row.getAttribute('data-category') === category) input.checked = true;
+        });
+        update(true);
+        setStatus('已保留该分类的全部作品');
+      });
+    });
+    $all('#curate-category-unselect').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var category = categorySelect ? categorySelect.value : '';
+        if (!category) return;
+        rows.forEach(function (row) {
+          var input = rowInput(row);
+          if (input && row.getAttribute('data-category') === category) input.checked = false;
+        });
+        update(true);
+        setStatus('已排除该分类的全部作品');
+      });
+    });
+
+    $all('#curate-copy').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var json = JSON.stringify(buildJson(), null, 2);
+        if (output) output.value = json;
+        function copied() {
+          setStatus('已复制排除清单（' + excludedEntries().entries.length + ' 个作品）');
+        }
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          navigator.clipboard.writeText(json).then(copied).catch(function () {
+            setStatus(fallbackCopy(json)
+              ? '已复制排除清单（' + excludedEntries().entries.length + ' 个作品）'
+              : '浏览器不允许自动复制，已在下方列出 JSON，请手动复制。');
+          });
+        } else if (fallbackCopy(json)) {
+          copied();
+        } else {
+          setStatus('浏览器不允许自动复制，已在下方列出 JSON，请手动复制。');
+        }
+      });
+    });
+
+    $all('#curate-download').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var json = JSON.stringify(buildJson(), null, 2);
+        try {
+          var blob = new Blob([json], { type: 'application/json' });
+          var url = URL.createObjectURL(blob);
+          var anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = 'curate-exclude.json';
+          document.body.appendChild(anchor);
+          anchor.click();
+          document.body.removeChild(anchor);
+          setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+          setStatus('已下载 curate-exclude.json');
+        } catch (error) {
+          setStatus('下载失败：' + (error && error.message ? error.message : '浏览器不支持'));
+        }
+      });
+    });
+
+    syncRows();
+    update(false);
+    filterRows();
+  }
+
+  /* ----------------------------------------------------------------------
      启动
      ---------------------------------------------------------------------- */
 
@@ -422,6 +705,7 @@
     initImageFallbacks();
     initNotesFilter();
     initWorksFilter();
+    initCurate();
     initMath();
   });
 })();
