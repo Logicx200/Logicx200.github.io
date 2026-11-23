@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161816" media="(prefers-color-scheme: dark)">
+<title>提瓦特的凌日 / 凌月带 · 说明 · 学哲玩</title>
+<meta name="description" content="天空岛、群玉阁、寒天之钉的日月凌带推算 + 交互地图">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%273%27 fill=%27%232f6f5e%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Georgia,serif%27 font-size=%2719%27 text-anchor=%27middle%27 fill=%27%23fbfaf7%27%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
+<script>(function(){var d=document.documentElement;d.className=d.className.replace(/\bno-js\b/,"js");try{var t=localStorage.getItem("xz-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}d.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body class="page-work-doc" data-page="work-doc">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
+<main id="main">
+<div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 雷达 · 地理 · 导航</p><h1 class="work-doc-title">提瓦特的凌日 / 凌月带</h1><p class="work-doc-sub">天空岛、群玉阁、寒天之钉的日月凌带推算 + 交互地图</p><div class="work-doc-meta"><span>雷达 · 地理 · 导航</span><span>7 个文件</span><span>7.8 MB</span><span class="tag">原神</span><span class="tag">提瓦特</span><span class="tag">凌日</span><span class="tag">凌月</span><span class="tag">地图</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a class="is-demo" href="index.html">在线试玩 ▶</a><a href="https://github.com/Logicx200/Logicx200.github.io/tree/master/works/teyvat-transit-bands" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><p>用游戏内已知目标（天空岛、群玉阁、寒天之钉）反推提瓦特天空的日月轨迹，并画出它们的凌日带与凌月带。</p>
+<p><strong>在线交互地图：</strong> <a href="index.html">index.html</a>（单文件，可缩放/平移、切换目标与底图）</p>
+<h2 id="结论">结论</h2>
+<div class="table-container"><table><thead><tr><th>目标</th><th>位置 (x, y)</th><th>高度</th><th>带偏移（南）</th><th>带宽</th><th>凌日 / 凌月</th></tr></thead><tbody><tr><td>天空岛</td><td>(−3383, +21)</td><td>1.5 km</td><td>600 m</td><td>≈196 m</td><td>12:00 / 00:00</td></tr><tr><td>群玉阁</td><td>(−1201, +3164)</td><td>300 m</td><td>120 m</td><td>≈60 m</td><td>12:00 / 00:00</td></tr><tr><td>寒天之钉</td><td>(+142.5, +1364)</td><td>400–696 m</td><td>160–280 m</td><td>≈120 m+</td><td>12:00 / 00:00</td></tr></tbody></table></div>
+<ul><li>日月轨迹最高只到 <strong>68.2°</strong>，不过天顶，所以带都落在目标<strong>正下方以南</strong>，偏移 = 高度 ÷ tan 68.2° ≈ 0.4 × 高度；</li><li>太阳带正东西，月亮带偏 <strong>10°</strong>（升 80°/落 260°）；</li><li>两带的交点<strong>不是</strong>目标本身，而是目标正下方以南的那个点；</li><li>寒天之钉是竖长的钉体，钉底与钉顶的影子落点不同，带因此被“拉宽”。</li></ul>
+<h2 id="方法">方法</h2>
+<ol><li>从观测枢锚点表中取天空岛、群玉阁、寒天之钉的水平坐标；</li><li>用天空岛的偏移（1.5 km → 600 m）反推日月轨迹最高高度角 68.2°；</li><li>同一片天空下，其余目标的带偏移按高度线性缩放；</li><li>带宽由目标的横向尺度（足迹）与高度跨度共同决定；</li><li>用世界坐标（+x 东、+y 南，米）把带画在地图上。</li></ol>
+<h2 id="文件">文件</h2>
+<ul><li><code>index.html</code>：交互地图（内嵌完整 8K 官方大地图底图与简图底图）；</li><li><code>figures/</code>：天空岛合成图、天空岛高度角热力图、群玉阁大范围图、群玉阁与寒天之钉热力图；</li><li><code>data/bands.csv</code>：三个目标的带参数。</li></ul>
+<h2 id="不确定度">不确定度</h2>
+<ul><li>群玉阁、寒天之钉的水平位置取观测枢点，可能有几十到几百米误差；</li><li>寒天之钉底部高度按山体约 400 m 估；</li><li>若实测日月最高高度角不是 68.2°，所有偏移按 <code>高度 / tan(a_max)</code> 缩放。</li></ul>
+<h2 id="english-summary">English summary</h2>
+<p>Transit bands of three floating landmarks in Teyvat (Celestia, Jade Chamber, Skyfrost Nail). The sun/moon path peaks at 68.2° (not the zenith), so each transit band lies ~0.4×height south of the target; the solar band runs E-W and the lunar band is tilted 10°. The interactive map is a single self-contained HTML file with the full 8K official map and a clean basemap.</p></article><section class="work-gallery" aria-labelledby="work-gallery-title"><h2 class="work-gallery-title" id="work-gallery-title">图集</h2><p class="work-gallery-note">正文配图较少，以下从项目目录挑选了 4 张图片。</p><div class="work-gallery-grid"><figure class="work-gallery-item"><a href="figures/sky-island-heatmap.png"><img src="figures/sky-island-heatmap.png" alt="sky-island-heatmap.png" loading="lazy" decoding="async"></a><figcaption>sky-island-heatmap.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="figures/jade-nail-heatmaps.png"><img src="figures/jade-nail-heatmaps.png" alt="jade-nail-heatmaps.png" loading="lazy" decoding="async"></a><figcaption>jade-nail-heatmaps.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="figures/jade-wide.png"><img src="figures/jade-wide.png" alt="jade-wide.png" loading="lazy" decoding="async"></a><figcaption>jade-wide.png</figcaption></figure>
+<figure class="work-gallery-item"><a href="figures/sky-island-bands.png"><img src="figures/sky-island-bands.png" alt="sky-island-bands.png" loading="lazy" decoding="async"></a><figcaption>sky-island-bands.png</figcaption></figure></div></section><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+</main>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>45 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>

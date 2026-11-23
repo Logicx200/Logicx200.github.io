@@ -13,9 +13,9 @@
   }
  },
  "totals": {
-  "projects": 44,
-  "files": 5019,
-  "bytes": 266467407,
+  "projects": 45,
+  "files": 5026,
+  "bytes": 274661593,
   "excluded": 4
  },
  "categories": [
@@ -56,6 +56,43 @@
   }
  ],
  "projects": [
+  {
+   "id": "teyvat-transit-bands",
+   "dir": "works/teyvat-transit-bands",
+   "title": "提瓦特的凌日 / 凌月带",
+   "subtitle": "天空岛、群玉阁、寒天之钉的日月凌带推算 + 交互地图",
+   "category": "geo",
+   "tags": [
+    "原神",
+    "提瓦特",
+    "凌日",
+    "凌月",
+    "地图"
+   ],
+   "summary": "用天空岛、群玉阁、寒天之钉三处已知高度的目标反推提瓦特日月轨迹：最高只到 68.2°，所以凌日/凌月带都落在目标正下方以南约 0.4×高度处，太阳带东西向、月亮带偏 10°。附三目标的带参数表、高度角热力图与单文件交互地图（内嵌完整 8K 官方大地图，可缩放、切换目标与底图）。",
+   "highlights": [
+    "日月最高 68.2°：带在南侧 0.4×高度，不在目标脚下",
+    "天空岛 600 m / 群玉阁 120 m / 寒天之钉 160–280 m 的偏移与带宽",
+    "交互地图：目标切换、缩放平移、完整 8K 官方底图"
+   ],
+   "tech": [
+    "JavaScript",
+    "Canvas",
+    "Python",
+    "Matplotlib"
+   ],
+   "cover": "works/teyvat-transit-bands/figures/jade-wide.png",
+   "demo": "works/teyvat-transit-bands/index.html",
+   "entry": "works/teyvat-transit-bands/README.md",
+   "published": true,
+   "sourceFiles": 7,
+   "sourceBytes": 8194186,
+   "publishedFiles": 7,
+   "publishedBytes": 8194186,
+   "excludeReason": "",
+   "excludeNote": "",
+   "featured": false
+  },
   {
    "id": "817-optics",
    "dir": "works/817-optics",
