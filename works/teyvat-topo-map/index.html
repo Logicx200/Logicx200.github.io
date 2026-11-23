@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>提瓦特大陆行政区划与地形图</title>
+<style>
+  :root{--paper:#f7f3ea;--ink:#2a2622;--muted:#7a7266;--line:#c9bda6}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif}
+  .wrap{max-width:1200px;margin:0 auto;padding:40px 22px 60px}
+  .eyebrow{font-size:12px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+  h1{font-size:30px;margin:6px 0 4px;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 22px}
+  .frame{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;
+    box-shadow:0 2px 14px rgba(0,0,0,.05)}
+  .frame img{display:block;width:100%;height:auto;border-radius:6px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 8px}
+  a.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+    background:var(--ink);color:#fff;border-radius:8px;padding:10px 16px;font-size:14px}
+  a.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  a.btn:hover{opacity:.88}
+  .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:20px 0}
+  .meta div{background:#fbf8f0;border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:13px}
+  .meta b{display:block;font-size:18px;margin-bottom:2px}
+  p.note{font-size:12.5px;color:var(--muted);line-height:1.8;margin-top:14px}
+  a.back{color:var(--muted);font-size:12.5px;text-decoration:none}
+  a.back:hover{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Teyvat · Administrative &amp; Topographic</p>
+  <h1>提瓦特大陆行政区划与地形图</h1>
+  <p class="sub">8 个一级行政区 · 65 个二级行政区 · 107 个地名 · 6 级相对起伏 + 等高线</p>
+
+  <div class="frame">
+    <a href="teyvat-topo-6000.png"><img src="preview.jpg" alt="提瓦特大陆行政区划与地形图预览"></a>
+  </div>
+
+  <div class="actions">
+    <a class="btn" href="teyvat-topo-6000.png" download>下载 PNG（6000×4200，300dpi）</a>
+    <a class="btn ghost" href="teyvat-topo.pdf" download>下载 PDF（可编辑矢量）</a>
+  </div>
+
+  <div class="meta">
+    <div><b>8</b>一级行政区</div>
+    <div><b>65</b>二级行政区</div>
+    <div><b>107</b>地名</div>
+    <div><b>A3</b>300 dpi · 6000×4200</div>
+  </div>
+
+  <p class="note">
+    以观测枢《提瓦特大地图》8K 影像为底，按 301 个锚点配准后重绘：一级/二级行政区界与治所、地名、经纬网（标准纬线 30°N）、比例尺 1:2,700,000；
+    陆域按底图明度反演为“相对起伏”6 级分层并叠加等高线，海侧擦除滤镜带后沿岸线重新描边。
+    灰色分层为相对起伏示意，非实测高程；行政区划为同人整理，非官方设定。
+  </p>
+  <p class="note">分层源文件（PSD，91 MB）未上传，仓库只保留 PNG / PDF / 预览图。</p>
+  <a class="back" href="../index.html">← 返回作品</a>
+</div>
+</body>
+</html>

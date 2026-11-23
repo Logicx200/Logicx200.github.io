@@ -38,7 +38,7 @@ python scripts\to_parquet.py       # 5) 合并 6 个 CSV 分块 -&gt; atmosphere
 <h2 id="4-数据消费建议给升级仿真模型">4. 数据消费建议（给升级仿真模型）</h2>
 <ul><li>直接可读：<code>models.json</code>（枚举+想定+模型+包围盒一体）、<code>Q2解析\atmosphere_data\*.csv</code>（pandas 直接 concat）。</li><li>大气链路：用 <code>path_transmittance</code> / <code>path_radiance_W_m2sr</code> 作大气修正，<code>background_radiance_W_m2sr</code> 仅限&quot;城市+沙漠型气溶胶&quot;这一组条件；其他背景/地点/季节/能见度必须外部补算（Q2 的 RT 卡片未提供，无法复现）。</li><li>传感器链路：几何（FOV/分辨率/高度/俯仰）与波段可直接沿用；辐射-灰度环节需按 <code>sensor_notes.md</code> §4 补齐参数，建议按 §5 的导引头字段对齐接口、按 §6 的公式重建物理链路。</li></ul></article><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
 </main>
-<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>45 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
+<footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>46 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
 <script src="../../assets/js/site.js" defer></script>
 </body>
 </html>

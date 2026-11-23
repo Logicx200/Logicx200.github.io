@@ -13,9 +13,9 @@
   }
  },
  "totals": {
-  "projects": 45,
-  "files": 5026,
-  "bytes": 274661593,
+  "projects": 46,
+  "files": 5031,
+  "bytes": 280679000,
   "excluded": 4
  },
  "categories": [
@@ -56,6 +56,42 @@
   }
  ],
  "projects": [
+  {
+   "id": "teyvat-topo-map",
+   "dir": "works/teyvat-topo-map",
+   "title": "提瓦特大陆行政区划与地形图",
+   "subtitle": "8 个一级行政区 · 65 个二级行政区 · 6 级相对起伏 + 等高线",
+   "category": "geo",
+   "tags": [
+    "原神",
+    "提瓦特",
+    "地图",
+    "行政区划",
+    "等高线"
+   ],
+   "summary": "以观测枢《提瓦特大地图》8K 影像为底，按 301 个锚点配准后重绘的 A3 地图：8 个一级行政区、65 个二级行政区、107 个地名，经纬网 + 比例尺 1:2,700,000，陆域按底图明度反演为相对起伏 6 级并叠加等高线。附 PNG / PDF / 预览图。",
+   "highlights": [
+    "8 个一级行政区 / 65 个二级行政区 / 107 个地名",
+    "6 级相对起伏分层 + 等高线 + 经纬网",
+    "A3 300dpi（6000×4200），PDF / PNG 双版本"
+   ],
+   "tech": [
+    "Python",
+    "Matplotlib",
+    "Pillow"
+   ],
+   "cover": "works/teyvat-topo-map/preview.jpg",
+   "demo": "works/teyvat-topo-map/index.html",
+   "entry": "works/teyvat-topo-map/README.md",
+   "published": true,
+   "sourceFiles": 5,
+   "sourceBytes": 6017407,
+   "publishedFiles": 5,
+   "publishedBytes": 6017407,
+   "excludeReason": "",
+   "excludeNote": "分层 PSD（91 MB）未上传",
+   "featured": false
+  },
   {
    "id": "teyvat-transit-bands",
    "dir": "works/teyvat-transit-bands",
