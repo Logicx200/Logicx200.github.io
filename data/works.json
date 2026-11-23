@@ -15,7 +15,7 @@
  "totals": {
   "projects": 46,
   "files": 5031,
-  "bytes": 280679000,
+  "bytes": 281790443,
   "excluded": 4
  },
  "categories": [
@@ -121,10 +121,10 @@
    "demo": "works/teyvat-transit-bands/index.html",
    "entry": "works/teyvat-transit-bands/README.md",
    "published": true,
-   "sourceFiles": 7,
-   "sourceBytes": 8194186,
-   "publishedFiles": 7,
-   "publishedBytes": 8194186,
+   "sourceFiles": 8,
+   "sourceBytes": 9305629,
+   "publishedFiles": 8,
+   "publishedBytes": 9305629,
    "excludeReason": "",
    "excludeNote": "",
    "featured": false
