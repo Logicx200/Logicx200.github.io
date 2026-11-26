@@ -13,7 +13,7 @@
 | `preview.py` | 用 Pillow 从同一份数据画 PNG 预览，便于快速看路网形态（依赖 Pillow）。 |
 | `download_bbbike.py` | 轮询并下载 BBBike 已触发好的 extract（含 20 分钟超时）。 |
 | `trigger_bbbike.py` | 向 BBBike 提交自定义 bbox 的提取请求（网页表单自动化）。 |
-| `preview_太原.png` / `preview_南京.png` | 原版把太原、南京数据画出来的预览图（Pillow 生成）。 |
+| `preview_beijing.png` | 用同一套数据与投影画出的北京路网预览图（Pillow 生成，示例统一用北京）。 |
 
 ## 原版用法
 

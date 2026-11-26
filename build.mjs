@@ -347,6 +347,7 @@ function loadWorksData() {
       cover: stripWorksPrefix(project.cover),
       demo: stripWorksPrefix(project.demo),
       entry: stripWorksPrefix(project.entry),
+      repo: trim(project.repo),
       featured: project.featured === true,
       published: project.published !== false,
       publishedFiles: Number(project.publishedFiles),
@@ -465,7 +466,7 @@ function workCardHtml(project, repo, options) {
 
   const links = [];
   if (demo) links.push('<a class="is-demo" href="' + esc(prefix + demo) + '">在线试玩 ▶</a>');
-  const sourceUrl = repoTreeUrl(repo, 'works/' + project.slug);
+  const sourceUrl = project.repo || repoTreeUrl(repo, 'works/' + project.slug);
   if (sourceUrl) links.push('<a href="' + esc(sourceUrl) + '" target="_blank" rel="noopener noreferrer">源码 ↗</a>');
   links.push('<a href="' + esc(prefix + docPath) + '">说明文档</a>');
 
@@ -1160,7 +1161,7 @@ function buildWorkDocPage(site, project, works, stats) {
   const gallery = bodyImageCount < 3 ? collectGalleryImages(projectDir, referenceImages) : [];
 
   const demoHref = workDocDemoHref(project);
-  const sourceUrl = repoTreeUrl(works.repo, 'works/' + project.slug);
+  const sourceUrl = project.repo || repoTreeUrl(works.repo, 'works/' + project.slug);
   const metaParts = ['<span>' + esc(project.categoryName) + '</span>'];
   if (Number.isFinite(project.publishedFiles)) {
     metaParts.push('<span>' + formatNumber(project.publishedFiles) + ' 个文件</span>');
