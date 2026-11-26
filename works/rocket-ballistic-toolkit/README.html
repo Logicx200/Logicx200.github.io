@@ -17,16 +17,16 @@
 <header class="site-header"><div class="wrap nav"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>学哲玩</a><div class="nav-right"><nav aria-label="主导航"><ul class="nav-links"><li><a class="nav-link" href="../../notes/">文章</a></li><li><a class="nav-link" href="../../works/" aria-current="page">作品</a></li><li><a class="nav-link" href="../../about/">关于</a></li></ul></nav><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换到暗色模式" title="暗色"><svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><path d="M8 1.3v1.6M8 13.1v1.6M1.3 8h1.6M13.1 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"></path></svg><svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.3 9.6A5.8 5.8 0 0 1 6.4 2.7a5.9 5.9 0 1 0 6.9 6.9Z"></path></svg></button></div></div></header>
 <main id="main">
 <div class="wrap-narrow work-doc"><header class="work-doc-head"><p class="work-doc-kicker">说明 · 雷达 · 地理 · 导航</p><h1 class="work-doc-title">火箭弹道工具箱</h1><p class="work-doc-sub">离线 3-DOF 弹道 / 落区 / 发射窗口 / 天空可见性 / 全国地图 / KMZ / 中文报告</p><div class="work-doc-meta"><span>雷达 · 地理 · 导航</span><span>8 个文件</span><span>3.2 MB</span><span class="tag">弹道</span><span class="tag">3-DOF</span><span class="tag">发射窗口</span><span class="tag">KMZ</span><span class="tag">离线</span><span class="tag">Python</span></div><div class="work-doc-actions"><a href="../../works/">← 返回作品列表</a><a href="https://github.com/Logicx200/rocket-ballistic-toolkit" target="_blank" rel="noopener noreferrer">GitHub 源码 ↗</a><a href="README.md">原始 Markdown</a></div></header><article class="prose work-doc-body"><blockquote><p><strong>离线 3-DOF 弹道预报与任务成果工具箱</strong>：把「一次发射（或一次返回）」变成一整套可交付成果—— 弹道、残骸落区、入轨根数、发射窗口、观测点天空轨迹、全国最大高度角地图、三维 KMZ、 不确定度、中文技术报告与交付自检。</p></blockquote>
-<p>源码与完整文档（独立仓库）：<strong>https://github.com/Logicx200/rocket-ballistic-toolkit</strong></p>
-<p><img src="figures/map_beijing.png" alt="北京示例：全国最大高度角地图" loading="lazy" decoding="async"></p>
-<blockquote><p>本作品展示图统一使用「北京」作为示例地点：发射场在北京北部（自定义坐标 40.35°N, 116.20°E）， 观测点在北京天安门（39.9042°N, 116.4074°E）。这是一次<strong>虚构的示意任务</strong>，不是真实发射。</p></blockquote>
+<p>源码与完整文档（独立仓库）：<strong>https://github.com/Logicx200/rocket-ballistic-toolkit</strong> 免安装版下载：<strong>https://github.com/Logicx200/rocket-ballistic-toolkit/releases/latest</strong></p>
+<p><img src="figures/map_beijing.png" alt="北京观测示例：太原 LC-9 发射、北京观测的全国最大高度角地图" loading="lazy" decoding="async"></p>
+<blockquote><p>展示图统一使用「北京」作为<strong>观测地点</strong>：发射工位是真实的太原卫星发射中心 LC-9 （38.8632°N, 111.5896°E），观测点设在北京天安门（39.9042°N, 116.4074°E）。 任务参数沿用内置示例，仅用于演示软件能力，<strong>不是真实发射</strong>。</p></blockquote>
 <h2 id="能做什么">能做什么</h2>
 <ul><li><strong>三类任务</strong>：常规发射弹道 / 载人交会（含 T0 反推、相位调整 + Hohmann + 末段逼近）/ 返回舱返回（制动窗、再入/开伞/着陆、1σ 散布）；</li><li><strong>八步向导 GUI</strong>：任务与箭型 → 轨道与时序 → 航警与落区 → 观测点 → 空间站与返回 → 输出与模块 → 数据体检 → 运行与成果；</li><li><strong>自定义箭型</strong>：多级 / 并联助推器 / 多机多阶段点火 / 折线俯仰 / 整流罩，图形化编辑器，免写数据库；</li><li><strong>真实出图</strong>：全国最大高度角地图（含晨昏线/阳光可见）、天空轨迹与地形判读、三维 KMZ/KML；</li><li><strong>交付自检</strong>：<code>qc_report.json</code> 逐项 PASS/FAIL、一页纸任务摘要、成果清单与步骤台账。</li></ul>
-<h2 id="北京示例虚构可复现">北京示例（虚构，可复现）</h2>
-<pre><code class="language-bash">python -m app.main --cli --mission &quot;examples/北京示例_任务输入.json&quot; --workdir &quot;作品\示例_北京_2026-11-19&quot;</code></pre>
-<p>本机实测：<strong>QC 35/35 PASS</strong>，入轨 282 km × 937 km / 45.64°，残骸 3/3 落区内，发射窗口 19.4 min， 北京观测点最大仰角 31.5°。</p>
+<h2 id="北京观测示例可复现">北京观测示例（可复现）</h2>
+<pre><code class="language-bash">python -m app.main --cli --mission &quot;examples/北京观测示例_任务输入.json&quot; --workdir &quot;作品\示例_太原发射_北京观测&quot;</code></pre>
+<p>本机实测：<strong>QC 35/35 PASS</strong>，入轨 370 km × 640 km / 94.19°，残骸 3/3 落区内， 发射窗口 19.3 min；北京观测点首次出现 06:51:33（方位 254.9°、仰角 0.44°），最高仰角 13.5°。</p>
 <div class="table-container"><table><thead><tr><th>界面</th><th>数据体检</th></tr></thead><tbody><tr><td><img src="figures/01_mission.png" alt="任务与箭型" loading="lazy" decoding="async"></td><td><img src="figures/07_health_result.png" alt="数据体检" loading="lazy" decoding="async"></td></tr></tbody></table></div>
-<p><img src="figures/appear_beijing.png" alt="出现方位地形判读图（北京观测点）" loading="lazy" decoding="async"> <img src="figures/sun_earthshadow_beijing.png" alt="太阳高度与地影（北京观测点）" loading="lazy" decoding="async"></p>
+<p><img src="figures/sky_beijing.png" alt="从北京看太原发射：天空轨迹（方位角-高度角）" loading="lazy" decoding="async"> <img src="figures/appear_beijing.png" alt="出现方位地形判读图（北京观测点）" loading="lazy" decoding="async"> <img src="figures/sun_earthshadow_beijing.png" alt="太阳高度与地影（北京观测点）" loading="lazy" decoding="async"></p>
 <h2 id="输出成果">输出成果</h2>
 <pre><code>作品\&lt;日期_型号_工位&gt;\
 ├─ sim\      弹道序列、事件表、落点、入轨根数、关键节点、飞行阶段、环境剖面
@@ -37,7 +37,7 @@
 <h2 id="技术栈">技术栈</h2>
 <p>Python 3.10+ · numpy · scipy · matplotlib · tkinter · python-docx · sgp4 · PyInstaller</p>
 <h2 id="说明">说明</h2>
-<ul><li>仅供公开信息分析与教学使用；非实际发射/返回弹道，非官方信息。</li><li>3-DOF 质点模型，不含侧向机动细节、风场与真实发动机调节；交会与返回舱结果为工程估算。</li><li>支持打包为免安装 Windows exe（PyInstaller one-folder），打包脚本随源码仓库提供。</li></ul></article><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
+<ul><li>仅供公开信息分析与教学使用；非实际发射/返回弹道，非官方信息。</li><li>3-DOF 质点模型，不含侧向机动细节、风场与真实发动机调节；交会与返回舱结果为工程估算。</li><li>提供 Windows 免安装版 exe（PyInstaller one-folder），见 Releases。</li></ul></article><p class="work-doc-foot"><a class="back-link" href="../../works/">← 返回作品列表</a></p></div>
 </main>
 <footer class="site-footer"><div class="wrap"><div class="footer-row"><p>© 2026 学哲玩<span class="footer-sep">·</span>7 篇文章<span class="footer-sep">·</span>47 个作品</p><p>本站由纯静态 HTML / CSS / JS 构建<span class="footer-sep">·</span><span class="footer-links"><a href="https://github.com/logicx200" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:1831665169@qq.com">邮箱</a></span></p></div></div></footer>
 <script src="../../assets/js/site.js" defer></script>
